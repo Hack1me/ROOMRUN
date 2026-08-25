@@ -6,11 +6,13 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from roomrun.core.models import BaseModel
+
 from .managers import UserManager
 
 
 # USER
-class User(AbstractUser):
+class User(BaseModel,AbstractUser):
     """
     Default custom user model for ROOMRUN.
     If adding fields that need to be filled at user signup,
