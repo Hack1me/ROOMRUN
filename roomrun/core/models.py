@@ -13,18 +13,18 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-# from roomrun.core.managers import AllObjectsManager
-# from roomrun.core.managers import SoftDeleteManager
+# from roomrun.core.managers import AllObjectsManager  # noqa: ERA001
+# from roomrun.core.managers import SoftDeleteManager  # noqa: ERA001
 
 if TYPE_CHECKING:
     from roomrun.users.models import User
 
 
 class BaseModel(models.Model):
-    """Abstract base model with UUID primary key, timestamps, audit fields, and soft-delete.
-
-    All concrete models should inherit from this to ensure consistency across the platform.
     """
+        Abstract base model with UUID primary key, timestamps, audit fields, and soft-delete.
+        All concrete models should inherit from this to ensure consistency across the platform.
+    """  # noqa: E501
 
     id = models.UUIDField(
         primary_key=True,
@@ -65,9 +65,11 @@ class BaseModel(models.Model):
         help_text=_("Soft-delete flag. Deactivated records are excluded from default queries."),
     )
 
-    # Managers
-    # objects = SoftDeleteManager()
-    # all_objects = AllObjectsManager()
+    """
+        #Managers
+        objects = SoftDeleteManager()
+        all_objects = AllObjectsManager()
+    """
 
     class Meta:
         abstract = True
