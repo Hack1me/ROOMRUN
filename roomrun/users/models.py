@@ -166,3 +166,247 @@ class Landlord(models.Model):
 
     def __str__(self):
         return self.user.full_name or self.user.email
+
+
+# TENANT
+class Tenant(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="tenant_profile",
+    )
+
+    tenant_number = models.CharField(
+        max_length=20,
+        unique=True,
+        editable=False,
+    )
+
+    nationality = models.CharField(
+        max_length=100,
+        blank=True,
+    )
+
+    occupation = models.CharField(
+        max_length=150,
+        blank=True,
+    )
+
+    verified = models.BooleanField(
+        default=False,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        db_table = "tenants"
+        ordering = ["-created_at"]
+
+    def __str__(self) -> str:
+        return self.user.full_name or self.user.email
+
+    def get_absolute_url(self) -> str:
+        return reverse(
+            "users:tenant-detail",
+            kwargs={"pk": self.id},
+        )
+
+#EMPLOYEE
+class Employee(models.Model):
+    """
+    Business profile representing an employee in ROOMRUN.
+    """
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="employee_profile",
+    )
+
+    employee_number = models.CharField(
+        max_length=20,
+        unique=True,
+        editable=False,
+    )
+
+    job_title = models.CharField(
+        max_length=150,
+        blank=True,
+    )
+
+    class EmployeeStatus(models.TextChoices):
+        ACTIVE = "ACTIVE", _("Actif")
+        INACTIVE = "INACTIVE", _("Inactif")
+        SUSPENDED = "SUSPENDED", _("Suspendu")
+
+    status = models.CharField(
+        max_length=20,
+        choices=EmployeeStatus.choices,
+        default=EmployeeStatus.ACTIVE,
+    )
+
+    hire_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        db_table = "employees"
+        ordering = ["-created_at"]
+
+        indexes = [
+            models.Index(
+                fields=["status"],
+                name="employee_status_idx",
+            ),
+            models.Index(
+                fields=["hire_date"],
+                name="employee_hire_date_idx",
+            ),
+        ]
+
+    def __str__(self) -> str:
+        return self.user.full_name or self.user.email
+
+    def get_absolute_url(self) -> str:
+        return reverse(
+            "users:employee-detail",
+            kwargs={"pk": self.id},
+        )
+
+#GUARD
+class Guard(models.Model):
+    """
+    Business profile representing a security guard in ROOMRUN.
+    A guard is a specialized employee.
+    """
+
+    class GuardShift(models.TextChoices):
+        DAY = "DAY", _("Jour")
+        NIGHT = "NIGHT", _("Nuit")
+        ROTATING = "ROTATING", _("Rotation")
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    employee = models.OneToOneField(
+        Employee,
+        on_delete=models.CASCADE,
+        related_name="guard_profile",
+    )
+
+    guard_number = models.CharField(
+        max_length=20,
+        unique=True,
+        editable=False,
+    )
+
+    shift = models.CharField(
+        max_length=20,
+        choices=GuardShift.choices,
+        default=GuardShift.DAY,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        db_table = "guards"
+        ordering = ["-created_at"]
+
+    def __str__(self) -> str:
+        return self.employee.user.full_name or self.employee.user.email
+
+    def get_absolute_url(self) -> str:
+        return reverse(
+            "users:guard-detail",
+            kwargs={"pk": self.id},
+        )
+
+#MAINTENANCEAGENT
+class MaintenanceAgent(models.Model):
+    """
+    Business profile representing a maintenance agent in ROOMRUN.
+    A maintenance agent is a specialized employee.
+    """
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    employee = models.OneToOneField(
+        Employee,
+        on_delete=models.CASCADE,
+        related_name="maintenance_agent_profile",
+    )
+
+    agent_number = models.CharField(
+        max_length=20,
+        unique=True,
+        editable=False,
+    )
+
+    speciality = models.CharField(
+        max_length=150,
+        blank=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        db_table = "maintenance_agents"
+        ordering = ["-created_at"]
+
+    def __str__(self) -> str:
+        return (
+            self.employee.user.full_name
+            or self.employee.user.email
+        )
+
+    def get_absolute_url(self) -> str:
+        return reverse(
+            "users:maintenance-agent-detail",
+            kwargs={"pk": self.id},
+        )
