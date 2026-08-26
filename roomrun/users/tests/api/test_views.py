@@ -8,7 +8,7 @@ from rest_framework.test import APIRequestFactory
 from roomrun.users.api.views import UserViewSet
 
 if TYPE_CHECKING:
-    from roomrun.users.models import User
+    from roomrun.roomrun.users.models import User
 
 
 class TestUserViewSet:

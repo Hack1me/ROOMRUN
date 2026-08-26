@@ -23,7 +23,7 @@ from roomrun.users.views import user_detail_view
 if TYPE_CHECKING:
     from django.test import RequestFactory
 
-    from roomrun.users.models import User
+    from roomrun.roomrun.users.models import User
 
 pytestmark = pytest.mark.django_db
 

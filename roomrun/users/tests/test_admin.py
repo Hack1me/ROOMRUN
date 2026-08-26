@@ -8,7 +8,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.urls import reverse
 from pytest_django.asserts import assertRedirects
 
-from roomrun.users.models import User
+from roomrun.roomrun.users.models import User
 
 
 class TestUserAdmin:

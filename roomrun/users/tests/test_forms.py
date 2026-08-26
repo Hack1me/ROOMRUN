@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from roomrun.users.forms import UserAdminCreationForm
 
 if TYPE_CHECKING:
-    from roomrun.users.models import User
+    from roomrun.roomrun.users.models import User
 
 
 class TestUserAdminCreationForm:

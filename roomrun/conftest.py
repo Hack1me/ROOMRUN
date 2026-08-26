@@ -7,7 +7,7 @@ import pytest
 from roomrun.users.tests.factories import UserFactory
 
 if TYPE_CHECKING:
-    from roomrun.users.models import User
+    from roomrun.roomrun.users.models import User
 
 
 @pytest.fixture(autouse=True)

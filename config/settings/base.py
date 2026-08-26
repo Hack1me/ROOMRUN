@@ -98,6 +98,8 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "drf_spectacular",
+    "django_countries",
+    "phonenumber_field",
 ]
 
 LOCAL_APPS = [
@@ -108,6 +110,8 @@ LOCAL_APPS = [
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
+# Default phonumer region
+PHONENUMBER_DEFAULT_REGION = "FR"  # ISO-3166-1
 # MIGRATIONS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
