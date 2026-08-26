@@ -103,8 +103,9 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "roomrun.users",
+    "roomrun.users.apps.UsersConfig",
     "roomrun.core",
+    "roomrun.properties"
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

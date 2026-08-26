@@ -1,0 +1,292 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-26 17:30+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+#: config/settings/base.py:35
+msgid "English"
+msgstr "Anglais"
+
+#: config/settings/base.py:36
+msgid "French"
+msgstr "Francais"
+
+#: config/settings/base.py:37
+msgid "Portuguese"
+msgstr "Portuguais"
+
+#: roomrun/core/models/base.py:35
+msgid "ID"
+msgstr "ID"
+
+#: roomrun/core/models/base.py:44
+msgid "Created at"
+msgstr ""
+
+#: roomrun/core/models/base.py:49
+msgid "Updated at"
+msgstr ""
+
+#: roomrun/core/models/base.py:62
+msgid "Created by"
+msgstr ""
+
+#: roomrun/core/models/base.py:71
+msgid "Updated by"
+msgstr ""
+
+#: roomrun/core/models/base.py:81
+msgid "Is deleted"
+msgstr ""
+
+#: roomrun/core/models/base.py:83
+msgid "Indicates whether this record has been soft-deleted."
+msgstr ""
+
+#: roomrun/templates/allauth/layouts/entrance.html:8
+#: roomrun/templates/errors/base.html:98
+msgid "Sign In"
+msgstr ""
+
+#: roomrun/templates/errors/base.html:83
+msgid "My Profile"
+msgstr ""
+
+#: roomrun/templates/errors/base.html:87
+msgid "Sign Out"
+msgstr ""
+
+#: roomrun/templates/errors/base.html:93
+msgid "Sign Up"
+msgstr ""
+
+#: roomrun/users/admin.py:24
+msgid "Personal info"
+msgstr ""
+
+#: roomrun/users/admin.py:26
+msgid "Permissions"
+msgstr ""
+
+#: roomrun/users/admin.py:37
+msgid "Important dates"
+msgstr ""
+
+#: roomrun/users/apps.py:7
+msgid "Users"
+msgstr ""
+
+#: roomrun/users/forms.py:27 roomrun/users/tests/test_forms.py:41
+msgid "This email has already been taken."
+msgstr ""
+
+#: roomrun/users/models.py:45
+msgid "Actif"
+msgstr ""
+
+#: roomrun/users/models.py:46
+msgid "Inactif"
+msgstr ""
+
+#: roomrun/users/models.py:47
+msgid "Suspendu"
+msgstr ""
+
+#: roomrun/users/models.py:54
+msgid "email address"
+msgstr ""
+
+#: roomrun/users/models.py:59
+msgid "phone number"
+msgstr ""
+
+#: roomrun/users/models.py:66
+msgid "country"
+msgstr ""
+
+#: roomrun/users/models.py:72
+msgid "profile picture"
+msgstr ""
+
+#: roomrun/users/models.py:83
+msgid "user status"
+msgstr ""
+
+#: roomrun/users/models.py:95
+msgid "email verified"
+msgstr ""
+
+#: roomrun/users/models.py:100
+msgid "phone verified"
+msgstr ""
+
+#: roomrun/users/models.py:109
+msgid "last login IP"
+msgstr ""
+
+#: roomrun/users/models.py:121
+msgid "user"
+msgstr ""
+
+#: roomrun/users/models.py:122
+msgid "users"
+msgstr ""
+
+#: roomrun/users/models.py:176 roomrun/users/models.py:292
+msgid "User"
+msgstr ""
+
+#: roomrun/users/models.py:183
+msgid "Landlord number"
+msgstr ""
+
+#: roomrun/users/models.py:185
+msgid "Auto-generated unique identifier for the landlord."
+msgstr ""
+
+#: roomrun/users/models.py:192
+msgid "Verified"
+msgstr ""
+
+#: roomrun/users/models.py:194
+msgid "Indicates if the landlord's identity has been verified."
+msgstr ""
+
+#: roomrun/users/models.py:201
+msgid "Landlord"
+msgstr ""
+
+#: roomrun/users/models.py:202
+msgid "Landlords"
+msgstr ""
+
+#: roomrun/users/models.py:239
+msgid "Tenant number"
+msgstr ""
+
+#: roomrun/users/models.py:240
+msgid "Auto-generated unique identifier for the tenant."
+msgstr ""
+
+#: roomrun/users/models.py:260
+msgid "tenant"
+msgstr ""
+
+#: roomrun/users/models.py:261
+msgid "tenants"
+msgstr ""
+
+#: roomrun/users/models.py:299
+msgid "Employee number"
+msgstr ""
+
+#: roomrun/users/models.py:301
+msgid "Auto-generated unique identifier for the employee."
+msgstr ""
+
+#: roomrun/users/models.py:308
+msgid "Job title"
+msgstr ""
+
+#: roomrun/users/models.py:316
+msgid "Status"
+msgstr ""
+
+#: roomrun/users/models.py:322
+msgid "Hire date"
+msgstr ""
+
+#: roomrun/users/models.py:328 roomrun/users/models.py:371
+#: roomrun/users/models.py:427
+msgid "Employee"
+msgstr ""
+
+#: roomrun/users/models.py:329
+msgid "Employees"
+msgstr ""
+
+#: roomrun/users/models.py:378
+msgid "Agent number"
+msgstr ""
+
+#: roomrun/users/models.py:380
+msgid "Auto-generated unique identifier for the maintenance agent."
+msgstr ""
+
+#: roomrun/users/models.py:387
+msgid "Speciality"
+msgstr ""
+
+#: roomrun/users/models.py:389
+msgid "Technical speciality of the maintenance agent."
+msgstr ""
+
+#: roomrun/users/models.py:396
+msgid "Maintenance agent"
+msgstr ""
+
+#: roomrun/users/models.py:397
+msgid "Maintenance agents"
+msgstr ""
+
+#: roomrun/users/models.py:434
+msgid "Guard number"
+msgstr ""
+
+#: roomrun/users/models.py:436
+msgid "Auto-generated unique identifier for the guard."
+msgstr ""
+
+#: roomrun/users/models.py:444
+msgid "Shift"
+msgstr ""
+
+#: roomrun/users/models.py:450
+msgid "Guard"
+msgstr ""
+
+#: roomrun/users/models.py:451
+msgid "Guards"
+msgstr ""
+
+#: roomrun/users/tests/test_views.py:78 roomrun/users/views.py:31
+msgid "Information successfully updated"
+msgstr ""
+
+#: roomrun/utils/enums.py:7
+msgid "Active"
+msgstr ""
+
+#: roomrun/utils/enums.py:8
+msgid "Inactive"
+msgstr ""
+
+#: roomrun/utils/enums.py:9
+msgid "Suspended"
+msgstr ""
+
+#: roomrun/utils/enums.py:13
+msgid "Day"
+msgstr ""
+
+#: roomrun/utils/enums.py:14
+msgid "Night"
+msgstr ""
+
+#: roomrun/utils/enums.py:15
+msgid "Rotating"
+msgstr ""

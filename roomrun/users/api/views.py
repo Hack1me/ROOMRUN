@@ -6,7 +6,7 @@ from rest_framework.mixins import UpdateModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from roomrun.roomrun.users.models import User
+from roomrun.users.models import User
 
 from .serializers import UserSerializer
 
