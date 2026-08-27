@@ -14,10 +14,14 @@ class GuardShift(models.TextChoices):
     NIGHT = "NIGHT", _("Night")
     ROTATING = "ROTATING", _("Rotating")
 
+
+
 class PropertyStatus(models.TextChoices):
     ACTIVE = "ACTIVE", _("Active")
     INACTIVE = "INACTIVE", _("Inactive")
     UNDER_CONSTRUCTION = "UNDER_CONSTRUCTION", _("Under construction")
+
+
 
 class UnitStatus(models.TextChoices):
     """
@@ -42,3 +46,44 @@ class UnitType(models.TextChoices):
     RETAIL = "RETAIL", _("Retail")
     WAREHOUSE = "WAREHOUSE", _("Warehouse")
     PENTHOUSE = "PENTHOUSE", _("Penthouse")
+
+
+class ApplicationStatus(models.TextChoices):
+    PENDING = "PENDING", _("Pending")
+    APPROVED = "APPROVED", _("Approved")
+    REJECTED = "REJECTED", _("Rejected")
+    CANCELLED = "CANCELLED", _("Cancelled")
+
+class ContractStatus(models.TextChoices):
+        ACTIVE = "ACTIVE", _("Active")
+        COMPLETED = "COMPLETED", _("Completed")
+        TERMINATED = "TERMINATED", _("Terminated")
+        CANCELLED = "CANCELLED", _("Cancelled")
+
+
+class ChargeType(models.TextChoices):
+    """
+    Defines the types of financial charges that can be applied to a rental contract.
+    """
+    RENT = "RENT", _("Rent")
+    ELECTRICITY = "ELECTRICITY", _("Electricity")
+    WATER = "WATER", _("Water")
+    GAS = "GAS", _("Gas")
+    INTERNET = "INTERNET", _("Internet")
+    MAINTENANCE_FEE = "MAINTENANCE_FEE", _("Maintenance fee")
+    TRASH = "TRASH", _("Trash collection")
+    PARKING = "PARKING", _("Parking")
+    LATE_FEE = "LATE_FEE", _("Late fee")
+    OTHER = "OTHER", _("Other")
+
+
+class ChargeStatus(models.TextChoices):
+    """
+    Defines the lifecycle status of a financial charge.
+    Ordered to reflect the natural flow: pending → paid / overdue / cancelled.
+    """
+    PENDING = "PENDING", _("Pending")
+    PARTIAL = "PARTIAL", _("Partially paid")
+    PAID = "PAID", _("Paid")
+    OVERDUE = "OVERDUE", _("Overdue")
+    CANCELLED = "CANCELLED", _("Cancelled")

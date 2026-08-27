@@ -104,8 +104,10 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "properties.apps.PropertiesConfig",
     "users.apps.UsersConfig",
+    "properties.apps.PropertiesConfig",
+    "rentals.apps.RentalsConfig",
+    "billing.appa.BillingConfig",
     "core",
     # Your stuff: custom apps go here
 ]

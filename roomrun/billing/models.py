@@ -1,0 +1,117 @@
+from core.models import BaseModel
+from django.core.exceptions import ValidationError
+from django.db import models
+from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
+from djmoney.models.fields import MoneyField
+from rentals.models import RentalContract
+from utils.enums import ChargeStatus
+from utils.enums import ChargeType
+
+
+class Charge(BaseModel):
+    """
+    Represents a financial charge associated with a rental contract.
+    Each charge has a unique number, a type, and a status.
+    """
+
+    # -------------------------------------------------------------------------
+    # Core Fields
+    # -------------------------------------------------------------------------
+
+    contract = models.ForeignKey(
+        RentalContract,
+        on_delete=models.PROTECT,          # Prevents deletion if charges exist
+        related_name="charges",
+        verbose_name=_("Rental contract"),
+        help_text=_("The rental contract this charge belongs to."),
+    )
+
+    charge_number = models.CharField(
+        max_length=50,
+        unique=True,
+        editable=False,
+        verbose_name=_("Charge number"),
+        help_text=_("Auto-generated unique identifier for the charge."),
+        # Generation logic must be added via a signals.py
+    )
+
+    charge_type = models.CharField(
+        max_length=30,
+        choices=ChargeType.choices,
+        db_index=True,                     # Added for faster filtering by type
+        verbose_name=_("Charge type"),
+        help_text=_("Type of charge (e.g., rent, utilities, maintenance)."),
+    )
+
+    amount = MoneyField(                   # Changed to MoneyField for consistency
+        max_digits=12,
+        decimal_places=2,
+        default_currency="USD",            # Adjust to your default currency
+        verbose_name=_("Amount"),
+        help_text=_("Charge amount in the local currency."),
+    )
+
+    due_date = models.DateField(
+        verbose_name=_("Due date"),
+        help_text=_("Date by which the charge must be paid."),
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=ChargeStatus.choices,
+        default=ChargeStatus.PENDING,
+        db_index=True,
+        verbose_name=_("Status"),
+        help_text=_("Current payment status of the charge."),
+    )
+
+    description = models.TextField(
+        blank=True,
+        verbose_name=_("Description"),
+        help_text=_("Optional details or notes about the charge."),
+    )
+
+    # -------------------------------------------------------------------------
+    # Meta Options
+    # -------------------------------------------------------------------------
+
+    class Meta:
+        db_table = "charges"
+        ordering = ["-due_date"]
+        verbose_name = _("Charge")
+        verbose_name_plural = _("Charges")
+
+        indexes = [
+            models.Index(fields=["contract"], name="charge_contract_idx"),
+            models.Index(fields=["charge_type"], name="charge_type_idx"),
+            models.Index(fields=["status"], name="charge_status_idx"),
+            models.Index(fields=["due_date"], name="charge_due_date_idx"),
+        ]
+
+    # -------------------------------------------------------------------------
+    # Methods
+    # -------------------------------------------------------------------------
+
+    def __str__(self) -> str:
+        """Return the charge number as string representation."""
+        return self.charge_number
+
+    def get_absolute_url(self) -> str:
+        """Return the canonical URL for the charge detail view."""
+        return reverse("billing:charge-detail", kwargs={"pk": self.id})
+
+    def clean(self):
+        """
+        Business‑rule validations:
+        - Ensure due_date is not in the past (optional, uncomment if needed)
+        """
+        # from datetime import date
+        # if self.due_date and self.due_date < date.today():
+        #     raise ValidationError(_("Due date cannot be in the past."))
+        pass
+
+    def save(self, *args, **kwargs):
+        """Run full validation before saving."""
+        self.full_clean()
+        super().save(*args, **kwargs)

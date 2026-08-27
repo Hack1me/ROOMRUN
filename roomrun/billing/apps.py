@@ -1,9 +1,9 @@
 from django.apps import AppConfig
 
 
-class RentalsConfig(AppConfig):
+class BillingConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "rentals"
+    name = "billing"
 
     def ready(self):
-        import rentals.signals  # noqa: F401, PLC0415
+        import billing.signals  # noqa: F401, PLC0415

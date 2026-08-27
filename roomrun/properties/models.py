@@ -169,8 +169,7 @@ class PropertyImage(BaseModel):
         # Optional: add validators for size/dimensions here
     )
     caption = models.CharField(
-        _("Caption"),
-        default=_("Property Image"),
+        default="Property Image",
         verbose_name=_("Property Image"),
         help_text=_(
             "Setup caption caption of Property Image."
