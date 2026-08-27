@@ -1,7 +1,7 @@
 # users/signals.py
 
 import uuid
-from typing import Type
+from typing import Type  # noqa: UP035
 from typing import TypeVar
 
 from django.db.models import Model
@@ -18,7 +18,7 @@ from .models import Tenant
 M = TypeVar("M", bound=Model)
 
 
-def generate_unique_identifier(prefix: str, model: Type[M], field: str = "id") -> str:
+def generate_unique_identifier(prefix: str, model: Type[M], field: str = "id") -> str:  # noqa: UP006, UP047
     """
     Generate a unique alphanumeric identifier with a given prefix.
 

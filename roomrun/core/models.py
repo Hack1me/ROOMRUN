@@ -12,11 +12,12 @@ from __future__ import annotations
 
 import uuid
 
-from core.managers import AllObjectsManager
-from core.managers import SoftDeleteManager
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from .managers import AllObjectsManager
+from .managers import SoftDeleteManager
 
 
 class BaseModel(models.Model):
@@ -32,6 +33,7 @@ class BaseModel(models.Model):
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
+        null=False,
         verbose_name=_("ID"),
     )
 

@@ -1,8 +1,9 @@
 # ALL IMPORTS
-import uuid
+
 from typing import ClassVar
 
-from core.models.base import BaseModel
+from core.models import BaseModel
+from core.validators import validate_phone_number_for_country
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -60,6 +61,8 @@ class User(BaseModel, AbstractUser):
         unique=True,
         null=True,    # Allows NULL in the database (since unique=True + null=True is supported.  # noqa: E501
         blank=True,   # but be careful with duplicate NULLs on some database backends).
+        validators=[validate_phone_number_for_country],
+        help_text=_("International format, e.g. +33123456789."),
     )
 
     country = CountryField(

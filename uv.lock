@@ -685,6 +685,19 @@ wheels = [
 ]
 
 [[package]]
+name = "django-money"
+version = "3.6.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "py-moneyed" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/5e/a1/2a86adff207bd7562a26da2319746fba516978a946fe0864fad96640ecae/django_money-3.6.1.tar.gz", hash = "sha256:9b25d992a457af932eef1e5fef0098dd3ff0c92f4255d2d6d452af772b2fdde5", size = 45020, upload-time = "2026-06-07T10:52:34.363Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/53/27/d044f09fcdb2a630c12f737a38615e9ace35eeb7923c4a10247f9b1e552b/django_money-3.6.1-py3-none-any.whl", hash = "sha256:32a8027a91dea969951a34a9cc4a4f101aaa6ec45e7f784f0b17ec7813818fb2", size = 38296, upload-time = "2026-06-07T10:52:33.193Z" },
+]
+
+[[package]]
 name = "django-phonenumber-field"
 version = "8.5.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1525,6 +1538,19 @@ wheels = [
 ]
 
 [[package]]
+name = "py-moneyed"
+version = "3.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "babel" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/2c/d9/cb6f113d2b7cf930bb3963d2b84ee245c20f93f9afc2e41adece58d324ae/py-moneyed-3.0.tar.gz", hash = "sha256:4906f0f02cf2b91edba2e156f2d4e9a78f224059ab8c8fa2ff26230c75d894e8", size = 20385, upload-time = "2022-11-27T21:29:38.564Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/be/2b/2d87f12edc70f0d8c85148c51b57a4b8cf89e4d8ad291935a47ed1b7c52e/py_moneyed-3.0-py3-none-any.whl", hash = "sha256:9583a14f99c05b46196193d8185206e9b73c8439fc8a5eee9cfc7e733676d9bb", size = 11324, upload-time = "2022-11-27T21:29:37.201Z" },
+]
+
+[[package]]
 name = "pycparser"
 version = "3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1787,6 +1813,7 @@ dependencies = [
     { name = "django-crispy-forms" },
     { name = "django-environ" },
     { name = "django-model-utils" },
+    { name = "django-money" },
     { name = "django-phonenumber-field", extra = ["phonenumbers"] },
     { name = "django-redis" },
     { name = "djangorestframework" },
@@ -1842,6 +1869,7 @@ requires-dist = [
     { name = "django-crispy-forms", specifier = "==2.7" },
     { name = "django-environ", specifier = "==0.14.0" },
     { name = "django-model-utils", specifier = "==5.0.0" },
+    { name = "django-money", specifier = ">=3.6.1" },
     { name = "django-phonenumber-field", extras = ["phonenumbers"], specifier = ">=8.5.0" },
     { name = "django-redis", specifier = "==7.0.0" },
     { name = "djangorestframework", specifier = "==3.18.0" },

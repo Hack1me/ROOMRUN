@@ -100,12 +100,13 @@ THIRD_PARTY_APPS = [
     "drf_spectacular",
     "django_countries",
     "phonenumber_field",
+    "djmoney"
 ]
 
 LOCAL_APPS = [
-    "roomrun.users.apps.UsersConfig",
-    "roomrun.core",
-    "roomrun.properties"
+    "properties.apps.PropertiesConfig",
+    "users.apps.UsersConfig",
+    "core",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -113,6 +114,8 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 # Default phonumer region
 PHONENUMBER_DEFAULT_REGION = "FR"  # ISO-3166-1
+#Default currencies
+CURRENCIES = ["USD", "EUR", "XAF"]
 # MIGRATIONS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules

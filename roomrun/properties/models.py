@@ -1,3 +1,442 @@
-from django.db import models
+import os
 
-# Create your models here.
+from core.models import BaseModel
+from core.validators import validate_image_extension
+from core.validators import validate_image_size
+from django.db import models
+from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
+from django_countries.fields import CountryField
+from djmoney.models.fields import MoneyField
+from users.models import Landlord
+from utils.enums import PropertyStatus
+from utils.enums import UnitStatus
+from utils.enums import UnitType
+
+
+# PROPERTY
+class Property(BaseModel):
+    """
+    Represents a property managed by a landlord in ROOMRUN.
+    A property can contain one or more buildings.
+    Inherits from BaseModel, which provides `id`, `created_at`, and `updated_at`.
+    """
+
+    # -------------------------------------------------------------------------
+    # Inner Choices Class
+    # -------------------------------------------------------------------------
+
+
+    # -------------------------------------------------------------------------
+    # Core Fields
+    # -------------------------------------------------------------------------
+
+    landlord = models.ForeignKey(
+        Landlord,
+        on_delete=models.CASCADE,          # When a landlord is deleted, all their properties are deleted.  # noqa: E501
+        related_name="properties",         # Allows accessing `landlord.properties.all()`.  # noqa: E501
+        verbose_name=_("Landlord"),
+        null=False,
+        help_text=_("The landlord who owns this property."),
+    )
+
+    property_number = models.CharField(
+        max_length=50,
+        unique=True,
+        editable=False,                    # Not editable via forms; automatically generated.  # noqa: E501
+        verbose_name=_("Property number"),
+        help_text=_("Auto-generated unique identifier for the property."),
+        # NOTE: Generation logic is provided via a `pre_save` signal.
+    )
+
+    name = models.CharField(
+        max_length=150,
+        verbose_name=_("Property name"),
+        help_text=_("The official name of the property (e.g., 'Sunset Tower')."),
+    )
+
+    description = models.TextField(
+        blank=True,                        # Optional field; can be left empty.
+        verbose_name=_("Description"),
+        help_text=_("Additional details about the property, such as amenities or history."),  # noqa: E501
+    )
+
+    address = models.CharField(
+        max_length=255,
+        verbose_name=_("Address"),
+        help_text=_("Street address of the property (e.g., '123 Main St')."),
+    )
+
+    city = models.CharField(
+        max_length=100,
+        verbose_name=_("City"),
+        help_text=_("City where the property is located."),
+    )
+
+    country = CountryField(
+        verbose_name=_("Country"),
+        help_text=_("Country where the property is located."),
+        # Uses `django-countries`; stores a two-letter country code (e.g., 'FR', 'US').
+    )
+
+    status = models.CharField(
+        max_length=30,
+        choices=PropertyStatus.choices,
+        default=PropertyStatus.ACTIVE,
+        verbose_name=_("Status"),
+        help_text=_("Current operational status of the property."),
+    )
+
+    # -------------------------------------------------------------------------
+    # Meta Options
+    # -------------------------------------------------------------------------
+
+    class Meta:
+        db_table = "properties"             # Explicit table name in the database.
+        ordering = ["-created_at"]          # Default ordering: newest first.
+        verbose_name = _("Property")
+        verbose_name_plural = _("Properties")
+
+        indexes = [
+            models.Index(fields=["landlord"], name="property_landlord_idx"),
+            # Speeds up queries filtering by landlord.
+            models.Index(fields=["status"], name="property_status_idx"),
+            # Speeds up queries filtering by status.
+            models.Index(fields=["city"], name="property_city_idx"),
+            # Speeds up queries filtering by city (e.g., for location-based searches).
+        ]
+
+    # -------------------------------------------------------------------------
+    # Standard Methods
+    # -------------------------------------------------------------------------
+
+    def __str__(self) -> str:
+        """Return the property name as its string representation."""
+        return self.name
+
+    def get_absolute_url(self) -> str:
+        """Return the canonical URL for the property detail page."""
+        return reverse("properties:property-detail", kwargs={"pk": self.id})
+
+    # -------------------------------------------------------------------------
+    # Computed Properties (Derived from Related Models)
+    # -------------------------------------------------------------------------
+
+    @property
+    def total_buildings(self) -> int:
+        """
+        Return the total number of buildings associated with this property.
+        """
+        return self.buildings.count()
+
+    @property
+    def total_units(self) -> int:
+        """
+        Return the total number of rental units across all buildings.
+        """
+        from django.db.models import Sum  # noqa: PLC0415
+        # Aggregate the sum of `units_count` from all buildings belonging to this property.  # noqa: E501
+        result = self.buildings.aggregate(total=Sum("units_count"))["total"]
+        return result or 0  # Return 0 if no buildings exist or no units are defined.
+
+# PROPERTYIMAGES
+class PropertyImage(BaseModel):
+    """
+    Represents an image associated with a property.
+    Each property can have multiple images, with one optionally marked as primary.
+    """
+
+    property = models.ForeignKey(
+        Property,
+        on_delete=models.CASCADE,
+        related_name="images",
+        verbose_name=_("Property"),
+        help_text=_("The property this image belongs to."),
+    )
+
+    image = models.ImageField(
+        _("Image"),
+        upload_to="properties/images/",
+        help_text=_(
+            "Upload a JPG, PNG, or WebP image. "
+            "Recommended size: 1920*1080 pixels, max 5MB."
+        ),
+        validators=[
+            validate_image_size,
+            validate_image_extension,
+            # validate_image_dimensions,   # optional
+        ],
+        # Optional: add validators for size/dimensions here
+    )
+    caption = models.CharField(
+        _("Caption"),
+        default=_("Property Image"),
+        verbose_name=_("Property Image"),
+        help_text=_(
+            "Setup caption caption of Property Image."
+        ),
+    )
+
+    is_primary = models.BooleanField(
+        default=False,
+        verbose_name=_("Primary image"),
+        help_text=_(
+            "Mark this image as the main/cover image for the property. "
+            "Only one image per property should be primary."
+        ),
+        db_index=True,  # Since we filter by it often
+    )
+
+    class Meta:
+        db_table = "property_images"
+        ordering = ["-is_primary", "-created_at"]
+        verbose_name = _("Property image")
+        verbose_name_plural = _("Property images")
+
+        indexes = [
+            models.Index(fields=["property"], name="property_image_property_idx"),
+            # Composite index speeds up queries
+            models.Index(
+                fields=["property", "is_primary"],
+                name="property_image_primary_idx",
+            ),
+        ]
+
+    def __str__(self) -> str:
+        """Display property name and basename of the image file."""
+        filename = os.path.basename(self.image.name) if self.image else "no image"  # noqa: PTH119
+        return f"{self.property.name} - {filename}"
+
+    def get_absolute_url(self) -> str:
+        """
+        Return the canonical URL for the image detail view.
+        Note: In practice, images are often displayed as part of the property detail.
+        """
+        return reverse("properties:property-image-detail", kwargs={"pk": self.id})
+
+    def property_image_upload(self, filename):
+        return f"properties/{self.property.id}/{filename}"
+
+# BUILDING
+class Building(BaseModel):
+    """
+    Represents a building belonging to a property in ROOMRUN.
+    A building can contain one or more rental units.
+    Inherits from BaseModel, which provides `id`, `created_at`, and `updated_at`.
+    """
+
+    # -------------------------------------------------------------------------
+    # Inner Choices Class
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # Core Fields
+    # -------------------------------------------------------------------------
+
+    Property = models.ForeignKey(
+        Property,
+        on_delete=models.CASCADE,          # If property is deleted, all its buildings are deleted.  # noqa: E501
+        related_name="buildings",          # Allows accessing `property.buildings.all()'
+        verbose_name=_("Property"),
+        help_text=_("The property that this building belongs to."),
+    )
+
+    building_number = models.CharField(
+        max_length=50,
+        unique=True,
+        editable=False,                    # Not editable, Auto-generated In signal.py
+        verbose_name=_("Building number"),
+        help_text=_("Auto-generated unique identifier for the building."),
+    )
+
+    name = models.CharField(
+        max_length=150,
+        verbose_name=_("Building name"),
+        help_text=_("The official name of the building (e.g., 'Tower A')."),
+    )
+
+    description = models.TextField(
+        blank=True,                        # Optional field; can be left empty.
+        verbose_name=_("Description"),
+        help_text=_("Additional details about the building, such as amenities or construction year."),  # noqa: E501
+    )
+
+    floors = models.PositiveIntegerField(
+        default=1,
+        verbose_name=_("Number of floors"),
+        help_text=_("Total number of floors in the building."),
+    )
+
+    status = models.CharField(
+        max_length=30,
+        choices=PropertyStatus.choices,
+        default=PropertyStatus.ACTIVE,
+        verbose_name=_("Status"),
+        help_text=_("Current operational status of the building."),
+    )
+
+    # -------------------------------------------------------------------------
+    # Meta Options
+    # -------------------------------------------------------------------------
+
+    class Meta:
+        db_table = "buildings"              # Explicit table name in the database.
+        ordering = ["-created_at"]          # Default ordering: newest first.
+        verbose_name = _("Building")
+        verbose_name_plural = _("Buildings")
+
+        indexes = [
+            models.Index(fields=["property"], name="building_property_idx"),
+            # Speeds up queries filtering by property.
+            models.Index(fields=["status"], name="building_status_idx"),
+            # Speeds up queries filtering by status.
+        ]
+
+    # -------------------------------------------------------------------------
+    # Standard Methods
+    # -------------------------------------------------------------------------
+
+    def __str__(self) -> str:
+        """Return the building name as its string representation."""
+        return self.name
+
+    def get_absolute_url(self) -> str:
+        """Return the canonical URL for the building detail page."""
+        return reverse("properties:building-detail", kwargs={"pk": self.id})
+
+    # -------------------------------------------------------------------------
+    # Computed Properties
+    # -------------------------------------------------------------------------
+
+    @property
+    def unit_count(self) -> int:
+        """
+        Return the total number of rental units in this building.
+        This is a computed alternative to the stored `total_units` field.
+        """
+        return self.units.count()  # Requires a Unit model with related_name="units"
+
+# UNIT
+class Unit(BaseModel):
+    """
+    Represents an individual rental unit within a building in ROOMRUN.
+    Each unit has a unique number within its building and specific attributes
+    such as type, size, and rental price.
+    Inherits from BaseModel, which provides `id`, `created_at`, and `updated_at`.
+    """
+
+    # -------------------------------------------------------------------------
+    # Inner Choices Classes
+    # -------------------------------------------------------------------------
+
+
+    # -------------------------------------------------------------------------
+    # Core Fields
+    # -------------------------------------------------------------------------
+
+    building = models.ForeignKey(
+        Building,
+        on_delete=models.CASCADE,          # When a building is deleted, all its units are deleted.  # noqa: E501
+        related_name="units",              # Allows accessing `building.units.all()`.
+        verbose_name=_("Building"),
+        help_text=_("The building that contains this unit."),
+    )
+
+    unit_number = models.CharField(
+        max_length=50,
+        verbose_name=_("Unit number"),
+        help_text=_(
+            "Unique unit identifier within the building. "
+            "Must be unique per building (enforced by a database constraint)."
+        ),
+    )
+
+    floor = models.PositiveIntegerField(
+        default=0,
+        verbose_name=_("Floor"),
+        help_text=_("Floor number where the unit is located (0 = ground floor)."),
+    )
+
+    unit_type = models.CharField(
+        max_length=50,
+        choices=UnitType.choices,          # <-- FIXED: Now uses choices.
+        default=UnitType.APARTMENT,
+        verbose_name=_("Unit type"),
+        help_text=_("Category of the unit (e.g., studio, apartment, office)."),
+    )
+
+    bedrooms = models.PositiveIntegerField(
+        default=0,
+        verbose_name=_("Bedrooms"),
+        help_text=_("Number of bedrooms in the unit."),
+    )
+
+    bathrooms = models.PositiveIntegerField(
+        default=1,
+        verbose_name=_("Bathrooms"),
+        help_text=_("Number of bathrooms in the unit."),
+    )
+
+    area = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,                         # Optional field.
+        blank=True,
+        verbose_name=_("Area"),
+        help_text=_("Total area of the unit in square meters."),
+    )
+
+    monthly_rent = MoneyField(
+        max_digits=12,
+        decimal_places=2,
+        default_currency="USD",
+        verbose_name=_("Monthly rent"),
+        help_text=_("Monthly rental price in the local currency."),
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=UnitStatus.choices,
+        default=UnitStatus.AVAILABLE,
+        verbose_name=_("Status"),
+        help_text=_("Current occupancy status of the unit."),
+    )
+
+    # -------------------------------------------------------------------------
+    # Meta Options
+    # -------------------------------------------------------------------------
+
+    class Meta:
+        db_table = "units"                 # Explicit table name in the database.
+        ordering = ["building", "unit_number"]  # Default ordering: by building, then unit number.  # noqa: E501
+        verbose_name = _("Unit")
+        verbose_name_plural = _("Units")
+
+        constraints = [
+            # Ensures that unit_number is unique per building.
+            models.UniqueConstraint(
+                fields=["building", "unit_number"],
+                name="unique_unit_number_per_building",
+            ),
+        ]
+
+        indexes = [
+            models.Index(fields=["building"], name="unit_building_idx"),
+            models.Index(fields=["status"], name="unit_status_idx"),
+            models.Index(fields=["floor"], name="unit_floor_idx"),      # Added
+            models.Index(fields=["unit_type"], name="unit_type_idx"),   # Added
+        ]
+
+    # -------------------------------------------------------------------------
+    # Standard Methods
+    # -------------------------------------------------------------------------
+
+    def __str__(self) -> str:
+        """
+        Return a human-readable representation combining building name and unit number.
+        """
+        return f"{self.building.name} - {self.unit_number}"
+
+    def get_absolute_url(self) -> str:
+        """Return the canonical URL for the unit detail page."""
+        return reverse("properties:unit-detail", kwargs={"pk": self.id})
