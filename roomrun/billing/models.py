@@ -24,7 +24,7 @@ class Charge(BaseModel):
 
     contract = models.ForeignKey(
         RentalContract,
-        on_delete=models.PROTECT,          # Prevents deletion if charges exist
+        on_delete=models.PROTECT,  # Prevents deletion if charges exist
         related_name="charges",
         verbose_name=_("Rental contract"),
         help_text=_("The rental contract this charge belongs to."),
@@ -46,10 +46,10 @@ class Charge(BaseModel):
         help_text=_("Type of charge (e.g., rent, utilities, maintenance)."),
     )
 
-    amount = MoneyField(                   # Changed to MoneyField for consistency
+    amount = MoneyField(  # Changed to MoneyField for consistency
         max_digits=12,
         decimal_places=2,
-        default_currency="USD",            # Adjust to your default currency
+        default_currency="USD",  # Adjust to your default currency
         verbose_name=_("Amount"),
         help_text=_("Charge amount in the local currency."),
     )
@@ -108,6 +108,7 @@ class Charge(BaseModel):
         - Ensure due_date is not in the past (optional, uncomment if needed)
         """
         from datetime import date  # noqa: PLC0415
+
         if self.due_date and self.due_date < date.today():  # noqa: DTZ011
             raise ValidationError(_("Due date cannot be in the past."))
 
@@ -116,7 +117,8 @@ class Charge(BaseModel):
         self.full_clean()
         super().save(*args, **kwargs)
 
-#PAYEMENT
+
+# PAYEMENT
 class Payment(BaseModel):
     """
     Represents a payment made against a financial charge.
@@ -138,7 +140,7 @@ class Payment(BaseModel):
 
     charge = models.ForeignKey(
         Charge,
-        on_delete=models.PROTECT,          # Prevents deletion if payments exist
+        on_delete=models.PROTECT,  # Prevents deletion if payments exist
         related_name="payments",
         verbose_name=_("Charge"),
         help_text=_("The financial charge this payment is for."),
@@ -170,7 +172,7 @@ class Payment(BaseModel):
     transaction_reference = models.CharField(
         max_length=100,
         unique=True,
-        null=True,                # Required for gateways that don't provide a reference
+        null=True,  # Required for gateways that don't provide a reference
         blank=True,
         verbose_name=_("Transaction reference"),
         help_text=_("External reference from the payment gateway."),
@@ -234,10 +236,9 @@ class Payment(BaseModel):
                     _("Paid at date is required when status is PAID.")
                 )
             from django.utils import timezone  # noqa: PLC0415
+
             if self.paid_at > timezone.now():
-                raise ValidationError(
-                    _("Paid at date cannot be in the future.")
-                )
+                raise ValidationError(_("Paid at date cannot be in the future."))
 
         # When status is not PAID, paid_at should be null
         if self.status != PaymentStatus.PAID and self.paid_at:
@@ -249,6 +250,7 @@ class Payment(BaseModel):
         """Run full validation before saving."""
         self.full_clean()
         super().save(*args, **kwargs)
+
 
 # RECEIPT
 class Receipt(BaseModel):

@@ -16,7 +16,10 @@ def validate_phone_number(value):
         parsed = phonenumbers.parse(value, None)
     except phonenumbers.NumberParseException:
         raise ValidationError(  # noqa: B904
-            _("Invalid phone number format. Use international format, e.g. +33123456789."),  # noqa: E501
+            _(
+                "Invalid phone number format. Use international format, "
+                "e.g. +33123456789."
+            ),
             code="invalid_phone",
         )
 
@@ -75,9 +78,11 @@ def validate_phone_number_with_region(value, expected_region="FR"):
             code="wrong_region",
         )
 
-#---------___________----------
+
+# ---------___________----------
 # ----- IMAGES VALIDATORS----
-#---------___________----------
+# ---------___________----------
+
 
 def validate_image_size(value):
     """

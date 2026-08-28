@@ -26,15 +26,14 @@ class Property(BaseModel):
     # Inner Choices Class
     # -------------------------------------------------------------------------
 
-
     # -------------------------------------------------------------------------
     # Core Fields
     # -------------------------------------------------------------------------
 
     landlord = models.ForeignKey(
         Landlord,
-        on_delete=models.CASCADE,          # When a landlord is deleted, all their properties are deleted.  # noqa: E501
-        related_name="properties",         # Allows accessing `landlord.properties.all()`.  # noqa: E501
+        on_delete=models.CASCADE,  # When a landlord is deleted, all their properties are deleted.  # noqa: E501
+        related_name="properties",  # Allows accessing `landlord.properties.all()`.  # noqa: E501
         verbose_name=_("Landlord"),
         null=False,
         help_text=_("The landlord who owns this property."),
@@ -43,7 +42,7 @@ class Property(BaseModel):
     property_number = models.CharField(
         max_length=50,
         unique=True,
-        editable=False,                    # Not editable via forms; automatically generated.  # noqa: E501
+        editable=False,  # Not editable via forms; automatically generated.  # noqa: E501
         verbose_name=_("Property number"),
         help_text=_("Auto-generated unique identifier for the property."),
         # NOTE: Generation logic is provided via a `pre_save` signal.
@@ -56,9 +55,11 @@ class Property(BaseModel):
     )
 
     description = models.TextField(
-        blank=True,                        # Optional field; can be left empty.
+        blank=True,  # Optional field; can be left empty.
         verbose_name=_("Description"),
-        help_text=_("Additional details about the property, such as amenities or history."),  # noqa: E501
+        help_text=_(
+            "Additional details about the property, such as amenities or history."
+        ),
     )
 
     address = models.CharField(
@@ -92,8 +93,8 @@ class Property(BaseModel):
     # -------------------------------------------------------------------------
 
     class Meta:
-        db_table = "properties"             # Explicit table name in the database.
-        ordering = ["-created_at"]          # Default ordering: newest first.
+        db_table = "properties"  # Explicit table name in the database.
+        ordering = ["-created_at"]  # Default ordering: newest first.
         verbose_name = _("Property")
         verbose_name_plural = _("Properties")
 
@@ -135,9 +136,11 @@ class Property(BaseModel):
         Return the total number of rental units across all buildings.
         """
         from django.db.models import Sum  # noqa: PLC0415
+
         # Aggregate the sum of `units_count` from all buildings belonging to this property.  # noqa: E501
         result = self.buildings.aggregate(total=Sum("units_count"))["total"]
         return result or 0  # Return 0 if no buildings exist or no units are defined.
+
 
 # PROPERTYIMAGES
 class PropertyImage(BaseModel):
@@ -171,9 +174,7 @@ class PropertyImage(BaseModel):
     caption = models.CharField(
         default="Property Image",
         verbose_name=_("Property Image"),
-        help_text=_(
-            "Setup caption caption of Property Image."
-        ),
+        help_text=_("Setup caption caption of Property Image."),
     )
 
     is_primary = models.BooleanField(
@@ -216,6 +217,7 @@ class PropertyImage(BaseModel):
     def property_image_upload(self, filename):
         return f"properties/{self.property.id}/{filename}"
 
+
 # BUILDING
 class Building(BaseModel):
     """
@@ -234,8 +236,8 @@ class Building(BaseModel):
 
     Property = models.ForeignKey(
         Property,
-        on_delete=models.CASCADE,          # If property is deleted, all its buildings are deleted.  # noqa: E501
-        related_name="buildings",          # Allows accessing `property.buildings.all()'
+        on_delete=models.CASCADE,  # If property is deleted, all its buildings are deleted.  # noqa: E501
+        related_name="buildings",  # Allows accessing `property.buildings.all()'
         verbose_name=_("Property"),
         help_text=_("The property that this building belongs to."),
     )
@@ -243,7 +245,7 @@ class Building(BaseModel):
     building_number = models.CharField(
         max_length=50,
         unique=True,
-        editable=False,                    # Not editable, Auto-generated In signal.py
+        editable=False,  # Not editable, Auto-generated In signal.py
         verbose_name=_("Building number"),
         help_text=_("Auto-generated unique identifier for the building."),
     )
@@ -255,9 +257,12 @@ class Building(BaseModel):
     )
 
     description = models.TextField(
-        blank=True,                        # Optional field; can be left empty.
+        blank=True,  # Optional field; can be left empty.
         verbose_name=_("Description"),
-        help_text=_("Additional details about the building, such as amenities or construction year."),  # noqa: E501
+        help_text=_(
+            "Additional details about the building, such as amenities "
+            "or construction year."
+        ),
     )
 
     floors = models.PositiveIntegerField(
@@ -279,8 +284,8 @@ class Building(BaseModel):
     # -------------------------------------------------------------------------
 
     class Meta:
-        db_table = "buildings"              # Explicit table name in the database.
-        ordering = ["-created_at"]          # Default ordering: newest first.
+        db_table = "buildings"  # Explicit table name in the database.
+        ordering = ["-created_at"]  # Default ordering: newest first.
         verbose_name = _("Building")
         verbose_name_plural = _("Buildings")
 
@@ -315,6 +320,7 @@ class Building(BaseModel):
         """
         return self.units.count()  # Requires a Unit model with related_name="units"
 
+
 # UNIT
 class Unit(BaseModel):
     """
@@ -328,15 +334,14 @@ class Unit(BaseModel):
     # Inner Choices Classes
     # -------------------------------------------------------------------------
 
-
     # -------------------------------------------------------------------------
     # Core Fields
     # -------------------------------------------------------------------------
 
     building = models.ForeignKey(
         Building,
-        on_delete=models.CASCADE,          # When a building is deleted, all its units are deleted.  # noqa: E501
-        related_name="units",              # Allows accessing `building.units.all()`.
+        on_delete=models.CASCADE,  # When a building is deleted, all its units are deleted.  # noqa: E501
+        related_name="units",  # Allows accessing `building.units.all()`.
         verbose_name=_("Building"),
         help_text=_("The building that contains this unit."),
     )
@@ -358,7 +363,7 @@ class Unit(BaseModel):
 
     unit_type = models.CharField(
         max_length=50,
-        choices=UnitType.choices,          # <-- FIXED: Now uses choices.
+        choices=UnitType.choices,  # <-- FIXED: Now uses choices.
         default=UnitType.APARTMENT,
         verbose_name=_("Unit type"),
         help_text=_("Category of the unit (e.g., studio, apartment, office)."),
@@ -379,7 +384,7 @@ class Unit(BaseModel):
     area = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        null=True,                         # Optional field.
+        null=True,  # Optional field.
         blank=True,
         verbose_name=_("Area"),
         help_text=_("Total area of the unit in square meters."),
@@ -406,8 +411,11 @@ class Unit(BaseModel):
     # -------------------------------------------------------------------------
 
     class Meta:
-        db_table = "units"                 # Explicit table name in the database.
-        ordering = ["building", "unit_number"]  # Default ordering: by building, then unit number.  # noqa: E501
+        db_table = "units"  # Explicit table name in the database.
+        ordering = [
+            "building",
+            "unit_number",
+        ]  # Default ordering: by building, then unit number.
         verbose_name = _("Unit")
         verbose_name_plural = _("Units")
 
@@ -422,8 +430,8 @@ class Unit(BaseModel):
         indexes = [
             models.Index(fields=["building"], name="unit_building_idx"),
             models.Index(fields=["status"], name="unit_status_idx"),
-            models.Index(fields=["floor"], name="unit_floor_idx"),      # Added
-            models.Index(fields=["unit_type"], name="unit_type_idx"),   # Added
+            models.Index(fields=["floor"], name="unit_floor_idx"),  # Added
+            models.Index(fields=["unit_type"], name="unit_type_idx"),  # Added
         ]
 
     # -------------------------------------------------------------------------

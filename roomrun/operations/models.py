@@ -31,7 +31,7 @@ class CleaningSchedule(BaseModel):
 
     building = models.ForeignKey(
         Building,
-        on_delete=models.PROTECT,          # Prevents deletion if schedules exist
+        on_delete=models.PROTECT,  # Prevents deletion if schedules exist
         related_name="cleaning_schedules",
         verbose_name=_("Building"),
         help_text=_("The building to be cleaned."),
@@ -122,15 +122,11 @@ class CleaningSchedule(BaseModel):
         # Validate time order
         if self.start_time and self.end_time:
             if self.end_time <= self.start_time:
-                raise ValidationError(
-                    _("End time must be after start time.")
-                )
+                raise ValidationError(_("End time must be after start time."))
 
         # Validate scheduled date is not in the past
         if self.scheduled_date and self.scheduled_date < timezone.now().date():
-            raise ValidationError(
-                _("Scheduled date cannot be in the past.")
-            )
+            raise ValidationError(_("Scheduled date cannot be in the past."))
 
     def save(self, *args, **kwargs):
         """Run full validation before saving."""

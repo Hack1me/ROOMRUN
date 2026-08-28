@@ -13,6 +13,7 @@ def set_request_number(sender, instance, **kwargs):
     if not instance.request_number:
         instance.request_number = f"MNT-{uuid.uuid4().hex[:8].upper()}"
 
+
 @receiver(pre_save, sender=Task)
 def set_task_number(sender, instance, **kwargs):
     """Auto-generate task_number if not already set."""

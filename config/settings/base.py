@@ -100,7 +100,7 @@ THIRD_PARTY_APPS = [
     "drf_spectacular",
     "django_countries",
     "phonenumber_field",
-    "djmoney"
+    "djmoney",
 ]
 
 LOCAL_APPS = [
@@ -119,7 +119,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 # Default phonumer region
 PHONENUMBER_DEFAULT_REGION = "FR"  # ISO-3166-1
-#Default currencies
+# Default currencies
 CURRENCIES = ["XAF", "USD", "EUR"]
 # MIGRATIONS
 # ------------------------------------------------------------------------------

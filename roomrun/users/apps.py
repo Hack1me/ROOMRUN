@@ -9,7 +9,7 @@ class UsersConfig(AppConfig):
 
     def ready(self):
         """
-            Import signals to ensure they are registered with Django's signal
-            dispatcher.
+        Import signals to ensure they are registered with Django's signal
+        dispatcher.
         """
         import users.signals  # noqa: F401, PLC0415

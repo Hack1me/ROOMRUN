@@ -81,9 +81,7 @@ class BaseModel(models.Model):
         default=False,
         db_index=True,
         verbose_name=_("Is deleted"),
-        help_text=_(
-            "Indicates whether this record has been soft-deleted."
-        ),
+        help_text=_("Indicates whether this record has been soft-deleted."),
     )
 
     # -------------------------------------------------------------------------

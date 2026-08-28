@@ -34,7 +34,7 @@ class MaintenanceRequest(BaseModel):
 
     tenant = models.ForeignKey(
         Tenant,
-        on_delete=models.PROTECT,          # Prevents deletion if requests exist
+        on_delete=models.PROTECT,  # Prevents deletion if requests exist
         related_name="maintenance_requests",
         verbose_name=_("Tenant"),
         help_text=_("The tenant who submitted the maintenance request."),
@@ -57,7 +57,7 @@ class MaintenanceRequest(BaseModel):
     description = models.TextField(
         verbose_name=_("Description"),
         help_text=_("Detailed description of the maintenance issue."),
-        blank=False
+        blank=False,
     )
 
     priority = models.CharField(
@@ -124,9 +124,7 @@ class MaintenanceRequest(BaseModel):
                     _("Resolved at date is required when status is RESOLVED.")
                 )
             if self.resolved_at > timezone.now():
-                raise ValidationError(
-                    _("Resolved at date cannot be in the future.")
-                )
+                raise ValidationError(_("Resolved at date cannot be in the future."))
 
         # When status is not RESOLVED, resolved_at should be null
         if self.status != RequestStatus.RESOLVED and self.resolved_at:
@@ -138,6 +136,7 @@ class MaintenanceRequest(BaseModel):
         """Run full validation before saving."""
         self.full_clean()
         super().save(*args, **kwargs)
+
 
 # TASK
 class Task(BaseModel):
@@ -162,7 +161,7 @@ class Task(BaseModel):
 
     maintenance_request = models.ForeignKey(
         "maintenance.MaintenanceRequest",
-        on_delete=models.PROTECT,          # Prevents deletion if tasks exist
+        on_delete=models.PROTECT,  # Prevents deletion if tasks exist
         related_name="tasks",
         verbose_name=_("Maintenance request"),
         help_text=_("The maintenance request this task belongs to."),
@@ -256,15 +255,11 @@ class Task(BaseModel):
         # Validate chronological order
         if self.scheduled_at and self.started_at:
             if self.started_at < self.scheduled_at:
-                raise ValidationError(
-                    _("Started at cannot be before scheduled at.")
-                )
+                raise ValidationError(_("Started at cannot be before scheduled at."))
 
         if self.started_at and self.completed_at:
             if self.completed_at < self.started_at:
-                raise ValidationError(
-                    _("Completed at cannot be before started at.")
-                )
+                raise ValidationError(_("Completed at cannot be before started at."))
 
         # Status validation
         if self.status == TaskStatus.COMPLETED and not self.completed_at:

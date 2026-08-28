@@ -64,7 +64,7 @@ class RentalApplication(BaseModel):
     reviewed_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_("Applied at"),
-        help_text=_("Reviewed time of the rental application")
+        help_text=_("Reviewed time of the rental application"),
     )
 
     # -------------------------------------------------------------------------
@@ -121,6 +121,7 @@ class RentalApplication(BaseModel):
                     _("This tenant already has an approved application for this unit.")
                 )
 
+
 # RENTAL CONTRACT
 class RentalContract(BaseModel):
     """
@@ -134,7 +135,7 @@ class RentalContract(BaseModel):
 
     tenant = models.ForeignKey(
         Tenant,
-        on_delete=models.PROTECT,          # Prevents deletion if contract exists
+        on_delete=models.PROTECT,  # Prevents deletion if contract exists
         related_name="rental_contracts",
         verbose_name=_("Tenant"),
         help_text=_("The tenant who signs this contract."),
@@ -240,9 +241,7 @@ class RentalContract(BaseModel):
         2. A tenant cannot have another active contract for the same unit.
         """
         if self.end_date and self.end_date <= self.start_date:
-            raise ValidationError(
-                _("End date must be after the start date.")
-            )
+            raise ValidationError(_("End date must be after the start date."))
 
         if self.status == self.ContractStatus.ACTIVE:
             # Check for duplicate active contracts (besides this one)

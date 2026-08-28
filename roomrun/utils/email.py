@@ -50,7 +50,11 @@ class EmailUtil:
     def _add_site_context(context: dict[str, Any]) -> dict[str, Any]:
         site_url = getattr(settings, "BASE_URL", "")
         if site_url and not site_url.startswith(("http://", "https://")):
-            site_url = f"https://{site_url}" if "localhost" not in site_url else f"http://{site_url}"
+            site_url = (
+                f"https://{site_url}"
+                if "localhost" not in site_url
+                else f"http://{site_url}"
+            )
 
         context["site_url"] = site_url
         context["site_name"] = getattr(settings, "SITE_NAME", "My Apps")
@@ -97,7 +101,9 @@ class EmailUtil:
             logger.info("*** TEST EMAIL MODE ***")
             return True
 
-        return EmailUtil._send_django_email(subject, html_content or text_content, to, from_email, file_path)
+        return EmailUtil._send_django_email(
+            subject, html_content or text_content, to, from_email, file_path
+        )
 
     @staticmethod
     def _send_django_email(
@@ -156,7 +162,9 @@ class EmailUtil:
             translation.activate(current_language)
 
         try:
-            return EmailUtil.send_generic_email(subject=resolved_subject, to=receivers, html_content=body)
+            return EmailUtil.send_generic_email(
+                subject=resolved_subject, to=receivers, html_content=body
+            )
         except Exception:
             logger.exception("An error occurred while sending email with template")
             return False

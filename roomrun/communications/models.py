@@ -34,7 +34,7 @@ class Announcement(BaseModel):
 
     landlord = models.ForeignKey(
         Landlord,
-        on_delete=models.PROTECT,          # Prevents deletion if announcements exist
+        on_delete=models.PROTECT,  # Prevents deletion if announcements exist
         related_name="announcements",
         verbose_name=_("Landlord"),
         help_text=_("The landlord who published this announcement."),
@@ -159,9 +159,7 @@ class Announcement(BaseModel):
         # Validate date order
         if self.published_at and self.expires_at:
             if self.expires_at <= self.published_at:
-                raise ValidationError(
-                    _("Expires at must be after published at.")
-                )
+                raise ValidationError(_("Expires at must be after published at."))
 
         # Status validation
         if self.status == AnnouncementStatus.PUBLISHED:
@@ -170,9 +168,7 @@ class Announcement(BaseModel):
                     _("Published at is required when status is PUBLISHED.")
                 )
             if self.published_at > timezone.now():
-                raise ValidationError(
-                    _("Published at cannot be in the future.")
-                )
+                raise ValidationError(_("Published at cannot be in the future."))
 
         # DRAFT announcements should not have published_at
         if self.status == AnnouncementStatus.DRAFT and self.published_at:
@@ -208,6 +204,7 @@ class Announcement(BaseModel):
         if self.status != AnnouncementStatus.ARCHIVED:
             self.status = AnnouncementStatus.ARCHIVED
             self.save()
+
 
 class Notification(BaseModel):
     """
@@ -309,9 +306,7 @@ class Notification(BaseModel):
                 _("Read at should be empty when the notification is not read.")
             )
         if self.read_at and self.read_at > timezone.now():
-            raise ValidationError(
-                _("Read at cannot be in the future.")
-            )
+            raise ValidationError(_("Read at cannot be in the future."))
 
     def save(self, *args, **kwargs):
         """Run full validation before saving."""
@@ -433,9 +428,7 @@ class Message(BaseModel):
         """
         # Prevent self-messaging
         if self.sender and self.recipient and self.sender == self.recipient:
-            raise ValidationError(
-                _("You cannot send a message to yourself.")
-            )
+            raise ValidationError(_("You cannot send a message to yourself."))
 
         # Read status validation
         if self.is_read and not self.read_at:
@@ -447,9 +440,7 @@ class Message(BaseModel):
                 _("Read at should be empty when the message is not read.")
             )
         if self.read_at and self.read_at > timezone.now():
-            raise ValidationError(
-                _("Read at cannot be in the future.")
-            )
+            raise ValidationError(_("Read at cannot be in the future."))
 
     def save(self, *args, **kwargs):
         """Run full validation before saving."""

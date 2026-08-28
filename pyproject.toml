@@ -40,6 +40,7 @@ dependencies = [
   "django-countries>=9.0.0",
   "django-phonenumber-field[phonenumbers]>=8.5.0",
   "django-money>=3.6.1",
+  "pre-commit>=4.6.2",
 ]
 
 [dependency-groups]

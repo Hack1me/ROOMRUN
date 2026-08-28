@@ -39,6 +39,7 @@ from utils.enums import GuardShift
 # USER - Custom authentication model
 # =====================================================================
 
+
 class User(BaseModel, AbstractUser):
     """
     Default custom user model for ROOMRUN.
@@ -71,9 +72,10 @@ class User(BaseModel, AbstractUser):
         """
         Possible account statuses for a user.
         """
-        ACTIVE = "ACTIVE", _("Actif")         # Normal active account
-        INACTIVE = "INACTIVE", _("Inactif")   # Disabled but not suspended
-        SUSPENDED = "SUSPENDED", _("Suspendu") # Temporarily blocked
+
+        ACTIVE = "ACTIVE", _("Actif")  # Normal active account
+        INACTIVE = "INACTIVE", _("Inactif")  # Disabled but not suspended
+        SUSPENDED = "SUSPENDED", _("Suspendu")  # Temporarily blocked
 
     # -----------------------------------------------------------------
     # Personal information fields
@@ -191,6 +193,7 @@ class User(BaseModel, AbstractUser):
 # LANDLORD - Business profile for property owners
 # =====================================================================
 
+
 class Landlord(BaseModel):
     """
     Business profile representing a landlord.
@@ -244,6 +247,7 @@ class Landlord(BaseModel):
 # =====================================================================
 # TENANT - Business profile for renters
 # =====================================================================
+
 
 class Tenant(BaseModel):
     """
@@ -313,6 +317,7 @@ class Tenant(BaseModel):
 # EMPLOYEE - Business profile for staff members
 # =====================================================================
 
+
 class Employee(BaseModel):
     """
     Business profile representing an employee.
@@ -371,16 +376,16 @@ class Employee(BaseModel):
             models.Index(
                 fields=["status"],
                 name="employee_status_idx",
-                ),
+            ),
             # Speeds up filtering by employment status.
             models.Index(
                 fields=["hire_date"],
                 name="employee_hire_date_idx",
-                ),
+            ),
             # Speeds up filtering by hire date.
             models.Index(
-                fields=["status", "hire_date"],
-                name="employee_status_hire_idx"),
+                fields=["status", "hire_date"], name="employee_status_hire_idx"
+            ),
             # Composite index for combined filtering on status and hire date.
         ]
 
@@ -394,6 +399,7 @@ class Employee(BaseModel):
 # =====================================================================
 # MAINTENANCE AGENT - Specialized Employee
 # =====================================================================
+
 
 class MaintenanceAgent(BaseModel):
     """
@@ -444,6 +450,7 @@ class MaintenanceAgent(BaseModel):
 # =====================================================================
 # GUARD - Specialized Employee
 # =====================================================================
+
 
 class Guard(BaseModel):
     """
@@ -496,9 +503,11 @@ class Guard(BaseModel):
         # Using the 'users' namespace for consistency.
         return reverse("users:guard-detail", kwargs={"pk": self.id})
 
+
 # =====================================================================
 # INVITATION - Gestion des invitations
 # =====================================================================
+
 
 class Invitation(BaseModel):
     """
@@ -612,7 +621,7 @@ class Invitation(BaseModel):
             models.Index(
                 fields=["token"],
                 name="invitation_token_idx",
-                ),
+            ),
             models.Index(
                 fields=["status"],
                 name="invitation_status_idx",

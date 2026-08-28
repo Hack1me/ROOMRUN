@@ -13,6 +13,7 @@ def set_application_number(sender, instance, **kwargs):
     if not instance.application_number:
         instance.application_number = f"APP-{uuid.uuid4().hex[:8].upper()}"
 
+
 @receiver(pre_save, sender=RentalContract)
 def set_contract_number(sender, instance, **kwargs):
     """Auto-generate contract_number if not already set."""

@@ -15,12 +15,10 @@ class GuardShift(models.TextChoices):
     ROTATING = "ROTATING", _("Rotating")
 
 
-
 class PropertyStatus(models.TextChoices):
     ACTIVE = "ACTIVE", _("Active")
     INACTIVE = "INACTIVE", _("Inactive")
     UNDER_CONSTRUCTION = "UNDER_CONSTRUCTION", _("Under construction")
-
 
 
 class UnitStatus(models.TextChoices):
@@ -28,6 +26,7 @@ class UnitStatus(models.TextChoices):
     Defines the possible occupancy statuses for a unit.
     Used as choices for the `status` field.
     """
+
     AVAILABLE = "AVAILABLE", _("Available")
     OCCUPIED = "OCCUPIED", _("Occupied")
     RESERVED = "RESERVED", _("Reserved")
@@ -40,6 +39,7 @@ class UnitType(models.TextChoices):
     Defines the possible types of rental units.
     Used as choices for the `unit_type` field.
     """
+
     STUDIO = "STUDIO", _("Studio")
     APARTMENT = "APARTMENT", _("Apartment")
     OFFICE = "OFFICE", _("Office")
@@ -54,17 +54,19 @@ class ApplicationStatus(models.TextChoices):
     REJECTED = "REJECTED", _("Rejected")
     CANCELLED = "CANCELLED", _("Cancelled")
 
+
 class ContractStatus(models.TextChoices):
-        ACTIVE = "ACTIVE", _("Active")
-        COMPLETED = "COMPLETED", _("Completed")
-        TERMINATED = "TERMINATED", _("Terminated")
-        CANCELLED = "CANCELLED", _("Cancelled")
+    ACTIVE = "ACTIVE", _("Active")
+    COMPLETED = "COMPLETED", _("Completed")
+    TERMINATED = "TERMINATED", _("Terminated")
+    CANCELLED = "CANCELLED", _("Cancelled")
 
 
 class ChargeType(models.TextChoices):
     """
     Defines the types of financial charges that can be applied to a rental contract.
     """
+
     RENT = "RENT", _("Rent")
     ELECTRICITY = "ELECTRICITY", _("Electricity")
     WATER = "WATER", _("Water")
@@ -82,6 +84,7 @@ class ChargeStatus(models.TextChoices):
     Defines the lifecycle status of a financial charge.
     Ordered to reflect the natural flow: pending → paid / overdue / cancelled.
     """
+
     PENDING = "PENDING", _("Pending")
     PARTIAL = "PARTIAL", _("Partially paid")
     PAID = "PAID", _("Paid")
@@ -89,11 +92,11 @@ class ChargeStatus(models.TextChoices):
     CANCELLED = "CANCELLED", _("Cancelled")
 
 
-
 class PaymentMethod(models.TextChoices):
     """
     Defines the methods available for making payments.
     """
+
     CASH = "CASH", _("Cash")
     MOBILE_MONEY = "MOBILE_MONEY", _("Mobile Money")
     BANK_TRANSFER = "BANK_TRANSFER", _("Bank transfer")
@@ -107,6 +110,7 @@ class PaymentStatus(models.TextChoices):
     """
     Defines the lifecycle status of a payment.
     """
+
     PENDING = "PENDING", _("Pending")
     COMPLETED = "COMPLETED", _("Completed")
     FAILED = "FAILED", _("Failed")
@@ -119,6 +123,7 @@ class Priority(models.TextChoices):
     Defines the urgency levels for maintenance requests.
     Used to prioritize and allocate resources accordingly.
     """
+
     LOW = "LOW", _("Low")
     MEDIUM = "MEDIUM", _("Medium")
     HIGH = "HIGH", _("High")
@@ -130,10 +135,12 @@ class RequestStatus(models.TextChoices):
     Defines the lifecycle status of a maintenance request.
     Tracks the progress from submission to resolution or cancellation.
     """
+
     PENDING = "PENDING", _("Pending")
     IN_PROGRESS = "IN_PROGRESS", _("In progress")
     RESOLVED = "RESOLVED", _("Resolved")
     CANCELLED = "CANCELLED", _("Cancelled")
+
 
 class TaskStatus(models.TextChoices):
     PENDING = "PENDING", _("Pending")
@@ -149,6 +156,7 @@ class CleaningStatus(models.TextChoices):
     COMPLETED = "COMPLETED", _("Completed")
     CANCELLED = "CANCELLED", _("Cancelled")
 
+
 class AnnouncementStatus(models.TextChoices):
     ARCHIVED = "ARCHIVED", _("Archived")
     EXPIRED = "EXPIRED", _("Expired")
@@ -156,10 +164,12 @@ class AnnouncementStatus(models.TextChoices):
     SCHEDULED = "SCHEDULED", _("Scheduled")
     PUBLISHED = "PUBLISHED", _("Published")
 
+
 class AnnouncementTarget(models.TextChoices):
     ALL_TENANTS = "ALL_TENANTS", _("All tenants")
     BUILDING = "BUILDING", _("Building")
     UNIT = "UNIT", _("Unit")
+
 
 class NotificationType(models.TextChoices):
     PAYMENT = "PAYMENT", _("Payment")
