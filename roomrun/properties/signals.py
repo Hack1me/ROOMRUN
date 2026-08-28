@@ -1,35 +1,32 @@
-import uuid
-
 from django.db.models.signals import post_delete
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from utils.helpers import generate_unique_identifier
 
 from .models import Building
 from .models import Property
 from .models import PropertyImage
 
 
-def generate_property_number() -> str:
-    """Generate a unique property number with prefix PRP-."""
-    while True:
-        new_number = f"PRP-{uuid.uuid4().hex[:8].upper()}"
-        if not Property.objects.filter(property_number=new_number).exists():
-            return new_number
-
-
 @receiver(pre_save, sender=Property)
 def set_property_number(sender, instance, **kwargs):
     """Auto-generate property_number if not already set."""
     if not instance.property_number:
-        instance.property_number = generate_property_number()
-
+        instance.property_number = generate_unique_identifier(
+            prefix="PRP",
+            model=Property,
+            field="property_number",
+        )
 
 @receiver(pre_save, sender=Building)
 def set_building_number(sender, instance, **kwargs):
     """Auto-generate building_number if not already set."""
     if not instance.building_number:
-        instance.building_number = f"BLD-{uuid.uuid4().hex[:8].upper()}"
-
+        instance.building_number = generate_unique_identifier(
+            prefix="BLD",
+            model=Building,
+            field="building_number",
+        )
 
 # PROPERTY IMAGE
 @receiver(pre_save, sender=PropertyImage)

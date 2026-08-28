@@ -1,46 +1,12 @@
-# users/signals.py
-
-import uuid
-from typing import Type  # noqa: UP035
-from typing import TypeVar
-
-from django.db.models import Model
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from utils.helpers import generate_unique_identifier
 
 from .models import Employee
 from .models import Guard
 from .models import Landlord
 from .models import MaintenanceAgent
 from .models import Tenant
-
-# Type variable for the model class
-M = TypeVar("M", bound=Model)
-
-
-def generate_unique_identifier(prefix: str, model: Type[M], field: str = "id") -> str:  # noqa: UP006, UP047
-    """
-    Generate a unique alphanumeric identifier with a given prefix.
-
-    The identifier format is: {PREFIX}-{8-character-UUID}
-    Example: LND-A7F9B3C1
-
-    This function loops until a unique identifier is found, making it safe
-    for concurrent use, although collisions are extremely unlikely.
-
-    Args:
-        prefix: The uppercase prefix for the identifier (e.g., 'LND', 'TEN').
-        model: The Django model class to check against.
-        field: The model field name that stores the identifier.
-
-    Returns:
-        A unique identifier string.
-    """
-    while True:
-        identifier = f"{prefix}-{uuid.uuid4().hex[:8].upper()}"
-        kwargs = {field: identifier}
-        if not model.objects.filter(**kwargs).exists():
-            return identifier
 
 
 # ===========================================================================
