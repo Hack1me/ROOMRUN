@@ -148,3 +148,23 @@ class CleaningStatus(models.TextChoices):
     IN_PROGRESS = "IN_PROGRESS", _("In progress")
     COMPLETED = "COMPLETED", _("Completed")
     CANCELLED = "CANCELLED", _("Cancelled")
+
+class AnnouncementStatus(models.TextChoices):
+    ARCHIVED = "ARCHIVED", _("Archived")
+    EXPIRED = "EXPIRED", _("Expired")
+    DRAFT = "DRAFT", _("Draft")
+    SCHEDULED = "SCHEDULED", _("Scheduled")
+    PUBLISHED = "PUBLISHED", _("Published")
+
+class AnnouncementTarget(models.TextChoices):
+    ALL_TENANTS = "ALL_TENANTS", _("All tenants")
+    BUILDING = "BUILDING", _("Building")
+    UNIT = "UNIT", _("Unit")
+
+class NotificationType(models.TextChoices):
+    PAYMENT = "PAYMENT", _("Payment")
+    RENT_REMINDER = "RENT_REMINDER", _("Rent reminder")
+    MAINTENANCE = "MAINTENANCE", _("Maintenance")
+    TASK = "TASK", _("Task")
+    ANNOUNCEMENT = "ANNOUNCEMENT", _("Announcement")
+    SYSTEM = "SYSTEM", _("System")

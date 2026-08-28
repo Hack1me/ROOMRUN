@@ -111,6 +111,7 @@ LOCAL_APPS = [
     "billing.apps.BillingConfig",
     "maintenance.apps.MaintenanceConfig",
     "operations.apps.OperationsConfig",
+    "communications.apps.CommunicationsConfig",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
