@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-26 17:30+0000\n"
+"POT-Creation-Date: 2026-08-27 20:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
 #: config/settings/base.py:35
 msgid "English"
 msgstr "Anglais"
@@ -29,32 +30,743 @@ msgstr "Francais"
 msgid "Portuguese"
 msgstr "Portuguais"
 
-#: roomrun/core/models/base.py:35
+#: roomrun/billing/models.py:29 roomrun/rentals/models.py:205
+msgid "Rental contract"
+msgstr "Contrat de Bail"
+
+#: roomrun/billing/models.py:30
+msgid "The rental contract this charge belongs to."
+msgstr "Le contrat de location auquel cette charge se rapporte."
+
+#: roomrun/billing/models.py:37
+msgid "Charge number"
+msgstr ""
+
+#: roomrun/billing/models.py:38
+msgid "Auto-generated unique identifier for the charge."
+msgstr ""
+
+#: roomrun/billing/models.py:45
+msgid "Charge type"
+msgstr ""
+
+#: roomrun/billing/models.py:46
+msgid "Type of charge (e.g., rent, utilities, maintenance)."
+msgstr ""
+
+#: roomrun/billing/models.py:53 roomrun/billing/models.py:151
+msgid "Amount"
+msgstr "Montant"
+
+#: roomrun/billing/models.py:54
+msgid "Charge amount in the local currency."
+msgstr ""
+
+#: roomrun/billing/models.py:58
+msgid "Due date"
+msgstr ""
+
+#: roomrun/billing/models.py:59
+msgid "Date by which the charge must be paid."
+msgstr ""
+
+#: roomrun/billing/models.py:66 roomrun/billing/models.py:166
+#: roomrun/maintenance/models.py:75 roomrun/maintenance/models.py:196
+#: roomrun/properties/models.py:86 roomrun/properties/models.py:273
+#: roomrun/properties/models.py:400 roomrun/rentals/models.py:60
+#: roomrun/rentals/models.py:194 roomrun/users/models.py:311
+msgid "Status"
+msgstr ""
+
+#: roomrun/billing/models.py:67
+msgid "Current payment status of the charge."
+msgstr ""
+
+#: roomrun/billing/models.py:72 roomrun/maintenance/models.py:58
+#: roomrun/maintenance/models.py:187 roomrun/properties/models.py:60
+#: roomrun/properties/models.py:259
+msgid "Description"
+msgstr ""
+
+#: roomrun/billing/models.py:73
+msgid "Optional details or notes about the charge."
+msgstr ""
+
+#: roomrun/billing/models.py:83 roomrun/billing/models.py:143
+msgid "Charge"
+msgstr ""
+
+#: roomrun/billing/models.py:84
+msgid "Charges"
+msgstr ""
+
+#: roomrun/billing/models.py:112
+msgid "Due date cannot be in the past."
+msgstr ""
+
+#: roomrun/billing/models.py:134
+msgid "Payment number"
+msgstr ""
+
+#: roomrun/billing/models.py:135
+msgid "Auto-generated unique identifier for the payment."
+msgstr ""
+
+#: roomrun/billing/models.py:144
+msgid "The financial charge this payment is for."
+msgstr ""
+
+#: roomrun/billing/models.py:152
+msgid "Payment amount in the local currency."
+msgstr ""
+
+#: roomrun/billing/models.py:158
+msgid "Payment method"
+msgstr ""
+
+#: roomrun/billing/models.py:159
+msgid "Method used to make the payment (e.g., cash, momo)."
+msgstr ""
+
+#: roomrun/billing/models.py:167
+msgid "Current payment status."
+msgstr ""
+
+#: roomrun/billing/models.py:175
+msgid "Transaction reference"
+msgstr ""
+
+#: roomrun/billing/models.py:176
+msgid "External reference from the payment gateway."
+msgstr ""
+
+#: roomrun/billing/models.py:182
+msgid "Paid at"
+msgstr ""
+
+#: roomrun/billing/models.py:183
+msgid "Date and time when the payment was successfully completed."
+msgstr ""
+
+#: roomrun/billing/models.py:188
+msgid "Notes"
+msgstr ""
+
+#: roomrun/billing/models.py:189
+msgid "Additional notes about the payment."
+msgstr ""
+
+#: roomrun/billing/models.py:199 roomrun/billing/models.py:277
+msgid "Payment"
+msgstr ""
+
+#: roomrun/billing/models.py:200
+msgid "Payments"
+msgstr ""
+
+#: roomrun/billing/models.py:229
+msgid "Payment amount must be greater than zero."
+msgstr ""
+
+#: roomrun/billing/models.py:234
+msgid "Paid at date is required when status is PAID."
+msgstr ""
+
+#: roomrun/billing/models.py:239
+msgid "Paid at date cannot be in the future."
+msgstr ""
+
+#: roomrun/billing/models.py:245
+msgid "Paid at date should only be set when status is PAID."
+msgstr ""
+
+#: roomrun/billing/models.py:268
+msgid "Receipt number"
+msgstr ""
+
+#: roomrun/billing/models.py:269
+msgid "Auto-generated unique identifier for the receipt."
+msgstr ""
+
+#: roomrun/billing/models.py:278
+msgid "The payment for which this receipt is issued."
+msgstr ""
+
+#: roomrun/billing/models.py:288
+msgid "Receipt"
+msgstr ""
+
+#: roomrun/billing/models.py:289
+msgid "Receipts"
+msgstr ""
+
+#: roomrun/billing/models.py:315
+msgid "Receipts can only be issued for completed payments."
+msgstr ""
+
+#: roomrun/core/models.py:37
 msgid "ID"
 msgstr "ID"
 
-#: roomrun/core/models/base.py:44
+#: roomrun/core/models.py:46
 msgid "Created at"
 msgstr ""
 
-#: roomrun/core/models/base.py:49
+#: roomrun/core/models.py:51
 msgid "Updated at"
 msgstr ""
 
-#: roomrun/core/models/base.py:62
+#: roomrun/core/models.py:64
 msgid "Created by"
 msgstr ""
 
-#: roomrun/core/models/base.py:71
+#: roomrun/core/models.py:73
 msgid "Updated by"
 msgstr ""
 
-#: roomrun/core/models/base.py:81
+#: roomrun/core/models.py:83
 msgid "Is deleted"
 msgstr ""
 
-#: roomrun/core/models/base.py:83
+#: roomrun/core/models.py:85
 msgid "Indicates whether this record has been soft-deleted."
+msgstr ""
+
+#: roomrun/core/validators.py:19
+msgid ""
+"Invalid phone number format. Use international format, e.g. +33123456789."
+msgstr ""
+
+#: roomrun/core/validators.py:26
+msgid "The phone number is not valid for the selected country."
+msgstr ""
+
+#: roomrun/core/validators.py:32
+msgid "The phone number is too long or too short."
+msgstr ""
+
+#: roomrun/core/validators.py:46
+#, python-format
+msgid "Invalid phone number for %(country)s."
+msgstr ""
+
+#: roomrun/core/validators.py:53
+#, python-format
+msgid "The phone number is not valid for %(country)s."
+msgstr ""
+
+#: roomrun/core/validators.py:68
+msgid "Invalid phone number format."
+msgstr ""
+
+#: roomrun/core/validators.py:73
+#, python-format
+msgid "The phone number must be from %(region)s."
+msgstr ""
+
+#: roomrun/core/validators.py:89
+#, python-format
+msgid "The image size must not exceed %(max_size)d MB."
+msgstr ""
+
+#: roomrun/core/validators.py:103
+msgid "Allowed image formats are: JPG, JPEG, PNG, and WEBP."
+msgstr ""
+
+#: roomrun/core/validators.py:121
+#, python-format
+msgid "Image must be at least %(width)d x %(height)d pixels."
+msgstr ""
+
+#: roomrun/maintenance/models.py:30
+msgid "Request number"
+msgstr ""
+
+#: roomrun/maintenance/models.py:31
+msgid "Auto-generated unique identifier for the maintenance request."
+msgstr ""
+
+#: roomrun/maintenance/models.py:39 roomrun/rentals/models.py:28
+#: roomrun/rentals/models.py:139
+msgid "Tenant"
+msgstr ""
+
+#: roomrun/maintenance/models.py:40
+msgid "The tenant who submitted the maintenance request."
+msgstr ""
+
+#: roomrun/maintenance/models.py:47 roomrun/properties/models.py:411
+#: roomrun/rentals/models.py:36 roomrun/rentals/models.py:147
+msgid "Unit"
+msgstr ""
+
+#: roomrun/maintenance/models.py:48
+msgid "The unit where the maintenance issue is located."
+msgstr ""
+
+#: roomrun/maintenance/models.py:53 roomrun/maintenance/models.py:181
+msgid "Title"
+msgstr ""
+
+#: roomrun/maintenance/models.py:54
+msgid "Brief summary of the maintenance issue."
+msgstr ""
+
+#: roomrun/maintenance/models.py:59
+msgid "Detailed description of the maintenance issue."
+msgstr ""
+
+#: roomrun/maintenance/models.py:67
+msgid "Priority"
+msgstr ""
+
+#: roomrun/maintenance/models.py:68
+msgid "Priority level of the maintenance request."
+msgstr ""
+
+#: roomrun/maintenance/models.py:76
+msgid "Current status of the maintenance request."
+msgstr ""
+
+#: roomrun/maintenance/models.py:82
+msgid "Resolved at"
+msgstr ""
+
+#: roomrun/maintenance/models.py:83
+msgid "Timestamp when the request was resolved."
+msgstr ""
+
+#: roomrun/maintenance/models.py:93 roomrun/maintenance/models.py:167
+msgid "Maintenance request"
+msgstr ""
+
+#: roomrun/maintenance/models.py:94
+msgid "Maintenance requests"
+msgstr ""
+
+#: roomrun/maintenance/models.py:124
+msgid "Resolved at date is required when status is RESOLVED."
+msgstr ""
+
+#: roomrun/maintenance/models.py:128
+msgid "Resolved at date cannot be in the future."
+msgstr ""
+
+#: roomrun/maintenance/models.py:134
+msgid "Resolved at should only be set when status is RESOLVED."
+msgstr ""
+
+#: roomrun/maintenance/models.py:158
+msgid "Task number"
+msgstr ""
+
+#: roomrun/maintenance/models.py:159
+msgid "Auto-generated unique identifier for the task."
+msgstr ""
+
+#: roomrun/maintenance/models.py:168
+msgid "The maintenance request this task belongs to."
+msgstr ""
+
+#: roomrun/maintenance/models.py:175 roomrun/users/models.py:386
+msgid "Maintenance agent"
+msgstr ""
+
+#: roomrun/maintenance/models.py:176
+msgid "The agent assigned to perform this task."
+msgstr ""
+
+#: roomrun/maintenance/models.py:182
+msgid "Brief summary of the task."
+msgstr ""
+
+#: roomrun/maintenance/models.py:188
+msgid "Detailed description of the work to be performed."
+msgstr ""
+
+#: roomrun/maintenance/models.py:197
+msgid "Current status of the task."
+msgstr ""
+
+#: roomrun/maintenance/models.py:203
+msgid "Scheduled at"
+msgstr ""
+
+#: roomrun/maintenance/models.py:204
+msgid "Date and time when the task is scheduled to start."
+msgstr ""
+
+#: roomrun/maintenance/models.py:210
+msgid "Started at"
+msgstr ""
+
+#: roomrun/maintenance/models.py:211
+msgid "Date and time when the task actually started."
+msgstr ""
+
+#: roomrun/maintenance/models.py:217
+msgid "Completed at"
+msgstr ""
+
+#: roomrun/maintenance/models.py:218
+msgid "Date and time when the task was completed."
+msgstr ""
+
+#: roomrun/maintenance/models.py:228
+msgid "Maintenance task"
+msgstr ""
+
+#: roomrun/maintenance/models.py:229
+msgid "Maintenance tasks"
+msgstr ""
+
+#: roomrun/maintenance/models.py:260
+msgid "Started at cannot be before scheduled at."
+msgstr ""
+
+#: roomrun/maintenance/models.py:266
+msgid "Completed at cannot be before started at."
+msgstr ""
+
+#: roomrun/maintenance/models.py:272
+msgid "Completed at is required when status is COMPLETED."
+msgstr ""
+
+#: roomrun/maintenance/models.py:277
+msgid "Started at is required when status is IN_PROGRESS."
+msgstr ""
+
+#: roomrun/maintenance/models.py:283
+msgid "Completed at should only be set when status is COMPLETED."
+msgstr ""
+
+#: roomrun/properties/apps.py:13 roomrun/properties/models.py:98
+msgid "Properties"
+msgstr ""
+
+#: roomrun/properties/models.py:38 roomrun/users/models.py:204
+msgid "Landlord"
+msgstr ""
+
+#: roomrun/properties/models.py:40
+msgid "The landlord who owns this property."
+msgstr ""
+
+#: roomrun/properties/models.py:47
+msgid "Property number"
+msgstr ""
+
+#: roomrun/properties/models.py:48
+msgid "Auto-generated unique identifier for the property."
+msgstr ""
+
+#: roomrun/properties/models.py:54
+msgid "Property name"
+msgstr ""
+
+#: roomrun/properties/models.py:55
+msgid "The official name of the property (e.g., 'Sunset Tower')."
+msgstr ""
+
+#: roomrun/properties/models.py:61
+msgid "Additional details about the property, such as amenities or history."
+msgstr ""
+
+#: roomrun/properties/models.py:66
+msgid "Address"
+msgstr ""
+
+#: roomrun/properties/models.py:67
+msgid "Street address of the property (e.g., '123 Main St')."
+msgstr ""
+
+#: roomrun/properties/models.py:72
+msgid "City"
+msgstr ""
+
+#: roomrun/properties/models.py:73
+msgid "City where the property is located."
+msgstr ""
+
+#: roomrun/properties/models.py:77
+msgid "Country"
+msgstr ""
+
+#: roomrun/properties/models.py:78
+msgid "Country where the property is located."
+msgstr ""
+
+#: roomrun/properties/models.py:87
+msgid "Current operational status of the property."
+msgstr ""
+
+#: roomrun/properties/models.py:97 roomrun/properties/models.py:153
+#: roomrun/properties/models.py:239
+msgid "Property"
+msgstr ""
+
+#: roomrun/properties/models.py:154
+msgid "The property this image belongs to."
+msgstr ""
+
+#: roomrun/properties/models.py:158
+msgid "Image"
+msgstr ""
+
+#: roomrun/properties/models.py:161
+msgid ""
+"Upload a JPG, PNG, or WebP image. Recommended size: 1920*1080 pixels, max "
+"5MB."
+msgstr ""
+
+#: roomrun/properties/models.py:173
+msgid "Property Image"
+msgstr ""
+
+#: roomrun/properties/models.py:175
+msgid "Setup caption caption of Property Image."
+msgstr ""
+
+#: roomrun/properties/models.py:181
+msgid "Primary image"
+msgstr ""
+
+#: roomrun/properties/models.py:183
+msgid ""
+"Mark this image as the main/cover image for the property. Only one image per "
+"property should be primary."
+msgstr ""
+
+#: roomrun/properties/models.py:192
+msgid "Property image"
+msgstr ""
+
+#: roomrun/properties/models.py:193
+msgid "Property images"
+msgstr ""
+
+#: roomrun/properties/models.py:240
+msgid "The property that this building belongs to."
+msgstr ""
+
+#: roomrun/properties/models.py:247
+msgid "Building number"
+msgstr ""
+
+#: roomrun/properties/models.py:248
+msgid "Auto-generated unique identifier for the building."
+msgstr ""
+
+#: roomrun/properties/models.py:253
+msgid "Building name"
+msgstr ""
+
+#: roomrun/properties/models.py:254
+msgid "The official name of the building (e.g., 'Tower A')."
+msgstr ""
+
+#: roomrun/properties/models.py:260
+msgid ""
+"Additional details about the building, such as amenities or construction "
+"year."
+msgstr ""
+
+#: roomrun/properties/models.py:265
+msgid "Number of floors"
+msgstr ""
+
+#: roomrun/properties/models.py:266
+msgid "Total number of floors in the building."
+msgstr ""
+
+#: roomrun/properties/models.py:274
+msgid "Current operational status of the building."
+msgstr ""
+
+#: roomrun/properties/models.py:284 roomrun/properties/models.py:340
+msgid "Building"
+msgstr ""
+
+#: roomrun/properties/models.py:285
+msgid "Buildings"
+msgstr ""
+
+#: roomrun/properties/models.py:341
+msgid "The building that contains this unit."
+msgstr ""
+
+#: roomrun/properties/models.py:346
+msgid "Unit number"
+msgstr ""
+
+#: roomrun/properties/models.py:348
+msgid ""
+"Unique unit identifier within the building. Must be unique per building "
+"(enforced by a database constraint)."
+msgstr ""
+
+#: roomrun/properties/models.py:355
+msgid "Floor"
+msgstr ""
+
+#: roomrun/properties/models.py:356
+msgid "Floor number where the unit is located (0 = ground floor)."
+msgstr ""
+
+#: roomrun/properties/models.py:363
+msgid "Unit type"
+msgstr ""
+
+#: roomrun/properties/models.py:364
+msgid "Category of the unit (e.g., studio, apartment, office)."
+msgstr ""
+
+#: roomrun/properties/models.py:369
+msgid "Bedrooms"
+msgstr ""
+
+#: roomrun/properties/models.py:370
+msgid "Number of bedrooms in the unit."
+msgstr ""
+
+#: roomrun/properties/models.py:375
+msgid "Bathrooms"
+msgstr ""
+
+#: roomrun/properties/models.py:376
+msgid "Number of bathrooms in the unit."
+msgstr ""
+
+#: roomrun/properties/models.py:384
+msgid "Area"
+msgstr ""
+
+#: roomrun/properties/models.py:385
+msgid "Total area of the unit in square meters."
+msgstr ""
+
+#: roomrun/properties/models.py:392 roomrun/rentals/models.py:176
+msgid "Monthly rent"
+msgstr ""
+
+#: roomrun/properties/models.py:393
+msgid "Monthly rental price in the local currency."
+msgstr ""
+
+#: roomrun/properties/models.py:401
+msgid "Current occupancy status of the unit."
+msgstr ""
+
+#: roomrun/properties/models.py:412
+msgid "Units"
+msgstr ""
+
+#: roomrun/rentals/models.py:29
+msgid "The tenant submitting the application."
+msgstr ""
+
+#: roomrun/rentals/models.py:37
+msgid "The unit being applied for."
+msgstr ""
+
+#: roomrun/rentals/models.py:44
+msgid "Application number"
+msgstr ""
+
+#: roomrun/rentals/models.py:45
+msgid "Auto-generated unique identifier for the application."
+msgstr ""
+
+#: roomrun/rentals/models.py:51
+msgid "Message"
+msgstr ""
+
+#: roomrun/rentals/models.py:52
+msgid "Optional message provided by the tenant."
+msgstr ""
+
+#: roomrun/rentals/models.py:61
+msgid "Current status of the rental application."
+msgstr ""
+
+#: roomrun/rentals/models.py:66
+msgid "Applied at"
+msgstr ""
+
+#: roomrun/rentals/models.py:67
+msgid "Reviewed time of the rental application"
+msgstr ""
+
+#: roomrun/rentals/models.py:77
+msgid "Rental application"
+msgstr ""
+
+#: roomrun/rentals/models.py:78
+msgid "Rental applications"
+msgstr ""
+
+#: roomrun/rentals/models.py:121
+msgid "This tenant already has an approved application for this unit."
+msgstr ""
+
+#: roomrun/rentals/models.py:140
+msgid "The tenant who signs this contract."
+msgstr ""
+
+#: roomrun/rentals/models.py:148
+msgid "The unit being rented under this contract."
+msgstr ""
+
+#: roomrun/rentals/models.py:155
+msgid "Contract number"
+msgstr ""
+
+#: roomrun/rentals/models.py:156
+msgid "Auto-generated unique identifier for the contract."
+msgstr ""
+
+#: roomrun/rentals/models.py:161
+msgid "Start date"
+msgstr ""
+
+#: roomrun/rentals/models.py:162
+msgid "The date when the contract becomes effective."
+msgstr ""
+
+#: roomrun/rentals/models.py:168
+msgid "End date"
+msgstr ""
+
+#: roomrun/rentals/models.py:169
+msgid "Leave empty for an open-ended contract."
+msgstr ""
+
+#: roomrun/rentals/models.py:177
+msgid "Monthly rental amount in the local currency."
+msgstr ""
+
+#: roomrun/rentals/models.py:185
+msgid "Security deposit"
+msgstr ""
+
+#: roomrun/rentals/models.py:186
+msgid "Security deposit required at contract signing."
+msgstr ""
+
+#: roomrun/rentals/models.py:195
+msgid "Current lifecycle status of the contract."
+msgstr ""
+
+#: roomrun/rentals/models.py:206
+msgid "Rental contracts"
+msgstr ""
+
+#: roomrun/rentals/models.py:244
+msgid "End date must be after the start date."
+msgstr ""
+
+#: roomrun/rentals/models.py:256
+msgid "This tenant already has an active contract for this unit."
 msgstr ""
 
 #: roomrun/templates/allauth/layouts/entrance.html:8
@@ -86,7 +798,7 @@ msgstr ""
 msgid "Important dates"
 msgstr ""
 
-#: roomrun/users/apps.py:7
+#: roomrun/users/apps.py:8
 msgid "Users"
 msgstr ""
 
@@ -94,92 +806,92 @@ msgstr ""
 msgid "This email has already been taken."
 msgstr ""
 
-#: roomrun/users/models.py:45
+#: roomrun/users/models.py:46
 msgid "Actif"
 msgstr ""
 
-#: roomrun/users/models.py:46
+#: roomrun/users/models.py:47
 msgid "Inactif"
 msgstr ""
 
-#: roomrun/users/models.py:47
+#: roomrun/users/models.py:48
 msgid "Suspendu"
 msgstr ""
 
-#: roomrun/users/models.py:54
+#: roomrun/users/models.py:55
 msgid "email address"
 msgstr ""
 
-#: roomrun/users/models.py:59
+#: roomrun/users/models.py:60
 msgid "phone number"
 msgstr ""
 
-#: roomrun/users/models.py:66
+#: roomrun/users/models.py:65
+msgid "International format, e.g. +33123456789."
+msgstr ""
+
+#: roomrun/users/models.py:69
 msgid "country"
 msgstr ""
 
-#: roomrun/users/models.py:72
+#: roomrun/users/models.py:75
 msgid "profile picture"
 msgstr ""
 
-#: roomrun/users/models.py:83
+#: roomrun/users/models.py:86
 msgid "user status"
 msgstr ""
 
-#: roomrun/users/models.py:95
+#: roomrun/users/models.py:98
 msgid "email verified"
 msgstr ""
 
-#: roomrun/users/models.py:100
+#: roomrun/users/models.py:103
 msgid "phone verified"
 msgstr ""
 
-#: roomrun/users/models.py:109
+#: roomrun/users/models.py:112
 msgid "last login IP"
 msgstr ""
 
-#: roomrun/users/models.py:121
+#: roomrun/users/models.py:124
 msgid "user"
 msgstr ""
 
-#: roomrun/users/models.py:122
+#: roomrun/users/models.py:125
 msgid "users"
 msgstr ""
 
-#: roomrun/users/models.py:176 roomrun/users/models.py:292
+#: roomrun/users/models.py:179 roomrun/users/models.py:287
 msgid "User"
 msgstr ""
 
-#: roomrun/users/models.py:183
+#: roomrun/users/models.py:186
 msgid "Landlord number"
 msgstr ""
 
-#: roomrun/users/models.py:185
-msgid "Auto-generated unique identifier for the landlord."
+#: roomrun/users/models.py:188
+msgid "Auto-generated unique identifier for the landlord. In signals.py"
 msgstr ""
 
-#: roomrun/users/models.py:192
+#: roomrun/users/models.py:195
 msgid "Verified"
 msgstr ""
 
-#: roomrun/users/models.py:194
+#: roomrun/users/models.py:197
 msgid "Indicates if the landlord's identity has been verified."
 msgstr ""
 
-#: roomrun/users/models.py:201
-msgid "Landlord"
-msgstr ""
-
-#: roomrun/users/models.py:202
+#: roomrun/users/models.py:205
 msgid "Landlords"
 msgstr ""
 
-#: roomrun/users/models.py:239
+#: roomrun/users/models.py:237
 msgid "Tenant number"
 msgstr ""
 
-#: roomrun/users/models.py:240
-msgid "Auto-generated unique identifier for the tenant."
+#: roomrun/users/models.py:239
+msgid "Auto-generated unique identifier for the tenant. In signals.py"
 msgstr ""
 
 #: roomrun/users/models.py:260
@@ -190,76 +902,69 @@ msgstr ""
 msgid "tenants"
 msgstr ""
 
-#: roomrun/users/models.py:299
+#: roomrun/users/models.py:294
 msgid "Employee number"
 msgstr ""
 
-#: roomrun/users/models.py:301
-msgid "Auto-generated unique identifier for the employee."
+#: roomrun/users/models.py:296
+msgid "Auto-generated unique identifier for the employee. In signals.py"
 msgstr ""
 
-#: roomrun/users/models.py:308
+#: roomrun/users/models.py:303
 msgid "Job title"
 msgstr ""
 
-#: roomrun/users/models.py:316
-msgid "Status"
-msgstr ""
-
-#: roomrun/users/models.py:322
+#: roomrun/users/models.py:317
 msgid "Hire date"
 msgstr ""
 
-#: roomrun/users/models.py:328 roomrun/users/models.py:371
-#: roomrun/users/models.py:427
+#: roomrun/users/models.py:323 roomrun/users/models.py:361
+#: roomrun/users/models.py:412
 msgid "Employee"
 msgstr ""
 
-#: roomrun/users/models.py:329
+#: roomrun/users/models.py:324
 msgid "Employees"
 msgstr ""
 
-#: roomrun/users/models.py:378
+#: roomrun/users/models.py:368
 msgid "Agent number"
 msgstr ""
 
-#: roomrun/users/models.py:380
-msgid "Auto-generated unique identifier for the maintenance agent."
+#: roomrun/users/models.py:370
+msgid ""
+"Auto-generated unique identifier for the maintenance agent. In signals.py"
 msgstr ""
 
-#: roomrun/users/models.py:387
+#: roomrun/users/models.py:377
 msgid "Speciality"
 msgstr ""
 
-#: roomrun/users/models.py:389
+#: roomrun/users/models.py:379
 msgid "Technical speciality of the maintenance agent."
 msgstr ""
 
-#: roomrun/users/models.py:396
-msgid "Maintenance agent"
-msgstr ""
-
-#: roomrun/users/models.py:397
+#: roomrun/users/models.py:387
 msgid "Maintenance agents"
 msgstr ""
 
-#: roomrun/users/models.py:434
+#: roomrun/users/models.py:419
 msgid "Guard number"
 msgstr ""
 
-#: roomrun/users/models.py:436
-msgid "Auto-generated unique identifier for the guard."
+#: roomrun/users/models.py:421
+msgid "Auto-generated unique identifier for the guard. In signals.py"
 msgstr ""
 
-#: roomrun/users/models.py:444
+#: roomrun/users/models.py:429
 msgid "Shift"
 msgstr ""
 
-#: roomrun/users/models.py:450
+#: roomrun/users/models.py:435
 msgid "Guard"
 msgstr ""
 
-#: roomrun/users/models.py:451
+#: roomrun/users/models.py:436
 msgid "Guards"
 msgstr ""
 
@@ -267,11 +972,11 @@ msgstr ""
 msgid "Information successfully updated"
 msgstr ""
 
-#: roomrun/utils/enums.py:7
+#: roomrun/utils/enums.py:7 roomrun/utils/enums.py:20 roomrun/utils/enums.py:58
 msgid "Active"
 msgstr ""
 
-#: roomrun/utils/enums.py:8
+#: roomrun/utils/enums.py:8 roomrun/utils/enums.py:21 roomrun/utils/enums.py:35
 msgid "Inactive"
 msgstr ""
 
@@ -289,4 +994,189 @@ msgstr ""
 
 #: roomrun/utils/enums.py:15
 msgid "Rotating"
+msgstr ""
+
+#: roomrun/utils/enums.py:22
+msgid "Under construction"
+msgstr ""
+
+#: roomrun/utils/enums.py:31
+msgid "Available"
+msgstr ""
+
+#: roomrun/utils/enums.py:32
+msgid "Occupied"
+msgstr ""
+
+#: roomrun/utils/enums.py:33
+msgid "Reserved"
+msgstr ""
+
+#: roomrun/utils/enums.py:34
+msgid "Under maintenance"
+msgstr ""
+
+#: roomrun/utils/enums.py:43
+msgid "Studio"
+msgstr ""
+
+#: roomrun/utils/enums.py:44
+msgid "Apartment"
+msgstr ""
+
+#: roomrun/utils/enums.py:45
+msgid "Office"
+msgstr ""
+
+#: roomrun/utils/enums.py:46
+msgid "Retail"
+msgstr ""
+
+#: roomrun/utils/enums.py:47
+msgid "Warehouse"
+msgstr ""
+
+#: roomrun/utils/enums.py:48
+msgid "Penthouse"
+msgstr ""
+
+#: roomrun/utils/enums.py:52 roomrun/utils/enums.py:85
+#: roomrun/utils/enums.py:110 roomrun/utils/enums.py:133
+#: roomrun/utils/enums.py:139
+msgid "Pending"
+msgstr ""
+
+#: roomrun/utils/enums.py:53
+msgid "Approved"
+msgstr ""
+
+#: roomrun/utils/enums.py:54
+msgid "Rejected"
+msgstr ""
+
+#: roomrun/utils/enums.py:55 roomrun/utils/enums.py:61
+#: roomrun/utils/enums.py:89 roomrun/utils/enums.py:114
+#: roomrun/utils/enums.py:136 roomrun/utils/enums.py:143
+msgid "Cancelled"
+msgstr ""
+
+#: roomrun/utils/enums.py:59 roomrun/utils/enums.py:111
+#: roomrun/utils/enums.py:142
+msgid "Completed"
+msgstr ""
+
+#: roomrun/utils/enums.py:60
+msgid "Terminated"
+msgstr ""
+
+#: roomrun/utils/enums.py:68
+msgid "Rent"
+msgstr ""
+
+#: roomrun/utils/enums.py:69
+msgid "Electricity"
+msgstr ""
+
+#: roomrun/utils/enums.py:70
+msgid "Water"
+msgstr ""
+
+#: roomrun/utils/enums.py:71
+msgid "Gas"
+msgstr ""
+
+#: roomrun/utils/enums.py:72
+msgid "Internet"
+msgstr ""
+
+#: roomrun/utils/enums.py:73
+msgid "Maintenance fee"
+msgstr ""
+
+#: roomrun/utils/enums.py:74
+msgid "Trash collection"
+msgstr ""
+
+#: roomrun/utils/enums.py:75
+msgid "Parking"
+msgstr ""
+
+#: roomrun/utils/enums.py:76
+msgid "Late fee"
+msgstr ""
+
+#: roomrun/utils/enums.py:77 roomrun/utils/enums.py:103
+msgid "Other"
+msgstr ""
+
+#: roomrun/utils/enums.py:86
+msgid "Partially paid"
+msgstr ""
+
+#: roomrun/utils/enums.py:87
+msgid "Paid"
+msgstr ""
+
+#: roomrun/utils/enums.py:88
+msgid "Overdue"
+msgstr ""
+
+#: roomrun/utils/enums.py:97
+msgid "Cash"
+msgstr ""
+
+#: roomrun/utils/enums.py:98
+msgid "Mobile Money"
+msgstr ""
+
+#: roomrun/utils/enums.py:99
+msgid "Bank transfer"
+msgstr ""
+
+#: roomrun/utils/enums.py:100
+msgid "Credit card"
+msgstr "Carte Banquaire"
+
+#: roomrun/utils/enums.py:101
+msgid "PayPal"
+msgstr "Paypal"
+
+#: roomrun/utils/enums.py:102
+msgid "Check"
+msgstr "Check"
+
+#: roomrun/utils/enums.py:112
+msgid "Failed"
+msgstr "Échoué"
+
+#: roomrun/utils/enums.py:113
+msgid "Refunded"
+msgstr ""
+
+#: roomrun/utils/enums.py:122
+msgid "Low"
+msgstr "Basse"
+
+#: roomrun/utils/enums.py:123
+msgid "Medium"
+msgstr "Moyenne"
+
+#: roomrun/utils/enums.py:124
+msgid "High"
+msgstr "Elevé"
+
+#: roomrun/utils/enums.py:125
+msgid "Urgent"
+msgstr "Urgent"
+
+#: roomrun/utils/enums.py:134 roomrun/utils/enums.py:141
+msgid "In progress"
+msgstr ""
+
+#: roomrun/utils/enums.py:135
+msgid "Resolved"
+msgstr ""
+
+#: roomrun/utils/enums.py:140
+msgid "Assigned"
 msgstr ""

@@ -104,11 +104,13 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
+    "core",
     "users.apps.UsersConfig",
     "properties.apps.PropertiesConfig",
     "rentals.apps.RentalsConfig",
-    "billing.appa.BillingConfig",
-    "core",
+    "billing.apps.BillingConfig",
+    "maintenance.apps.MaintenanceConfig",
+    "operations.apps.OperationsConfig",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -117,7 +119,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # Default phonumer region
 PHONENUMBER_DEFAULT_REGION = "FR"  # ISO-3166-1
 #Default currencies
-CURRENCIES = ["USD", "EUR", "XAF"]
+CURRENCIES = ["XAF", "USD", "EUR"]
 # MIGRATIONS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules

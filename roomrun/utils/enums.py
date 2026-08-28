@@ -87,3 +87,64 @@ class ChargeStatus(models.TextChoices):
     PAID = "PAID", _("Paid")
     OVERDUE = "OVERDUE", _("Overdue")
     CANCELLED = "CANCELLED", _("Cancelled")
+
+
+
+class PaymentMethod(models.TextChoices):
+    """
+    Defines the methods available for making payments.
+    """
+    CASH = "CASH", _("Cash")
+    MOBILE_MONEY = "MOBILE_MONEY", _("Mobile Money")
+    BANK_TRANSFER = "BANK_TRANSFER", _("Bank transfer")
+    CREDIT_CARD = "CREDIT_CARD", _("Credit card")
+    PAYPAL = "PAYPAL", _("PayPal")
+    CHECK = "CHECK", _("Check")
+    OTHER = "OTHER", _("Other")
+
+
+class PaymentStatus(models.TextChoices):
+    """
+    Defines the lifecycle status of a payment.
+    """
+    PENDING = "PENDING", _("Pending")
+    COMPLETED = "COMPLETED", _("Completed")
+    FAILED = "FAILED", _("Failed")
+    REFUNDED = "REFUNDED", _("Refunded")
+    CANCELLED = "CANCELLED", _("Cancelled")
+
+
+class Priority(models.TextChoices):
+    """
+    Defines the urgency levels for maintenance requests.
+    Used to prioritize and allocate resources accordingly.
+    """
+    LOW = "LOW", _("Low")
+    MEDIUM = "MEDIUM", _("Medium")
+    HIGH = "HIGH", _("High")
+    URGENT = "URGENT", _("Urgent")
+
+
+class RequestStatus(models.TextChoices):
+    """
+    Defines the lifecycle status of a maintenance request.
+    Tracks the progress from submission to resolution or cancellation.
+    """
+    PENDING = "PENDING", _("Pending")
+    IN_PROGRESS = "IN_PROGRESS", _("In progress")
+    RESOLVED = "RESOLVED", _("Resolved")
+    CANCELLED = "CANCELLED", _("Cancelled")
+
+class TaskStatus(models.TextChoices):
+    PENDING = "PENDING", _("Pending")
+    ASSIGNED = "ASSIGNED", _("Assigned")
+    IN_PROGRESS = "IN_PROGRESS", _("In progress")
+    COMPLETED = "COMPLETED", _("Completed")
+    CANCELLED = "CANCELLED", _("Cancelled")
+
+
+class CleaningStatus(models.TextChoices):
+    SCHEDULED = "SCHEDULED", _("Scheduled")
+    IN_PROGRESS = "IN_PROGRESS", _("In progress")
+    COMPLETED = "COMPLETED", _("Completed")
+    CANCELLED = "CANCELLED", _("Cancelled")
