@@ -1,5 +1,4 @@
 name: CI
-
 # Enable Buildkit and let compose use it to speed up image building
 env:
   DOCKER_BUILDKIT: 1
@@ -11,7 +10,7 @@ on:
     paths-ignore: ['docs/**']
 
   push:
-    branches: ['features/auth']
+    branches: ['features/project-setup']
     paths-ignore: ['docs/**']
 
 concurrency:

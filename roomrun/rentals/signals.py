@@ -16,6 +16,7 @@ def set_application_number(sender, instance, **kwargs):
             field="application_number",
         )
 
+
 @receiver(pre_save, sender=RentalContract)
 def set_contract_number(sender, instance, **kwargs):
     """Auto-generate contract_number if not already set."""

@@ -17,6 +17,7 @@ def set_charge_number(sender, instance, **kwargs):
             field="charge_number",
         )
 
+
 @receiver(pre_save, sender=Payment)
 def set_payment_number(sender, instance, **kwargs):
     """Auto-generate payment_number if not already set."""
@@ -26,6 +27,7 @@ def set_payment_number(sender, instance, **kwargs):
             model=Payment,
             field="payment_number",
         )
+
 
 @receiver(pre_save, sender=Receipt)
 def set_receipt_number(sender, instance, **kwargs):

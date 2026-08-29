@@ -16,6 +16,7 @@ def set_request_number(sender, instance, **kwargs):
             field="request_number",
         )
 
+
 @receiver(pre_save, sender=Task)
 def set_task_number(sender, instance, **kwargs):
     """Auto-generate task_number if not already set."""

@@ -18,6 +18,7 @@ def set_property_number(sender, instance, **kwargs):
             field="property_number",
         )
 
+
 @receiver(pre_save, sender=Building)
 def set_building_number(sender, instance, **kwargs):
     """Auto-generate building_number if not already set."""
@@ -27,6 +28,7 @@ def set_building_number(sender, instance, **kwargs):
             model=Building,
             field="building_number",
         )
+
 
 # PROPERTY IMAGE
 @receiver(pre_save, sender=PropertyImage)
