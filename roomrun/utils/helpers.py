@@ -7,7 +7,7 @@ from django.db import models
 
 M = TypeVar("M", bound=models.Model)
 
-def generate_unique_identifier[M: models.Model](prefix: str, model: type[M], field: str = 'id') -> str:
+def generate_unique_identifier[M: models.Model](prefix: str, model: type[M], field: str = "id") -> str:  # noqa: E501
     """
     Generate a unique identifier with a given prefix and an 8-character UUID.
     The function loops until it finds an unused value, guaranteeing uniqueness.
