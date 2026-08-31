@@ -238,7 +238,7 @@ class Building(BaseModel):
         Property,
         on_delete=models.CASCADE,  # If property is deleted, all its buildings are deleted.  # noqa: E501
         related_name="buildings",  # Allows accessing `property.buildings.all()'
-        verbose_name=_("Property"),
+        verbose_name=_("property"),
         help_text=_("The property that this building belongs to."),
     )
 
@@ -290,7 +290,7 @@ class Building(BaseModel):
         verbose_name_plural = _("Buildings")
 
         indexes = [
-            models.Index(fields=["property"], name="building_property_idx"),
+            models.Index(fields=["Property"], name="building_property_idx"),
             # Speeds up queries filtering by property.
             models.Index(fields=["status"], name="building_status_idx"),
             # Speeds up queries filtering by status.
