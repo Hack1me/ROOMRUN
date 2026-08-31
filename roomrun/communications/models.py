@@ -1,10 +1,15 @@
 from core.models import BaseModel
+from core.models import ReadableModelMixin
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from properties.models import Building
+from properties.models import Unit
 from users.models import Landlord
 from users.models import User
 from utils.enums import AnnouncementStatus
@@ -19,6 +24,9 @@ class Announcement(BaseModel):
     have a defined publication and expiration schedule.
     """
 
+    reference_field = "announcement_number"
+    reference_prefix = "ANN"
+
     # -------------------------------------------------------------------------
     # Core Fields
     # -------------------------------------------------------------------------
@@ -27,6 +35,7 @@ class Announcement(BaseModel):
         max_length=50,
         unique=True,
         editable=False,
+        blank=True,
         verbose_name=_("Announcement number"),
         help_text=_("Auto-generated unique identifier for the announcement."),
         # Generation logic must be added via a signals.py
@@ -82,6 +91,24 @@ class Announcement(BaseModel):
         help_text=_("The intended audience for this announcement."),
     )
 
+    building = models.ForeignKey(
+        Building,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="announcements",
+        verbose_name=_("Building"),
+    )
+
+    unit = models.ForeignKey(
+        Unit,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="announcements",
+        verbose_name=_("Unit"),
+    )
+
     attachment_url = models.URLField(
         blank=True,
         verbose_name=_("Attachment URL"),
@@ -107,7 +134,7 @@ class Announcement(BaseModel):
             # Composite index for active announcements filtering
             models.Index(
                 fields=["status", "published_at"],
-                name="announcement_status_published_idx",
+                name="ann_status_published_idx",
             ),
         ]
 
@@ -149,19 +176,16 @@ class Announcement(BaseModel):
         return self.expires_at and self.expires_at <= timezone.now()
 
     def clean(self):
-        """
-        Business-rule validations:
-        1. published_at must be before expires_at (if both provided).
-        2. published_at is required when status is PUBLISHED.
-        3. published_at should be null when status is DRAFT.
-        4. expires_at must be after published_at (if published_at is set).
-        """
-        # Validate date order
-        if self.published_at and self.expires_at:
-            if self.expires_at <= self.published_at:
-                raise ValidationError(_("Expires at must be after published at."))
+        super().clean()
+        self._clean_target()
 
-        # Status validation
+        if (
+            self.published_at
+            and self.expires_at
+            and self.expires_at <= self.published_at
+        ):
+            raise ValidationError(_("Expires at must be after published at."))
+
         if self.status == AnnouncementStatus.PUBLISHED:
             if not self.published_at:
                 raise ValidationError(
@@ -170,21 +194,29 @@ class Announcement(BaseModel):
             if self.published_at > timezone.now():
                 raise ValidationError(_("Published at cannot be in the future."))
 
-        # DRAFT announcements should not have published_at
         if self.status == AnnouncementStatus.DRAFT and self.published_at:
             raise ValidationError(
                 _("Published at should not be set when status is DRAFT.")
             )
 
-        # Expired validation (if expires_at is set, it must be in the future)
-        if self.expires_at and self.expires_at <= timezone.now():
-            # Allow setting expired announcements only if status is not DRAFT
-            pass  # This can be allowed; it's a valid state.
-
-    def save(self, *args, **kwargs):
-        """Run full validation before saving."""
-        self.full_clean()
-        super().save(*args, **kwargs)
+    def _clean_target(self) -> None:
+        """Validate that the selected audience has the needed relation."""
+        if self.target == AnnouncementTarget.ALL_TENANTS and (
+            self.building_id or self.unit_id
+        ):
+            raise ValidationError(
+                _("A general announcement cannot target a building or unit.")
+            )
+        if self.target == AnnouncementTarget.BUILDING and not self.building_id:
+            raise ValidationError(_("A building is required for this target."))
+        if self.target == AnnouncementTarget.UNIT and not self.unit_id:
+            raise ValidationError(_("A unit is required for this target."))
+        if (
+            self.unit_id
+            and self.building_id
+            and self.unit.building_id != self.building_id
+        ):
+            raise ValidationError(_("The unit must belong to the selected building."))
 
     def publish(self):
         """
@@ -206,11 +238,14 @@ class Announcement(BaseModel):
             self.save()
 
 
-class Notification(BaseModel):
+class Notification(ReadableModelMixin, BaseModel):
     """
     Represents a notification sent to a user.
     Notifications can be marked as read, and the read timestamp is tracked.
     """
+
+    reference_field = "notification_number"
+    reference_prefix = "NTF"
 
     # -------------------------------------------------------------------------
     # Core Fields
@@ -220,13 +255,14 @@ class Notification(BaseModel):
         max_length=50,
         unique=True,
         editable=False,
+        blank=True,
         verbose_name=_("Notification number"),
         help_text=_("Auto-generated unique identifier for the notification."),
     )
 
     recipient = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="notifications",
         verbose_name=_("Recipient"),
         help_text=_("The user who receives this notification."),
@@ -250,19 +286,15 @@ class Notification(BaseModel):
         help_text=_("The category of this notification."),
     )
 
-    is_read = models.BooleanField(
-        default=False,
-        db_index=True,
-        verbose_name=_("Read"),
-        help_text=_("Indicates whether the notification has been read."),
-    )
-
-    read_at = models.DateTimeField(
+    related_content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name=_("Read at"),
-        help_text=_("The timestamp when the notification was read."),
+        related_name="notification_contexts",
     )
+    related_object_id = models.UUIDField(null=True, blank=True)
+    related_object = GenericForeignKey("related_content_type", "related_object_id")
 
     # -------------------------------------------------------------------------
     # Meta Options
@@ -290,53 +322,15 @@ class Notification(BaseModel):
     def get_absolute_url(self) -> str:
         return reverse("communications:notification-detail", kwargs={"pk": self.id})
 
-    def clean(self):
-        """
-        Business-rule validations:
-        1. If is_read is True, read_at must be set.
-        2. If is_read is False, read_at must be null.
-        3. read_at cannot be in the future.
-        """
-        if self.is_read and not self.read_at:
-            raise ValidationError(
-                _("Read at must be set when the notification is marked as read.")
-            )
-        if not self.is_read and self.read_at:
-            raise ValidationError(
-                _("Read at should be empty when the notification is not read.")
-            )
-        if self.read_at and self.read_at > timezone.now():
-            raise ValidationError(_("Read at cannot be in the future."))
 
-    def save(self, *args, **kwargs):
-        """Run full validation before saving."""
-        self.full_clean()
-        super().save(*args, **kwargs)
-
-    def mark_as_read(self):
-        """Mark the notification as read."""
-        if not self.is_read:
-            self.is_read = True
-            self.read_at = timezone.now()
-            self.save()
-
-    def mark_as_unread(self):
-        """Mark the notification as unread."""
-        if self.is_read:
-            self.is_read = False
-            self.read_at = None
-            self.save()
-
-    @property
-    def is_unread(self) -> bool:
-        return not self.is_read
-
-
-class Message(BaseModel):
+class Message(ReadableModelMixin, BaseModel):
     """
     Represents a direct message between two users in ROOMRUN.
     Messages track their read status and support threading if needed.
     """
+
+    reference_field = "message_number"
+    reference_prefix = "MSG"
 
     # -------------------------------------------------------------------------
     # Core Fields
@@ -346,13 +340,14 @@ class Message(BaseModel):
         max_length=50,
         unique=True,
         editable=False,
+        blank=True,
         verbose_name=_("Message number"),
         help_text=_("Auto-generated unique identifier for the message."),
     )
 
     sender = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="sent_messages",
         verbose_name=_("Sender"),
         help_text=_("The user who sent the message."),
@@ -360,7 +355,7 @@ class Message(BaseModel):
 
     recipient = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="received_messages",
         verbose_name=_("Recipient"),
         help_text=_("The user who received the message."),
@@ -371,18 +366,13 @@ class Message(BaseModel):
         help_text=_("The actual content of the message."),
     )
 
-    is_read = models.BooleanField(
-        default=False,
-        db_index=True,
-        verbose_name=_("Read"),
-        help_text=_("Indicates whether the message has been read by the recipient."),
-    )
-
-    read_at = models.DateTimeField(
+    parent_message = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name=_("Read at"),
-        help_text=_("The timestamp when the message was read."),
+        related_name="replies",
+        verbose_name=_("Reply to"),
     )
 
     # -------------------------------------------------------------------------
@@ -426,41 +416,7 @@ class Message(BaseModel):
         3. If is_read is False, read_at must be null.
         4. read_at cannot be in the future.
         """
+        super().clean()
         # Prevent self-messaging
         if self.sender and self.recipient and self.sender == self.recipient:
             raise ValidationError(_("You cannot send a message to yourself."))
-
-        # Read status validation
-        if self.is_read and not self.read_at:
-            raise ValidationError(
-                _("Read at must be set when the message is marked as read.")
-            )
-        if not self.is_read and self.read_at:
-            raise ValidationError(
-                _("Read at should be empty when the message is not read.")
-            )
-        if self.read_at and self.read_at > timezone.now():
-            raise ValidationError(_("Read at cannot be in the future."))
-
-    def save(self, *args, **kwargs):
-        """Run full validation before saving."""
-        self.full_clean()
-        super().save(*args, **kwargs)
-
-    def mark_as_read(self):
-        """Mark the message as read."""
-        if not self.is_read:
-            self.is_read = True
-            self.read_at = timezone.now()
-            self.save()
-
-    def mark_as_unread(self):
-        """Mark the message as unread."""
-        if self.is_read:
-            self.is_read = False
-            self.read_at = None
-            self.save()
-
-    @property
-    def is_unread(self) -> bool:
-        return not self.is_read

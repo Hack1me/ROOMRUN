@@ -11,170 +11,673 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('auth', '0012_alter_user_first_name_max_length'),
+        ("auth", "0012_alter_user_first_name_max_length"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='User',
+            name="User",
             fields=[
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('is_superuser', models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='superuser status')),
-                ('first_name', models.CharField(blank=True, max_length=150, verbose_name='first name')),
-                ('last_name', models.CharField(blank=True, max_length=150, verbose_name='last name')),
-                ('is_staff', models.BooleanField(default=False, help_text='Designates whether the user can log into this admin site.', verbose_name='staff status')),
-                ('is_active', models.BooleanField(default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active')),
-                ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
-                ('is_deleted', models.BooleanField(db_index=True, default=False, help_text='Indicates whether this record has been soft-deleted.', verbose_name='Is deleted')),
-                ('email', models.EmailField(max_length=254, unique=True, verbose_name='email address')),
-                ('phone', phonenumber_field.modelfields.PhoneNumberField(blank=True, max_length=128, null=True, region=None, unique=True, verbose_name='phone number')),
-                ('country', django_countries.fields.CountryField(blank=True, max_length=2, null=True, verbose_name='country')),
-                ('profile_picture', models.ImageField(blank=True, null=True, upload_to='users/profile/', verbose_name='profile picture')),
-                ('status', models.CharField(choices=[('ACTIVE', 'Actif'), ('INACTIVE', 'Inactif'), ('SUSPENDED', 'Suspendu')], db_index=True, default='ACTIVE', max_length=20, verbose_name='user status')),
-                ('email_verified', models.BooleanField(default=False, verbose_name='email verified')),
-                ('phone_verified', models.BooleanField(default=False, verbose_name='phone verified')),
-                ('last_login_ip', models.GenericIPAddressField(blank=True, null=True, verbose_name='last login IP')),
-                ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_created', to=settings.AUTH_USER_MODEL, verbose_name='Created by')),
-                ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.group', verbose_name='groups')),
-                ('updated_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_updated', to=settings.AUTH_USER_MODEL, verbose_name='Updated by')),
-                ('user_permissions', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.permission', verbose_name='user permissions')),
+                ("password", models.CharField(max_length=128, verbose_name="password")),
+                (
+                    "last_login",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="last login"
+                    ),
+                ),
+                (
+                    "is_superuser",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates that this user has all permissions without explicitly assigning them.",
+                        verbose_name="superuser status",
+                    ),
+                ),
+                (
+                    "first_name",
+                    models.CharField(
+                        blank=True, max_length=150, verbose_name="first name"
+                    ),
+                ),
+                (
+                    "last_name",
+                    models.CharField(
+                        blank=True, max_length=150, verbose_name="last name"
+                    ),
+                ),
+                (
+                    "is_staff",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates whether the user can log into this admin site.",
+                        verbose_name="staff status",
+                    ),
+                ),
+                (
+                    "is_active",
+                    models.BooleanField(
+                        default=True,
+                        help_text="Designates whether this user should be treated as active. Unselect this instead of deleting accounts.",
+                        verbose_name="active",
+                    ),
+                ),
+                (
+                    "date_joined",
+                    models.DateTimeField(
+                        default=django.utils.timezone.now, verbose_name="date joined"
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated at"),
+                ),
+                (
+                    "is_deleted",
+                    models.BooleanField(
+                        db_index=True,
+                        default=False,
+                        help_text="Indicates whether this record has been soft-deleted.",
+                        verbose_name="Is deleted",
+                    ),
+                ),
+                (
+                    "email",
+                    models.EmailField(
+                        max_length=254, unique=True, verbose_name="email address"
+                    ),
+                ),
+                (
+                    "phone",
+                    phonenumber_field.modelfields.PhoneNumberField(
+                        blank=True,
+                        max_length=128,
+                        null=True,
+                        region=None,
+                        unique=True,
+                        verbose_name="phone number",
+                    ),
+                ),
+                (
+                    "country",
+                    django_countries.fields.CountryField(
+                        blank=True, max_length=2, null=True, verbose_name="country"
+                    ),
+                ),
+                (
+                    "profile_picture",
+                    models.ImageField(
+                        blank=True,
+                        null=True,
+                        upload_to="users/profile/",
+                        verbose_name="profile picture",
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("ACTIVE", "Actif"),
+                            ("INACTIVE", "Inactif"),
+                            ("SUSPENDED", "Suspendu"),
+                        ],
+                        db_index=True,
+                        default="ACTIVE",
+                        max_length=20,
+                        verbose_name="user status",
+                    ),
+                ),
+                (
+                    "email_verified",
+                    models.BooleanField(default=False, verbose_name="email verified"),
+                ),
+                (
+                    "phone_verified",
+                    models.BooleanField(default=False, verbose_name="phone verified"),
+                ),
+                (
+                    "last_login_ip",
+                    models.GenericIPAddressField(
+                        blank=True, null=True, verbose_name="last login IP"
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_created",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created by",
+                    ),
+                ),
+                (
+                    "groups",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+                        related_name="user_set",
+                        related_query_name="user",
+                        to="auth.group",
+                        verbose_name="groups",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_updated",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Updated by",
+                    ),
+                ),
+                (
+                    "user_permissions",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="Specific permissions for this user.",
+                        related_name="user_set",
+                        related_query_name="user",
+                        to="auth.permission",
+                        verbose_name="user permissions",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'user',
-                'verbose_name_plural': 'users',
-                'db_table': 'users',
-                'ordering': ['-created_at'],
+                "verbose_name": "user",
+                "verbose_name_plural": "users",
+                "db_table": "users",
+                "ordering": ["-created_at"],
             },
             managers=[
-                ('objects', users.managers.UserManager()),
+                ("objects", users.managers.UserManager()),
             ],
         ),
         migrations.CreateModel(
-            name='Employee',
+            name="Employee",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
-                ('is_deleted', models.BooleanField(db_index=True, default=False, help_text='Indicates whether this record has been soft-deleted.', verbose_name='Is deleted')),
-                ('employee_number', models.CharField(editable=False, help_text='Auto-generated unique identifier for the employee. In signals.py', max_length=20, unique=True, verbose_name='Employee number')),
-                ('job_title', models.CharField(blank=True, max_length=150, verbose_name='Job title')),
-                ('status', models.CharField(choices=[('ACTIVE', 'Active'), ('INACTIVE', 'Inactive'), ('SUSPENDED', 'Suspended')], db_index=True, default='ACTIVE', max_length=20, verbose_name='Status')),
-                ('hire_date', models.DateField(blank=True, null=True, verbose_name='Hire date')),
-                ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_created', to=settings.AUTH_USER_MODEL, verbose_name='Created by')),
-                ('updated_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_updated', to=settings.AUTH_USER_MODEL, verbose_name='Updated by')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='employee_profile', to=settings.AUTH_USER_MODEL, verbose_name='User')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated at"),
+                ),
+                (
+                    "is_deleted",
+                    models.BooleanField(
+                        db_index=True,
+                        default=False,
+                        help_text="Indicates whether this record has been soft-deleted.",
+                        verbose_name="Is deleted",
+                    ),
+                ),
+                (
+                    "employee_number",
+                    models.CharField(
+                        editable=False,
+                        help_text="Auto-generated unique identifier for the employee. In signals.py",
+                        max_length=20,
+                        unique=True,
+                        verbose_name="Employee number",
+                    ),
+                ),
+                (
+                    "job_title",
+                    models.CharField(
+                        blank=True, max_length=150, verbose_name="Job title"
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("ACTIVE", "Active"),
+                            ("INACTIVE", "Inactive"),
+                            ("SUSPENDED", "Suspended"),
+                        ],
+                        db_index=True,
+                        default="ACTIVE",
+                        max_length=20,
+                        verbose_name="Status",
+                    ),
+                ),
+                (
+                    "hire_date",
+                    models.DateField(blank=True, null=True, verbose_name="Hire date"),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_created",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created by",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_updated",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Updated by",
+                    ),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="employee_profile",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="User",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Employee',
-                'verbose_name_plural': 'Employees',
-                'db_table': 'employees',
-                'ordering': ['-created_at'],
+                "verbose_name": "Employee",
+                "verbose_name_plural": "Employees",
+                "db_table": "employees",
+                "ordering": ["-created_at"],
             },
         ),
         migrations.CreateModel(
-            name='Guard',
+            name="Guard",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
-                ('is_deleted', models.BooleanField(db_index=True, default=False, help_text='Indicates whether this record has been soft-deleted.', verbose_name='Is deleted')),
-                ('guard_number', models.CharField(editable=False, help_text='Auto-generated unique identifier for the guard. In signals.py', max_length=20, unique=True, verbose_name='Guard number')),
-                ('shift', models.CharField(choices=[('DAY', 'Day'), ('NIGHT', 'Night'), ('ROTATING', 'Rotating')], default='DAY', max_length=20, verbose_name='Shift')),
-                ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_created', to=settings.AUTH_USER_MODEL, verbose_name='Created by')),
-                ('employee', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='guard_profile', to='users.employee', verbose_name='Employee')),
-                ('updated_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_updated', to=settings.AUTH_USER_MODEL, verbose_name='Updated by')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated at"),
+                ),
+                (
+                    "is_deleted",
+                    models.BooleanField(
+                        db_index=True,
+                        default=False,
+                        help_text="Indicates whether this record has been soft-deleted.",
+                        verbose_name="Is deleted",
+                    ),
+                ),
+                (
+                    "guard_number",
+                    models.CharField(
+                        editable=False,
+                        help_text="Auto-generated unique identifier for the guard. In signals.py",
+                        max_length=20,
+                        unique=True,
+                        verbose_name="Guard number",
+                    ),
+                ),
+                (
+                    "shift",
+                    models.CharField(
+                        choices=[
+                            ("DAY", "Day"),
+                            ("NIGHT", "Night"),
+                            ("ROTATING", "Rotating"),
+                        ],
+                        default="DAY",
+                        max_length=20,
+                        verbose_name="Shift",
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_created",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created by",
+                    ),
+                ),
+                (
+                    "employee",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="guard_profile",
+                        to="users.employee",
+                        verbose_name="Employee",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_updated",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Updated by",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Guard',
-                'verbose_name_plural': 'Guards',
-                'db_table': 'guards',
-                'ordering': ['-created_at'],
+                "verbose_name": "Guard",
+                "verbose_name_plural": "Guards",
+                "db_table": "guards",
+                "ordering": ["-created_at"],
             },
         ),
         migrations.CreateModel(
-            name='Landlord',
+            name="Landlord",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
-                ('is_deleted', models.BooleanField(db_index=True, default=False, help_text='Indicates whether this record has been soft-deleted.', verbose_name='Is deleted')),
-                ('landlord_number', models.CharField(editable=False, help_text='Auto-generated unique identifier for the landlord. In signals.py', max_length=50, unique=True, verbose_name='Landlord number')),
-                ('verified', models.BooleanField(db_index=True, default=False, help_text="Indicates if the landlord's identity has been verified.", verbose_name='Verified')),
-                ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_created', to=settings.AUTH_USER_MODEL, verbose_name='Created by')),
-                ('updated_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_updated', to=settings.AUTH_USER_MODEL, verbose_name='Updated by')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='landlord_profile', to=settings.AUTH_USER_MODEL, verbose_name='User')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated at"),
+                ),
+                (
+                    "is_deleted",
+                    models.BooleanField(
+                        db_index=True,
+                        default=False,
+                        help_text="Indicates whether this record has been soft-deleted.",
+                        verbose_name="Is deleted",
+                    ),
+                ),
+                (
+                    "landlord_number",
+                    models.CharField(
+                        editable=False,
+                        help_text="Auto-generated unique identifier for the landlord. In signals.py",
+                        max_length=50,
+                        unique=True,
+                        verbose_name="Landlord number",
+                    ),
+                ),
+                (
+                    "verified",
+                    models.BooleanField(
+                        db_index=True,
+                        default=False,
+                        help_text="Indicates if the landlord's identity has been verified.",
+                        verbose_name="Verified",
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_created",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created by",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_updated",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Updated by",
+                    ),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="landlord_profile",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="User",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Landlord',
-                'verbose_name_plural': 'Landlords',
-                'db_table': 'landlords',
-                'ordering': ['-created_at'],
+                "verbose_name": "Landlord",
+                "verbose_name_plural": "Landlords",
+                "db_table": "landlords",
+                "ordering": ["-created_at"],
             },
         ),
         migrations.CreateModel(
-            name='MaintenanceAgent',
+            name="MaintenanceAgent",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
-                ('is_deleted', models.BooleanField(db_index=True, default=False, help_text='Indicates whether this record has been soft-deleted.', verbose_name='Is deleted')),
-                ('agent_number', models.CharField(editable=False, help_text='Auto-generated unique identifier for the maintenance agent. In signals.py', max_length=20, unique=True, verbose_name='Agent number')),
-                ('speciality', models.CharField(blank=True, help_text='Technical speciality of the maintenance agent.', max_length=150, verbose_name='Speciality')),
-                ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_created', to=settings.AUTH_USER_MODEL, verbose_name='Created by')),
-                ('employee', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='maintenance_agent_profile', to='users.employee', verbose_name='Employee')),
-                ('updated_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_updated', to=settings.AUTH_USER_MODEL, verbose_name='Updated by')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated at"),
+                ),
+                (
+                    "is_deleted",
+                    models.BooleanField(
+                        db_index=True,
+                        default=False,
+                        help_text="Indicates whether this record has been soft-deleted.",
+                        verbose_name="Is deleted",
+                    ),
+                ),
+                (
+                    "agent_number",
+                    models.CharField(
+                        editable=False,
+                        help_text="Auto-generated unique identifier for the maintenance agent. In signals.py",
+                        max_length=20,
+                        unique=True,
+                        verbose_name="Agent number",
+                    ),
+                ),
+                (
+                    "speciality",
+                    models.CharField(
+                        blank=True,
+                        help_text="Technical speciality of the maintenance agent.",
+                        max_length=150,
+                        verbose_name="Speciality",
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_created",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created by",
+                    ),
+                ),
+                (
+                    "employee",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="maintenance_agent_profile",
+                        to="users.employee",
+                        verbose_name="Employee",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_updated",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Updated by",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Maintenance agent',
-                'verbose_name_plural': 'Maintenance agents',
-                'db_table': 'maintenance_agents',
-                'ordering': ['-created_at'],
+                "verbose_name": "Maintenance agent",
+                "verbose_name_plural": "Maintenance agents",
+                "db_table": "maintenance_agents",
+                "ordering": ["-created_at"],
             },
         ),
         migrations.CreateModel(
-            name='Tenant',
+            name="Tenant",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
-                ('is_deleted', models.BooleanField(db_index=True, default=False, help_text='Indicates whether this record has been soft-deleted.', verbose_name='Is deleted')),
-                ('tenant_number', models.CharField(editable=False, help_text='Auto-generated unique identifier for the tenant. In signals.py', max_length=20, unique=True, verbose_name='Tenant number')),
-                ('nationality', models.CharField(blank=True, max_length=100)),
-                ('occupation', models.CharField(blank=True, max_length=150)),
-                ('verified', models.BooleanField(default=False)),
-                ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_created', to=settings.AUTH_USER_MODEL, verbose_name='Created by')),
-                ('updated_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_updated', to=settings.AUTH_USER_MODEL, verbose_name='Updated by')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='tenant_profile', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated at"),
+                ),
+                (
+                    "is_deleted",
+                    models.BooleanField(
+                        db_index=True,
+                        default=False,
+                        help_text="Indicates whether this record has been soft-deleted.",
+                        verbose_name="Is deleted",
+                    ),
+                ),
+                (
+                    "tenant_number",
+                    models.CharField(
+                        editable=False,
+                        help_text="Auto-generated unique identifier for the tenant. In signals.py",
+                        max_length=20,
+                        unique=True,
+                        verbose_name="Tenant number",
+                    ),
+                ),
+                ("nationality", models.CharField(blank=True, max_length=100)),
+                ("occupation", models.CharField(blank=True, max_length=150)),
+                ("verified", models.BooleanField(default=False)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_created",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created by",
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_updated",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Updated by",
+                    ),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="tenant_profile",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'tenant',
-                'verbose_name_plural': 'tenants',
-                'db_table': 'tenants',
-                'ordering': ['-created_at'],
+                "verbose_name": "tenant",
+                "verbose_name_plural": "tenants",
+                "db_table": "tenants",
+                "ordering": ["-created_at"],
             },
         ),
         migrations.AddIndex(
-            model_name='user',
-            index=models.Index(fields=['status'], name='user_status_idx'),
+            model_name="user",
+            index=models.Index(fields=["status"], name="user_status_idx"),
         ),
         migrations.AddIndex(
-            model_name='user',
-            index=models.Index(fields=['created_at'], name='user_created_at_idx'),
+            model_name="user",
+            index=models.Index(fields=["created_at"], name="user_created_at_idx"),
         ),
         migrations.AddIndex(
-            model_name='employee',
-            index=models.Index(fields=['hire_date'], name='employee_hire_date_idx'),
+            model_name="employee",
+            index=models.Index(fields=["hire_date"], name="employee_hire_date_idx"),
         ),
         migrations.AddIndex(
-            model_name='employee',
-            index=models.Index(fields=['status'], name='employee_status_idx'),
+            model_name="employee",
+            index=models.Index(fields=["status"], name="employee_status_idx"),
         ),
     ]

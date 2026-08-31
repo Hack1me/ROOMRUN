@@ -2,8 +2,10 @@ from core.models import BaseModel
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
+from djmoney.money import Money
 from rentals.models import RentalContract
 from utils.enums import ChargeStatus
 from utils.enums import ChargeType
@@ -17,6 +19,9 @@ class Charge(BaseModel):
     Represents a financial charge associated with a rental contract.
     Each charge has a unique number, a type, and a status.
     """
+
+    reference_field = "charge_number"
+    reference_prefix = "CHG"
 
     # -------------------------------------------------------------------------
     # Core Fields
@@ -34,6 +39,7 @@ class Charge(BaseModel):
         max_length=50,
         unique=True,
         editable=False,
+        blank=True,
         verbose_name=_("Charge number"),
         help_text=_("Auto-generated unique identifier for the charge."),
         # Generation logic must be added via a signals.py
@@ -49,7 +55,7 @@ class Charge(BaseModel):
     amount = MoneyField(  # Changed to MoneyField for consistency
         max_digits=12,
         decimal_places=2,
-        default_currency="USD",  # Adjust to your default currency
+        default_currency="XAF",
         verbose_name=_("Amount"),
         help_text=_("Charge amount in the local currency."),
     )
@@ -103,19 +109,41 @@ class Charge(BaseModel):
         return reverse("billing:charge-detail", kwargs={"pk": self.id})
 
     def clean(self):
-        """
-        Business-rule validations:
-        - Ensure due_date is not in the past (optional, uncomment if needed)
-        """
-        from datetime import date  # noqa: PLC0415
+        super().clean()
+        if self.amount and self.amount <= Money(0, self.amount.currency):
+            raise ValidationError(_("Charge amount must be greater than zero."))
 
-        if self.due_date and self.due_date < date.today():  # noqa: DTZ011
-            raise ValidationError(_("Due date cannot be in the past."))
+    @property
+    def total_paid(self) -> Money:
+        total = Money(0, self.amount.currency)
+        for payment in self.payments.filter(status=PaymentStatus.COMPLETED):
+            total += payment.amount
+        return total
 
-    def save(self, *args, **kwargs):
-        """Run full validation before saving."""
-        self.full_clean()
-        super().save(*args, **kwargs)
+    @property
+    def balance_due(self) -> Money:
+        return max(self.amount - self.total_paid, Money(0, self.amount.currency))
+
+    @property
+    def is_overdue(self) -> bool:
+        return (
+            self.balance_due > Money(0, self.amount.currency)
+            and self.due_date < timezone.localdate()
+        )
+
+    def refresh_status(self) -> None:
+        if self.balance_due == Money(0, self.amount.currency):
+            status = ChargeStatus.PAID
+        elif self.total_paid > Money(0, self.amount.currency):
+            status = ChargeStatus.PARTIAL
+        elif self.is_overdue:
+            status = ChargeStatus.OVERDUE
+        else:
+            status = ChargeStatus.PENDING
+
+        if self.status != status:
+            self.status = status
+            self.save(update_fields=["status", "updated_at"])
 
 
 # PAYEMENT
@@ -125,6 +153,9 @@ class Payment(BaseModel):
     Each payment has a unique number and a status tracking its lifecycle.
     """
 
+    reference_field = "payment_number"
+    reference_prefix = "PAY"
+
     # -------------------------------------------------------------------------
     # Core Fields
     # -------------------------------------------------------------------------
@@ -133,6 +164,7 @@ class Payment(BaseModel):
         max_length=50,
         unique=True,
         editable=False,
+        blank=True,
         verbose_name=_("Payment number"),
         help_text=_("Auto-generated unique identifier for the payment."),
         # Generation logic must be added via a signals.py
@@ -227,29 +259,42 @@ class Payment(BaseModel):
         2. When status is PAID, paid_at must be set and not in the future.
         3. When status is PAID, paid_at must be provided.
         """
-        if self.amount and self.amount <= 0:
+        super().clean()
+        if self.amount and self.amount <= Money(0, self.amount.currency):
             raise ValidationError(_("Payment amount must be greater than zero."))
 
-        if self.status == PaymentStatus.PAID:
+        if self.charge_id and self.amount.currency != self.charge.amount.currency:
+            raise ValidationError(_("Payment and charge currencies must match."))
+
+        if self.status == PaymentStatus.COMPLETED:
             if not self.paid_at:
                 raise ValidationError(
-                    _("Paid at date is required when status is PAID.")
+                    _("Paid at date is required when status is COMPLETED.")
                 )
             from django.utils import timezone  # noqa: PLC0415
 
             if self.paid_at > timezone.now():
                 raise ValidationError(_("Paid at date cannot be in the future."))
 
-        # When status is not PAID, paid_at should be null
-        if self.status != PaymentStatus.PAID and self.paid_at:
+        if self.status != PaymentStatus.COMPLETED and self.paid_at:
             raise ValidationError(
-                _("Paid at date should only be set when status is PAID.")
+                _("Paid at date should only be set when status is COMPLETED.")
             )
 
+        if self.status == PaymentStatus.COMPLETED and self.charge_id:
+            previous_total = Money(0, self.charge.amount.currency)
+            for payment in self.charge.payments.filter(
+                status=PaymentStatus.COMPLETED
+            ).exclude(pk=self.pk):
+                previous_total += payment.amount
+            if previous_total + self.amount > self.charge.amount:
+                raise ValidationError(
+                    _("A payment cannot exceed the remaining balance.")
+                )
+
     def save(self, *args, **kwargs):
-        """Run full validation before saving."""
-        self.full_clean()
         super().save(*args, **kwargs)
+        self.charge.refresh_status()
 
 
 # RECEIPT
@@ -259,6 +304,9 @@ class Receipt(BaseModel):
     Each receipt has a unique number and is linked to exactly one payment.
     """
 
+    reference_field = "receipt_number"
+    reference_prefix = "RCP"
+
     # -------------------------------------------------------------------------
     # Core Fields
     # -------------------------------------------------------------------------
@@ -267,6 +315,7 @@ class Receipt(BaseModel):
         max_length=50,
         unique=True,
         editable=False,
+        blank=True,
         verbose_name=_("Receipt number"),
         help_text=_("Auto-generated unique identifier for the receipt."),
         # Generation logic must be added via a signals.py
@@ -312,12 +361,8 @@ class Receipt(BaseModel):
         Business-rule validation:
         A receipt can only be created for a payment that is COMPLETED.
         """
-        if self.payment and self.payment.status != "COMPLETED":
+        super().clean()
+        if self.payment and self.payment.status != PaymentStatus.COMPLETED:
             raise ValidationError(
                 _("Receipts can only be issued for completed payments.")
             )
-
-    def save(self, *args, **kwargs):
-        """Run full validation before saving."""
-        self.full_clean()
-        super().save(*args, **kwargs)

@@ -1,4 +1,5 @@
 import os
+from builtins import property as builtin_property
 
 from core.models import BaseModel
 from core.validators import validate_image_extension
@@ -22,6 +23,9 @@ class Property(BaseModel):
     Inherits from BaseModel, which provides `id`, `created_at`, and `updated_at`.
     """
 
+    reference_field = "property_number"
+    reference_prefix = "PRP"
+
     # -------------------------------------------------------------------------
     # Inner Choices Class
     # -------------------------------------------------------------------------
@@ -32,7 +36,7 @@ class Property(BaseModel):
 
     landlord = models.ForeignKey(
         Landlord,
-        on_delete=models.CASCADE,  # When a landlord is deleted, all their properties are deleted.  # noqa: E501
+        on_delete=models.PROTECT,
         related_name="properties",  # Allows accessing `landlord.properties.all()`.  # noqa: E501
         verbose_name=_("Landlord"),
         null=False,
@@ -43,6 +47,7 @@ class Property(BaseModel):
         max_length=50,
         unique=True,
         editable=False,  # Not editable via forms; automatically generated.  # noqa: E501
+        blank=True,
         verbose_name=_("Property number"),
         help_text=_("Auto-generated unique identifier for the property."),
         # NOTE: Generation logic is provided via a `pre_save` signal.
@@ -135,10 +140,9 @@ class Property(BaseModel):
         """
         Return the total number of rental units across all buildings.
         """
-        from django.db.models import Sum  # noqa: PLC0415
+        from django.db.models import Count  # noqa: PLC0415
 
-        # Aggregate the sum of `units_count` from all buildings belonging to this property.  # noqa: E501
-        result = self.buildings.aggregate(total=Sum("units_count"))["total"]
+        result = self.buildings.aggregate(total=Count("units"))["total"]
         return result or 0  # Return 0 if no buildings exist or no units are defined.
 
 
@@ -226,6 +230,9 @@ class Building(BaseModel):
     Inherits from BaseModel, which provides `id`, `created_at`, and `updated_at`.
     """
 
+    reference_field = "building_number"
+    reference_prefix = "BLD"
+
     # -------------------------------------------------------------------------
     # Inner Choices Class
     # -------------------------------------------------------------------------
@@ -234,9 +241,9 @@ class Building(BaseModel):
     # Core Fields
     # -------------------------------------------------------------------------
 
-    Property = models.ForeignKey(
+    property = models.ForeignKey(
         Property,
-        on_delete=models.CASCADE,  # If property is deleted, all its buildings are deleted.  # noqa: E501
+        on_delete=models.PROTECT,
         related_name="buildings",  # Allows accessing `property.buildings.all()'
         verbose_name=_("property"),
         help_text=_("The property that this building belongs to."),
@@ -246,6 +253,7 @@ class Building(BaseModel):
         max_length=50,
         unique=True,
         editable=False,  # Not editable, Auto-generated In signal.py
+        blank=True,
         verbose_name=_("Building number"),
         help_text=_("Auto-generated unique identifier for the building."),
     )
@@ -290,7 +298,7 @@ class Building(BaseModel):
         verbose_name_plural = _("Buildings")
 
         indexes = [
-            models.Index(fields=["Property"], name="building_property_idx"),
+            models.Index(fields=["property"], name="building_property_idx"),
             # Speeds up queries filtering by property.
             models.Index(fields=["status"], name="building_status_idx"),
             # Speeds up queries filtering by status.
@@ -312,7 +320,7 @@ class Building(BaseModel):
     # Computed Properties
     # -------------------------------------------------------------------------
 
-    @property
+    @builtin_property
     def unit_count(self) -> int:
         """
         Return the total number of rental units in this building.
@@ -340,7 +348,7 @@ class Unit(BaseModel):
 
     building = models.ForeignKey(
         Building,
-        on_delete=models.CASCADE,  # When a building is deleted, all its units are deleted.  # noqa: E501
+        on_delete=models.PROTECT,
         related_name="units",  # Allows accessing `building.units.all()`.
         verbose_name=_("Building"),
         help_text=_("The building that contains this unit."),
@@ -393,7 +401,7 @@ class Unit(BaseModel):
     monthly_rent = MoneyField(
         max_digits=12,
         decimal_places=2,
-        default_currency="USD",
+        default_currency="XAF",
         verbose_name=_("Monthly rent"),
         help_text=_("Monthly rental price in the local currency."),
     )

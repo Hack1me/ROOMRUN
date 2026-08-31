@@ -28,3 +28,17 @@ def generate_unique_identifier[M: models.Model](
         kwargs = {field: identifier}
         if not model.objects.filter(**kwargs).exists():
             return identifier
+
+
+def assign_reference_identifier[M: models.Model](
+    instance: M, *, field: str, prefix: str
+) -> None:
+    """Populate a model reference field when it has not yet been assigned."""
+    if not getattr(instance, field):
+        setattr(
+            instance,
+            field,
+            generate_unique_identifier(
+                prefix=prefix, model=type(instance), field=field
+            ),
+        )

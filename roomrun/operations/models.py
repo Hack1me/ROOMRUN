@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from properties.models import Building
+from users.models import Tenant
 from utils.enums import CleaningStatus
 
 
@@ -16,6 +17,9 @@ class CleaningSchedule(BaseModel):
     assignments (those are handled in CleaningCalendar).
     """
 
+    reference_field = "schedule_number"
+    reference_prefix = "CLS"
+
     # -------------------------------------------------------------------------
     # Core Fields
     # -------------------------------------------------------------------------
@@ -24,9 +28,10 @@ class CleaningSchedule(BaseModel):
         max_length=50,
         unique=True,
         editable=False,
+        blank=True,
         verbose_name=_("Schedule number"),
         help_text=_("Auto-generated unique identifier for the cleaning schedule."),
-        # 🔧 Generation logic must be added via a signal or overridden save()
+        # Generation logic must be added via a signals.py
     )
 
     building = models.ForeignKey(
@@ -71,6 +76,13 @@ class CleaningSchedule(BaseModel):
         help_text=_("Current status of the cleaning schedule."),
     )
 
+    assigned_Tenant = models.ManyToManyField(
+        Tenant,
+        blank=True,
+        related_name="cleaning_schedules",
+        verbose_name=_("Assigned employees"),
+    )
+
     # -------------------------------------------------------------------------
     # Meta Options
     # -------------------------------------------------------------------------
@@ -88,11 +100,11 @@ class CleaningSchedule(BaseModel):
             # Composite index for common filtering on building and date
             models.Index(
                 fields=["building", "scheduled_date"],
-                name="cleaning_schedule_building_date_idx",
+                name="cleaning_building_date_idx",
             ),
         ]
 
-        # Optional: Prevent duplicate schedules for the same building on the same date
+        # Prevent duplicate schedules for the same building on the same date
         constraints = [
             models.UniqueConstraint(
                 fields=["building", "scheduled_date"],
@@ -119,6 +131,7 @@ class CleaningSchedule(BaseModel):
         1. End time must be after start time (if both provided).
         2. Scheduled date cannot be in the past.
         """
+        super().clean()
         # Validate time order
         if self.start_time and self.end_time:
             if self.end_time <= self.start_time:
@@ -127,8 +140,3 @@ class CleaningSchedule(BaseModel):
         # Validate scheduled date is not in the past
         if self.scheduled_date and self.scheduled_date < timezone.now().date():
             raise ValidationError(_("Scheduled date cannot be in the past."))
-
-    def save(self, *args, **kwargs):
-        """Run full validation before saving."""
-        self.full_clean()
-        super().save(*args, **kwargs)

@@ -1,7 +1,7 @@
 from django.db.models.signals import post_delete
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from utils.helpers import generate_unique_identifier
+from utils.helpers import assign_reference_identifier
 
 from .models import Building
 from .models import Property
@@ -11,23 +11,13 @@ from .models import PropertyImage
 @receiver(pre_save, sender=Property)
 def set_property_number(sender, instance, **kwargs):
     """Auto-generate property_number if not already set."""
-    if not instance.property_number:
-        instance.property_number = generate_unique_identifier(
-            prefix="PRP",
-            model=Property,
-            field="property_number",
-        )
+    assign_reference_identifier(instance, field="property_number", prefix="PRP")
 
 
 @receiver(pre_save, sender=Building)
 def set_building_number(sender, instance, **kwargs):
     """Auto-generate building_number if not already set."""
-    if not instance.building_number:
-        instance.building_number = generate_unique_identifier(
-            prefix="BLD",
-            model=Building,
-            field="building_number",
-        )
+    assign_reference_identifier(instance, field="building_number", prefix="BLD")
 
 
 # PROPERTY IMAGE

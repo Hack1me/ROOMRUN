@@ -1,4 +1,5 @@
 from core.models import BaseModel
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
@@ -8,6 +9,7 @@ from properties.models import Unit
 from users.models import Tenant
 from utils.enums import ApplicationStatus
 from utils.enums import ContractStatus
+from utils.enums import UnitStatus
 
 
 # RENTAL APPLICATION
@@ -17,13 +19,16 @@ class RentalApplication(BaseModel):
     Each application has a status and an auto-generated unique number.
     """
 
+    reference_field = "application_number"
+    reference_prefix = "APP"
+
     # -------------------------------------------------------------------------
     # Core Fields
     # -------------------------------------------------------------------------
 
     tenant = models.ForeignKey(
         Tenant,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="rental_applications",
         verbose_name=_("Tenant"),
         help_text=_("The tenant submitting the application."),
@@ -31,7 +36,7 @@ class RentalApplication(BaseModel):
 
     unit = models.ForeignKey(
         Unit,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="rental_applications",
         verbose_name=_("Unit"),
         help_text=_("The unit being applied for."),
@@ -41,6 +46,7 @@ class RentalApplication(BaseModel):
         max_length=50,
         unique=True,
         editable=False,
+        blank=True,
         verbose_name=_("Application number"),
         help_text=_("Auto-generated unique identifier for the application."),
         # Generation logic must be provided via a signals.py
@@ -61,10 +67,26 @@ class RentalApplication(BaseModel):
         help_text=_("Current status of the rental application."),
     )
 
-    reviewed_at = models.DateTimeField(
+    applied_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_("Applied at"),
-        help_text=_("Reviewed time of the rental application"),
+        help_text=_("Time at which the application was submitted."),
+    )
+
+    reviewed_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Reviewed at"),
+        help_text=_("Time at which the application was reviewed."),
+    )
+
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="reviewed_rental_applications",
+        verbose_name=_("Reviewed by"),
     )
 
     # -------------------------------------------------------------------------
@@ -81,7 +103,7 @@ class RentalApplication(BaseModel):
             models.Index(fields=["tenant"], name="rental_app_tenant_idx"),
             models.Index(fields=["unit"], name="rental_app_unit_idx"),
             models.Index(fields=["status"], name="rental_app_status_idx"),
-            models.Index(fields=["reviewed_at"], name="rental_app_reviewed_at_idex"),
+            models.Index(fields=["reviewed_at"], name="rental_app_reviewed_at_idx"),
         ]
 
         # prevent duplicate applications from the same tenant for the same unit
@@ -110,16 +132,22 @@ class RentalApplication(BaseModel):
         Business-rule validation: a tenant cannot have an approved application
         for the same unit.
         """
-        if self.status == self.ApplicationStatus.APPROVED:
+        super().clean()
+        if self.status == ApplicationStatus.APPROVED:
             existing = RentalApplication.objects.filter(
                 tenant=self.tenant,
                 unit=self.unit,
-                status=self.ApplicationStatus.APPROVED,
+                status=ApplicationStatus.APPROVED,
             ).exclude(pk=self.pk)
             if existing.exists():
                 raise ValidationError(
                     _("This tenant already has an approved application for this unit.")
                 )
+
+        if self.status != ApplicationStatus.PENDING and not self.reviewed_at:
+            raise ValidationError(
+                _("Reviewed at is required once an application is decided.")
+            )
 
 
 # RENTAL CONTRACT
@@ -128,6 +156,9 @@ class RentalContract(BaseModel):
     Represents a rental contract between a tenant and a unit.
     Each contract has a unique number and a status indicating its lifecycle.
     """
+
+    reference_field = "contract_number"
+    reference_prefix = "CNT"
 
     # -------------------------------------------------------------------------
     # Core Fields
@@ -149,10 +180,21 @@ class RentalContract(BaseModel):
         help_text=_("The unit being rented under this contract."),
     )
 
+    application = models.OneToOneField(
+        RentalApplication,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="rental_contract",
+        verbose_name=_("Rental application"),
+        help_text=_("Approved application that resulted in this contract."),
+    )
+
     contract_number = models.CharField(
         max_length=50,
         unique=True,
         editable=False,
+        blank=True,
         verbose_name=_("Contract number"),
         help_text=_("Auto-generated unique identifier for the contract."),
         # Generation logic must be added via a signals.py
@@ -182,7 +224,7 @@ class RentalContract(BaseModel):
         max_digits=12,
         decimal_places=2,
         default=0,
-        default_currency="USD",
+        default_currency="XAF",
         verbose_name=_("Security deposit"),
         help_text=_("Security deposit required at contract signing."),
     )
@@ -214,11 +256,11 @@ class RentalContract(BaseModel):
         ]
 
         constraints = [
-            # Ensure a tenant cannot have two ACTIVE contracts for the same unit
+            # A unit can have only one active contract at a time.
             models.UniqueConstraint(
-                fields=["tenant", "unit"],
+                fields=["unit"],
                 condition=models.Q(status="ACTIVE"),
-                name="unique_active_contract_per_tenant_unit",
+                name="unique_active_contract_per_unit",
             ),
         ]
 
@@ -243,19 +285,34 @@ class RentalContract(BaseModel):
         if self.end_date and self.end_date <= self.start_date:
             raise ValidationError(_("End date must be after the start date."))
 
-        if self.status == self.ContractStatus.ACTIVE:
-            # Check for duplicate active contracts (besides this one)
+        super().clean()
+        if self.application and (
+            self.application.tenant_id != self.tenant_id
+            or self.application.unit_id != self.unit_id
+        ):
+            raise ValidationError(
+                _("The linked application must concern the same tenant and unit.")
+            )
+
+        if self.status == ContractStatus.ACTIVE:
             existing = RentalContract.objects.filter(
-                tenant=self.tenant,
                 unit=self.unit,
-                status=self.ContractStatus.ACTIVE,
+                status=ContractStatus.ACTIVE,
             ).exclude(pk=self.pk)
             if existing.exists():
-                raise ValidationError(
-                    _("This tenant already has an active contract for this unit.")
-                )
+                raise ValidationError(_("This unit already has an active contract."))
 
     def save(self, *args, **kwargs):
-        """Run full validation before saving."""
-        self.full_clean()
         super().save(*args, **kwargs)
+        if self.status == ContractStatus.ACTIVE:
+            Unit.objects.filter(pk=self.unit_id).update(status=UnitStatus.OCCUPIED)
+        elif (
+            not RentalContract.objects.filter(
+                unit_id=self.unit_id, status=ContractStatus.ACTIVE
+            )
+            .exclude(pk=self.pk)
+            .exists()
+        ):
+            Unit.objects.filter(pk=self.unit_id, status=UnitStatus.OCCUPIED).update(
+                status=UnitStatus.AVAILABLE
+            )

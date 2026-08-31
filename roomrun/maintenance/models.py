@@ -19,6 +19,9 @@ class MaintenanceRequest(BaseModel):
     Each request has a unique number and tracks its lifecycle status.
     """
 
+    reference_field = "request_number"
+    reference_prefix = "MNT"
+
     # -------------------------------------------------------------------------
     # Core Fields
     # -------------------------------------------------------------------------
@@ -27,6 +30,7 @@ class MaintenanceRequest(BaseModel):
         max_length=50,
         unique=True,
         editable=False,
+        blank=True,
         verbose_name=_("Request number"),
         help_text=_("Auto-generated unique identifier for the maintenance request."),
         # Generation logic must be added via a signals.py
@@ -118,6 +122,24 @@ class MaintenanceRequest(BaseModel):
         1. When status is RESOLVED, resolved_at must be set.
         2. resolved_at cannot be in the future.
         """
+        super().clean()
+        if self.tenant_id and self.unit_id:
+            from rentals.models import RentalContract  # noqa: PLC0415
+            from utils.enums import ContractStatus  # noqa: PLC0415
+
+            is_occupant = RentalContract.objects.filter(
+                tenant_id=self.tenant_id,
+                unit_id=self.unit_id,
+                status=ContractStatus.ACTIVE,
+            ).exists()
+            if not is_occupant:
+                raise ValidationError(
+                    _(
+                        "A maintenance request can only concern the tenant's "
+                        "active unit."
+                    )
+                )
+
         if self.status == RequestStatus.RESOLVED:
             if not self.resolved_at:
                 raise ValidationError(
@@ -132,10 +154,24 @@ class MaintenanceRequest(BaseModel):
                 _("Resolved at should only be set when status is RESOLVED.")
             )
 
-    def save(self, *args, **kwargs):
-        """Run full validation before saving."""
-        self.full_clean()
-        super().save(*args, **kwargs)
+
+class MaintenanceRequestAttachment(BaseModel):
+    """File or photo supplied as evidence for a maintenance request."""
+
+    maintenance_request = models.ForeignKey(
+        MaintenanceRequest,
+        on_delete=models.CASCADE,
+        related_name="attachments",
+        verbose_name=_("Maintenance request"),
+    )
+    file = models.FileField(upload_to="maintenance/attachments/")
+    caption = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        ordering = ["created_at"]
+
+    def __str__(self) -> str:
+        return self.caption or self.file.name
 
 
 # TASK
@@ -146,6 +182,9 @@ class Task(BaseModel):
     through to completion.
     """
 
+    reference_field = "task_number"
+    reference_prefix = "TSK"
+
     # -------------------------------------------------------------------------
     # Core Fields
     # -------------------------------------------------------------------------
@@ -154,6 +193,7 @@ class Task(BaseModel):
         max_length=50,
         unique=True,
         editable=False,
+        blank=True,
         verbose_name=_("Task number"),
         help_text=_("Auto-generated unique identifier for the task."),
         # Generation logic must be added via a signals.py
@@ -252,6 +292,7 @@ class Task(BaseModel):
         1. Timestamps must be in chronological order.
         2. Status must be consistent with timestamps.
         """
+        super().clean()
         # Validate chronological order
         if self.scheduled_at and self.started_at:
             if self.started_at < self.scheduled_at:
@@ -282,8 +323,3 @@ class Task(BaseModel):
             # Allow started_at to be set even if status is not IN_PROGRESS
             # (e.g., scheduled tasks may have a start time)
             pass
-
-    def save(self, *args, **kwargs):
-        """Run full validation before saving."""
-        self.full_clean()
-        super().save(*args, **kwargs)

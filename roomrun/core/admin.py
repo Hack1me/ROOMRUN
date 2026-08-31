@@ -1,3 +1,5 @@
-# from django.contrib import admin  # noqa: ERA001
+from django.contrib import admin
 
-# Register your models here.
+from .models import StatusHistory
+
+admin.site.register(StatusHistory)
