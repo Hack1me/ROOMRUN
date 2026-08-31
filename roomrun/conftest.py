@@ -1,13 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 import pytest
-
-from roomrun.users.tests.factories import UserFactory
-
-if TYPE_CHECKING:
-    from roomrun.roomrun.users.models import User
+from users.models import User
 
 
 @pytest.fixture(autouse=True)
@@ -17,4 +11,7 @@ def _media_storage(settings, tmpdir) -> None:
 
 @pytest.fixture
 def user(db) -> User:
-    return UserFactory.create()
+    return User.objects.create_user(
+        email="user@example.com",
+        password="test-password",  # noqa: S106
+    )

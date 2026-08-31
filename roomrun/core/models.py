@@ -222,3 +222,4 @@ class StatusHistory(models.Model):
 
     def __str__(self) -> str:
         return f"{self.content_object}: {self.previous_status} → {self.status}"
+
