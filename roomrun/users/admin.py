@@ -6,6 +6,12 @@ from django.utils.translation import gettext_lazy as _
 
 from .forms import UserAdminChangeForm
 from .forms import UserAdminCreationForm
+from .models import Employee
+from .models import Guard
+from .models import Invitation
+from .models import Landlord
+from .models import MaintenanceAgent
+from .models import Tenant
 from .models import User
 
 if settings.DJANGO_ADMIN_FORCE_ALLAUTH:
@@ -48,3 +54,8 @@ class UserAdmin(auth_admin.UserAdmin):
             },
         ),
     )
+
+
+admin.site.register(
+    [Landlord, Tenant, Employee, MaintenanceAgent, Guard, Invitation]
+)
