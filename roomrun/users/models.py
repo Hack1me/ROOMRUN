@@ -668,3 +668,4 @@ class Invitation(BaseModel):
         self.employee = employee
         self.accepted_at = timezone.now()
         self.save()
+
