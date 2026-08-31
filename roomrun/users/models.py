@@ -34,6 +34,9 @@ from phonenumber_field.modelfields import PhoneNumberField
 from users.managers import UserManager
 from utils.enums import EmployeeStatus
 from utils.enums import GuardShift
+from utils.enums import InvitationRole
+from utils.enums import InvitationStatus
+from utils.enums import UserStatus
 
 # =====================================================================
 # USER - Custom authentication model
@@ -63,19 +66,6 @@ class User(BaseModel, AbstractUser):
 
     # No additional fields required for createsuperuser (email is already required).
     REQUIRED_FIELDS = []
-
-    # -----------------------------------------------------------------
-    # Inner Choices class
-    # -----------------------------------------------------------------
-
-    class UserStatus(models.TextChoices):
-        """
-        Possible account statuses for a user.
-        """
-
-        ACTIVE = "ACTIVE", _("Actif")  # Normal active account
-        INACTIVE = "INACTIVE", _("Inactif")  # Disabled but not suspended
-        SUSPENDED = "SUSPENDED", _("Suspendu")  # Temporarily blocked
 
     # -----------------------------------------------------------------
     # Personal information fields
@@ -182,7 +172,7 @@ class User(BaseModel, AbstractUser):
 
     def is_active_user(self) -> bool:
         """Check if the account status is ACTIVE."""
-        return self.status == self.UserStatus.ACTIVE
+        return self.status == UserStatus.ACTIVE
 
     def get_absolute_url(self) -> str:
         """URL to the user detail page (for admin or frontend)."""
@@ -518,16 +508,6 @@ class Invitation(BaseModel):
         - Existing user: links to an existing User/Employee
     """
 
-    class InvitationStatus(models.TextChoices):
-        PENDING = "PENDING", _("Pending")
-        ACCEPTED = "ACCEPTED", _("Accepted")
-        EXPIRED = "EXPIRED", _("Expired")
-        REJECTED = "REJECTED", _("Rejected")
-
-    class InvitationRole(models.TextChoices):
-        MAINTENANCE = "MAINTENANCE", _("Maintenance Agent")
-        GUARD = "GUARD", _("Guard")
-
     # -----------------------------------------------------------------
     # Core fields
     # -----------------------------------------------------------------
@@ -657,7 +637,7 @@ class Invitation(BaseModel):
         """
         Mark the invitation as accepted and link it to the user/employee.
         """
-        self.status = self.InvitationStatus.ACCEPTED
+        self.status = InvitationStatus.ACCEPTED
         self.user = user
         self.employee = employee
         self.accepted_at = timezone.now()

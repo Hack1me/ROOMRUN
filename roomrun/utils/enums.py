@@ -4,18 +4,33 @@ from django.utils.translation import gettext_lazy as _
 
 
 class EmployeeStatus(models.TextChoices):
+    """
+    Defines the possible employment statuses for an employee.
+    Used to track whether an employee is actively working, inactive, or suspended.
+    """
+
     ACTIVE = "ACTIVE", _("Active")
     INACTIVE = "INACTIVE", _("Inactive")
     SUSPENDED = "SUSPENDED", _("Suspended")
 
 
 class GuardShift(models.TextChoices):
+    """
+    Defines the possible shift types for security guards.
+    Used to schedule and manage guard shifts across different times of day.
+    """
+
     DAY = "DAY", _("Day")
     NIGHT = "NIGHT", _("Night")
     ROTATING = "ROTATING", _("Rotating")
 
 
 class PropertyStatus(models.TextChoices):
+    """
+    Defines the possible operational statuses for a property.
+    Indicates if property is actively managed, inactive, or under construction.
+    """
+
     ACTIVE = "ACTIVE", _("Active")
     INACTIVE = "INACTIVE", _("Inactive")
     UNDER_CONSTRUCTION = "UNDER_CONSTRUCTION", _("Under construction")
@@ -49,6 +64,11 @@ class UnitType(models.TextChoices):
 
 
 class ApplicationStatus(models.TextChoices):
+    """
+    Defines the lifecycle status of a rental application.
+    Tracks the progress from submission through approval, rejection, or cancellation.
+    """
+
     PENDING = "PENDING", _("Pending")
     APPROVED = "APPROVED", _("Approved")
     REJECTED = "REJECTED", _("Rejected")
@@ -56,6 +76,11 @@ class ApplicationStatus(models.TextChoices):
 
 
 class ContractStatus(models.TextChoices):
+    """
+    Defines the lifecycle status of a rental contract.
+    Indicates the current state of a lease agreement between landlord and tenant.
+    """
+
     ACTIVE = "ACTIVE", _("Active")
     COMPLETED = "COMPLETED", _("Completed")
     TERMINATED = "TERMINATED", _("Terminated")
@@ -143,6 +168,12 @@ class RequestStatus(models.TextChoices):
 
 
 class TaskStatus(models.TextChoices):
+    """
+    Defines the lifecycle status of a work task.
+    Tracks progression from creation through assignment, execution, completion,
+    or cancellation.
+    """
+
     PENDING = "PENDING", _("Pending")
     ASSIGNED = "ASSIGNED", _("Assigned")
     IN_PROGRESS = "IN_PROGRESS", _("In progress")
@@ -151,6 +182,11 @@ class TaskStatus(models.TextChoices):
 
 
 class CleaningStatus(models.TextChoices):
+    """
+    Defines the lifecycle status of a cleaning operation.
+    Tracks cleaning tasks from scheduling through completion or cancellation.
+    """
+
     SCHEDULED = "SCHEDULED", _("Scheduled")
     IN_PROGRESS = "IN_PROGRESS", _("In progress")
     COMPLETED = "COMPLETED", _("Completed")
@@ -158,6 +194,11 @@ class CleaningStatus(models.TextChoices):
 
 
 class AnnouncementStatus(models.TextChoices):
+    """
+    Defines the lifecycle status of an announcement.
+    Tracks from draft through scheduling, publishing, expiration or archival.
+    """
+
     ARCHIVED = "ARCHIVED", _("Archived")
     EXPIRED = "EXPIRED", _("Expired")
     DRAFT = "DRAFT", _("Draft")
@@ -166,15 +207,58 @@ class AnnouncementStatus(models.TextChoices):
 
 
 class AnnouncementTarget(models.TextChoices):
+    """
+    Defines the scope/target audience for an announcement.
+    Used to control who receives a particular announcement.
+    """
+
     ALL_TENANTS = "ALL_TENANTS", _("All tenants")
     BUILDING = "BUILDING", _("Building")
     UNIT = "UNIT", _("Unit")
 
 
 class NotificationType(models.TextChoices):
+    """
+    Defines the categories of notifications that can be sent to users.
+    Used to categorize and filter notifications by type.
+    """
+
     PAYMENT = "PAYMENT", _("Payment")
     RENT_REMINDER = "RENT_REMINDER", _("Rent reminder")
     MAINTENANCE = "MAINTENANCE", _("Maintenance")
     TASK = "TASK", _("Task")
     ANNOUNCEMENT = "ANNOUNCEMENT", _("Announcement")
     SYSTEM = "SYSTEM", _("System")
+
+
+class UserStatus(models.TextChoices):
+    """
+    Defines the possible account statuses for a user.
+    Used to track user account lifecycle: active, inactive, or suspended.
+    """
+
+    ACTIVE = "ACTIVE", _("Actif")  # Normal active account
+    INACTIVE = "INACTIVE", _("Inactif")  # Disabled but not suspended
+    SUSPENDED = "SUSPENDED", _("Suspendu")  # Temporarily blocked
+
+
+class InvitationStatus(models.TextChoices):
+    """
+    Defines the lifecycle status of an invitation.
+    Tracks invitations from pending through acceptance, expiration, or rejection.
+    """
+
+    PENDING = "PENDING", _("Pending")
+    ACCEPTED = "ACCEPTED", _("Accepted")
+    EXPIRED = "EXPIRED", _("Expired")
+    REJECTED = "REJECTED", _("Rejected")
+
+
+class InvitationRole(models.TextChoices):
+    """
+    Defines the roles that can be offered through an invitation.
+    Used to specify what position a new employee is being invited to fill.
+    """
+
+    MAINTENANCE = "MAINTENANCE", _("Maintenance Agent")
+    GUARD = "GUARD", _("Guard")
