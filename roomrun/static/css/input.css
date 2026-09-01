@@ -1,1 +1,163 @@
 @import "tailwindcss";
+
+/* ========== DESIGN TOKENS ========== */
+@theme {
+  --color-primary: #1e3a5f;
+  --color-primary-hover: #17304f;
+  --color-secondary: #4a90d9;
+  --color-surface: #f5f6f8;
+  --color-success: #2e9e5b;
+  --color-warning: #b9770e;
+  --color-danger: #d64545;
+  --color-ink: #1e293b;
+  --color-muted: #6b7280;
+  --color-text: #1e293b;
+  --color-border: #e5e7eb;
+  --color-line: #e5e7eb;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --radius-card: 0.75rem;
+  --radius-input: 0.5rem;
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes auth-float {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-0.625rem, -0.9375rem); }
+}
+
+/* ========== TAILWIND COMPONENTS ========== */
+
+/* Form Input Components */
+@layer components {
+  /* Base form input styling */
+  .form-input {
+    @apply h-11 px-3 pl-9 border border-border rounded-lg bg-white text-sm outline-none transition-all duration-150;
+  }
+
+  .form-input::placeholder {
+    @apply text-gray-400;
+  }
+
+  /* Input with focus effect */
+  .input-focus {
+    @apply focus:border-secondary focus:shadow-[0_0_0_3px_rgba(74,144,217,0.15)];
+  }
+
+  /* Input group wrapper for icons */
+  .input-group {
+    @apply relative;
+  }
+
+  .input-group .input-icon {
+    @apply transition-colors duration-200 text-muted;
+  }
+
+  .input-group:focus-within .input-icon {
+    @apply text-secondary;
+  }
+
+  /* Password toggle button */
+  .password-toggle {
+    @apply absolute right-3 top-1/2 -translate-y-1/2 border-none bg-none text-gray-400 cursor-pointer p-1 rounded transition-all duration-200;
+  }
+
+  .password-toggle:hover {
+    @apply text-primary bg-black/3;
+  }
+
+  .password-toggle:focus {
+    @apply outline-none shadow-[0_0_0_3px_rgba(74,144,217,0.2)];
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply transition-all duration-200;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    @apply bg-primary-hover -translate-y-1 shadow-lg shadow-primary/30;
+  }
+
+  .btn-primary:active:not(:disabled) {
+    @apply scale-98;
+  }
+
+  .btn-primary:focus {
+    @apply outline-none;
+  }
+
+  .btn-primary:disabled {
+    @apply opacity-60 cursor-not-allowed;
+  }
+
+  /* Social/Secondary buttons */
+  .social-btn {
+    @apply transition-all duration-200 border-2 border-border;
+  }
+
+  .social-btn:hover {
+    @apply bg-gray-50 border-gray-400 shadow-sm;
+  }
+
+  .social-btn:active {
+    @apply scale-[0.98];
+  }
+
+  .social-btn:focus {
+    @apply outline-none shadow-[0_0_0_3px_rgba(74,144,217,0.2)];
+  }
+
+  /* Checkboxes */
+  .checkbox-custom {
+    @apply appearance-none w-[18px] h-[18px] min-w-[18px] border-2 border-border rounded cursor-pointer relative transition-all duration-150;
+    @apply focus:shadow-[0_0_0_3px_rgba(74,144,217,0.2)] focus:border-secondary disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .checkbox-custom:checked {
+    @apply bg-primary border-primary;
+  }
+
+  .checkbox-custom:checked::after {
+    content: "✓";
+    @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-xs font-bold;
+  }
+
+  /* Messages & Alerts */
+  .error-message,
+  .errorlist li {
+    @apply text-danger text-xs;
+  }
+
+  .errorlist {
+    @apply list-none p-0 m-0;
+  }
+
+  .errorlist li {
+    @apply mt-1;
+  }
+
+  .form-error {
+    @apply border border-danger/20 bg-danger/5 rounded-lg;
+  }
+
+  .success-message {
+    @apply text-success;
+  }
+
+  .warning-message {
+    @apply text-warning;
+  }
+
+  /* Form Layout Helpers */
+  .form-label {
+    @apply font-medium text-xs text-text;
+  }
+
+  .form-field {
+    @apply flex flex-col gap-2;
+  }
+
+  .form-row {
+    @apply grid grid-cols-2 gap-4;
+  }
+}

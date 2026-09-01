@@ -15,6 +15,10 @@ SECRET_KEY = env(
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]  # noqa: S104
 
+# Keep public pages renderable when developing the UI without PostgreSQL running.
+# Database writes that require an atomic boundary already use transaction.atomic().
+DATABASES["default"]["ATOMIC_REQUESTS"] = False
+
 # CACHES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#caches

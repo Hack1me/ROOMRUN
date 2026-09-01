@@ -1,0 +1,220 @@
+{% extends "home/pages/auth/layout.html" %}
+{% load i18n static %}
+
+{% block title %}{% translate "Create an account" %} | ROOMRUN{% endblock title %}
+
+{% block content %}
+  <section class="flex w-full items-center justify-center bg-white px-6 py-10 shadow-lg shadow-primary/5 lg:w-[58%]">
+    <div class="w-full max-w-110">
+      <!-- Mobile logo -->
+      <a href="{% url 'home' %}" class="mb-10 flex items-center justify-center gap-2 lg:hidden" aria-label="ROOMRUN">
+        <span class="flex size-10 items-center justify-center rounded-lg bg-primary shadow-md shadow-primary/20">
+          <i class="ti ti-building-community text-white text-xl"></i>
+        </span>
+        <span class="text-lg font-semibold text-primary">ROOMRUN</span>
+      </a>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <p class="mb-2 text-xs font-medium text-secondary tracking-widest">
+          {% translate "WELCOME TO ROOMRUN" %}
+        </p>
+        <h2 class="text-2xl font-semibold tracking-tight text-primary">
+          {% translate "Create your account" %}
+        </h2>
+        <p class="mt-2 text-sm text-muted">
+          {% translate "Start managing your space now." %}
+        </p>
+      </div>
+
+      <!-- Messages -->
+      {% include "home/pages/auth/_messages.html" %}
+
+      <!-- Form -->
+      <form method="post" class="space-y-5" novalidate>
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+          <div class="rounded-input border border-danger/20 bg-danger/5 px-3 py-2 text-sm text-danger">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+
+        <!-- First & Last Name -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="{{ form.first_name.id_for_label }}" class="mb-2 block text-xs font-medium text-text">
+              {{ form.first_name.label }}
+            </label>
+            <div class="relative input-group">
+              <i class="ti ti-user absolute left-3 top-1/2 -translate-y-1/2 text-muted input-icon text-sm" aria-hidden="true"></i>
+              <input 
+                id="{{ form.first_name.id_for_label }}" 
+                type="text" 
+                name="first_name" 
+                value="{{ form.first_name.value|default:'' }}"
+                placeholder="{% translate 'John' %}"
+                class="form-input input-focus w-full"
+                required>
+            </div>
+            {% for error in form.first_name.errors %}<p class="mt-1 text-xs text-danger">{{ error }}</p>{% endfor %}
+          </div>
+
+          <div>
+            <label for="{{ form.last_name.id_for_label }}" class="mb-2 block text-xs font-medium text-text">
+              {{ form.last_name.label }}
+            </label>
+            <input 
+              id="{{ form.last_name.id_for_label }}" 
+              type="text" 
+              name="last_name" 
+              value="{{ form.last_name.value|default:'' }}"
+              placeholder="{% translate 'Doe' %}"
+              class="form-input input-focus w-full"
+              required>
+            {% for error in form.last_name.errors %}<p class="mt-1 text-xs text-danger">{{ error }}</p>{% endfor %}
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label for="{{ form.email.id_for_label }}" class="mb-2 block text-xs font-medium text-text">
+            {{ form.email.label }}
+          </label>
+          <div class="relative input-group">
+            <i class="ti ti-mail absolute left-3 top-1/2 -translate-y-1/2 text-muted input-icon text-sm" aria-hidden="true"></i>
+            <input 
+              id="{{ form.email.id_for_label }}" 
+              type="email" 
+              name="email" 
+              value="{{ form.email.value|default:'' }}"
+              placeholder="you@example.com"
+              class="form-input input-focus w-full"
+              required>
+          </div>
+          {% for error in form.email.errors %}<p class="mt-1 text-xs text-danger">{{ error }}</p>{% endfor %}
+        </div>
+
+        <!-- Password -->
+        <div>
+          <div class="mb-2 flex items-center justify-between">
+            <label for="{{ form.password1.id_for_label }}" class="text-xs font-medium text-text">
+              {{ form.password1.label }}
+            </label>
+            <span class="text-[11px] text-muted">{% translate "8 characters minimum" %}</span>
+          </div>
+          <div class="relative input-group">
+            <i class="ti ti-lock absolute left-3 top-1/2 -translate-y-1/2 text-muted input-icon text-sm" aria-hidden="true"></i>
+            <input 
+              id="{{ form.password1.id_for_label }}" 
+              type="password" 
+              name="password1" 
+              placeholder="••••••••"
+              class="form-input input-focus w-full pr-10"
+              required>
+            <button
+              type="button"
+              class="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted transition hover:bg-black/4 hover:text-primary focus:outline-none focus:ring-2 focus:ring-secondary/30"
+              data-password-toggle="{{ form.password1.id_for_label }}"
+              aria-label="{% translate 'Show password' %}">
+              <i class="ti ti-eye text-lg" aria-hidden="true"></i>
+            </button>
+          </div>
+          {% for error in form.password1.errors %}<p class="mt-1 text-xs text-danger">{{ error }}</p>{% endfor %}
+        </div>
+
+        <!-- Confirm Password -->
+        <div>
+          <label for="{{ form.password2.id_for_label }}" class="mb-2 block text-xs font-medium text-text">
+            {{ form.password2.label }}
+          </label>
+          <div class="relative input-group">
+            <i class="ti ti-lock-check absolute left-3 top-1/2 -translate-y-1/2 text-muted input-icon text-sm" aria-hidden="true"></i>
+            <input 
+              id="{{ form.password2.id_for_label }}" 
+              type="password" 
+              name="password2" 
+              placeholder="••••••••"
+              class="form-input input-focus w-full"
+              required>
+          </div>
+          {% for error in form.password2.errors %}<p class="mt-1 text-xs text-danger">{{ error }}</p>{% endfor %}
+        </div>
+
+        <!-- Terms Acceptance -->
+        <div class="flex items-start gap-3 pt-1">
+          <input 
+            id="{{ form.accept_terms.id_for_label }}" 
+            type="checkbox" 
+            name="accept_terms"
+            class="checkbox-custom"
+            required>
+          <label for="{{ form.accept_terms.id_for_label }}" class="text-xs leading-5 text-muted">
+            {% translate "I accept the" %}
+            <a href="#" class="font-medium text-primary transition hover:text-secondary">
+              {% translate "terms of use" %}
+            </a>
+            {% translate "and the" %}
+            <a href="#" class="font-medium text-primary transition hover:text-secondary">
+              {% translate "privacy policy" %}
+            </a>.
+          </label>
+        </div>
+        {% for error in form.accept_terms.errors %}<p class="-mt-3 text-xs text-danger">{{ error }}</p>{% endfor %}
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="btn-primary group flex h-11 w-full items-center justify-center gap-2 rounded-input bg-primary text-sm font-medium text-white focus:outline-none focus:ring-3 focus:ring-secondary/30">
+          {% translate "Create my account" %}
+          <i class="ti ti-arrow-right transition-transform group-hover:translate-x-1" aria-hidden="true"></i>
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <div class="flex items-center gap-4 my-7">
+        <div class="flex-1 h-px bg-border"></div>
+        <span class="text-[11px] text-muted font-medium tracking-wider">OR</span>
+        <div class="flex-1 h-px bg-border"></div>
+      </div>
+
+      <!-- Google Sign Up -->
+      <button
+        type="button"
+        class="social-btn w-full h-11 flex items-center justify-center gap-3 bg-white border-border rounded-input text-sm font-medium text-text transition">
+        <svg width="17" height="17" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M21.35 12.23c0-.79-.07-1.55-.23-2.27H12v4.3h5.23a4.47 4.47 0 0 1-1.94 2.93v2.44h3.14c1.84-1.69 2.92-4.18 2.92-7.4Z"/>
+          <path fill="#34A853" d="M12 21.77c2.63 0 4.84-.87 6.45-2.36l-3.14-2.44c-.87.58-1.98.93-3.31.93-2.54 0-4.69-1.72-5.46-4.03H3.3v2.52A9.74 9.74 0 0 0 12 21.77Z"/>
+          <path fill="#FBBC05" d="M6.54 13.87A5.85 5.85 0 0 1 6.23 12c0-.65.11-1.28.31-1.87V7.61H3.3A9.76 9.76 0 0 0 2.27 12c0 1.58.38 3.08 1.03 4.39l3.24-2.52Z"/>
+          <path fill="#EA4335" d="M12 6.1c1.43 0 2.72.49 3.73 1.45l2.8-2.8C16.83 3.09 14.63 2.23 12 2.23a9.74 9.74 0 0 0-8.7 5.38l3.24 2.52C7.31 7.82 9.46 6.1 12 6.1Z"/>
+        </svg>
+        {% translate "Continue with Google" %}
+      </button>
+
+      <!-- Sign In Link -->
+      <p class="mt-7 text-center text-xs text-muted">
+        {% translate "Already have an account?" %}
+        <a href="{% url 'users:signin' %}" class="font-medium text-primary transition hover:text-secondary">
+          {% translate "Sign in" %}
+        </a>
+      </p>
+    </div>
+  </section>
+{% endblock content %}
+
+{% block extra_js %}
+  <script defer src="{% static 'js/auth/signup.js' %}"></script>
+  <script>
+    // Password visibility toggle
+    document.querySelectorAll('[data-password-toggle]').forEach(button => {
+      button.addEventListener('click', () => {
+        const inputId = button.getAttribute('data-password-toggle');
+        const input = document.getElementById(inputId);
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        const icon = button.querySelector('i');
+        icon.className = isPassword ? 'ti ti-eye-off text-lg' : 'ti ti-eye text-lg';
+      });
+    });
+  </script>
+{% endblock extra_js %}

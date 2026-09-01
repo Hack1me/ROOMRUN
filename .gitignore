@@ -274,5 +274,6 @@ roomrun/media/
 .pytest_cache/
 .ipython/
 .env
+.node_modules/
 .envs/*
 !.envs/.local/

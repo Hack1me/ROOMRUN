@@ -242,6 +242,14 @@ class UserStatus(models.TextChoices):
     SUSPENDED = "SUSPENDED", _("Suspendu")  # Temporarily blocked
 
 
+class OtpPurpose(models.TextChoices):
+    """Operations for which a one-time verification code can be issued."""
+
+    SIGNUP = "signup", _("Sign up")
+    LOGIN = "login", _("Sign in")
+    PASSWORD_RESET = "password_reset", _("Password reset")
+
+
 class InvitationStatus(models.TextChoices):
     """
     Defines the lifecycle status of an invitation.

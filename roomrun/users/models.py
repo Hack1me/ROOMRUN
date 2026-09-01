@@ -36,7 +36,11 @@ from utils.enums import EmployeeStatus
 from utils.enums import GuardShift
 from utils.enums import InvitationRole
 from utils.enums import InvitationStatus
+from utils.enums import OtpPurpose
 from utils.enums import UserStatus
+from utils.otp import verify_otp_code
+
+MAX_OTP_ATTEMPTS = 5
 
 
 def default_invitation_expiration():
@@ -183,6 +187,55 @@ class User(BaseModel, AbstractUser):
     def get_absolute_url(self) -> str:
         """URL to the user detail page (for admin or frontend)."""
         return reverse("users:detail", kwargs={"pk": self.id})
+
+
+class Otp(BaseModel):
+    """A short-lived, single-use code used to verify a sensitive operation."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="otps",
+        verbose_name=_("user"),
+    )
+    purpose = models.CharField(_("purpose"), max_length=32, choices=OtpPurpose.choices)
+    code_hash = models.CharField(_("code hash"), max_length=128)
+    expiration_at = models.DateTimeField(_("expires at"))
+    attempts = models.PositiveSmallIntegerField(_("attempts"), default=0)
+    is_used = models.BooleanField(_("used"), default=False)
+
+    class Meta:
+        db_table = "user_otps"
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(
+                fields=["user", "purpose", "is_used"], name="otp_user_purpose_idx"
+            ),
+            models.Index(fields=["expiration_at"], name="otp_expiration_idx"),
+        ]
+
+    def is_expired(self) -> bool:
+        """Return whether this OTP can no longer be used."""
+        return timezone.now() >= self.expiration_at
+
+    def can_attempt(self) -> bool:
+        """Limit code guesses to reduce brute-force attempts."""
+        return self.attempts < MAX_OTP_ATTEMPTS
+
+    def increment_attempts(self) -> None:
+        """Record one verification attempt."""
+        self.attempts = models.F("attempts") + 1
+        self.save(update_fields=["attempts", "updated_at"])
+        self.refresh_from_db(fields=["attempts"])
+
+    def is_valid_code(self, code: str) -> bool:
+        """Check a submitted code against its password hash."""
+        return verify_otp_code(code, self.code_hash)
+
+    def mark_verified(self) -> None:
+        """Consume this OTP after a successful verification."""
+        self.is_used = True
+        self.save(update_fields=["is_used", "updated_at"])
 
 
 # =====================================================================
@@ -668,4 +721,3 @@ class Invitation(BaseModel):
         self.employee = employee
         self.accepted_at = timezone.now()
         self.save()
-

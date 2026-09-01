@@ -1,0 +1,9 @@
+{% extends "errors/base.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Bad request" %}{% endblock title %}
+
+{% block content %}
+  <h1>{% translate "Bad request" %}</h1>
+  <p>{% translate "The request could not be processed. Please try again." %}</p>
+{% endblock content %}

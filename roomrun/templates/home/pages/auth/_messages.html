@@ -1,0 +1,7 @@
+{% if messages %}
+  <ul class="mb-5 space-y-2" aria-live="polite">
+    {% for message in messages %}
+      <li class="rounded-input border px-3 py-2 text-sm {% if 'error' in message.tags %}border-danger/20 bg-danger/5 text-danger{% elif 'warning' in message.tags %}border-warning/20 bg-warning/5 text-warning{% else %}border-success/20 bg-success/5 text-success{% endif %}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}

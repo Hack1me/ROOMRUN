@@ -11,20 +11,27 @@ from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 
+handler400 = "core.error_views.bad_request"
+handler403 = "core.error_views.permission_denied"
+handler404 = "core.error_views.page_not_found"
+handler500 = "core.error_views.server_error"
+
 urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
 ]
 urlpatterns += i18n_patterns(
-    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
+    path("",
+        TemplateView.as_view(template_name="dashboard/pages/home.html"),
+        name="home",
+        ),
     path(
         "about/",
-        TemplateView.as_view(template_name="pages/about.html"),
+        TemplateView.as_view(template_name="dashboard/pages/about.html"),
         name="about",
     ),
-    # User management
-    # path("users/", include("roomrun.users.urls", namespace="users")),  # noqa: ERA001
-    # path("accounts/", include("allauth.urls")),  # noqa: ERA001
+    # User authentication and account management.
+    path("users/", include("users.urls", namespace="users")),
     # Your stuff: custom urls includes go here
     # ...
     # Media files
