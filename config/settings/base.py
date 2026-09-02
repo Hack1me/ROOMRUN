@@ -220,8 +220,6 @@ TEMPLATES = [
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 # http://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
-# CRISPY_TEMPLATE_PACK = "uni_form"
-# CRISPY_ALLOWED_TEMPLATE_PACKS = "uni_form"
 
 # FIXTURES
 # ------------------------------------------------------------------------------
@@ -350,3 +348,10 @@ SPECTACULAR_SETTINGS = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
+# settings.py
+EMAIL_LOGO_PATH = os.getenv("EMAIL_LOGO_PATH", "images/logo/logo.png")
+SITE_NAME = os.getenv("SITE_NAME", "Mon Application")
+
+# otp_request_coldown
+OTP_REQUEST_COOLDOWN_SECONDS = os.getenv("OTP_REQUEST_COOLDOWN_SECONDS", 60)  # noqa: PLW1508
+OTP_VALID_MINUTES = os.getenv("OTP_VALID_MINUTES", 10)  # noqa: PLW1508

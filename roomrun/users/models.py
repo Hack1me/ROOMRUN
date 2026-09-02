@@ -197,16 +197,45 @@ class Otp(BaseModel):
         on_delete=models.CASCADE,
         related_name="otps",
         verbose_name=_("user"),
+        help_text=_("The user associated with this OTP."),
     )
-    purpose = models.CharField(_("purpose"), max_length=32, choices=OtpPurpose.choices)
-    code_hash = models.CharField(_("code hash"), max_length=128)
-    expiration_at = models.DateTimeField(_("expires at"))
-    attempts = models.PositiveSmallIntegerField(_("attempts"), default=0)
-    is_used = models.BooleanField(_("used"), default=False)
+
+    purpose = models.CharField(
+        _("purpose"),
+        max_length=32,
+        choices=OtpPurpose.choices,
+        help_text=_("The purpose for which this OTP was generated."),
+    )
+
+    code_hash = models.CharField(
+        _("code hash"),
+        max_length=128,
+        help_text=_("Hashed representation of the OTP code."),
+    )
+
+    expiration_at = models.DateTimeField(
+        _("expires at"),
+        help_text=_("The date and time after which this OTP is no longer valid."),
+    )
+
+    attempts = models.PositiveSmallIntegerField(
+        _("attempts"),
+        default=0,
+        help_text=_("The number of verification attempts made with this OTP."),
+    )
+
+    is_used = models.BooleanField(
+        _("used"),
+        default=False,
+        help_text=_("Whether this OTP has been used for verification."),
+    )
 
     class Meta:
         db_table = "user_otps"
         ordering = ["-created_at"]
+        verbose_name = _("OTP")
+        verbose_name_plural = _("OTPs")
+
         indexes = [
             models.Index(
                 fields=["user", "purpose", "is_used"], name="otp_user_purpose_idx"

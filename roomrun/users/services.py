@@ -63,7 +63,7 @@ class OtpEmailService:
             msg = "Raw OTP code is required."
             raise ValueError(msg)
 
-        full_name = str(user) or user.email
+        full_name = user.fu or user.email
         validity = getattr(settings, "OTP_VALID_MINUTES", 10)
         lang = language or getattr(user, "language", None) or settings.LANGUAGE_CODE
 

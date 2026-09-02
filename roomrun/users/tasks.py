@@ -8,8 +8,12 @@ from utils.email import EmailUtil
 
 @shared_task()
 def send_otp_email_task(
-    email: str, full_name: str, code: str, validity: int, language: str | None = None
-):
+        email: str,
+        full_name: str,
+        code: str,
+        validity: int,
+        language: str | None = None
+    ):
     lang = language or "en"
     with translation.override(lang):
         subject = _("Your ROOMRUN verification code")

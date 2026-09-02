@@ -204,17 +204,4 @@
 
 {% block extra_js %}
   <script defer src="{% static 'js/auth/signup.js' %}"></script>
-  <script>
-    // Password visibility toggle
-    document.querySelectorAll('[data-password-toggle]').forEach(button => {
-      button.addEventListener('click', () => {
-        const inputId = button.getAttribute('data-password-toggle');
-        const input = document.getElementById(inputId);
-        const isPassword = input.type === 'password';
-        input.type = isPassword ? 'text' : 'password';
-        const icon = button.querySelector('i');
-        icon.className = isPassword ? 'ti ti-eye-off text-lg' : 'ti ti-eye text-lg';
-      });
-    });
-  </script>
 {% endblock extra_js %}

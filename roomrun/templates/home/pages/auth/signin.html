@@ -148,19 +148,5 @@
 {% endblock content %}
 
 {% block extra_js %}
-  <script>
-    // Password visibility toggle
-    const passwordInput = document.getElementById('{{ form.password.id_for_label }}');
-    const toggleButton = document.getElementById('togglePassword');
-
-    if (toggleButton && passwordInput) {
-      toggleButton.addEventListener('click', () => {
-        const isPassword = passwordInput.type === 'password';
-        passwordInput.type = isPassword ? 'text' : 'password';
-        const icon = toggleButton.querySelector('i');
-        icon.className = isPassword ? 'ti ti-eye-off text-lg' : 'ti ti-eye text-lg';
-        toggleButton.setAttribute('aria-label', isPassword ? '{% translate "Hide password" %}' : '{% translate "Show password" %}');
-      });
-    }
-  </script>
+  <script defer src="{% static 'js/auth/signin.js' %}"></script>
 {% endblock extra_js %}

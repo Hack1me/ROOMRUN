@@ -57,13 +57,13 @@ class EmailUtil:
             )
 
         context["site_url"] = site_url
-        context["site_name"] = getattr(settings, "SITE_NAME", "My Apps")
+        context["site_name"] = getattr(settings, "SITE_NAME", "ROOMRUN")
 
         static_url = getattr(settings, "STATIC_URL", "/static/")
         if static_url.startswith(("http://", "https://")):
-            logo_url = f"{static_url}images/logo/Mboago.png"
+            logo_url = f"{static_url}images/logo/RoomRun-no-backgroung.png"
         else:
-            logo_url = f"{site_url.rstrip('/')}{static_url}images/logo/Mboago.png"
+            logo_url = f"{site_url.rstrip('/')}{static_url}images/logo/RoomRun-no-backgroung.png"
 
         context["logo_url"] = logo_url
         return context
@@ -117,12 +117,12 @@ class EmailUtil:
             email = EmailMessage(subject, content, from_email, [], bcc=to)
             email.content_subtype = "html"
 
-            if file_path and Path.exists(file_path):
+            if file_path and Path(file_path).exists():
                 email.attach_file(file_path)
             elif file_path:
                 logger.warning("File not found at: %s", file_path)
-
             email.send()
+
         except Exception:
             logger.exception("Error sending email via Django backend")
             return False
