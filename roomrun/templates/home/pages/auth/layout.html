@@ -7,7 +7,7 @@
     <title>{% block title %}ROOMRUN{% endblock title %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
     <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}">
@@ -15,7 +15,7 @@
   </head>
   <body class="bg-surface font-sans text-ink antialiased">
     <main class="flex min-h-screen">
-      {% include "home/pages/auth/includes/brand_panel.html" %}
+      {% include "home/includes/brand_panel.html" %}
       {% block content %}{% endblock content %}
     </main>
     {% block extra_js %}{% endblock extra_js %}

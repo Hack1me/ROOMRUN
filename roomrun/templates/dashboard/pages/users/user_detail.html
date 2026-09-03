@@ -4,8 +4,11 @@
 {% block title %}{% translate "Profile" %} | ROOMRUN{% endblock title %}
 
 {% block content %}
-  <div class="container mx-auto px-4 py-8">
-    <h2 class="text-2xl font-semibold text-primary">{{ object.full_name|default:object.email }}</h2>
-    <p class="text-sm text-muted">{{ object.email }}</p>
-  </div>
+  <section class="mx-auto max-w-2xl py-6">
+    <div class="rr-card p-7 sm:p-9">
+      <p class="rr-eyebrow">{% translate "PROFILE" %}</p>
+      <h2 class="rr-display mt-4 text-3xl">{{ object.full_name|default:object.email }}</h2>
+      <p class="mt-2 text-sm text-muted">{{ object.email }}</p>
+    </div>
+  </section>
 {% endblock content %}

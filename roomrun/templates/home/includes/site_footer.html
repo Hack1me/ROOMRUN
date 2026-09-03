@@ -1,0 +1,22 @@
+{% load i18n %}
+<footer class="bg-primary text-white">
+  <div class="rr-container grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
+    <div>
+      <a href="{% url 'home' %}" class="flex items-center gap-2 font-display text-lg font-semibold"><span class="size-2.5 rounded-full bg-secondary"></span>ROOMRUN</a>
+      <p class="mt-4 max-w-xs text-sm leading-6 text-slate-300">{% translate "A calm workspace for residential management, designed for the people who live in a community and the people who keep it moving." %}</p>
+    </div>
+    <div>
+      <h2 class="font-mono text-xs tracking-[0.08em] text-slate-300">{% translate "PLATFORM" %}</h2>
+      <ul class="mt-4 space-y-2 text-sm text-slate-200"><li><a class="hover:text-secondary" href="{% url 'home' %}#fonctionnalites">{% translate "Features" %}</a></li><li><a class="hover:text-secondary" href="{% url 'home' %}#tarifs">{% translate "Pricing" %}</a></li></ul>
+    </div>
+    <div>
+      <h2 class="font-mono text-xs tracking-[0.08em] text-slate-300">{% translate "PROFILES" %}</h2>
+      <ul class="mt-4 space-y-2 text-sm text-slate-200"><li>{% translate "Landlords" %}</li><li>{% translate "Tenants" %}</li><li>{% translate "Maintenance teams" %}</li></ul>
+    </div>
+    <div>
+      <h2 class="font-mono text-xs tracking-[0.08em] text-slate-300">{% translate "COMPANY" %}</h2>
+      <ul class="mt-4 space-y-2 text-sm text-slate-200"><li><a class="hover:text-secondary" href="{% url 'about' %}">{% translate "About" %}</a></li><li>{% translate "Security" %}</li><li>{% translate "Contact" %}</li></ul>
+    </div>
+  </div>
+  <div class="border-t border-white/10"><div class="rr-container flex flex-wrap justify-between gap-3 py-5 text-xs text-slate-400"><span>© {% now "Y" %} ROOMRUN</span><span class="font-mono tracking-[0.08em]">DOUALA · YAOUNDÉ · LIBREVILLE</span></div></div>
+</footer>

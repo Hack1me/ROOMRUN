@@ -1,6 +1,6 @@
 {% load static i18n %}
 
-<!DOCTYPE html>
+<!doctype html>
 {% get_current_language as LANGUAGE_CODE %}
 <html lang="{{ LANGUAGE_CODE }}">
   <head>
@@ -12,15 +12,11 @@
       {% endblock title %}
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description"
-          content="Progressive Web App for locatives properties" />
+    <meta name="description" content="{% translate 'Property management made simple.' %}" />
     <meta name="author" content="SAHIT HEUFEU" />
     <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}" />
     {% block css %}
-      <!-- Tailwind CSS -->
       <link href="{% static 'css/output.css' %}" rel="stylesheet" />
-      <!-- Your stuff: Third-party CSS libraries go here -->
-      <!-- This file stores project-specific CSS -->
       <link href="{% static 'css/project.css' %}" rel="stylesheet" />
     {% endblock css %}
     <!-- Le javascript
@@ -32,55 +28,11 @@
       <script defer src="{% static 'js/project.js' %}"></script>
     {% endblock javascript %}
   </head>
-  <body class="bg-white text-slate-900 {% block bodyclass %}{% endblock bodyclass %}">
+  <body class="rr-shell {% block bodyclass %}{% endblock bodyclass %}">
     {% block body %}
-      <div class="border-b border-slate-200">
-        <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div class="flex h-16 items-center justify-between">
-            <div class="flex items-center">
-              <a href="{% url 'home' %}" class="text-2xl font-bold text-blue-900">
-                ROOMRUN
-              </a>
-            </div>
-            <div class="hidden md:flex space-x-8">
-              <a href="{% url 'home' %}" class="text-slate-700 hover:text-blue-900 transition-colors">
-                {% translate "Home" %}
-              </a>
-              <a href="{% url 'about' %}" class="text-slate-700 hover:text-blue-900 transition-colors">
-                {% translate "About" %}
-              </a>
-              <a href="{% url 'users:signup' %}" class="text-slate-700 hover:text-blue-900 transition-colors">
-                {% translate "Sign up" %}
-              </a>
-            </div>
-          </div>
-        </nav>
-      </div>
-      
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-        {% if messages %}
-          {% for message in messages %}
-            <div class="mb-4 rounded-md bg-blue-50 border border-blue-200 p-4 relative {% if message.tags %}bg-{{ message.tags }}-50 border-{{ message.tags }}-200{% endif %}">
-              <div class="flex justify-between items-start">
-                <p class="text-blue-900">{{ message }}</p>
-                <button type="button"
-                        class="text-blue-400 hover:text-blue-600"
-                        onclick="this.parentElement.parentElement.remove()">
-                  <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          {% endfor %}
-        {% endif %}
-        
-        {% block main %}
-          {% block content %}
-            <p class="text-slate-600">Use this document as a way to quick start any new project.</p>
-          {% endblock content %}
-        {% endblock main %}
-      </div>
+      {% include "home/includes/site_header.html" %}
+      {% block main %}<main class="rr-container py-12">{% include "home/includes/messages.html" %}{% block content %}{% endblock content %}</main>{% endblock main %}
+      {% include "home/includes/site_footer.html" %}
     {% endblock body %}
     
     {% block modal %}

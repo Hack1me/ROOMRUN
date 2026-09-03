@@ -1,0 +1,19 @@
+{% load i18n %}
+<header class="sticky top-0 z-50 border-b border-line bg-paper/92 backdrop-blur">
+  <nav class="rr-container flex h-18 items-center gap-8" aria-label="{% translate 'Main navigation' %}">
+    <a href="{% url 'home' %}" class="mr-auto flex items-center gap-2 font-display text-lg font-semibold text-primary" aria-label="ROOMRUN">
+      <span class="size-2.5 rounded-full bg-secondary"></span>
+      ROOMRUN
+    </a>
+    <div class="hidden items-center gap-7 md:flex">
+      <a class="rr-nav-link" href="{% url 'home' %}#ecosysteme">{% translate "Ecosystem" %}</a>
+      <a class="rr-nav-link" href="{% url 'home' %}#fonctionnalites">{% translate "Features" %}</a>
+      <a class="rr-nav-link" href="{% url 'home' %}#tarifs">{% translate "Pricing" %}</a>
+      <a class="rr-nav-link" href="{% url 'about' %}">{% translate "About" %}</a>
+    </div>
+    <div class="hidden items-center gap-4 sm:flex">
+      <a class="rr-nav-link" href="{% url 'users:signin' %}">{% translate "Sign in" %}</a>
+      <a class="rr-btn-dark px-4 py-2.5" href="{% url 'users:signup' %}">{% translate "Create an account" %}</a>
+    </div>
+  </nav>
+</header>
