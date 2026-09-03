@@ -34,7 +34,7 @@ class OtpService:
         if limited:
             raise OtpRateLimitError(_("Please wait before requesting another code."))
 
-        validity = getattr(settings, "OTP_VALID_MINUTES", 10)
+        validity = int(getattr(settings, "OTP_VALID_MINUTES", 10))
         raw_code = generate_otp_code()
         expiration_at = timezone.now() + datetime.timedelta(minutes=validity)
 
@@ -63,8 +63,8 @@ class OtpEmailService:
             msg = "Raw OTP code is required."
             raise ValueError(msg)
 
-        full_name = user.fu or user.email
-        validity = getattr(settings, "OTP_VALID_MINUTES", 10)
+        full_name = user.full_name or user.email
+        validity = int(getattr(settings, "OTP_VALID_MINUTES", 10))
         lang = language or getattr(user, "language", None) or settings.LANGUAGE_CODE
 
         transaction.on_commit(
@@ -121,7 +121,7 @@ class OtpVerifyService:
 
 
 class PasswordResetTokenService:
-    timeout = getattr(settings, "RESET_TOKEN_TIMEOUT", 15) * 60
+    timeout = getattr(settings, "RESET_TOKEN_TIMEOUT", 900)
 
     @staticmethod
     def generate(user) -> str:

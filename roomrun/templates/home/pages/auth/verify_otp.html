@@ -5,7 +5,7 @@
 
 {% block content %}
   <section class="flex w-full items-center justify-center bg-white px-6 py-10 shadow-lg shadow-primary/5 lg:w-[58%]">
-    <div class="w-full max-w-100">
+    <div class="w-full max-w-md">
       <!-- Mobile logo -->
       <a href="{% url 'home' %}" class="mb-9 flex items-center justify-center gap-2 lg:hidden" aria-label="ROOMRUN">
         <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary shadow-md shadow-primary/20">
@@ -15,7 +15,7 @@
       </a>
 
       <!-- Verification icon -->
-      <div class="mb-5 flex h-13.5 w-13.5 items-center justify-center rounded-full bg-primary-soft shadow-[0_0_0_7px_rgba(74,144,217,0.04)] mx-auto">
+      <div class="mb-5 mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary-soft shadow-[0_0_0_7px_rgba(74,144,217,0.04)]">
         <i class="ti ti-mail-check text-2xl text-primary"></i>
       </div>
 
@@ -48,7 +48,8 @@
       {% include "home/pages/auth/_messages.html" %}
 
       <!-- OTP Form -->
-      <form method="post" class="mt-8 space-y-6" novalidate id="otpForm">
+      <form method="post" class="mt-8 space-y-6" novalidate id="otpForm"
+            data-i18n-error="{% translate 'Please enter all 6 digits' %}">
         {% csrf_token %}
         
         {% if form.non_field_errors %}
@@ -75,7 +76,7 @@
           </div>
 
           <!-- Error message -->
-          <div class="error-message text-center min-h-5" id="errorMessage">
+          <div class="error-message min-h-5 text-center" id="errorMessage">
             {% for error in form.code.errors %}
               <p class="text-xs text-danger">{{ error }}</p>
             {% endfor %}
@@ -97,13 +98,16 @@
           {% translate "Verify code" %}
           <i class="ti ti-arrow-right text-base transition-transform group-hover:translate-x-1"></i>
         </button>
+
+        <!-- Hidden field for OTP code input -->
+        <input type="hidden" id="otpCode" name="code" value="">
       </form>
 
       <!-- Resend Section -->
       <div class="mt-6 text-center text-xs text-muted space-y-2">
         <p>
           {% translate "Didn't receive the code?" %}
-          <form method="post" action="{% url 'users:resend_otp' purpose token %}" class="inline">
+          <form method="post" action="{% url 'users:resend_otp' purpose %}" class="inline">
             {% csrf_token %}
             <button
               type="submit"
@@ -133,42 +137,8 @@
       </div>
     </div>
   </section>
-
-  <!-- Hidden field for OTP code input -->
-  <input type="hidden" id="otpCode" name="code" value="">
 {% endblock content %}
 
 {% block extra_js %}
   <script defer src="{% static 'js/auth/verify-otp.js' %}"></script>
-  <style>
-    /* OTP Input Styling */
-    .form-otp {
-      @apply h-13 w-13 rounded-lg border-2 border-border bg-white text-center text-lg font-semibold text-primary outline-none transition-all duration-200;
-      @apply focus:border-secondary focus:shadow-[0_0_0_3px_rgba(74,144,217,0.15)] focus:-translate-y-px;
-      @apply placeholder-gray-400;
-    }
-
-    .form-otp.filled {
-      @apply border-secondary bg-primary-soft;
-    }
-
-    .form-otp:disabled {
-      @apply opacity-50 cursor-not-allowed;
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-4px); }
-      75% { transform: translateX(4px); }
-    }
-
-    .form-otp.shake {
-      animation: shake 0.3s ease;
-      @apply border-danger bg-danger/5;
-    }
-
-    .timer.expired {
-      @apply text-danger;
-    }
-  </style>
 {% endblock extra_js %}

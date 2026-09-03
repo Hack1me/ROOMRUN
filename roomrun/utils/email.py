@@ -61,7 +61,7 @@ class EmailUtil:
 
         static_url = getattr(settings, "STATIC_URL", "/static/")
         if static_url.startswith(("http://", "https://")):
-            logo_url = f"{static_url}images/logo/RoomRun-no-backgroung.png"
+            logo_url = f"{static_url}images/logo/logo.png"
         else:
             logo_url = f"{site_url.rstrip('/')}{static_url}images/logo/RoomRun-no-backgroung.png"
 
@@ -97,25 +97,28 @@ class EmailUtil:
         default_from = getattr(settings, "DEFAULT_FROM_EMAIL", "noreply@example.com")
         from_email = _from or default_from
 
-        if getattr(settings, "TESTING", False):
-            logger.info("*** TEST EMAIL MODE ***")
-            return True
-
         return EmailUtil._send_django_email(
-            subject, html_content or text_content, to, from_email, file_path
+            subject,
+            html_content,
+            text_content,
+            to,
+            from_email,
+            file_path,
         )
 
     @staticmethod
-    def _send_django_email(
+    def _send_django_email(  # noqa: PLR0913, PLR0917
         subject: str,
-        content: str,
+        html_content: str | None,
+        text_content: str | None,
         to: list[str],
         from_email: str,
         file_path: str | None,
     ) -> bool:
         try:
-            email = EmailMessage(subject, content, from_email, [], bcc=to)
-            email.content_subtype = "html"
+            body = html_content if html_content is not None else (text_content or "")
+            email = EmailMessage(subject, body, from_email, [], bcc=to)
+            email.content_subtype = "html" if html_content is not None else "plain"
 
             if file_path and Path(file_path).exists():
                 email.attach_file(file_path)
@@ -138,28 +141,18 @@ class EmailUtil:
     ) -> bool:
         context = EmailUtil._add_site_context(context)
 
-        resolved_subject = subject
-        if language:
-            resolved_subject = EmailUtil._translate_subject(subject, language)
-        else:
-            resolved_subject = EmailUtil._resolve_subject(subject)
-
-        context["subject"] = resolved_subject
-
-        current_language = translation.get_language()
-        try:
-            if language:
-                translation.activate(language)
-                if subject != resolved_subject:
-                    resolved_subject = EmailUtil._translate_subject(subject, language)
-                    context["subject"] = resolved_subject
-
-            body = render_to_string(template_name=template, context=context)
-        except Exception:
-            logger.exception("Error rendering email template %s", template)
-            return False
-        finally:
-            translation.activate(current_language)
+        with translation.override(language or translation.get_language()):
+            try:
+                resolved_subject = (
+                    EmailUtil._translate_subject(subject, language)
+                    if language
+                    else EmailUtil._resolve_subject(subject)
+                )
+                context["subject"] = resolved_subject
+                body = render_to_string(template_name=template, context=context)
+            except Exception:
+                logger.exception("Error rendering email template %s", template)
+                return False
 
         try:
             return EmailUtil.send_generic_email(

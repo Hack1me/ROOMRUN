@@ -231,7 +231,7 @@ FIXTURE_DIRS = (str(APPS_DIR / "fixtures"),)
 # https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
 SESSION_COOKIE_HTTPONLY = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
-CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = False
 # Use the branded page when a CSRF token is missing or invalid.
 CSRF_FAILURE_VIEW = "core.error_views.csrf_failure"
 # https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
@@ -336,6 +336,7 @@ REST_FRAMEWORK = {
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
 CORS_URLS_REGEX = r"^/api/.*$"
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
 
 # By Default swagger ui is available only to admin user(s). You can change permission classes to change that
 # See more configuration options at https://drf-spectacular.readthedocs.io/en/latest/settings.html#settings
@@ -353,7 +354,8 @@ EMAIL_LOGO_PATH = os.getenv("EMAIL_LOGO_PATH", "images/logo/logo.png")
 SITE_NAME = os.getenv("SITE_NAME", "Mon Application")
 
 # otp_request_coldown
-OTP_REQUEST_COOLDOWN_SECONDS = os.getenv("OTP_REQUEST_COOLDOWN_SECONDS", 60)  # noqa: PLW1508
-OTP_VALID_MINUTES = os.getenv("OTP_VALID_MINUTES", 10)  # noqa: PLW1508
-RESET_TOKEN_TIMEOUT = os.getenv("RESET_TOKEN_TIMEOUT", 3600)  # noqa: PLW1508
-LOGIN_REDIRECT_URL = os.getenv("LOGIN_REDIRECT_URL", "home")
+OTP_REQUEST_COOLDOWN_SECONDS = env.int("OTP_REQUEST_COOLDOWN_SECONDS", 60)
+OTP_VALID_MINUTES = env.int("OTP_VALID_MINUTES", 10)
+RESET_TOKEN_TIMEOUT = env.int("RESET_TOKEN_TIMEOUT", 900)
+# Allow LOGIN_REDIRECT_URL override via env (must be a URL name, e.g. "users:redirect")
+LOGIN_REDIRECT_URL = os.getenv("LOGIN_REDIRECT_URL", LOGIN_REDIRECT_URL)

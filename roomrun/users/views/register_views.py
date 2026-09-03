@@ -42,14 +42,14 @@ class SignupView(RedirectToNextOrReferrerMixin, FormView):
                 _("Server Error. Request a new code on the next page.")
             )
 
-        self.request.session["pending_signup_token"] = token
+        self.request.session["pending_otp_token:signup"] = token
         messages.success(
             self.request,
             _(
                 "Your account has been created. Enter the code sent by email to activate it."  # noqa: E501
             ),
         )
-        return redirect("users:verify_otp", purpose=OtpPurpose.SIGNUP, token=token)
+        return redirect("users:verify_otp", purpose=OtpPurpose.SIGNUP)
 
     def form_invalid(self, form):
         messages.error(self.request, _("Please correct the sign-up details."))

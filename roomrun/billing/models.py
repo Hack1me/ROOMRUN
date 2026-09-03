@@ -1,7 +1,7 @@
 from core.models import BaseModel
+from core.utils import safe_reverse
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
@@ -106,7 +106,7 @@ class Charge(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the charge detail view."""
-        return reverse("billing:charge-detail", kwargs={"pk": self.id})
+        return safe_reverse("billing:charge-detail", kwargs={"pk": self.id})
 
     def clean(self):
         super().clean()
@@ -250,7 +250,7 @@ class Payment(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the payment detail view."""
-        return reverse("billing:payment-detail", kwargs={"pk": self.id})
+        return safe_reverse("billing:payment-detail", kwargs={"pk": self.id})
 
     def clean(self):
         """
@@ -354,7 +354,7 @@ class Receipt(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the receipt detail view."""
-        return reverse("billing:receipt-detail", kwargs={"pk": self.id})
+        return safe_reverse("billing:receipt-detail", kwargs={"pk": self.id})
 
     def clean(self):
         """

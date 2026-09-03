@@ -180,18 +180,20 @@ def check_cooldown(user_id: str, purpose: str) -> tuple[bool, int]:
         If not blocked, remaining_seconds is 0.
     """
     key = _cooldown_key(user_id, purpose)
+    payload = cache.get(key)
+    if not payload:
+        return False, 0
 
-    # Some cache backends (e.g., locmem) do not support .ttl()
-    remaining = cache.ttl(key) if hasattr(cache, "ttl") else None
+    # Payload is a dict with an absolute expiry timestamp.
+    if isinstance(payload, dict):
+        import time  # noqa: PLC0415
 
-    if remaining is not None and remaining > 0:
-        return True, remaining
+        remaining = int(payload.get("expires_at", 0) - time.time())
+        return remaining > 0, max(remaining, 0)
 
-    # Fallback: if the key exists but we cannot get TTL, assume full cooldown time
-    if cache.get(key):
-        return True, _get_cooldown_timeout()
+    # Backwards-compat: plain truthy value (no TTL info).
+    return True, _get_cooldown_timeout()
 
-    return False, 0
 
 def set_cooldown(user_id: str, purpose: str) -> None:
     """
@@ -199,6 +201,13 @@ def set_cooldown(user_id: str, purpose: str) -> None:
 
     The duration is taken from settings (or default).
     """
+    import time  # noqa: PLC0415
+
     timeout = _get_cooldown_timeout()
-    cache.set(_cooldown_key(user_id, purpose), value=True, timeout=timeout)
+    key = _cooldown_key(user_id, purpose)
+    cache.set(
+        key,
+        {"expires_at": int(time.time()) + timeout},
+        timeout=timeout,
+    )
 

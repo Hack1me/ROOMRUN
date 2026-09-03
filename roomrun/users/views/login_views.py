@@ -35,9 +35,9 @@ class SigninView(RedirectToNextOrReferrerMixin, FormView):
                 messages.warning(self.request, error)
                 return self.form_invalid(form)
 
-            self.request.session["pending_login_token"] = token
+            self.request.session["pending_otp_token:login"] = token
             messages.info(self.request, _("A verification code has been sent to you."))
-            return redirect("users:verify_otp", purpose=OtpPurpose.LOGIN, token=token)
+            return redirect("users:verify_otp", purpose=OtpPurpose.LOGIN)
 
         login(self.request, user)
         if not form.cleaned_data.get("remember_me"):

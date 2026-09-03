@@ -1,7 +1,7 @@
 from core.models import BaseModel
+from core.utils import safe_reverse
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from properties.models import Unit
@@ -114,7 +114,7 @@ class MaintenanceRequest(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the maintenance request detail view."""
-        return reverse("maintenance:request-detail", kwargs={"pk": self.id})
+        return safe_reverse("maintenance:request-detail", kwargs={"pk": self.id})
 
     def clean(self):
         """
@@ -284,7 +284,7 @@ class Task(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the task detail view."""
-        return reverse("maintenance:task-detail", kwargs={"pk": self.id})
+        return safe_reverse("maintenance:task-detail", kwargs={"pk": self.id})
 
     def clean(self):
         """

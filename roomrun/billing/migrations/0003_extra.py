@@ -7,10 +7,10 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    initial = True
+    initial = False
 
     dependencies = [
-        ('billing', '0002_initial'),
+        ('billing', '0002_more_models'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 

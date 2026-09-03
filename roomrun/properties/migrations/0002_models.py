@@ -7,7 +7,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    initial = True
+    initial = False
 
     dependencies = [
         ('properties', '0001_initial'),
@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='building',
-            name='property',
+            name='property_ref',
             field=models.ForeignKey(help_text='The property that this building belongs to.', on_delete=django.db.models.deletion.PROTECT, related_name='buildings', to='properties.property', verbose_name='property'),
         ),
         migrations.AddField(
@@ -90,7 +90,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name='building',
-            index=models.Index(fields=['property'], name='building_property_idx'),
+            index=models.Index(fields=['property_ref'], name='building_property_idx'),
         ),
         migrations.AddIndex(
             model_name='building',

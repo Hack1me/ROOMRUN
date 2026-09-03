@@ -1,8 +1,8 @@
 from core.models import BaseModel
+from core.utils import safe_reverse
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from properties.models import Unit
@@ -125,7 +125,7 @@ class RentalApplication(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the application detail view."""
-        return reverse("rentals:rental-application-detail", kwargs={"pk": self.id})
+        return safe_reverse("rentals:rental-application-detail", kwargs={"pk": self.id})
 
     def clean(self):
         """
@@ -274,7 +274,7 @@ class RentalContract(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the contract detail view."""
-        return reverse("rentals:rental-contract-detail", kwargs={"pk": self.id})
+        return safe_reverse("rentals:rental-contract-detail", kwargs={"pk": self.id})
 
     def clean(self):
         """

@@ -7,12 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    initial = True
+    initial = False
 
     dependencies = [
-        ('communications', '0002_initial'),
+        ('communications', '0002_models'),
         ('contenttypes', '0002_remove_content_type_name'),
-        ('properties', '0002_initial'),
+        ('properties', '0002_models'),
         ('users', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]

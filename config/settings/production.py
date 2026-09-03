@@ -49,7 +49,7 @@ CSRF_COOKIE_NAME = "__Secure-csrftoken"
 # https://docs.djangoproject.com/en/dev/topics/security/#ssl-https
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-hsts-seconds
 # TODO: set this to 60 seconds first and then to 518400 once you prove the former works
-SECURE_HSTS_SECONDS = 60
+SECURE_HSTS_SECONDS = env.int("DJANGO_SECURE_HSTS_SECONDS", default=518400)
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-hsts-include-subdomains
 SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool(
     "DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS",
@@ -97,12 +97,21 @@ ADMIN_URL = env("DJANGO_ADMIN_URL")
 # Anymail
 # ------------------------------------------------------------------------------
 # https://anymail.readthedocs.io/en/stable/installation/#installing-anymail
+# Set DJANGO_EMAIL_BACKEND to e.g. "anymail.backends.mailgun.EmailBackend"
+# and configure ANYMAIL with the ESP credentials to enable transactional
+# email delivery. The default below uses the standard SMTP backend.
 INSTALLED_APPS += ["anymail"]
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-# https://anymail.readthedocs.io/en/stable/installation/#anymail-settings-reference
-# https://anymail.readthedocs.io/en/stable/esps
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-ANYMAIL = {}
+EMAIL_BACKEND = env(
+    "DJANGO_EMAIL_BACKEND",
+    default="django.core.mail.backends.smtp.EmailBackend",
+)
+EMAIL_HOST = env("EMAIL_HOST", default="smtp.example.com")
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
+EMAIL_USE_SSL = env.bool("EMAIL_USE_SSL", default=False)
+ANYMAIL = env.dict("ANYMAIL", default={})
 
 
 # LOGGING

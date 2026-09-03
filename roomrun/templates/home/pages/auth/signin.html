@@ -5,7 +5,7 @@
 
 {% block content %}
   <section class="flex w-full items-center justify-center bg-white px-6 py-10 shadow-lg shadow-primary/5 lg:w-[58%]">
-    <div class="w-full max-w-100">
+    <div class="w-full max-w-md">
       <!-- Mobile logo -->
       <a href="{% url 'home' %}" class="mb-9 flex items-center justify-center gap-2 lg:hidden" aria-label="ROOMRUN">
         <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary shadow-md shadow-primary/20">
@@ -79,6 +79,8 @@
               type="button"
               class="password-toggle"
               id="togglePassword"
+              data-i18n-show="{% translate 'Show password' %}"
+              data-i18n-hide="{% translate 'Hide password' %}"
               aria-label="{% translate 'Show password' %}">
               <i class="ti ti-eye text-lg" aria-hidden="true"></i>
             </button>

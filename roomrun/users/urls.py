@@ -17,17 +17,17 @@ urlpatterns = [
     path("signup/", SignupView.as_view(), name="signup"),
     path("forgot-password/", ForgotPasswordView.as_view(), name="forgot_password"),
     path(
-        "verify-otp/<str:purpose>/<str:token>/",
+        "verify-otp/<str:purpose>/",
         VerifyOtpView.as_view(),
         name="verify_otp",
     ),
     path(
-        "verify-otp/<str:purpose>/<str:token>/resend/",
+        "verify-otp/<str:purpose>/resend/",
         ResendOtpView.as_view(),
         name="resend_otp",
     ),
     path(
-        "reset-password/<str:token>/",
+        "reset-password/",
         ResetPasswordView.as_view(),
         name="reset_password",
     ),

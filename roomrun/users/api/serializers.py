@@ -5,7 +5,7 @@ from users.models import User
 class UserSerializer(serializers.ModelSerializer[User]):
     class Meta:
         model = User
-        fields = ["name", "url"]
+        fields = ["id", "email", "first_name", "last_name", "url"]
 
         extra_kwargs = {
             "url": {"view_name": "api:user-detail", "lookup_field": "pk"},

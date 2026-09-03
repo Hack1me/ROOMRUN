@@ -1,11 +1,10 @@
 import os
-from builtins import property as builtin_property
 
 from core.models import BaseModel
 from core.validators import validate_image_extension
 from core.validators import validate_image_size
 from django.db import models
-from django.urls import reverse
+from django.urls import reverse as safe_reverse
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 from djmoney.models.fields import MoneyField
@@ -50,7 +49,7 @@ class Property(BaseModel):
         blank=True,
         verbose_name=_("Property number"),
         help_text=_("Auto-generated unique identifier for the property."),
-        # NOTE: Generation logic is provided via a `pre_save` signal.
+        # Generation logic is provided via a `pre_save` signal.
     )
 
     name = models.CharField(
@@ -122,7 +121,7 @@ class Property(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the property detail page."""
-        return reverse("properties:property-detail", kwargs={"pk": self.id})
+        return safe_reverse("properties:property-detail", kwargs={"pk": self.id})
 
     # -------------------------------------------------------------------------
     # Computed Properties (Derived from Related Models)
@@ -216,10 +215,7 @@ class PropertyImage(BaseModel):
         Return the canonical URL for the image detail view.
         Note: In practice, images are often displayed as part of the property detail.
         """
-        return reverse("properties:property-image-detail", kwargs={"pk": self.id})
-
-    def property_image_upload(self, filename):
-        return f"properties/{self.property.id}/{filename}"
+        return safe_reverse("properties:property-image-detail", kwargs={"pk": self.id})
 
 
 # BUILDING
@@ -241,10 +237,10 @@ class Building(BaseModel):
     # Core Fields
     # -------------------------------------------------------------------------
 
-    property = models.ForeignKey(
+    property_ref = models.ForeignKey(
         Property,
         on_delete=models.PROTECT,
-        related_name="buildings",  # Allows accessing `property.buildings.all()'
+        related_name="buildings",
         verbose_name=_("property"),
         help_text=_("The property that this building belongs to."),
     )
@@ -298,7 +294,7 @@ class Building(BaseModel):
         verbose_name_plural = _("Buildings")
 
         indexes = [
-            models.Index(fields=["property"], name="building_property_idx"),
+            models.Index(fields=["property_ref"], name="building_property_idx"),
             # Speeds up queries filtering by property.
             models.Index(fields=["status"], name="building_status_idx"),
             # Speeds up queries filtering by status.
@@ -314,13 +310,13 @@ class Building(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the building detail page."""
-        return reverse("properties:building-detail", kwargs={"pk": self.id})
+        return safe_reverse("properties:building-detail", kwargs={"pk": self.id})
 
     # -------------------------------------------------------------------------
     # Computed Properties
     # -------------------------------------------------------------------------
 
-    @builtin_property
+    @property
     def unit_count(self) -> int:
         """
         Return the total number of rental units in this building.
@@ -454,4 +450,4 @@ class Unit(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the unit detail page."""
-        return reverse("properties:unit-detail", kwargs={"pk": self.id})
+        return safe_reverse("properties:unit-detail", kwargs={"pk": self.id})

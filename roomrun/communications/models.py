@@ -1,11 +1,11 @@
 from core.models import BaseModel
 from core.models import ReadableModelMixin
+from core.utils import safe_reverse
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from properties.models import Building
@@ -151,7 +151,7 @@ class Announcement(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the announcement detail view."""
-        return reverse("communications:announcement-detail", kwargs={"pk": self.id})
+        return safe_reverse("communications:announcement-detail", kwargs={"pk": self.id})
 
     @property
     def is_active(self) -> bool:
@@ -320,7 +320,7 @@ class Notification(ReadableModelMixin, BaseModel):
         return self.title
 
     def get_absolute_url(self) -> str:
-        return reverse("communications:notification-detail", kwargs={"pk": self.id})
+        return safe_reverse("communications:notification-detail", kwargs={"pk": self.id})
 
 
 class Message(ReadableModelMixin, BaseModel):
@@ -406,7 +406,7 @@ class Message(ReadableModelMixin, BaseModel):
         return f"{self.sender} → {self.recipient}"
 
     def get_absolute_url(self) -> str:
-        return reverse("communications:message-detail", kwargs={"pk": self.id})
+        return safe_reverse("communications:message-detail", kwargs={"pk": self.id})
 
     def clean(self):
         """

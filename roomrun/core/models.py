@@ -17,6 +17,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db import transaction
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -105,7 +106,14 @@ class BaseModel(models.Model):
 
     def save(self, *args, **kwargs) -> None:
         """Validate domain rules and retain status transitions when applicable."""
-        if self.reference_field and self.reference_prefix:
+        # Only assign a reference identifier on first create to avoid
+        # redundant queries on every update.
+        if (
+            self._state.adding
+            and self.reference_field
+            and self.reference_prefix
+            and not getattr(self, self.reference_field, None)
+        ):
             from utils.helpers import assign_reference_identifier  # noqa: PLC0415
 
             assign_reference_identifier(
@@ -114,26 +122,33 @@ class BaseModel(models.Model):
                 prefix=self.reference_prefix,
             )
 
-        previous_status = None
-        if not self._state.adding and any(
+        # Cache the current status from the DB to detect transitions.
+        has_status_field = any(
             field.name == "status" for field in self._meta.fields
-        ):
-            previous_status = (
+        )
+        previous_status = None
+        status_changed = False
+        if has_status_field and not self._state.adding:
+            current_db_status = (
                 self.__class__.all_objects.filter(pk=self.pk)
                 .values_list("status", flat=True)
                 .first()
             )
+            if current_db_status is not None and current_db_status != self.status:
+                previous_status = current_db_status
+                status_changed = True
 
         self.full_clean()
-        super().save(*args, **kwargs)
+        with transaction.atomic():
+            super().save(*args, **kwargs)
 
-        if previous_status is not None and previous_status != self.status:
-            StatusHistory.objects.create(
-                content_object=self,
-                previous_status=previous_status,
-                status=self.status,
-                changed_by=self.updated_by,
-            )
+            if status_changed:
+                StatusHistory.objects.create(
+                    content_object=self,
+                    previous_status=previous_status,
+                    status=self.status,
+                    changed_by=self.updated_by,
+                )
 
     def soft_delete(self, user=None) -> None:
         """Soft-delete this instance and record the responsible user."""
@@ -222,4 +237,3 @@ class StatusHistory(models.Model):
 
     def __str__(self) -> str:
         return f"{self.content_object}: {self.previous_status} → {self.status}"
-

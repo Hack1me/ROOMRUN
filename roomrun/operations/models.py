@@ -1,8 +1,8 @@
 from core.models import BaseModel
+from core.utils import safe_reverse
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
-from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from properties.models import Building
@@ -123,7 +123,7 @@ class CleaningSchedule(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the cleaning schedule detail view."""
-        return reverse("operations:cleaning-schedule-detail", kwargs={"pk": self.id})
+        return safe_reverse("operations:cleaning-schedule-detail", kwargs={"pk": self.id})
 
     def clean(self):
         """

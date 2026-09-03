@@ -17,6 +17,7 @@ from typing import ClassVar
 
 # Core imports
 from core.models import BaseModel
+from core.utils import safe_reverse
 from core.validators import validate_phone_number_for_country
 
 # Django & third-party
@@ -24,7 +25,6 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Q
-from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
@@ -186,7 +186,7 @@ class User(BaseModel, AbstractUser):
 
     def get_absolute_url(self) -> str:
         """URL to the user detail page (for admin or frontend)."""
-        return reverse("users:detail", kwargs={"pk": self.id})
+        return safe_reverse("users:detail", kwargs={"pk": self.id})
 
 
 class Otp(BaseModel):
@@ -253,9 +253,10 @@ class Otp(BaseModel):
 
     def increment_attempts(self) -> None:
         """Record one verification attempt."""
-        self.attempts = models.F("attempts") + 1
+        # ``OtpVerifyService`` holds a row lock while calling this method, so a
+        # normal integer increment is safe and remains valid for ``full_clean``.
+        self.attempts += 1
         self.save(update_fields=["attempts", "updated_at"])
-        self.refresh_from_db(fields=["attempts"])
 
     def is_valid_code(self, code: str) -> bool:
         """Check a submitted code against its password hash."""
@@ -323,7 +324,7 @@ class Landlord(BaseModel):
         return str(self.user)
 
     def get_absolute_url(self) -> str:
-        return reverse("users:landlord-detail", kwargs={"pk": self.id})
+        return safe_reverse("users:landlord-detail", kwargs={"pk": self.id})
 
 
 # =====================================================================
@@ -396,7 +397,7 @@ class Tenant(BaseModel):
         return str(self.user)
 
     def get_absolute_url(self) -> str:
-        return reverse("users:tenant-detail", kwargs={"pk": self.id})
+        return safe_reverse("users:tenant-detail", kwargs={"pk": self.id})
 
 
 # =====================================================================
@@ -483,7 +484,7 @@ class Employee(BaseModel):
         return str(self.user)
 
     def get_absolute_url(self) -> str:
-        return reverse("users:employee-detail", kwargs={"pk": self.id})
+        return safe_reverse("users:employee-detail", kwargs={"pk": self.id})
 
 
 # =====================================================================
@@ -538,7 +539,7 @@ class MaintenanceAgent(BaseModel):
 
     def get_absolute_url(self) -> str:
         # Using the 'users' namespace for consistency with other profiles.
-        return reverse("users:maintenance-agent-detail", kwargs={"pk": self.id})
+        return safe_reverse("users:maintenance-agent-detail", kwargs={"pk": self.id})
 
 
 # =====================================================================
@@ -599,7 +600,7 @@ class Guard(BaseModel):
 
     def get_absolute_url(self) -> str:
         # Using the 'users' namespace for consistency.
-        return reverse("users:guard-detail", kwargs={"pk": self.id})
+        return safe_reverse("users:guard-detail", kwargs={"pk": self.id})
 
 
 # =====================================================================

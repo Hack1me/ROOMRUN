@@ -7,6 +7,8 @@ document.querySelectorAll("[data-password-toggle]").forEach((button) => {
     const visible = input.type === "password";
     input.type = visible ? "text" : "password";
     icon.className = `ti ${visible ? "ti-eye-off" : "ti-eye"} text-lg`;
-    button.setAttribute("aria-label", visible ? "Masquer le mot de passe" : "Afficher le mot de passe");
+    const showLabel = button.dataset.i18nShow || "Show password";
+    const hideLabel = button.dataset.i18nHide || "Hide password";
+    button.setAttribute("aria-label", visible ? hideLabel : showLabel);
   });
 });

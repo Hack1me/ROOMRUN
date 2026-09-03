@@ -170,7 +170,7 @@
 
   /* OTP Input Styling */
   .form-otp {
-    @apply h-13 w-13 rounded-lg border-2 border-border bg-white text-center text-lg font-semibold text-primary outline-none transition-all duration-200;
+    @apply h-12 w-12 rounded-lg border-2 border-border bg-white text-center text-lg font-semibold text-primary outline-none transition-all duration-200;
     @apply focus:border-secondary focus:shadow-[0_0_0_3px_rgba(74,144,217,0.15)] focus:-translate-y-px;
     @apply placeholder-gray-400;
   }
@@ -186,5 +186,9 @@
   .form-otp.shake {
     @apply border-danger bg-danger/5;
     animation: shake 0.3s ease;
+  }
+
+  .timer.expired {
+    @apply text-danger;
   }
 }

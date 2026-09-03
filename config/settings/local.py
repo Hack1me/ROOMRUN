@@ -24,8 +24,11 @@ DATABASES["default"]["ATOMIC_REQUESTS"] = False
 # https://docs.djangoproject.com/en/dev/ref/settings/#caches
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "",
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": env("REDIS_URL", default="redis://localhost:6379/0"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
     },
 }
 
@@ -34,7 +37,10 @@ CACHES = {
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-host
 EMAIL_HOST = env("EMAIL_HOST", default="mailpit")
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-port
-EMAIL_PORT = 1025
+EMAIL_PORT = env.int("EMAIL_PORT", 1025)
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=False)
+EMAIL_USE_SSL = env.bool("EMAIL_USE_SSL", default=False)
+DEFAULT_FROM_EMAIL = env("DJANGO_DEFAULT_FROM_EMAIL", default="webmaster@localhost")
 
 # WhiteNoise
 # ------------------------------------------------------------------------------
@@ -60,7 +66,7 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#internal-ips
 INTERNAL_IPS = ["127.0.0.1", "10.0.2.2"]
-if env("USE_DOCKER") == "yes":
+if env.bool("USE_DOCKER", default=False):
     import socket
 
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
