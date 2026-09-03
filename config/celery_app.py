@@ -1,10 +1,19 @@
 import os
+import sys
+from pathlib import Path
 
 from celery import Celery
 from celery.signals import setup_logging
 
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
+
+# Make the APPS_DIR (`roomrun/roomrun/`) importable so that the local Django
+# apps (core, users, utils, ...) can be resolved when Celery boots — mirrors
+# what `manage.py` does for `django-admin`.
+_APPS_DIR = Path(__file__).resolve().parent.parent / "roomrun"
+if _APPS_DIR.is_dir() and str(_APPS_DIR) not in sys.path:
+    sys.path.insert(0, str(_APPS_DIR))
 
 app = Celery("roomrun")
 
