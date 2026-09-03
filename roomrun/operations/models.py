@@ -76,7 +76,7 @@ class CleaningSchedule(BaseModel):
         help_text=_("Current status of the cleaning schedule."),
     )
 
-    assigned_Tenant = models.ManyToManyField(
+    assigned_Tenant = models.ManyToManyField(  # noqa: N815
         Tenant,
         blank=True,
         related_name="cleaning_schedules",
@@ -123,7 +123,9 @@ class CleaningSchedule(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the cleaning schedule detail view."""
-        return safe_reverse("operations:cleaning-schedule-detail", kwargs={"pk": self.id})
+        return safe_reverse(
+            "operations:cleaning-schedule-detail", kwargs={"pk": self.id}
+        )
 
     def clean(self):
         """

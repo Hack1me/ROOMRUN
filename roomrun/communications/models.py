@@ -151,7 +151,9 @@ class Announcement(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the announcement detail view."""
-        return safe_reverse("communications:announcement-detail", kwargs={"pk": self.id})
+        return safe_reverse(
+            "communications:announcement-detail", kwargs={"pk": self.id}
+        )
 
     @property
     def is_active(self) -> bool:
@@ -320,7 +322,9 @@ class Notification(ReadableModelMixin, BaseModel):
         return self.title
 
     def get_absolute_url(self) -> str:
-        return safe_reverse("communications:notification-detail", kwargs={"pk": self.id})
+        return safe_reverse(
+            "communications:notification-detail", kwargs={"pk": self.id}
+        )
 
 
 class Message(ReadableModelMixin, BaseModel):

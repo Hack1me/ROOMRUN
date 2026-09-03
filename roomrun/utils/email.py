@@ -63,7 +63,10 @@ class EmailUtil:
         if static_url.startswith(("http://", "https://")):
             logo_url = f"{static_url}images/logo/logo.png"
         else:
-            logo_url = f"{site_url.rstrip('/')}{static_url}images/logo/RoomRun-no-backgroung.png"
+            logo_url = (
+                f"{site_url.rstrip('/')}{static_url}"
+                "images/logo/RoomRun-no-backgroung.png"
+            )
 
         context["logo_url"] = logo_url
         return context

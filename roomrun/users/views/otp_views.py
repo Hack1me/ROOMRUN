@@ -17,8 +17,12 @@ from users.services import PasswordResetTokenService
 from utils.enums import OtpPurpose
 
 
-@method_decorator(ratelimit(key="ip", rate="10/m", method="POST", block=True), name="post")
-@method_decorator(ratelimit(key="ip", rate="30/m", method="GET", block=True), name="get")
+@method_decorator(
+    ratelimit(key="ip", rate="10/m", method="POST", block=True), name="post"
+)
+@method_decorator(
+    ratelimit(key="ip", rate="30/m", method="GET", block=True), name="get"
+)
 class VerifyOtpView(FormView):
     template_name = "home/pages/auth/verify_otp.html"
     form_class = OtpVerificationForm
@@ -39,7 +43,10 @@ class VerifyOtpView(FormView):
             return redirect("users:signin")
         self.token = request.session.get(self._session_key(self.purpose))
         if not self.token:
-            messages.error(request, _("Your verification session has expired. Please request a new code."))
+            messages.error(
+                request,
+                _("Your verification session has expired. Please request a new code."),
+            )
             return redirect("users:signin")
         return super().dispatch(request, *args, **kwargs)
 
@@ -91,7 +98,9 @@ class VerifyOtpView(FormView):
         return super().form_invalid(form)
 
 
-@method_decorator(ratelimit(key="ip", rate="5/m", method="POST", block=True), name="post")
+@method_decorator(
+    ratelimit(key="ip", rate="5/m", method="POST", block=True), name="post"
+)
 class ResendOtpView(View):
     http_method_names = ["post"]
 
@@ -102,7 +111,10 @@ class ResendOtpView(View):
         purpose = kwargs["purpose"]
         token = request.session.get(self._session_key(purpose))
         if not token:
-            messages.error(request, _("Your verification session has expired. Please request a new code."))
+            messages.error(
+                request,
+                _("Your verification session has expired. Please request a new code."),
+            )
             return redirect("users:signin")
         try:
             otp = OtpVerifyService._resolve_otp(token, purpose)  # noqa: SLF001
@@ -117,8 +129,7 @@ class ResendOtpView(View):
             )
         except Exception:  # noqa: BLE001
             messages.warning(
-                request,
-                _("Server Error. Request a new code on the next page.")
+                request, _("Server Error. Request a new code on the next page.")
             )
         messages.success(request, _("A new verification code has been sent."))
         return redirect("users:verify_otp", purpose=purpose)

@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db import transaction
@@ -11,6 +13,8 @@ from users.services import OtpEmailService
 from users.services import OtpRateLimitError
 from users.services import OtpService
 from utils.enums import OtpPurpose
+
+logger = logging.getLogger(__name__)
 
 
 class SignupView(RedirectToNextOrReferrerMixin, FormView):
@@ -37,9 +41,9 @@ class SignupView(RedirectToNextOrReferrerMixin, FormView):
                 user, otp, language=get_language_from_request(self.request)
             )
         except Exception:
+            logger.exception("Unable to send the sign-up verification email")
             messages.warning(
-                self.request,
-                _("Server Error. Request a new code on the next page.")
+                self.request, _("Server Error. Request a new code on the next page.")
             )
 
         self.request.session["pending_otp_token:signup"] = token

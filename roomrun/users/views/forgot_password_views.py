@@ -38,9 +38,7 @@ class ForgotPasswordView(FormView):
 
             self.request.session["pending_otp_token:password_reset"] = token
             messages.info(self.request, _("A reset code has been sent to you."))
-            return redirect(
-                "users:verify_otp", purpose=OtpPurpose.PASSWORD_RESET
-            )
+            return redirect("users:verify_otp", purpose=OtpPurpose.PASSWORD_RESET)
 
         messages.info(
             self.request, _("If this address exists, a reset code has been sent.")
@@ -70,7 +68,9 @@ class ResetPasswordView(FormView):
         with transaction.atomic():
             user_id = PasswordResetTokenService.get_user_id(self.token)
             if not user_id:
-                messages.error(self.request, _("This password reset request has expired."))
+                messages.error(
+                    self.request, _("This password reset request has expired.")
+                )
                 return redirect("users:forgot_password")
             user = User.objects.select_for_update().get(pk=user_id)
             user.set_password(form.cleaned_data["password1"])

@@ -1,5 +1,8 @@
 """Utilities for the ``core`` app."""
 
+from django.urls import NoReverseMatch
+from django.urls import reverse
+
 
 def safe_reverse(*args, **kwargs):
     """
@@ -9,9 +12,6 @@ def safe_reverse(*args, **kwargs):
     that may be evaluated before the related URL patterns are wired up
     (e.g. inside the admin or DRF while the app is still being built).
     """
-    from django.urls import NoReverseMatch
-    from django.urls import reverse
-
     try:
         return reverse(*args, **kwargs)
     except NoReverseMatch:
