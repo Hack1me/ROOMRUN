@@ -88,12 +88,18 @@ class ResendOtpView(RedirectToNextOrReferrerMixin, View):
             with transaction.atomic():
                 otp = OtpVerifyService._resolve_otp(token, purpose)  # noqa: SLF001
                 new_otp, new_token = OtpService.create(otp.user, purpose)
-                OtpEmailService.send(
-                    otp.user, new_otp, language=get_language_from_request(request)
-                )
+
         except (OtpVerificationError, OtpRateLimitError, ValueError) as error:
             messages.error(request, error)
             return redirect("users:verify_otp", purpose=purpose, token=token)
-
+        try:
+            OtpEmailService.send(
+                otp.user, new_otp, language=get_language_from_request(request)
+            )
+        except Exception:  # noqa: BLE001
+            messages.warning(
+                self.request,
+                _("Server Error. Request a new code on the next page.")
+            )
         messages.success(request, _("A new verification code has been sent."))
         return redirect("users:verify_otp", purpose=purpose, token=new_token)

@@ -49,7 +49,7 @@ class ForgotPasswordView(RedirectToNextOrReferrerMixin, FormView):
         return redirect("users:signin")
 
     def form_invalid(self, form):
-        messages.error(self.request, _("Veuillez saisir une adresse e-mail valide."))
+        messages.error(self.request, _("Enter a valid email address."))
         return super().form_invalid(form)
 
 

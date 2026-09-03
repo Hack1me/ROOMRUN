@@ -355,3 +355,5 @@ SITE_NAME = os.getenv("SITE_NAME", "Mon Application")
 # otp_request_coldown
 OTP_REQUEST_COOLDOWN_SECONDS = os.getenv("OTP_REQUEST_COOLDOWN_SECONDS", 60)  # noqa: PLW1508
 OTP_VALID_MINUTES = os.getenv("OTP_VALID_MINUTES", 10)  # noqa: PLW1508
+RESET_TOKEN_TIMEOUT = os.getenv("RESET_TOKEN_TIMEOUT", 3600)  # noqa: PLW1508
+LOGIN_REDIRECT_URL = os.getenv("LOGIN_REDIRECT_URL", "home")

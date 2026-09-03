@@ -32,7 +32,9 @@ class UserAdminCreationForm(admin_forms.AdminUserCreationForm):
 class SigninForm(forms.Form):
     email = forms.EmailField(label=_("Email address"))
     password = forms.CharField(
-        label=_("Password"), strip=False, widget=forms.PasswordInput
+        label=_("Password"),
+        strip=False,
+        widget=forms.PasswordInput,
     )
     remember_me = forms.BooleanField(label=_("Keep me signed in"), required=False)
 
@@ -59,7 +61,7 @@ class SignupForm(forms.ModelForm):
         strip=False,
         widget=forms.PasswordInput(
             attrs={
-                "class": "h-11 w-full rounded-input border border-line bg-white py-2 pl-9 pr-11 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-secondary focus:ring-3 focus:ring-secondary/15",
+                "class": "h-11 w-full rounded-input border border-line bg-white py-2 pl-9 pr-11 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-secondary focus:ring-3 focus:ring-secondary/15",  # noqa: E501
                 "placeholder": "••••••••",
                 "autocomplete": "new-password",
             }
@@ -70,7 +72,7 @@ class SignupForm(forms.ModelForm):
         strip=False,
         widget=forms.PasswordInput(
             attrs={
-                "class": "h-11 w-full rounded-input border border-line bg-white py-2 pl-9 pr-3 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-secondary focus:ring-3 focus:ring-secondary/15",
+                "class": "h-11 w-full rounded-input border border-line bg-white py-2 pl-9 pr-3 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-secondary focus:ring-3 focus:ring-secondary/15",  # noqa: E501
                 "placeholder": "••••••••",
                 "autocomplete": "new-password",
             }
@@ -97,9 +99,21 @@ class SignupForm(forms.ModelForm):
             "accept_terms",
         )
         widgets = {
-            "first_name": forms.TextInput(attrs={"class": "h-11 w-full rounded-input border border-line bg-white py-2 pl-9 pr-3 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-secondary focus:ring-3 focus:ring-secondary/15", "placeholder": _("Jean"), "autocomplete": "given-name"}),
-            "last_name": forms.TextInput(attrs={"class": "h-11 w-full rounded-input border border-line bg-white px-3 py-2 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-secondary focus:ring-3 focus:ring-secondary/15", "placeholder": _("Dupont"), "autocomplete": "family-name"}),
-            "email": forms.EmailInput(attrs={"class": "h-11 w-full rounded-input border border-line bg-white py-2 pl-9 pr-3 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-secondary focus:ring-3 focus:ring-secondary/15", "placeholder": _("you@example.com"), "autocomplete": "email"}),
+            "first_name": forms.TextInput(attrs={
+                "class": "h-11 w-full rounded-input border border-line bg-white py-2 pl-9 pr-3 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-secondary focus:ring-3 focus:ring-secondary/15",
+                "placeholder": _("Sahit"),
+                "autocomplete": "given-name",
+            }),
+            "last_name": forms.TextInput(attrs={
+                "class": "h-11 w-full rounded-input border border-line bg-white px-3 py-2 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-secondary focus:ring-3 focus:ring-secondary/15",
+                "placeholder": _("Heufeu"),
+                "autocomplete": "family-name",
+            }),
+            "email": forms.EmailInput(attrs={
+                "class": "h-11 w-full rounded-input border border-line bg-white py-2 pl-9 pr-3 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-secondary focus:ring-3 focus:ring-secondary/15",
+                "placeholder": _("you@example.com"),
+                "autocomplete": "email",
+            }),
         }
 
     def clean_email(self):

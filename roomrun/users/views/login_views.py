@@ -9,13 +9,14 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
 from django.views.generic import RedirectView
 from users.forms import SigninForm
+from users.mixins import RedirectToNextOrReferrerMixin
 from users.services import OtpEmailService
 from users.services import OtpRateLimitError
 from users.services import OtpService
 from utils.enums import OtpPurpose
 
 
-class SigninView(FormView):
+class SigninView(RedirectToNextOrReferrerMixin, FormView):
     template_name = "home/pages/auth/signin.html"
     form_class = SigninForm
 
