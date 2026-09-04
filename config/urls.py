@@ -30,6 +30,11 @@ urlpatterns += i18n_patterns(
         TemplateView.as_view(template_name="dashboard/pages/about.html"),
         name="about",
     ),
+    path(
+        "dashboard/",
+        TemplateView.as_view(template_name="dashboard/pages/dashboard.html"),
+        name="dashboard",
+    ),
     # User authentication and account management.
     path("users/", include("users.urls", namespace="users")),
     # Your stuff: custom urls includes go here

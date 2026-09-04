@@ -30,9 +30,9 @@
   </head>
   <body class="rr-shell {% block bodyclass %}{% endblock bodyclass %}">
     {% block body %}
-      {% include "home/includes/site_header.html" %}
-      {% block main %}<main class="rr-container py-12">{% include "home/includes/messages.html" %}{% block content %}{% endblock content %}</main>{% endblock main %}
-      {% include "home/includes/site_footer.html" %}
+      {% include "dashboard/includes/site_header.html" %}
+      {% block main %}<main class="rr-container py-12">{% include "common/includes/messages.html" %}{% block content %}{% endblock content %}</main>{% endblock main %}
+      {% include "dashboard/includes/site_footer.html" %}
     {% endblock body %}
     
     {% block modal %}
