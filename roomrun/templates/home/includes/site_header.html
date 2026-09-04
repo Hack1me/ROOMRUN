@@ -1,8 +1,10 @@
-{% load i18n %}
+{% load i18n static %}
 <header class="sticky top-0 z-50 border-b border-line bg-paper/92 backdrop-blur">
   <nav class="rr-container flex h-18 items-center gap-8" aria-label="{% translate 'Main navigation' %}">
     <a href="{% url 'home' %}" class="mr-auto flex items-center gap-2 font-display text-lg font-semibold text-primary" aria-label="ROOMRUN">
-      <span class="size-2.5 rounded-full bg-secondary"></span>
+      <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary shadow-md shadow-primary/20">
+        <img src="{% static 'images/logo/logo.png' %}" alt="ROOMRUN" class="size-6 object-contain">
+      </span>
       ROOMRUN
     </a>
     <div class="hidden items-center gap-7 md:flex">

@@ -55,6 +55,19 @@ class SigninForm(forms.Form):
 
 
 class SignupForm(forms.ModelForm):
+    ROLE_CHOICES = [
+        ("tenant", _("Tenant")),
+        ("landlord", _("Landlord")),
+    ]
+    role = forms.ChoiceField(
+        label=_("Profile type"),
+        choices=ROLE_CHOICES,
+        widget=forms.RadioSelect(
+            attrs={
+                "class": "sr-only",
+            }
+        ),
+    )
     password1 = forms.CharField(
         label=_("Password"),
         strip=False,
@@ -92,7 +105,9 @@ class SignupForm(forms.ModelForm):
         required=True,
         widget=forms.CheckboxInput(
             attrs={
-                "class": "mt-0.5 size-[18px] shrink-0 cursor-pointer rounded border-2 border-line text-primary accent-primary focus:ring-3 focus:ring-secondary/20",
+                "class": "mt-0.5 size-[18px] shrink-0 cursor-pointer"
+                "rounded border-2 border-line text-primary accent-primary"
+                "focus:ring-3 focus:ring-secondary/20",
             }
         ),
     )

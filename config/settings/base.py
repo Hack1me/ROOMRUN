@@ -352,7 +352,6 @@ SPECTACULAR_SETTINGS = {
 # settings.py
 EMAIL_LOGO_PATH = os.getenv("EMAIL_LOGO_PATH", "images/logo/logo.png")
 SITE_NAME = os.getenv("SITE_NAME", "Mon Application")
-BASE_URL = os.getenv("BASE_URL", "")
 
 # otp_request_coldown
 OTP_REQUEST_COOLDOWN_SECONDS = env.int("OTP_REQUEST_COOLDOWN_SECONDS", 60)

@@ -9,6 +9,8 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
 from users.forms import SignupForm
 from users.mixins import RedirectToNextOrReferrerMixin
+from users.models import Landlord
+from users.models import Tenant
 from users.services import OtpEmailService
 from users.services import OtpRateLimitError
 from users.services import OtpService
@@ -22,9 +24,14 @@ class SignupView(RedirectToNextOrReferrerMixin, FormView):
     form_class = SignupForm
 
     def form_valid(self, form):
+        role = form.cleaned_data.get("role")
         try:
             with transaction.atomic():
                 user = form.save()
+                if role == "landlord":
+                    Landlord.objects.create(user=user)
+                elif role == "tenant":
+                    Tenant.objects.create(user=user)
                 otp, token = OtpService.create(user, OtpPurpose.SIGNUP)
         except IntegrityError:
             form.add_error(

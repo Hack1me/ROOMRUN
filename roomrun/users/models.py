@@ -145,6 +145,16 @@ class User(BaseModel, AbstractUser):
         help_text=_("The IP address used during the last successful login."),
     )
 
+    is_landlord = models.BooleanField(
+        _("is landlord"),
+        default=False,
+        help_text=_("Indicates if the user is a landlord."),
+    )
+    is_tenant = models.BooleanField(
+        _("is tenant"),
+        default=False,
+        help_text=_("Indicates if the user is a tenant."),
+    )
     # -----------------------------------------------------------------
     # Meta options with centralized indexes
     # -----------------------------------------------------------------

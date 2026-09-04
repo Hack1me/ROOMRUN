@@ -47,7 +47,7 @@
   }
 
   .rr-container {
-    @apply mx-auto w-full max-w-[1180px] px-6 lg:px-8;
+    @apply mx-auto w-full max-w-295 px-6 lg:px-8;
   }
 
   .rr-display {
