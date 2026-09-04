@@ -73,7 +73,13 @@
     }
   }
 
-  let remainingSeconds = 120;
+  function getTimeoutSeconds() {
+    const timeout = timerElement ? timerElement.dataset.timeoutSeconds : null;
+    const parsed = parseInt(timeout, 10);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 120;
+  }
+
+  let remainingSeconds = getTimeoutSeconds();
   let timerInterval;
 
   function updateTimer() {
@@ -86,7 +92,7 @@
 
   function startTimer() {
     clearInterval(timerInterval);
-    remainingSeconds = 120;
+    remainingSeconds = getTimeoutSeconds();
     if (resendButton) {
       resendButton.disabled = true;
     }

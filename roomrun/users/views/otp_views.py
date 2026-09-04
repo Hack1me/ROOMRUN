@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
+from django.db import transaction
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.utils.translation import get_language_from_request
@@ -58,6 +60,7 @@ class VerifyOtpView(FormView):
         context["purpose"] = self.purpose
         context["title"] = _("Verify your account")
         context["subtitle"] = _("Enter the six-digit code sent to your email address.")
+        context["otp_timeout_seconds"] = settings.OTP_PAGE_TIMEOUT_SECONDS
         if self.purpose == OtpPurpose.PASSWORD_RESET:
             context["title"] = _("Verify the reset code")
             context["subtitle"] = _("Enter the code sent to create a new password.")
@@ -117,8 +120,9 @@ class ResendOtpView(View):
             )
             return redirect("users:signin")
         try:
-            otp = OtpVerifyService._resolve_otp(token, purpose)  # noqa: SLF001
-            new_otp, new_token = OtpService.create(otp.user, purpose)
+            with transaction.atomic():
+                otp = OtpVerifyService._resolve_otp(token, purpose)  # noqa: SLF001
+                new_otp, new_token = OtpService.create(otp.user, purpose)
         except (OtpVerificationError, OtpRateLimitError, ValueError) as error:
             messages.error(request, error)
             return redirect("users:verify_otp", purpose=purpose)

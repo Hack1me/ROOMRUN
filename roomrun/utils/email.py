@@ -48,7 +48,7 @@ class EmailUtil:
 
     @staticmethod
     def _add_site_context(context: dict[str, Any]) -> dict[str, Any]:
-        site_url = getattr(settings, "BASE_URL", "")
+        site_url = getattr(settings, "BASE_URL", "") or ""
         if site_url and not site_url.startswith(("http://", "https://")):
             site_url = (
                 f"https://{site_url}"
@@ -60,15 +60,17 @@ class EmailUtil:
         context["site_name"] = getattr(settings, "SITE_NAME", "ROOMRUN")
 
         static_url = getattr(settings, "STATIC_URL", "/static/")
-        if static_url.startswith(("http://", "https://")):
-            logo_url = f"{static_url}images/logo/logo.png"
-        else:
-            logo_url = (
-                f"{site_url.rstrip('/')}{static_url}"
-                "images/logo/RoomRun-no-backgroung.png"
-            )
+        email_logo_url = getattr(settings, "EMAIL_LOGO_URL", "") or ""
+        if not email_logo_url:
+            if static_url.startswith(("http://", "https://")):
+                email_logo_url = f"{static_url}images/logo/logo.png"
+            elif site_url:
+                email_logo_url = (
+                    f"{site_url.rstrip('/')}{static_url}"
+                    "images/logo/logo.png"
+                )
 
-        context["logo_url"] = logo_url
+        context["logo_url"] = email_logo_url
         return context
 
     @staticmethod

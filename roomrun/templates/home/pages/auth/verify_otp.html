@@ -86,7 +86,7 @@
         <!-- Timer -->
         <div class="text-center text-xs text-muted">
           {% translate "Code expires in" %}
-          <span class="font-semibold text-primary" id="timer">02:00</span>
+          <span class="font-semibold text-primary" id="timer" data-timeout-seconds="{{ otp_timeout_seconds }}">--:--</span>
         </div>
 
         <!-- Verify Button -->
