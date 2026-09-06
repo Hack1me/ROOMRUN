@@ -124,7 +124,7 @@
     if (code.length !== 6) {
       e.preventDefault();
       if (errorMessage) {
-        const i18nError = otpForm.dataset.i18nError || 'Please enter all 6 digits';
+        const i18nError = otpForm.dataset.i18nError || gettext('Please enter all 6 digits');
         errorMessage.textContent = i18nError;
       }
       return;

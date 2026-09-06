@@ -18,6 +18,6 @@ document.addEventListener('DOMContentLoaded', function () {
     button.disabled = true;
     if (spinner) spinner.classList.remove('hidden');
     if (buttonIcon) buttonIcon.classList.add('hidden');
-    if (buttonText) buttonText.textContent = labels.sending || 'Sending...';
+    if (buttonText) buttonText.textContent = labels.sending || gettext('Sending...');
   });
 });

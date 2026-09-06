@@ -11,8 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (icon) {
         icon.className = isPassword ? 'ti ti-eye-off text-lg' : 'ti ti-eye text-lg';
       }
-      const showLabel = toggleButton.dataset.i18nShow || 'Show password';
-      const hideLabel = toggleButton.dataset.i18nHide || 'Hide password';
+      const showLabel = toggleButton.dataset.i18nShow || gettext('Show password');
+      const hideLabel = toggleButton.dataset.i18nHide || gettext('Hide password');
       toggleButton.setAttribute('aria-label', isPassword ? hideLabel : showLabel);
     });
   }

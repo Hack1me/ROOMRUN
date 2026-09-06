@@ -7,8 +7,8 @@ document.querySelectorAll("[data-password-toggle]").forEach((button) => {
     const visible = input.type === "password";
     input.type = visible ? "text" : "password";
     icon.className = `ti ${visible ? "ti-eye-off" : "ti-eye"} text-lg`;
-    const showLabel = button.dataset.i18nShow || "Show password";
-    const hideLabel = button.dataset.i18nHide || "Hide password";
+    const showLabel = button.dataset.i18nShow || gettext("Show password");
+    const hideLabel = button.dataset.i18nHide || gettext("Hide password");
     button.setAttribute("aria-label", visible ? hideLabel : showLabel);
   });
 });
@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
     nextButton.addEventListener("click", () => {
       const selectedRole = document.querySelector('input[name="role"]:checked');
       if (!selectedRole) {
-        alert("{% translate 'Please select your profile type.' %}");
+        alert(gettext("Please select your profile type."));
         return;
       }
       showStep(2);

@@ -7,9 +7,12 @@ from django.urls import include
 from django.urls import path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
+from django.views.i18n import JavaScriptCatalog
 from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
+
+from dashboard.views import DashboardView
 
 handler400 = "core.error_views.bad_request"
 handler403 = "core.error_views.permission_denied"
@@ -32,7 +35,7 @@ urlpatterns += i18n_patterns(
     ),
     path(
         "dashboard/",
-        TemplateView.as_view(template_name="dashboard/pages/dashboard.html"),
+        DashboardView.as_view(),
         name="dashboard",
     ),
     # User authentication and account management.
@@ -48,6 +51,7 @@ if settings.DEBUG:
 
 # API URLS
 urlpatterns += [
+    path("jsi18n/", JavaScriptCatalog.as_view(), name="jsi18n"),
     # API base url
     path("api/", include("config.api_router")),
     # DRF auth token
