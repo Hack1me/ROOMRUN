@@ -1,0 +1,10 @@
+{% extends "dashboard/layout.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Maintenance dashboard" %} — ROOMRUN{% endblock %}
+
+{% block content %}
+<section class="py-10"><p class="rr-eyebrow">{% translate "MAINTENANCE" %}</p><div class="mt-4 flex flex-wrap items-end justify-between gap-4"><div><h1 class="rr-display text-4xl">{% blocktranslate with name=user.full_name %}Hello, {{ name }}{% endblocktranslate %}</h1><p class="mt-2 text-muted">{% translate "Your tasks and assigned maintenance requests." %}</p></div><a class="rr-btn-outline" href="{% url 'dashboard:entry' %}">{% translate "Switch dashboard" %}</a></div>
+  <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4"><article class="rr-dashboard-stat"><div class="rr-dashboard-stat__header"><p class="rr-dashboard-stat__label">{% translate "Total tasks" %}</p><span class="rr-dashboard-icon rr-dashboard-icon--primary" aria-hidden="true"><i class="ti ti-tool"></i></span></div><p class="rr-dashboard-stat__value">{{ total_tasks }}</p></article><article class="rr-dashboard-stat"><div class="rr-dashboard-stat__header"><p class="rr-dashboard-stat__label">{% translate "Pending" %}</p><span class="rr-dashboard-icon rr-dashboard-icon--warning" aria-hidden="true"><i class="ti ti-clock-pause"></i></span></div><p class="rr-dashboard-stat__value">{{ pending_tasks }}</p></article><article class="rr-dashboard-stat"><div class="rr-dashboard-stat__header"><p class="rr-dashboard-stat__label">{% translate "In progress" %}</p><span class="rr-dashboard-icon rr-dashboard-icon--secondary" aria-hidden="true"><i class="ti ti-progress"></i></span></div><p class="rr-dashboard-stat__value">{{ in_progress_tasks }}</p></article><article class="rr-dashboard-stat"><div class="rr-dashboard-stat__header"><p class="rr-dashboard-stat__label">{% translate "Completion rate" %}</p><span class="rr-dashboard-icon rr-dashboard-icon--success" aria-hidden="true"><i class="ti ti-circle-check"></i></span></div><p class="rr-dashboard-stat__value">{{ completion_rate }}%</p><p class="mt-2 text-xs text-danger">{{ urgent_requests }} {% translate "urgent request(s)" %}</p></article></div>
+</section>
+{% endblock %}

@@ -54,7 +54,7 @@ class UserRedirectView(RedirectView):
     permanent = False
 
     def get_redirect_url(self, *args, **kwargs):
-        return reverse("home")
+        return reverse("dashboard")
 
 
 class UserLogoutView(LogoutView):

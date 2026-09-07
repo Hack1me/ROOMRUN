@@ -1,0 +1,8 @@
+{% extends "dashboard/layout.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Dashboard" %} — ROOMRUN{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-2xl py-16 text-center"><p class="rr-eyebrow">ROOMRUN</p><h1 class="rr-display mt-4 text-4xl">{% blocktranslate with name=user.full_name %}Welcome, {{ name }}{% endblocktranslate %}</h1><p class="mx-auto mt-4 max-w-lg text-muted">{% translate "Your dashboard is being prepared. Once a role is assigned to your account, its workspace will appear here." %}</p><a class="rr-btn-dark mt-8" href="{% url 'users:logout' %}">{% translate "Sign out" %}</a></section>
+{% endblock %}

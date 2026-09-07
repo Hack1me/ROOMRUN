@@ -12,15 +12,12 @@ from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 
-from dashboard.views import DashboardView
-
 handler400 = "core.error_views.bad_request"
 handler403 = "core.error_views.permission_denied"
 handler404 = "core.error_views.page_not_found"
 handler500 = "core.error_views.server_error"
 
 urlpatterns = [
-    # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
 ]
 urlpatterns += i18n_patterns(
@@ -35,26 +32,20 @@ urlpatterns += i18n_patterns(
     ),
     path(
         "dashboard/",
-        DashboardView.as_view(),
-        name="dashboard",
+        include("users.urls.dashboard_urls", namespace="dashboard"),
     ),
-    # User authentication and account management.
-    path("users/", include("users.urls", namespace="users")),
-    # Your stuff: custom urls includes go here
-    # ...
-    # Media files
+    path(
+        "users/",
+        include("users.urls.users_urls", namespace="users"),
+    ),
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 )
 if settings.DEBUG:
-    # Static file serving when using Gunicorn + Uvicorn for local web socket development
     urlpatterns += staticfiles_urlpatterns()
 
-# API URLS
 urlpatterns += [
     path("jsi18n/", JavaScriptCatalog.as_view(), name="jsi18n"),
-    # API base url
     path("api/", include("config.api_router")),
-    # DRF auth token
     path("api/auth-token/", obtain_auth_token, name="obtain_auth_token"),
     path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
     path(
@@ -65,8 +56,6 @@ urlpatterns += [
 ]
 
 if settings.DEBUG:
-    # This allows the error pages to be debugged during development, just visit
-    # these url in browser to see how these error pages look like.
     urlpatterns += [
         path(
             "400/",

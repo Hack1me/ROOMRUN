@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block bodyclass %}dashboard-page{% endblock bodyclass %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/dist/tabler-icons.min.css">
+{% endblock extra_css %}
+
+{% block body %}
+  {% block dashboard_body %}
+    <main class="min-h-screen">
+      <div class="rr-container">
+        {% include "common/includes/messages.html" %}
+        {% block content %}{% endblock content %}
+      </div>
+    </main>
+  {% endblock dashboard_body %}
+{% endblock body %}
