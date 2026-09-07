@@ -2333,8 +2333,8 @@
     flex-direction: column;
     border-right-style: var(--tw-border-style);
     border-right-width: 1px;
-    border-color: var(--color-border);
-    background-color: var(--color-white);
+    border-color: var(--color-primary);
+    background-color: var(--color-primary);
     width: 232px;
     padding: 20px 14px;
   }
@@ -2352,8 +2352,8 @@
     align-items: center;
     justify-content: center;
     border-radius: var(--radius-lg);
-    background-color: var(--color-primary);
-    color: var(--color-white);
+    background-color: var(--color-white);
+    color: var(--color-primary);
     font-size: 18px;
   }
   .logo span {
@@ -2363,7 +2363,7 @@
     font-weight: var(--font-weight-bold);
     --tw-tracking: var(--tracking-tight);
     letter-spacing: var(--tracking-tight);
-    color: var(--color-primary);
+    color: var(--color-white);
   }
   .nav-title {
     margin-block: calc(var(--spacing) * 5);
@@ -2374,7 +2374,10 @@
     font-weight: var(--font-weight-semibold);
     --tw-tracking: var(--tracking-wide);
     letter-spacing: var(--tracking-wide);
-    color: var(--color-muted);
+    color: color-mix(in srgb, #fff 45%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-white) 45%, transparent);
+    }
     text-transform: uppercase;
   }
   .nav-title:first-of-type {
@@ -2396,7 +2399,10 @@
     line-height: var(--tw-leading, var(--text-sm--line-height));
     --tw-font-weight: var(--font-weight-medium);
     font-weight: var(--font-weight-medium);
-    color: var(--color-secondary);
+    color: color-mix(in srgb, #fff 70%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-white) 70%, transparent);
+    }
     transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
@@ -2408,7 +2414,7 @@
       outline-offset: 2px;
     }
     &:focus-visible {
-      outline-color: var(--color-secondary);
+      outline-color: var(--color-white);
     }
   }
   .nav-item i {
@@ -2417,12 +2423,17 @@
     font-size: 17px;
   }
   .nav-item:hover {
-    background-color: var(--color-bg);
-    color: var(--color-primary);
+    background-color: color-mix(in srgb, #fff 10%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-white) 10%, transparent);
+    }
+    color: var(--color-white);
   }
   .nav-item.active {
-    background-color: var(--color-accent-bg);
+    background-color: var(--color-white);
     color: var(--color-primary);
+    --tw-shadow: 0 1px 3px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 1px 2px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
   .nav-item.active i {
     color: var(--color-secondary);
@@ -2446,7 +2457,10 @@
     margin-top: auto;
     border-top-style: var(--tw-border-style);
     border-top-width: 1px;
-    border-color: var(--color-border);
+    border-color: color-mix(in srgb, #fff 15%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-white) 15%, transparent);
+    }
     padding-top: calc(var(--spacing) * 3.5);
   }
   .sidebar-user {
@@ -2464,12 +2478,15 @@
     align-items: center;
     justify-content: center;
     border-radius: calc(infinity * 1px);
-    background-color: var(--color-accent-bg);
+    background-color: color-mix(in srgb, #fff 15%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-white) 15%, transparent);
+    }
     font-size: var(--text-xs);
     line-height: var(--tw-leading, var(--text-xs--line-height));
     --tw-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
-    color: var(--color-primary);
+    color: var(--color-white);
   }
   .sidebar-user-info {
     min-width: 0px;
@@ -2482,12 +2499,15 @@
     line-height: var(--tw-leading, var(--text-xs--line-height));
     --tw-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
-    color: var(--color-text);
+    color: var(--color-white);
   }
   .sidebar-user-role {
     margin-top: calc(var(--spacing) * 0.5);
     font-size: 10.5px;
-    color: var(--color-muted);
+    color: color-mix(in srgb, #fff 55%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-white) 55%, transparent);
+    }
   }
   .main {
     min-height: 100vh;

@@ -64,7 +64,7 @@
 
           <div class="grid grid-cols-2 gap-3">
             <label class="role-card cursor-pointer">
-              <input type="radio" name="role" value="tenant" class="sr-only" required>
+              <input type="radio" name="role" value="tenant" class="sr-only" {% if form.role.value == "tenant" %}checked{% endif %} required>
               <div class="role-card-inner border border-line bg-white rounded-xl p-4 transition hover:border-secondary">
                 <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-soft text-primary">
                   <i class="ti ti-home"></i>
@@ -75,7 +75,7 @@
             </label>
 
             <label class="role-card cursor-pointer">
-              <input type="radio" name="role" value="landlord" class="sr-only" required>
+              <input type="radio" name="role" value="landlord" class="sr-only" {% if form.role.value == "landlord" %}checked{% endif %} required>
               <div class="role-card-inner border border-line bg-white rounded-xl p-4 transition hover:border-secondary">
                 <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-soft text-primary">
                   <i class="ti ti-building"></i>

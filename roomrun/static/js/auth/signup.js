@@ -45,26 +45,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  function getStep2FieldIds() {
-    return [
-      'input[name="first_name"]',
-      'input[name="last_name"]',
-      'input[name="email"]',
-      'input[name="password1"]',
-      'input[name="password2"]',
-      'input[name="accept_terms"]',
-    ];
-  }
-
   function hasStep2Errors() {
-    return getStep2FieldIds().some((selector) => {
-      const field = document.querySelector(selector);
-      if (!field) return false;
-      const container = field.closest(".field, .relative, div");
-      if (!container) return false;
-      const errorEl = container.querySelector(".text-danger, .text-red-500");
-      return !!errorEl;
-    });
+    return Boolean(
+      step2?.querySelector(".text-danger, .text-red-500")
+    );
   }
 
   function showStep(stepNumber) {
@@ -89,6 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   roleCards.forEach((card) => {
     const inner = card.querySelector(".role-card-inner");
+    const radio = card.querySelector('input[type="radio"]');
 
     function selectCard(cardToSelect) {
       roleCards.forEach((item) => {
@@ -96,8 +81,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!itemInner) return;
         itemInner.classList.remove("border-2", "border-secondary", "bg-primary-soft", "shadow-sm");
         itemInner.classList.add("border", "border-line", "bg-white");
-        const radio = item.querySelector('input[type="radio"]');
-        if (radio) radio.checked = false;
+        const itemRadio = item.querySelector('input[type="radio"]');
+        if (itemRadio) itemRadio.checked = false;
       });
 
       if (!cardToSelect) return;
@@ -105,11 +90,13 @@ document.addEventListener("DOMContentLoaded", function () {
         inner.classList.remove("border", "border-line", "bg-white");
         inner.classList.add("border-2", "border-secondary", "bg-primary-soft", "shadow-sm");
       }
-      const radio = cardToSelect.querySelector('input[type="radio"]');
-      if (radio) radio.checked = true;
+      const selectedRadio = cardToSelect.querySelector('input[type="radio"]');
+      if (selectedRadio) selectedRadio.checked = true;
     }
 
     card.addEventListener("click", () => selectCard(card));
+
+    radio?.addEventListener("change", () => selectCard(card));
 
     card.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
@@ -117,6 +104,8 @@ document.addEventListener("DOMContentLoaded", function () {
         selectCard(card);
       }
     });
+
+    if (radio?.checked) selectCard(card);
   });
 
   if (nextButton) {

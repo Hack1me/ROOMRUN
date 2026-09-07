@@ -296,7 +296,7 @@ class Landlord(BaseModel):
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name="landlord_profile",
         verbose_name=_("User"),
         help_text=_("The user account associated with this landlord."),
@@ -356,7 +356,7 @@ class Tenant(BaseModel):
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name="tenant_profile",
         verbose_name=_("User"),
         help_text=_("The user account associated with this tenant."),
@@ -429,7 +429,7 @@ class Employee(BaseModel):
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name="employee_profile",
         verbose_name=_("User"),
         help_text=_("The user account associated with this employee."),
@@ -515,7 +515,7 @@ class MaintenanceAgent(BaseModel):
 
     employee = models.OneToOneField(
         Employee,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name="maintenance_agent_profile",
         verbose_name=_("Employee"),
         help_text=_("The employee record for this maintenance agent."),
@@ -570,7 +570,7 @@ class Guard(BaseModel):
 
     employee = models.OneToOneField(
         Employee,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name="guard_profile",
         verbose_name=_("Employee"),
         help_text=_("The employee record for this security guard."),

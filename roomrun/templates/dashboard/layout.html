@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block bodyclass %}dashboard-page{% endblock bodyclass %}
 
 {% block extra_css %}
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}">
 {% endblock extra_css %}
 
 {% block body %}

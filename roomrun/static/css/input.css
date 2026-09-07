@@ -398,7 +398,7 @@
   .rr-dashboard-stat__value { @apply mt-4 font-display text-3xl font-semibold tracking-tight text-primary; }
 
   .sidebar {
-    @apply fixed inset-y-0 left-0 z-50 flex flex-col border-r border-border bg-white;
+    @apply fixed inset-y-0 left-0 z-50 flex flex-col border-r border-primary bg-primary;
     width: 232px;
     padding: 20px 14px;
   }
@@ -408,16 +408,16 @@
   }
 
   .logo-icon {
-    @apply flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white;
+    @apply flex h-8 w-8 items-center justify-center rounded-lg bg-white text-primary;
     font-size: 18px;
   }
 
   .logo span {
-    @apply text-base font-bold tracking-tight text-primary;
+    @apply text-base font-bold tracking-tight text-white;
   }
 
   .nav-title {
-    @apply px-2.5 my-5 text-xs font-semibold uppercase tracking-wide text-muted;
+    @apply px-2.5 my-5 text-xs font-semibold uppercase tracking-wide text-white/45;
   }
   .nav-title:first-of-type {
     @apply mt-0;
@@ -428,16 +428,16 @@
   }
 
   .nav-item {
-    @apply flex h-10 items-center gap-2.5 rounded-md px-2.5 text-sm font-medium text-secondary transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary;
+    @apply flex h-10 items-center gap-2.5 rounded-md px-2.5 text-sm font-medium text-white/70 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white;
   }
   .nav-item i {
     @apply w-[18px] text-center text-[17px];
   }
   .nav-item:hover {
-    @apply bg-bg text-primary;
+    @apply bg-white/10 text-white;
   }
   .nav-item.active {
-    @apply bg-accent-bg text-primary;
+    @apply bg-white text-primary shadow-sm;
   }
   .nav-item.active i {
     @apply text-secondary;
@@ -448,7 +448,7 @@
   }
 
   .sidebar-bottom {
-    @apply mt-auto border-t border-border pt-3.5;
+    @apply mt-auto border-t border-white/15 pt-3.5;
   }
 
   .sidebar-user {
@@ -456,7 +456,7 @@
   }
 
   .avatar {
-    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent-bg text-xs font-semibold text-primary;
+    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/15 text-xs font-semibold text-white;
   }
 
   .sidebar-user-info {
@@ -464,11 +464,11 @@
   }
 
   .sidebar-user-name {
-    @apply text-xs font-semibold text-text truncate;
+    @apply text-xs font-semibold text-white truncate;
   }
 
   .sidebar-user-role {
-    @apply mt-0.5 text-[10.5px] text-muted;
+    @apply mt-0.5 text-[10.5px] text-white/55;
   }
 
   .main {
