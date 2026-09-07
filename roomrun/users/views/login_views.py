@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
-from django.contrib.auth.views import LogoutView
+from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import get_language_from_request
@@ -54,8 +54,13 @@ class UserRedirectView(RedirectView):
     permanent = False
 
     def get_redirect_url(self, *args, **kwargs):
-        return reverse("dashboard:entry")
+        return reverse("dashboard:dashboard")
 
 
-class UserLogoutView(LogoutView):
-    next_page = "home"
+class UserLogoutView(RedirectView):
+    permanent = False
+    url = "/"
+
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return super().get(request, *args, **kwargs)

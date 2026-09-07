@@ -3,9 +3,11 @@
 
 {% block title %}{% translate "Landlord dashboard" %} — ROOMRUN{% endblock %}
 
+{% block header %}{% endblock header %}
+
 {% block dashboard_body %}
 <div class="app">
-  <aside class="sidebar" id="sidebar">
+  <aside class="sidebar overflow-y-auto" id="sidebar">
     <a class="logo" href="{% url 'dashboard:landlord' %}"><span class="logo-icon"><i class="ti ti-building-community"></i></span><span>ROOMRUN</span></a>
     <p class="nav-title">{% translate "Main" %}</p>
     <nav class="nav" aria-label="{% translate 'Main navigation' %}">
@@ -54,3 +56,5 @@
   });
 </script>
 {% endblock inline_javascript %}
+
+{% block footer %}{% endblock footer %}

@@ -55,7 +55,7 @@ class LandlordDashboardView(LoginRequiredMixin, TemplateView):
                 request,
                 _("You do not have access to the landlord dashboard.")
             )
-            return redirect("dashboard:entry")
+            return redirect("dashboard:dashboard")
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -75,7 +75,7 @@ class TenantDashboardView(LoginRequiredMixin, TemplateView):
                 request,
                 _("You do not have access to the tenant dashboard.")
             )
-            return redirect("dashboard:entry")
+            return redirect("dashboard:dashboard")
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -96,7 +96,7 @@ class MaintenanceDashboardView(LoginRequiredMixin, TemplateView):
                 request,
                 _("You do not have access to the maintenance dashboard.")
             )
-            return redirect("dashboard:entry")
+            return redirect("dashboard:dashboard")
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -117,7 +117,7 @@ class GuardDashboardView(LoginRequiredMixin, TemplateView):
                 request,
                 _("You do not have access to the guard dashboard.")
             )
-            return redirect("dashboard:entry")
+            return redirect("dashboard:dashboard")
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):

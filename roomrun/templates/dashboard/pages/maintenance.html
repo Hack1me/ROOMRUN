@@ -3,8 +3,280 @@
 
 {% block title %}{% translate "Maintenance dashboard" %} — ROOMRUN{% endblock %}
 
-{% block content %}
-<section class="py-10"><p class="rr-eyebrow">{% translate "MAINTENANCE" %}</p><div class="mt-4 flex flex-wrap items-end justify-between gap-4"><div><h1 class="rr-display text-4xl">{% blocktranslate with name=user.full_name %}Hello, {{ name }}{% endblocktranslate %}</h1><p class="mt-2 text-muted">{% translate "Your tasks and assigned maintenance requests." %}</p></div><a class="rr-btn-outline" href="{% url 'dashboard:entry' %}">{% translate "Switch dashboard" %}</a></div>
-  <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4"><article class="rr-dashboard-stat"><div class="rr-dashboard-stat__header"><p class="rr-dashboard-stat__label">{% translate "Total tasks" %}</p><span class="rr-dashboard-icon rr-dashboard-icon--primary" aria-hidden="true"><i class="ti ti-tool"></i></span></div><p class="rr-dashboard-stat__value">{{ total_tasks }}</p></article><article class="rr-dashboard-stat"><div class="rr-dashboard-stat__header"><p class="rr-dashboard-stat__label">{% translate "Pending" %}</p><span class="rr-dashboard-icon rr-dashboard-icon--warning" aria-hidden="true"><i class="ti ti-clock-pause"></i></span></div><p class="rr-dashboard-stat__value">{{ pending_tasks }}</p></article><article class="rr-dashboard-stat"><div class="rr-dashboard-stat__header"><p class="rr-dashboard-stat__label">{% translate "In progress" %}</p><span class="rr-dashboard-icon rr-dashboard-icon--secondary" aria-hidden="true"><i class="ti ti-progress"></i></span></div><p class="rr-dashboard-stat__value">{{ in_progress_tasks }}</p></article><article class="rr-dashboard-stat"><div class="rr-dashboard-stat__header"><p class="rr-dashboard-stat__label">{% translate "Completion rate" %}</p><span class="rr-dashboard-icon rr-dashboard-icon--success" aria-hidden="true"><i class="ti ti-circle-check"></i></span></div><p class="rr-dashboard-stat__value">{{ completion_rate }}%</p><p class="mt-2 text-xs text-danger">{{ urgent_requests }} {% translate "urgent request(s)" %}</p></article></div>
-</section>
-{% endblock %}
+{% block dashboard_body %}
+<div class="app">
+  <aside class="sidebar overflow-y-auto" id="sidebar">
+    <div class="logo">
+      <div class="logo-mark"><i class="ti ti-building-community"></i></div>
+      <div>
+        <div class="logo-text">ROOMRUN</div>
+        <span class="logo-subtitle">{% translate "Property Management" %}</span>
+      </div>
+    </div>
+
+    <div class="sidebar-content">
+      <div class="nav-section">
+        <div class="nav-title">{% translate "Main" %}</div>
+        <a href="{% url 'dashboard:maintenance' %}" class="nav-item active"><i class="ti ti-layout-dashboard"></i><span>{% translate "Dashboard" %}</span></a>
+        <a href="#" class="nav-item"><i class="ti ti-tool"></i><span>{% translate "My tasks" %}</span><span class="badge">5</span></a>
+        <a href="#" class="nav-item"><i class="ti ti-clipboard-list"></i><span>{% translate "Requests" %}</span></a>
+        <a href="#" class="nav-item"><i class="ti ti-calendar"></i><span>{% translate "Calendar" %}</span></a>
+        <a href="#" class="nav-item"><i class="ti ti-message"></i><span>{% translate "Messages" %}</span></a>
+        <a href="#" class="nav-item"><i class="ti ti-bell"></i><span>{% translate "Notifications" %}</span></a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">{% translate "Account" %}</div>
+        <a href="#" class="nav-item"><i class="ti ti-settings"></i><span>{% translate "Settings" %}</span></a>
+        <a href="#" class="nav-item"><i class="ti ti-help-circle"></i><span>{% translate "Help" %}</span></a>
+      </div>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="avatar">JD</div>
+      <div class="user-info">
+        <div class="user-name">Jean Dupont</div>
+        <div class="user-role">{% translate "Maintenance agent" %}</div>
+      </div>
+      <i class="ti ti-chevron-right" style="margin-left:auto;color:var(--muted);font-size:16px;"></i>
+    </div>
+  </aside>
+
+  <div class="overlay" id="overlay"></div>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu" id="mobileMenu" type="button"><i class="ti ti-menu-2"></i></button>
+        <div class="search"><i class="ti ti-search"></i><input type="text" placeholder="{% translate 'Search an intervention...' %}"></div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-button" type="button"><i class="ti ti-bell"></i><span class="notification-dot"></span></button>
+        <div class="top-user">
+          <div class="avatar">JD</div>
+          <span class="user-name">Jean Dupont</span>
+          <i class="ti ti-chevron-down" style="font-size:14px;color:var(--muted);"></i>
+        </div>
+      </div>
+    </header>
+
+    <section class="content">
+      <div class="welcome">
+        <h1>{% translate "Hello Jean" %} 👋</h1>
+        <p>{% translate "Here is the status of your interventions and pending tasks." %}</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">{% translate "To do" %}</span>
+            <div class="stat-icon blue"><i class="ti ti-list-check"></i></div>
+          </div>
+          <div class="stat-value">5</div>
+          <div class="stat-description">{% translate "assigned interventions" %}</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">{% translate "In progress" %}</span>
+            <div class="stat-icon orange"><i class="ti ti-loader"></i></div>
+          </div>
+          <div class="stat-value">2</div>
+          <div class="stat-description">{% translate "currently ongoing" %}</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">{% translate "Completed" %}</span>
+            <div class="stat-icon green"><i class="ti ti-circle-check"></i></div>
+          </div>
+          <div class="stat-value">18</div>
+          <div class="stat-description">{% translate "this month" %}</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">{% translate "Urgent" %}</span>
+            <div class="stat-icon red"><i class="ti ti-alert-triangle"></i></div>
+          </div>
+          <div class="stat-value">2</div>
+          <div class="stat-description">{% translate "need your attention" %}</div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">{% translate "My interventions" %}</div>
+            <span class="card-link">{% translate "See all" %}</span>
+          </div>
+
+          <div class="intervention">
+            <div class="task-icon plumbing"><i class="ti ti-droplet"></i></div>
+            <div class="task-content">
+              <div class="task-title">{% translate "Water leak in the bathroom" %}</div>
+              <div class="task-location"><i class="ti ti-map-pin"></i>{% translate "Résidence Les Palmiers · Building B · B04" %}</div>
+            </div>
+            <div class="task-meta">
+              <span class="badge-status urgent">{% translate "Urgent" %}</span>
+              <span class="task-date">{% translate "Today" %} · 09:00</span>
+            </div>
+          </div>
+
+          <div class="intervention">
+            <div class="task-icon electric"><i class="ti ti-bolt"></i></div>
+            <div class="task-content">
+              <div class="task-title">{% translate "Electrical outlet replacement" %}</div>
+              <div class="task-location"><i class="ti ti-map-pin"></i>{% translate "Résidence Horizon · Building A · A12" %}</div>
+            </div>
+            <div class="task-meta">
+              <span class="badge-status progress">{% translate "In progress" %}</span>
+              <span class="task-date">{% translate "Today" %} · 11:00</span>
+            </div>
+          </div>
+
+          <div class="intervention">
+            <div class="task-icon water"><i class="ti ti-adjustments-horizontal"></i></div>
+            <div class="task-content">
+              <div class="task-title">{% translate "Water meter check" %}</div>
+              <div class="task-location"><i class="ti ti-map-pin"></i>{% translate "Résidence Les Palmiers · Building A · A08" %}</div>
+            </div>
+            <div class="task-meta">
+              <span class="badge-status pending">{% translate "To do" %}</span>
+              <span class="task-date">{% translate "Today" %} · 14:00</span>
+            </div>
+          </div>
+
+          <div class="intervention">
+            <div class="task-icon general"><i class="ti ti-tool"></i></div>
+            <div class="task-content">
+              <div class="task-title">{% translate "Front door repair" %}</div>
+              <div class="task-location"><i class="ti ti-map-pin"></i>{% translate "Résidence Émeraude · Building C · C03" %}</div>
+            </div>
+            <div class="task-meta">
+              <span class="badge-status pending">{% translate "To do" %}</span>
+              <span class="task-date">{% translate "Tomorrow" %} · 09:30</span>
+            </div>
+          </div>
+
+          <div class="intervention">
+            <div class="task-icon electric"><i class="ti ti-bulb"></i></div>
+            <div class="task-content">
+              <div class="task-title">{% translate "Light bulb replacement" %}</div>
+              <div class="task-location"><i class="ti ti-map-pin"></i>{% translate "Résidence Horizon · Main hall" %}</div>
+            </div>
+            <div class="task-meta">
+              <span class="badge-status pending">{% translate "To do" %}</span>
+              <span class="task-date">{% translate "Tomorrow" %} · 15:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card side-card">
+            <div class="card-header">
+              <div class="card-title">{% translate "Recent requests" %}</div>
+              <span class="card-link">{% translate "See all" %}</span>
+            </div>
+            <div class="request">
+              <div class="request-title">{% translate "Air conditioning not working" %}</div>
+              <div class="request-info">
+                <span>{% translate "Apartment B04" %}</span>
+                <span class="badge-status urgent">{% translate "Urgent" %}</span>
+              </div>
+            </div>
+            <div class="request">
+              <div class="request-title">{% translate "Leaking faucet" %}</div>
+              <div class="request-info">
+                <span>{% translate "Apartment A08" %}</span>
+                <span class="badge-status pending">{% translate "New" %}</span>
+              </div>
+            </div>
+            <div class="request">
+              <div class="request-title">{% translate "Lock to repair" %}</div>
+              <div class="request-info">
+                <span>{% translate "Apartment C03" %}</span>
+                <span class="badge-status pending">{% translate "New" %}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card side-card">
+            <div class="card-header">
+              <div class="card-title">{% translate "Today" %}</div>
+              <span class="card-link">{% translate "Calendar" %}</span>
+            </div>
+            <div class="schedule">
+              <div class="schedule-item">
+                <div class="schedule-time">09:00</div>
+                <div class="schedule-content">
+                  <div class="schedule-title">{% translate "Water leak" %}</div>
+                  <div class="schedule-place">{% translate "Résidence Les Palmiers · B04" %}</div>
+                </div>
+              </div>
+              <div class="schedule-item">
+                <div class="schedule-time">11:00</div>
+                <div class="schedule-content">
+                  <div class="schedule-title">{% translate "Electrical outlet" %}</div>
+                  <div class="schedule-place">{% translate "Résidence Horizon · A12" %}</div>
+                </div>
+              </div>
+              <div class="schedule-item">
+                <div class="schedule-time">14:00</div>
+                <div class="schedule-content">
+                  <div class="schedule-title">{% translate "Water meter" %}</div>
+                  <div class="schedule-place">{% translate "Résidence Les Palmiers · A08" %}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">{% translate "Recent activity" %}</div>
+            <span class="card-link">{% translate "History" %}</span>
+          </div>
+          <div class="activity">
+            <div class="activity-icon"><i class="ti ti-check"></i></div>
+            <div>
+              <div class="activity-text">{% translate "You have completed" %} <strong>{% translate "Boiler repair" %}</strong>.</div>
+              <div class="activity-time">{% translate "35 minutes ago" %}</div>
+            </div>
+          </div>
+          <div class="activity">
+            <div class="activity-icon"><i class="ti ti-user"></i></div>
+            <div>
+              <div class="activity-text">{% translate "A new request has been assigned to you." %}</div>
+              <div class="activity-time">{% translate "2 hours ago" %}</div>
+            </div>
+          </div>
+          <div class="activity">
+            <div class="activity-icon"><i class="ti ti-message"></i></div>
+            <div>
+              <div class="activity-text">{% translate "The landlord" %} <strong>M. Dupont</strong> {% translate "sent you a message." %}</div>
+              <div class="activity-time">{% translate "3 hours ago" %}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">{% translate "Quick actions" %}</div>
+          </div>
+          <div class="quick-actions">
+            <div class="quick-action"><i class="ti ti-plus"></i><span>{% translate "New task" %}</span></div>
+            <div class="quick-action"><i class="ti ti-camera"></i><span>{% translate "Add a photo" %}</span></div>
+            <div class="quick-action"><i class="ti ti-message"></i><span>{% translate "New message" %}</span></div>
+            <div class="quick-action"><i class="ti ti-calendar-plus"></i><span>{% translate "View calendar" %}</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+{% endblock dashboard_body %}
+
+{% block inline_javascript %}<script defer src="{% static 'js/maintenance.js' %}"></script>{% endblock %}

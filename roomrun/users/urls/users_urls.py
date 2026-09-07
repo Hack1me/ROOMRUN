@@ -1,5 +1,4 @@
 from django.urls import path
-from users.views.dashboard import DashboardView
 from users.views.forgot_password_views import ForgotPasswordView
 from users.views.forgot_password_views import ResetPasswordView
 from users.views.login_views import SigninView
@@ -12,9 +11,7 @@ from users.views.register_views import SignupView
 app_name = "users"
 
 urlpatterns = [
-    path("", DashboardView.as_view(), name="dashboard"),
     path("signin/", SigninView.as_view(), name="signin"),
-    path("login/", SigninView.as_view(), name="account_login"),
     path("logout/", UserLogoutView.as_view(), name="logout"),
     path("signup/", SignupView.as_view(), name="signup"),
     path("forgot-password/", ForgotPasswordView.as_view(), name="forgot_password"),

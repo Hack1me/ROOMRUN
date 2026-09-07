@@ -9,7 +9,7 @@ from users.views.dashboard import TenantDashboardView
 app_name = "dashboard"
 
 urlpatterns = [
-    path("", DashboardView.as_view(), name="entry"),
+    path("", DashboardView.as_view(), name="dashboard"),
     path("landlord/", LandlordDashboardView.as_view(), name="landlord"),
     path("tenant/", TenantDashboardView.as_view(), name="tenant"),
     path("maintenance/", MaintenanceDashboardView.as_view(), name="maintenance"),
