@@ -1,7 +1,9 @@
 {% extends "dashboard/layout.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block title %}{% translate "Maintenance dashboard" %} — ROOMRUN{% endblock %}
+
+{% block header %}{% endblock header %}
 
 {% block dashboard_body %}
 <div class="app">
@@ -18,7 +20,7 @@
       <div class="nav-section">
         <div class="nav-title">{% translate "Main" %}</div>
         <a href="{% url 'dashboard:maintenance' %}" class="nav-item active"><i class="ti ti-layout-dashboard"></i><span>{% translate "Dashboard" %}</span></a>
-        <a href="#" class="nav-item"><i class="ti ti-tool"></i><span>{% translate "My tasks" %}</span><span class="badge">5</span></a>
+        <a href="#" class="nav-item"><i class="ti ti-tool"></i><span>{% translate "My tasks" %}</span><span class="badge">{{ pending_tasks }}</span></a>
         <a href="#" class="nav-item"><i class="ti ti-clipboard-list"></i><span>{% translate "Requests" %}</span></a>
         <a href="#" class="nav-item"><i class="ti ti-calendar"></i><span>{% translate "Calendar" %}</span></a>
         <a href="#" class="nav-item"><i class="ti ti-message"></i><span>{% translate "Messages" %}</span></a>
@@ -33,9 +35,9 @@
     </div>
 
     <div class="sidebar-user">
-      <div class="avatar">JD</div>
+      <div class="avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>
       <div class="user-info">
-        <div class="user-name">Jean Dupont</div>
+        <div class="user-name">{{ user.full_name }}</div>
         <div class="user-role">{% translate "Maintenance agent" %}</div>
       </div>
       <i class="ti ti-chevron-right" style="margin-left:auto;color:var(--muted);font-size:16px;"></i>
@@ -53,8 +55,8 @@
       <div class="topbar-right">
         <button class="icon-button" type="button"><i class="ti ti-bell"></i><span class="notification-dot"></span></button>
         <div class="top-user">
-          <div class="avatar">JD</div>
-          <span class="user-name">Jean Dupont</span>
+          <div class="avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>
+          <span class="user-name">{{ user.full_name }}</span>
           <i class="ti ti-chevron-down" style="font-size:14px;color:var(--muted);"></i>
         </div>
       </div>
@@ -62,7 +64,7 @@
 
     <section class="content">
       <div class="welcome">
-        <h1>{% translate "Hello Jean" %} 👋</h1>
+        <h1>{% blocktranslate with name=user.first_name|default:user.full_name %}Hello, {{ name }}{% endblocktranslate %} 👋</h1>
         <p>{% translate "Here is the status of your interventions and pending tasks." %}</p>
       </div>
 
@@ -72,7 +74,7 @@
             <span class="stat-label">{% translate "To do" %}</span>
             <div class="stat-icon blue"><i class="ti ti-list-check"></i></div>
           </div>
-          <div class="stat-value">5</div>
+          <div class="stat-value">{{ pending_tasks }}</div>
           <div class="stat-description">{% translate "assigned interventions" %}</div>
         </div>
 
@@ -81,7 +83,7 @@
             <span class="stat-label">{% translate "In progress" %}</span>
             <div class="stat-icon orange"><i class="ti ti-loader"></i></div>
           </div>
-          <div class="stat-value">2</div>
+          <div class="stat-value">{{ in_progress_tasks }}</div>
           <div class="stat-description">{% translate "currently ongoing" %}</div>
         </div>
 
@@ -90,7 +92,7 @@
             <span class="stat-label">{% translate "Completed" %}</span>
             <div class="stat-icon green"><i class="ti ti-circle-check"></i></div>
           </div>
-          <div class="stat-value">18</div>
+          <div class="stat-value">{{ completed_tasks }}</div>
           <div class="stat-description">{% translate "this month" %}</div>
         </div>
 
@@ -99,7 +101,7 @@
             <span class="stat-label">{% translate "Urgent" %}</span>
             <div class="stat-icon red"><i class="ti ti-alert-triangle"></i></div>
           </div>
-          <div class="stat-value">2</div>
+          <div class="stat-value">{{ urgent_requests }}</div>
           <div class="stat-description">{% translate "need your attention" %}</div>
         </div>
       </div>
@@ -111,66 +113,23 @@
             <span class="card-link">{% translate "See all" %}</span>
           </div>
 
-          <div class="intervention">
-            <div class="task-icon plumbing"><i class="ti ti-droplet"></i></div>
-            <div class="task-content">
-              <div class="task-title">{% translate "Water leak in the bathroom" %}</div>
-              <div class="task-location"><i class="ti ti-map-pin"></i>{% translate "Résidence Les Palmiers · Building B · B04" %}</div>
+          <div class="interventions-list">
+            {% for task in recent_tasks %}
+            <div class="intervention">
+              <div class="task-icon general"><i class="ti ti-tool"></i></div>
+              <div class="task-content">
+                <div class="task-title">{{ task.title }}</div>
+                <div class="task-location"><i class="ti ti-map-pin"></i>{{ task.maintenance_request.unit.building.property_ref.name }} · {{ task.maintenance_request.unit.building.name }} · {{ task.maintenance_request.unit.unit_number }}</div>
+              </div>
+              <div class="task-meta">
+                <span class="badge-status {% if task.status == 'PENDING' or task.status == 'ASSIGNED' %}pending{% elif task.status == 'IN_PROGRESS' %}progress{% elif task.status == 'COMPLETED' %}done{% endif %}">{{ task.get_status_display }}</span>
+                <span class="task-date">{% translate "Today" %} {% if task.scheduled_at %}· {{ task.scheduled_at|time:"H:i" }}{% endif %}</span>
+              </div>
             </div>
-            <div class="task-meta">
-              <span class="badge-status urgent">{% translate "Urgent" %}</span>
-              <span class="task-date">{% translate "Today" %} · 09:00</span>
-            </div>
+            {% empty %}
+            <p class="p-5 text-sm text-muted">{% translate "No intervention assigned yet." %}</p>
+            {% endfor %}
           </div>
-
-          <div class="intervention">
-            <div class="task-icon electric"><i class="ti ti-bolt"></i></div>
-            <div class="task-content">
-              <div class="task-title">{% translate "Electrical outlet replacement" %}</div>
-              <div class="task-location"><i class="ti ti-map-pin"></i>{% translate "Résidence Horizon · Building A · A12" %}</div>
-            </div>
-            <div class="task-meta">
-              <span class="badge-status progress">{% translate "In progress" %}</span>
-              <span class="task-date">{% translate "Today" %} · 11:00</span>
-            </div>
-          </div>
-
-          <div class="intervention">
-            <div class="task-icon water"><i class="ti ti-adjustments-horizontal"></i></div>
-            <div class="task-content">
-              <div class="task-title">{% translate "Water meter check" %}</div>
-              <div class="task-location"><i class="ti ti-map-pin"></i>{% translate "Résidence Les Palmiers · Building A · A08" %}</div>
-            </div>
-            <div class="task-meta">
-              <span class="badge-status pending">{% translate "To do" %}</span>
-              <span class="task-date">{% translate "Today" %} · 14:00</span>
-            </div>
-          </div>
-
-          <div class="intervention">
-            <div class="task-icon general"><i class="ti ti-tool"></i></div>
-            <div class="task-content">
-              <div class="task-title">{% translate "Front door repair" %}</div>
-              <div class="task-location"><i class="ti ti-map-pin"></i>{% translate "Résidence Émeraude · Building C · C03" %}</div>
-            </div>
-            <div class="task-meta">
-              <span class="badge-status pending">{% translate "To do" %}</span>
-              <span class="task-date">{% translate "Tomorrow" %} · 09:30</span>
-            </div>
-          </div>
-
-          <div class="intervention">
-            <div class="task-icon electric"><i class="ti ti-bulb"></i></div>
-            <div class="task-content">
-              <div class="task-title">{% translate "Light bulb replacement" %}</div>
-              <div class="task-location"><i class="ti ti-map-pin"></i>{% translate "Résidence Horizon · Main hall" %}</div>
-            </div>
-            <div class="task-meta">
-              <span class="badge-status pending">{% translate "To do" %}</span>
-              <span class="task-date">{% translate "Tomorrow" %} · 15:00</span>
-            </div>
-          </div>
-        </div>
 
         <div>
           <div class="card side-card">
@@ -178,28 +137,19 @@
               <div class="card-title">{% translate "Recent requests" %}</div>
               <span class="card-link">{% translate "See all" %}</span>
             </div>
-            <div class="request">
-              <div class="request-title">{% translate "Air conditioning not working" %}</div>
-              <div class="request-info">
-                <span>{% translate "Apartment B04" %}</span>
-                <span class="badge-status urgent">{% translate "Urgent" %}</span>
+            <div class="requests-list">
+              {% for request in recent_requests %}
+              <div class="request">
+                <div class="request-title">{{ request.title }}</div>
+                <div class="request-info">
+                  <span>{{ request.unit.building.property_ref.name }} · {{ request.unit.unit_number }}</span>
+                  <span class="badge-status {% if request.priority == 'URGENT' %}urgent{% elif request.priority == 'HIGH' %}progress{% else %}pending{% endif %}">{{ request.get_priority_display }}</span>
+                </div>
               </div>
+              {% empty %}
+              <p class="p-5 text-sm text-muted">{% translate "No recent request." %}</p>
+              {% endfor %}
             </div>
-            <div class="request">
-              <div class="request-title">{% translate "Leaking faucet" %}</div>
-              <div class="request-info">
-                <span>{% translate "Apartment A08" %}</span>
-                <span class="badge-status pending">{% translate "New" %}</span>
-              </div>
-            </div>
-            <div class="request">
-              <div class="request-title">{% translate "Lock to repair" %}</div>
-              <div class="request-info">
-                <span>{% translate "Apartment C03" %}</span>
-                <span class="badge-status pending">{% translate "New" %}</span>
-              </div>
-            </div>
-          </div>
 
           <div class="card side-card">
             <div class="card-header">
@@ -207,27 +157,17 @@
               <span class="card-link">{% translate "Calendar" %}</span>
             </div>
             <div class="schedule">
+              {% for task in recent_tasks %}
               <div class="schedule-item">
-                <div class="schedule-time">09:00</div>
+                <div class="schedule-time">{% if task.scheduled_at %}{{ task.scheduled_at|time:"H:i" }}{% else %}--{% endif %}</div>
                 <div class="schedule-content">
-                  <div class="schedule-title">{% translate "Water leak" %}</div>
-                  <div class="schedule-place">{% translate "Résidence Les Palmiers · B04" %}</div>
+                  <div class="schedule-title">{{ task.title }}</div>
+                  <div class="schedule-place">{{ task.maintenance_request.unit.building.name }} · {{ task.maintenance_request.unit.unit_number }}</div>
                 </div>
               </div>
-              <div class="schedule-item">
-                <div class="schedule-time">11:00</div>
-                <div class="schedule-content">
-                  <div class="schedule-title">{% translate "Electrical outlet" %}</div>
-                  <div class="schedule-place">{% translate "Résidence Horizon · A12" %}</div>
-                </div>
-              </div>
-              <div class="schedule-item">
-                <div class="schedule-time">14:00</div>
-                <div class="schedule-content">
-                  <div class="schedule-title">{% translate "Water meter" %}</div>
-                  <div class="schedule-place">{% translate "Résidence Les Palmiers · A08" %}</div>
-                </div>
-              </div>
+              {% empty %}
+              <p class="p-5 text-sm text-muted">{% translate "No scheduled task for today." %}</p>
+              {% endfor %}
             </div>
           </div>
         </div>
@@ -239,27 +179,7 @@
             <div class="card-title">{% translate "Recent activity" %}</div>
             <span class="card-link">{% translate "History" %}</span>
           </div>
-          <div class="activity">
-            <div class="activity-icon"><i class="ti ti-check"></i></div>
-            <div>
-              <div class="activity-text">{% translate "You have completed" %} <strong>{% translate "Boiler repair" %}</strong>.</div>
-              <div class="activity-time">{% translate "35 minutes ago" %}</div>
-            </div>
-          </div>
-          <div class="activity">
-            <div class="activity-icon"><i class="ti ti-user"></i></div>
-            <div>
-              <div class="activity-text">{% translate "A new request has been assigned to you." %}</div>
-              <div class="activity-time">{% translate "2 hours ago" %}</div>
-            </div>
-          </div>
-          <div class="activity">
-            <div class="activity-icon"><i class="ti ti-message"></i></div>
-            <div>
-              <div class="activity-text">{% translate "The landlord" %} <strong>M. Dupont</strong> {% translate "sent you a message." %}</div>
-              <div class="activity-time">{% translate "3 hours ago" %}</div>
-            </div>
-          </div>
+          <p class="p-5 text-sm text-muted">{% translate "No recent activity to display." %}</p>
         </div>
 
         <div class="card">
@@ -278,5 +198,7 @@
   </main>
 </div>
 {% endblock dashboard_body %}
+
+{% block footer %}{% endblock footer %}
 
 {% block inline_javascript %}<script defer src="{% static 'js/maintenance.js' %}"></script>{% endblock %}

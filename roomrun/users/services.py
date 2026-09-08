@@ -740,19 +740,20 @@ class MaintenanceDashboardService:
         in_progress_tasks = tasks.filter(status="IN_PROGRESS").count()
         completed_tasks = tasks.filter(status="COMPLETED").count()
 
-        # Urgent maintenance requests
-        urgent_requests = agent.maintenance_requests.filter(
+        # Urgent maintenance requests associated with this agent's tasks
+        urgent_requests = MaintenanceRequest.objects.filter(
+            tasks__maintenance_agent=agent,
             priority="URGENT",
-            status="PENDING"
-        ).count()
+            status="PENDING",
+        ).distinct().count()
 
         # Recent tasks (last 5)
         recent_tasks = tasks.order_by("-created_at")[:MaintenanceDashboardService.RECENT_LIMIT]
 
-        # Recent maintenance requests (last 5)
-        recent_requests = agent.maintenance_requests.order_by("-created_at")[
-            :MaintenanceDashboardService.RECENT_LIMIT
-        ]
+        # Recent maintenance requests linked to this agent's tasks (last 5)
+        recent_requests = MaintenanceRequest.objects.filter(
+            tasks__maintenance_agent=agent,
+        ).distinct().order_by("-created_at")[:MaintenanceDashboardService.RECENT_LIMIT]
 
         # Completion rate (percentage of tasks completed)
         completion_rate = (
