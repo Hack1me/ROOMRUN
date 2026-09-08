@@ -843,11 +843,11 @@ class GuardDashboardService:
 
         # Get all entries/logs associated with this guard
         # Assuming there's a GuardLog or similar model
-        logs = guard.logs.all() if hasattr(guard, "logs") else []
+        logs = guard.logs.all() if hasattr(guard, "logs") else None
 
         # Statistics
-        total_logs = logs.count()
-        today_logs = logs.filter(created_at__date=today).count() if logs else 0
+        total_logs = logs.count() if logs is not None else 0
+        today_logs = logs.filter(created_at__date=today).count() if logs is not None else 0
 
         # Active visitors (if you have a Visitor model)
         active_visitors = []
@@ -857,7 +857,7 @@ class GuardDashboardService:
             ).count()
 
         # Recent entries (last 5)
-        recent_logs = logs.order_by("-created_at")[:GuardDashboardService.RECENT_LIMIT] if logs else []
+        recent_logs = logs.order_by("-created_at")[:GuardDashboardService.RECENT_LIMIT] if logs is not None else []
 
         # Expected visitors (scheduled visits)
         expected_visitors = 0
@@ -936,3 +936,104 @@ class GuardDashboardService:
             return guard.visitors.filter(status="ACTIVE")
 
         return []
+
+# User Profile Service
+class ProfileService:
+    """
+    Handles business operations related to user profiles.
+
+    Only allows updating a predefined set of fields to prevent
+    accidental modification of sensitive attributes.
+    """
+
+    # Allowed fields that can be updated via this service
+    ALLOWED_UPDATE_FIELDS = {
+        "first_name",
+        "last_name",
+        "phone",
+        "country",
+        "profile_picture",
+    }
+
+    @staticmethod
+    @transaction.atomic
+    def update(user: User, data: dict) -> User:
+        """
+        Update the profile of a user.
+
+        Only fields provided in `data` that are in ALLOWED_UPDATE_FIELDS
+        will be modified. Model validations are applied before saving.
+
+        Args:
+            user: The user instance to update.
+            data: A dict with the fields to update.
+
+        Returns:
+            The updated user instance.
+
+        Raises:
+            AttributeError: If a field in `data` does not exist on the model.
+            ValidationError: If model validation fails.
+        """
+        changed_fields = []
+        old_picture_name = user.profile_picture.name if user.profile_picture else None
+        allowed_fields = ProfileService.ALLOWED_UPDATE_FIELDS
+
+        for field, value in data.items():
+            # Skip fields that are not allowed
+            if field not in allowed_fields:
+                continue
+
+            # Check if the field exists on the user model
+            if not hasattr(user, field):
+                msg = f"Field '{field}' does not exist on User model."
+                raise AttributeError(
+                    msg
+                )
+
+            # Only update if the value has changed
+            current_value = getattr(user, field)
+            if current_value != value:
+                setattr(user, field, value)
+                changed_fields.append(field)
+
+        if changed_fields:
+            # Run model validation before saving
+            user.full_clean()
+
+            # Include `updated_at` if it exists
+            update_fields = changed_fields.copy()
+            if hasattr(user, "updated_at"):
+                update_fields.append("updated_at")
+
+            user.save(update_fields=update_fields)
+
+            # Keep storage in sync with the database without risking the
+            # existing image when the surrounding transaction is rolled back.
+            if (
+                "profile_picture" in changed_fields
+                and old_picture_name
+                and user.profile_picture.name != old_picture_name
+            ):
+                storage = user.profile_picture.storage
+                transaction.on_commit(lambda: storage.delete(old_picture_name))
+
+        return user
+
+    @staticmethod
+    def update_bulk(users: list[User], data: dict) -> list[User]:
+        """
+        Update multiple users with the same data.
+
+        Args:
+            users: List of user instances.
+            data: Dict with fields to update.
+
+        Returns:
+            List of updated users.
+        """
+        updated_users = []
+        for user in users:
+            updated = ProfileService.update(user, data)
+            updated_users.append(updated)
+        return updated_users

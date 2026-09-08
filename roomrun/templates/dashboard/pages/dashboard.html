@@ -34,17 +34,18 @@
 
     <div class="sidebar-bottom">
       <nav class="nav">
+        <a href="{% url 'users:profile' %}" class="nav-item"><i class="ti ti-user"></i><span>{% translate "My profile" %}</span></a>
         <a href="#" class="nav-item"><i class="ti ti-settings"></i><span>{% translate "Settings" %}</span></a>
         <a href="#" class="nav-item"><i class="ti ti-help-circle"></i><span>{% translate "Help" %}</span></a>
       </nav>
 
-      <div class="sidebar-user">
-        <div class="avatar">SH</div>
+      <a href="{% url 'users:profile' %}" class="sidebar-user profile-link">
+        {% if user.profile_picture %}<img class="avatar object-cover" src="{{ user.profile_picture.url }}" alt="">{% else %}<div class="avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>{% endif %}
         <div class="sidebar-user-info">
-          <div class="sidebar-user-name">Sahit Heufeul</div>
-          <div class="sidebar-user-role">{% translate "Landlord" %}</div>
+          <div class="sidebar-user-name">{{ user.full_name|default:user.email }}</div>
+          <div class="sidebar-user-role">{% if user.is_landlord %}{% translate "Landlord" %}{% elif user.is_tenant %}{% translate "Tenant" %}{% else %}{% translate "User" %}{% endif %}</div>
         </div>
-      </div>
+      </a>
     </div>
   </aside>
 
@@ -66,7 +67,7 @@
 
       <div class="topbar-actions">
         <button class="icon-button"><i class="ti ti-bell"></i><span class="notification-dot"></span></button>
-        <button class="icon-button profile-button rounded-full"><i class="ti ti-user"></i></button>
+        <a href="{% url 'users:profile' %}" class="icon-button profile-button rounded-full overflow-hidden" aria-label="{% translate 'Profile' %}">{% if user.profile_picture %}<img class="h-full w-full object-cover" src="{{ user.profile_picture.url }}" alt="">{% else %}<i class="ti ti-user"></i>{% endif %}</a>
       </div>
     </header>
 

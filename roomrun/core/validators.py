@@ -42,6 +42,9 @@ def validate_phone_number_for_country(value, country_code="FR"):
     Validate that the phone number is valid for a specific country.
     `country_code` should be a two-letter ISO country code (e.g., "FR", "US").
     """
+    # django-phonenumber-field may pass a PhoneNumber object rather than its
+    # textual representation when this validator runs from a form.
+    value = str(value)
     try:
         parsed = phonenumbers.parse(value, country_code)
     except phonenumbers.NumberParseException:

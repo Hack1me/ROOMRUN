@@ -7,7 +7,7 @@
 
 {% block dashboard_body %}
 <div class="app">
-  <aside class="sidebar overflow-y-auto" id="sidebar">
+  <aside class="sidebar maintenance-sidebar overflow-y-auto" id="sidebar">
     <div class="logo">
       <div class="logo-mark"><i class="ti ti-building-community"></i></div>
       <div>
@@ -34,14 +34,14 @@
       </div>
     </div>
 
-    <div class="sidebar-user">
-      <div class="avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>
+    <a href="{% url 'users:profile' %}" class="sidebar-user profile-link">
+      {% if user.profile_picture %}<img class="avatar object-cover" src="{{ user.profile_picture.url }}" alt="">{% else %}<div class="avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>{% endif %}
       <div class="user-info">
         <div class="user-name">{{ user.full_name }}</div>
         <div class="user-role">{% translate "Maintenance agent" %}</div>
       </div>
       <i class="ti ti-chevron-right" style="margin-left:auto;color:var(--muted);font-size:16px;"></i>
-    </div>
+    </a>
   </aside>
 
   <div class="overlay" id="overlay"></div>
@@ -54,11 +54,11 @@
       </div>
       <div class="topbar-right">
         <button class="icon-button" type="button"><i class="ti ti-bell"></i><span class="notification-dot"></span></button>
-        <div class="top-user">
-          <div class="avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>
+        <a href="{% url 'users:profile' %}" class="top-user profile-link" aria-label="{% translate 'Profile' %}">
+          {% if user.profile_picture %}<img class="avatar object-cover" src="{{ user.profile_picture.url }}" alt="">{% else %}<div class="avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>{% endif %}
           <span class="user-name">{{ user.full_name }}</span>
           <i class="ti ti-chevron-down" style="font-size:14px;color:var(--muted);"></i>
-        </div>
+        </a>
       </div>
     </header>
 

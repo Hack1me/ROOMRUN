@@ -1,9 +1,12 @@
+from core.validators import validate_phone_number_for_country
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth import forms as admin_forms
 from django.contrib.auth.password_validation import validate_password
 from django.forms import EmailField
 from django.utils.translation import gettext_lazy as _
+from django_countries.widgets import CountrySelectWidget
+from phonenumber_field.formfields import PhoneNumberField
 
 from .models import User
 
@@ -231,3 +234,52 @@ class PasswordResetConfirmForm(forms.Form):
             except forms.ValidationError as error:
                 self.add_error("password1", error)
         return cleaned_data
+
+# User Profile form
+class ProfileForm(forms.ModelForm):
+    """
+    Form used to update the authenticated user's profile.
+    """
+
+    # Override phone field to add the validator
+    phone = PhoneNumberField(
+        validators=[validate_phone_number_for_country],
+        required=False,
+        widget=forms.TextInput(attrs={
+            "autocomplete": "tel",
+            "placeholder": _("+33123456789"),
+        }),
+    )
+
+    class Meta:
+        model = User
+        fields = (
+            "first_name",
+            "last_name",
+            "phone",
+            "country",
+            "profile_picture",
+        )
+
+        widgets = {
+            "first_name": forms.TextInput(attrs={"autocomplete": "given-name"}),
+            "last_name": forms.TextInput(attrs={"autocomplete": "family-name"}),
+            "phone": forms.TextInput(attrs={"autocomplete": "tel"}),
+            "country": CountrySelectWidget(
+                attrs={"autocomplete": "country", "class": "rr-input"}
+            ),
+            "profile_picture": forms.FileInput(attrs={"accept": "image/*"}),
+        }
+
+        labels = {
+            "first_name": _("First name"),
+            "last_name": _("Last name"),
+            "phone": _("Phone number"),
+            "country": _("Country"),
+            "profile_picture": _("Profile picture"),
+        }
+
+        help_texts = {
+            "phone": _("International format, e.g. +33123456789."),
+            "profile_picture": _("Upload a JPG, PNG, or WebP image. Max size: 5 MB."),
+        }
