@@ -1,41 +1,255 @@
 {% extends "base.html" %}
+
 {% load i18n %}
 
 {% block title %}ROOMRUN — {% translate "Property management made simple" %}{% endblock title %}
-
 {% block main %}
-<main>
-  <section class="relative overflow-hidden border-b border-line">
-    <div class="absolute inset-0 -z-10 bg-[linear-gradient(rgba(22,40,63,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(22,40,63,0.055)_1px,transparent_1px)] bg-size-[68px_68px]"></div>
-    <div class="rr-container grid gap-14 py-18 lg:grid-cols-2 lg:items-center lg:py-26">
-      <div>
-        <p class="mb-6 inline-flex items-center gap-2 rounded-full bg-primary-soft px-4 py-2 text-sm text-primary"><span class="text-secondary">✦</span>{% translate "Already supporting residential communities across Central Africa" %}</p>
-        <h1 class="rr-display max-w-xl text-4xl leading-[1.08] sm:text-5xl lg:text-6xl">{% translate "Property management," %}<br><em class="font-normal text-secondary">{% translate "made finally simple." %}</em></h1>
-        <p class="mt-6 max-w-xl text-base leading-8 text-muted sm:text-lg">{% translate "ROOMRUN brings landlords, tenants, maintenance teams and guards together in one calm workspace for homes, leases, payments, charges and maintenance." %}</p>
-        <div class="mt-9 flex flex-wrap gap-3"><a href="{% url 'users:signup' %}" class="rr-btn-primary">{% translate "Create an account" %} <span aria-hidden="true">→</span></a><a href="#fonctionnalites" class="rr-btn-outline">{% translate "Explore the platform" %}</a></div>
+  <main>
+    <section class="relative overflow-hidden border-b border-line">
+      <div class="absolute inset-0 -z-10 bg-[linear-gradient(rgba(22,40,63,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(22,40,63,0.055)_1px,transparent_1px)] bg-size-[68px_68px]">
       </div>
-      <div class="relative mx-auto w-full max-w-xl">
-        <div class="rr-card overflow-hidden shadow-[0_30px_60px_-30px_rgba(22,40,63,0.3)]">
-          <div class="flex items-center gap-1.5 border-b border-line bg-stone-50 px-4 py-3"><span class="size-2 rounded-full bg-line-strong"></span><span class="size-2 rounded-full bg-line-strong"></span><span class="size-2 rounded-full bg-line-strong"></span><span class="ml-3 font-mono text-[10px] tracking-[0.08em] text-muted">ROOMRUN / {% translate "OVERVIEW" %}</span></div>
-          <div class="p-5"><div class="grid grid-cols-3 gap-3"><div class="rounded-lg border border-line bg-stone-50 p-3"><p class="text-xs text-muted">{% translate "Occupancy" %}</p><p class="mt-1 font-display text-xl text-primary">96<span class="font-sans text-xs text-muted">%</span></p></div><div class="rounded-lg border border-line bg-stone-50 p-3"><p class="text-xs text-muted">{% translate "Rent received" %}</p><p class="mt-1 font-display text-xl text-primary">2.4M<span class="font-sans text-xs text-muted"> XAF</span></p></div><div class="rounded-lg border border-line bg-stone-50 p-3"><p class="text-xs text-muted">{% translate "Open requests" %}</p><p class="mt-1 font-display text-xl text-primary">06</p></div></div><div class="mt-4 rounded-lg border border-line p-4"><div class="mb-4 flex justify-between text-sm"><span class="font-medium">{% translate "Monthly rent collection" %}</span><span class="font-mono text-xs text-muted">{% translate "LAST 6 MONTHS" %}</span></div><div class="flex h-20 items-end gap-1.5"><i class="h-[42%] flex-1 rounded-t bg-line-strong"></i><i class="h-[58%] flex-1 rounded-t bg-line-strong"></i><i class="h-[48%] flex-1 rounded-t bg-line-strong"></i><i class="h-[76%] flex-1 rounded-t bg-secondary"></i><i class="h-[68%] flex-1 rounded-t bg-secondary"></i><i class="h-[92%] flex-1 rounded-t bg-secondary"></i></div></div></div>
+      <div class="rr-container grid gap-14 py-18 lg:grid-cols-2 lg:items-center lg:py-26">
+        <div>
+          <p class="mb-6 inline-flex items-center gap-2 rounded-full bg-primary-soft px-4 py-2 text-sm text-primary">
+            <span class="text-secondary">✦</span>{% translate "Already supporting residential communities across Central Africa" %}
+          </p>
+          <h1 class="rr-display max-w-xl text-4xl leading-[1.08] sm:text-5xl lg:text-6xl">
+            {% translate "Property management," %}
+            <br />
+            <em class="font-normal text-secondary">{% translate "made finally simple." %}</em>
+          </h1>
+          <p class="mt-6 max-w-xl text-base leading-8 text-muted sm:text-lg">
+            {% translate "ROOMRUN brings landlords, tenants, maintenance teams and guards together in one calm workspace for homes, leases, payments, charges and maintenance." %}
+          </p>
+          <div class="mt-9 flex flex-wrap gap-3">
+            <a href="{% url 'users:signup' %}" class="rr-btn-primary">
+              {% translate "Create an account" %} <span aria-hidden="true">→</span>
+            </a>
+            <a href="#fonctionnalites" class="rr-btn-outline">{% translate "Explore the platform" %}</a>
+          </div>
         </div>
-        <div class="absolute -right-4 -top-5 hidden w-48 rounded-xl border border-line bg-card p-3 shadow-lg sm:block"><p class="text-xs font-medium text-primary">{% translate "Request #2841 assigned" %}</p><p class="mt-1 text-xs text-muted">{% translate "Agent confirmed Thursday, 14:00" %}</p><div class="mt-3 h-1 overflow-hidden rounded bg-line"><i class="block h-full w-4/5 bg-secondary"></i></div></div>
+        <div class="relative mx-auto w-full max-w-xl">
+          <div class="rr-card overflow-hidden shadow-[0_30px_60px_-30px_rgba(22,40,63,0.3)]">
+            <div class="flex items-center gap-1.5 border-b border-line bg-stone-50 px-4 py-3">
+              <span class="size-2 rounded-full bg-line-strong"></span>
+              <span class="size-2 rounded-full bg-line-strong"></span>
+              <span class="size-2 rounded-full bg-line-strong"></span>
+              <span class="ml-3 font-mono text-[10px] tracking-[0.08em] text-muted">ROOMRUN / {% translate "OVERVIEW" %}</span>
+            </div>
+            <div class="p-5">
+              <div class="grid grid-cols-3 gap-3">
+                <div class="rounded-lg border border-line bg-stone-50 p-3">
+                  <p class="text-xs text-muted">{% translate "Occupancy" %}</p>
+                  <p class="mt-1 font-display text-xl text-primary">96<span class="font-sans text-xs text-muted">%</span></p>
+                </div>
+                <div class="rounded-lg border border-line bg-stone-50 p-3">
+                  <p class="text-xs text-muted">{% translate "Rent received" %}</p>
+                  <p class="mt-1 font-display text-xl text-primary">2.4M<span class="font-sans text-xs text-muted"> XAF</span></p>
+                </div>
+                <div class="rounded-lg border border-line bg-stone-50 p-3">
+                  <p class="text-xs text-muted">{% translate "Open requests" %}</p>
+                  <p class="mt-1 font-display text-xl text-primary">06</p>
+                </div>
+              </div>
+              <div class="mt-4 rounded-lg border border-line p-4">
+                <div class="mb-4 flex justify-between text-sm">
+                  <span class="font-medium">{% translate "Monthly rent collection" %}</span>
+                  <span class="font-mono text-xs text-muted">{% translate "LAST 6 MONTHS" %}</span>
+                </div>
+                <div class="flex h-20 items-end gap-1.5">
+                  <i class="h-[42%] flex-1 rounded-t bg-line-strong"></i>
+                  <i class="h-[58%] flex-1 rounded-t bg-line-strong"></i>
+                  <i class="h-[48%] flex-1 rounded-t bg-line-strong"></i>
+                  <i class="h-[76%] flex-1 rounded-t bg-secondary"></i>
+                  <i class="h-[68%] flex-1 rounded-t bg-secondary"></i>
+                  <i class="h-[92%] flex-1 rounded-t bg-secondary"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="absolute -right-4 -top-5 hidden w-48 rounded-xl border border-line bg-card p-3 shadow-lg sm:block">
+            <p class="text-xs font-medium text-primary">{% translate "Request #2841 assigned" %}</p>
+            <p class="mt-1 text-xs text-muted">{% translate "Agent confirmed Thursday, 14:00" %}</p>
+            <div class="mt-3 h-1 overflow-hidden rounded bg-line">
+              <i class="block h-full w-4/5 bg-secondary"></i>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="border-y border-line bg-card"><div class="rr-container grid grid-cols-2 sm:grid-cols-4">{% for value, label, desc in stats %}{% empty %}<div class="border-r border-line p-6 last:border-r-0"><p class="font-display text-3xl text-primary">27<span class="text-secondary">+</span></p><p class="mt-1 text-sm font-medium">{% translate "Active communities" %}</p><p class="mt-1 text-xs leading-5 text-muted">{% translate "From one home to a multi-community portfolio." %}</p></div><div class="border-r border-line p-6 last:border-r-0"><p class="font-display text-3xl text-primary">96<span class="text-secondary">%</span></p><p class="mt-1 text-sm font-medium">{% translate "Rent on time" %}</p><p class="mt-1 text-xs leading-5 text-muted">{% translate "Automatic reminders and simple payments." %}</p></div><div class="border-r border-line p-6 last:border-r-0"><p class="font-display text-3xl text-primary">340<span class="text-secondary">+</span></p><p class="mt-1 text-sm font-medium">{% translate "Homes managed" %}</p><p class="mt-1 text-xs leading-5 text-muted">{% translate "Clear, consolidated information." %}</p></div><div class="p-6"><p class="font-display text-3xl text-primary">1.8<span class="text-secondary"> {% translate "days" %}</span></p><p class="mt-1 text-sm font-medium">{% translate "Average resolution" %}</p><p class="mt-1 text-xs leading-5 text-muted">{% translate "From report to confirmed repair." %}</p></div>{% endfor %}</div></div>
-  </section>
-
-  <section id="ecosysteme" class="rr-container rr-section">
-    <div class="grid gap-8 lg:grid-cols-2 lg:items-end"><div><p class="rr-eyebrow">01 · {% translate "ECOSYSTEM" %}</p><h2 class="rr-display mt-4 text-3xl sm:text-4xl">{% translate "Three perspectives. One shared truth." %}</h2></div><p class="leading-7 text-muted">{% translate "ROOMRUN models the relationship itself: a payment, charge or maintenance request is the same event, viewed by the people who need it." %}</p></div>
-    <div class="mt-10 grid gap-5 lg:grid-cols-3"><article class="rr-card p-7"><p class="rr-eyebrow">{% translate "LANDLORDS" %}</p><h3 class="rr-display mt-5 text-xl">{% translate "See the whole community breathe" %}</h3><p class="mt-3 leading-7 text-muted">{% translate "Occupancy, revenue, delays and renewals, consolidated and always current." %}</p><ul class="mt-6 space-y-2 border-t border-line pt-5 text-sm text-muted"><li>• {% translate "Reports by community" %}</li><li>• {% translate "Rent and arrears tracking" %}</li><li>• {% translate "Document vault" %}</li></ul></article><article class="rr-card p-7"><p class="rr-eyebrow">{% translate "OPERATIONS" %}</p><h3 class="rr-display mt-5 text-xl">{% translate "Operations without reminders" %}</h3><p class="mt-3 leading-7 text-muted">{% translate "Leases, charges, inspections and maintenance in one visible, prioritised queue." %}</p><ul class="mt-6 space-y-2 border-t border-line pt-5 text-sm text-muted"><li>• {% translate "Unified operations queue" %}</li><li>• {% translate "Fair charge allocation" %}</li><li>• {% translate "Complete request history" %}</li></ul></article><div class="min-h-70 rounded-card bg-primary p-7 text-white"><p class="rr-eyebrow text-orange-200">{% translate "TENANTS" %}</p><h3 class="mt-5 font-display text-2xl">{% translate "A clear home, not another maze." %}</h3><p class="mt-3 leading-7 text-slate-300">{% translate "Payments, messages and requests are simple to find and easy to act on." %}</p></div></div>
-  </section>
-
-  <section id="fonctionnalites" class="rr-container rr-section pt-0"><div class="rr-section-heading"><p class="rr-eyebrow">02 · {% translate "FEATURES" %}</p><h2>{% translate "The repetitive work, handled with care." %}</h2><p>{% translate "Every obligation becomes planned, visible and followed through to completion." %}</p></div><div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4"><article class="rr-card p-6 md:col-span-2"><span class="text-2xl text-secondary">⌁</span><h3 class="rr-display mt-8 text-xl">{% translate "Leases that renew without friction" %}</h3><p class="mt-3 leading-7 text-muted">{% translate "Deadlines, notices and renewals are tracked automatically before they become urgent." %}</p><div class="mt-7 flex gap-10 border-t border-line pt-4"><div><p class="font-display text-2xl text-primary">3h</p><p class="text-xs text-muted">{% translate "Average signature" %}</p></div><div><p class="font-display text-2xl text-primary">0</p><p class="text-xs text-muted">{% translate "Missed renewals" %}</p></div></div></article><article class="rr-card p-6"><span class="text-2xl text-secondary">◫</span><h3 class="rr-display mt-8 text-xl">{% translate "Fair charges" %}</h3><p class="mt-3 leading-7 text-muted">{% translate "Water, electricity and shared charges allocated according to your rules." %}</p></article><article class="rr-card p-6"><span class="text-2xl text-secondary">⌕</span><h3 class="rr-display mt-8 text-xl">{% translate "Maintenance with memory" %}</h3><p class="mt-3 leading-7 text-muted">{% translate "Every request keeps its photos, agent and cost history." %}</p></article><article class="rounded-card border border-line bg-[repeating-linear-gradient(135deg,#f1ede7,#f1ede7_8px,#eae5dd_8px,#eae5dd_16px)] p-6"></article><article class="rr-card p-6"><h3 class="rr-display text-xl">{% translate "Announcements" %}</h3><p class="mt-3 leading-7 text-muted">{% translate "Reach a community or a building with read receipts." %}</p></article><article class="rr-card p-6"><h3 class="rr-display text-xl">{% translate "Calm notifications" %}</h3><p class="mt-3 leading-7 text-muted">{% translate "Grouped and prioritised. Urgent reaches you; the rest can wait." %}</p></article><article class="rr-card p-6 md:col-span-2"><h3 class="rr-display text-xl">{% translate "A reliable audit trail" %}</h3><p class="mt-3 leading-7 text-muted">{% translate "An immutable history for each lease, payment and decision, exportable when needed." %}</p></article></div></section>
-
-  <section class="bg-primary-soft"><div class="rr-container rr-section"><div class="mx-auto max-w-2xl text-center"><p class="rr-eyebrow">03 · {% translate "THE JOURNEY" %}</p><h2 class="rr-display mt-4 text-3xl sm:text-4xl">{% translate "Three steps to publish your first home." %}</h2></div><ol class="mt-12 grid gap-8 md:grid-cols-3">{% for title, copy in steps %}{% empty %}<li><span class="inline-flex size-9 items-center justify-center rounded-full bg-primary font-display text-white">1</span><h3 class="rr-display mt-4 text-lg">{% translate "Create your account" %}</h3><p class="mt-2 leading-7 text-[#6b4a34]">{% translate "Start as a landlord and add your first community." %}</p></li><li><span class="inline-flex size-9 items-center justify-center rounded-full bg-primary font-display text-white">2</span><h3 class="rr-display mt-4 text-lg">{% translate "Publish your homes" %}</h3><p class="mt-2 leading-7 text-[#6b4a34]">{% translate "Add your units, equipment and rent details." %}</p></li><li><span class="inline-flex size-9 items-center justify-center rounded-full bg-primary font-display text-white">3</span><h3 class="rr-display mt-4 text-lg">{% translate "Manage from one dashboard" %}</h3><p class="mt-2 leading-7 text-[#6b4a34]">{% translate "Follow requests, tenants and payments in one place." %}</p></li>{% endfor %}</ol></div></section>
-
-  <section id="tarifs" class="rr-container rr-section"><div class="mx-auto max-w-2xl text-center"><h2 class="rr-display text-3xl sm:text-4xl">{% translate "Free to start, Pro when you need more." %}</h2><p class="mt-4 text-muted">{% translate "Change plans at any time, without commitment." %}</p></div><div class="mx-auto mt-10 grid max-w-2xl gap-5 md:grid-cols-2"><article class="rr-card p-7"><p class="text-sm text-muted">{% translate "Free" %}</p><p class="rr-display mt-1 text-3xl">0 XAF<span class="font-sans text-sm font-normal text-muted">/{% translate "month" %}</span></p><ul class="my-7 space-y-3 text-sm text-ink"><li>◉ {% translate "Up to 2 communities" %}</li><li>◉ {% translate "Up to 10 homes" %}</li><li>◉ {% translate "Basic statistics" %}</li></ul><a href="{% url 'users:signup' %}" class="rr-btn-outline w-full">{% translate "Start for free" %}</a></article><article class="relative rounded-card border-2 border-secondary bg-card p-7"><span class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-white">{% translate "Recommended" %}</span><p class="text-sm text-secondary">{% translate "Pro" %}</p><p class="rr-display mt-1 text-3xl">15 000 XAF<span class="font-sans text-sm font-normal text-muted">/{% translate "month" %}</span></p><ul class="my-7 space-y-3 text-sm text-ink"><li>◉ {% translate "Unlimited communities and homes" %}</li><li>◉ {% translate "Advanced reports" %}</li><li>◉ {% translate "Reduced commission" %}</li></ul><a href="{% url 'users:signup' %}" class="rr-btn-primary w-full">{% translate "Choose Pro" %}</a></article></div></section>
-
-  <section class="bg-primary"><div class="rr-container py-20 text-center"><h2 class="font-display text-3xl font-semibold text-white sm:text-4xl">{% translate "Give your community" %}<br><em class="font-normal text-secondary">{% translate "calm management at last." %}</em></h2><p class="mx-auto mt-5 max-w-xl leading-7 text-slate-300">{% translate "Create your account in minutes. Add homes, tenants and leases — we will guide you through the rest." %}</p><a href="{% url 'users:signup' %}" class="rr-btn-primary mt-8">{% translate "Create an account" %} →</a></div></section>
-</main>
+      <div class="border-y border-line bg-card">
+        <div class="rr-container grid grid-cols-2 sm:grid-cols-4">
+          {% for value, label, desc in stats %}{% empty %}
+            <div class="border-r border-line p-6 last:border-r-0">
+              <p class="font-display text-3xl text-primary">27<span class="text-secondary">+</span></p>
+              <p class="mt-1 text-sm font-medium">{% translate "Active communities" %}</p>
+              <p class="mt-1 text-xs leading-5 text-muted">{% translate "From one home to a multi-community portfolio." %}</p>
+            </div>
+            <div class="border-r border-line p-6 last:border-r-0">
+              <p class="font-display text-3xl text-primary">96<span class="text-secondary">%</span></p>
+              <p class="mt-1 text-sm font-medium">{% translate "Rent on time" %}</p>
+              <p class="mt-1 text-xs leading-5 text-muted">{% translate "Automatic reminders and simple payments." %}</p>
+            </div>
+            <div class="border-r border-line p-6 last:border-r-0">
+              <p class="font-display text-3xl text-primary">340<span class="text-secondary">+</span></p>
+              <p class="mt-1 text-sm font-medium">{% translate "Homes managed" %}</p>
+              <p class="mt-1 text-xs leading-5 text-muted">{% translate "Clear, consolidated information." %}</p>
+            </div>
+            <div class="p-6">
+              <p class="font-display text-3xl text-primary">1.8<span class="text-secondary"> {% translate "days" %}</span></p>
+              <p class="mt-1 text-sm font-medium">{% translate "Average resolution" %}</p>
+              <p class="mt-1 text-xs leading-5 text-muted">{% translate "From report to confirmed repair." %}</p>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+    <section id="ecosysteme" class="rr-container rr-section">
+      <div class="grid gap-8 lg:grid-cols-2 lg:items-end">
+        <div>
+          <p class="rr-eyebrow">01 · {% translate "ECOSYSTEM" %}</p>
+          <h2 class="rr-display mt-4 text-3xl sm:text-4xl">{% translate "Three perspectives. One shared truth." %}</h2>
+        </div>
+        <p class="leading-7 text-muted">{% translate "ROOMRUN models the relationship itself: a payment, charge or maintenance request is the same event, viewed by the people who need it." %}</p>
+      </div>
+      <div class="mt-10 grid gap-5 lg:grid-cols-3">
+        <article class="rr-card p-7">
+          <p class="rr-eyebrow">{% translate "LANDLORDS" %}</p>
+          <h3 class="rr-display mt-5 text-xl">{% translate "See the whole community breathe" %}</h3>
+          <p class="mt-3 leading-7 text-muted">{% translate "Occupancy, revenue, delays and renewals, consolidated and always current." %}</p>
+          <ul class="mt-6 space-y-2 border-t border-line pt-5 text-sm text-muted">
+            <li>• {% translate "Reports by community" %}</li>
+            <li>• {% translate "Rent and arrears tracking" %}</li>
+            <li>• {% translate "Document vault" %}</li>
+          </ul>
+        </article>
+        <article class="rr-card p-7">
+          <p class="rr-eyebrow">{% translate "OPERATIONS" %}</p>
+          <h3 class="rr-display mt-5 text-xl">{% translate "Operations without reminders" %}</h3>
+          <p class="mt-3 leading-7 text-muted">{% translate "Leases, charges, inspections and maintenance in one visible, prioritised queue." %}</p>
+          <ul class="mt-6 space-y-2 border-t border-line pt-5 text-sm text-muted">
+            <li>• {% translate "Unified operations queue" %}</li>
+            <li>• {% translate "Fair charge allocation" %}</li>
+            <li>• {% translate "Complete request history" %}</li>
+          </ul>
+        </article>
+        <div class="min-h-70 rounded-card bg-primary p-7 text-white">
+          <p class="rr-eyebrow text-orange-200">{% translate "TENANTS" %}</p>
+          <h3 class="mt-5 font-display text-2xl">{% translate "A clear home, not another maze." %}</h3>
+          <p class="mt-3 leading-7 text-slate-300">{% translate "Payments, messages and requests are simple to find and easy to act on." %}</p>
+        </div>
+      </div>
+    </section>
+    <section id="fonctionnalites" class="rr-container rr-section pt-0">
+      <div class="rr-section-heading">
+        <p class="rr-eyebrow">02 · {% translate "FEATURES" %}</p>
+        <h2>{% translate "The repetitive work, handled with care." %}</h2>
+        <p>{% translate "Every obligation becomes planned, visible and followed through to completion." %}</p>
+      </div>
+      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <article class="rr-card p-6 md:col-span-2">
+          <span class="text-2xl text-secondary">⌁</span>
+          <h3 class="rr-display mt-8 text-xl">{% translate "Leases that renew without friction" %}</h3>
+          <p class="mt-3 leading-7 text-muted">{% translate "Deadlines, notices and renewals are tracked automatically before they become urgent." %}</p>
+          <div class="mt-7 flex gap-10 border-t border-line pt-4">
+            <div>
+              <p class="font-display text-2xl text-primary">3h</p>
+              <p class="text-xs text-muted">{% translate "Average signature" %}</p>
+            </div>
+            <div>
+              <p class="font-display text-2xl text-primary">0</p>
+              <p class="text-xs text-muted">{% translate "Missed renewals" %}</p>
+            </div>
+          </div>
+        </article>
+        <article class="rr-card p-6">
+          <span class="text-2xl text-secondary">◫</span>
+          <h3 class="rr-display mt-8 text-xl">{% translate "Fair charges" %}</h3>
+          <p class="mt-3 leading-7 text-muted">{% translate "Water, electricity and shared charges allocated according to your rules." %}</p>
+        </article>
+        <article class="rr-card p-6">
+          <span class="text-2xl text-secondary">⌕</span>
+          <h3 class="rr-display mt-8 text-xl">{% translate "Maintenance with memory" %}</h3>
+          <p class="mt-3 leading-7 text-muted">{% translate "Every request keeps its photos, agent and cost history." %}</p>
+        </article>
+        <article class="rounded-card border border-line bg-[repeating-linear-gradient(135deg,#f1ede7,#f1ede7_8px,#eae5dd_8px,#eae5dd_16px)] p-6"></article>
+        <article class="rr-card p-6">
+          <h3 class="rr-display text-xl">{% translate "Announcements" %}</h3>
+          <p class="mt-3 leading-7 text-muted">{% translate "Reach a community or a building with read receipts." %}</p>
+        </article>
+        <article class="rr-card p-6">
+          <span class="text-2xl text-secondary">◈</span>
+          <h3 class="rr-display mt-8 text-xl">{% translate "Payments that feel instant" %}</h3>
+          <p class="mt-3 leading-7 text-muted">{% translate "Mobile money, bank transfer or cash — all reconciled automatically." %}</p>
+        </article>
+      </div>
+    </section>
+    <section class="bg-primary-soft">
+      <div class="rr-container rr-section">
+        <div class="mx-auto max-w-2xl text-center">
+          <p class="rr-eyebrow">03 · {% translate "THE JOURNEY" %}</p>
+          <h2 class="rr-display mt-4 text-3xl sm:text-4xl">{% translate "Three steps to publish your first home." %}</h2>
+        </div>
+        <ol class="mt-12 grid gap-8 md:grid-cols-3">
+          {% for title, copy in steps %}{% empty %}
+            <li>
+              <span class="inline-flex size-9 items-center justify-center rounded-full bg-primary font-display text-white">1</span>
+              <h3 class="rr-display mt-4 text-lg">{% translate "Create your account" %}</h3>
+              <p class="mt-2 leading-7 text-[#6b4a34]">{% translate "Start as a landlord and add your first community." %}</p>
+            </li>
+            <li>
+              <span class="inline-flex size-9 items-center justify-center rounded-full bg-primary font-display text-white">2</span>
+              <h3 class="rr-display mt-4 text-lg">{% translate "Publish your homes" %}</h3>
+              <p class="mt-2 leading-7 text-[#6b4a34]">{% translate "Add your units, equipment and rent details." %}</p>
+            </li>
+            <li>
+              <span class="inline-flex size-9 items-center justify-center rounded-full bg-primary font-display text-white">3</span>
+              <h3 class="rr-display mt-4 text-lg">{% translate "Manage from one dashboard" %}</h3>
+              <p class="mt-2 leading-7 text-[#6b4a34]">{% translate "Follow requests, tenants and payments in one place." %}</p>
+            </li>
+          {% endfor %}
+        </ol>
+      </div>
+    </section>
+    <section id="tarifs" class="rr-container rr-section">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="rr-display text-3xl sm:text-4xl">{% translate "Free to start, Pro when you need more." %}</h2>
+        <p class="mt-4 text-muted">{% translate "Change plans at any time, without commitment." %}</p>
+      </div>
+      <div class="mx-auto mt-10 grid max-w-2xl gap-5 md:grid-cols-2">
+        <article class="rr-card p-7">
+          <p class="text-sm text-muted">{% translate "Free" %}</p>
+          <p class="rr-display mt-1 text-3xl">0 XAF<span class="font-sans text-sm font-normal text-muted">/{% translate "month" %}</span></p>
+          <ul class="my-7 space-y-3 text-sm text-ink">
+            <li>◉ {% translate "Up to 2 communities" %}</li>
+            <li>◉ {% translate "Up to 10 homes" %}</li>
+            <li>◉ {% translate "Basic statistics" %}</li>
+          </ul>
+          <a href="{% url 'users:signup' %}" class="rr-btn-outline w-full">{% translate "Start for free" %}</a>
+        </article>
+        <article class="relative rounded-card border-2 border-secondary bg-card p-7">
+          <span class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-white">{% translate "Recommended" %}</span>
+          <p class="text-sm text-secondary">{% translate "Pro" %}</p>
+          <p class="rr-display mt-1 text-3xl">15 000 XAF<span class="font-sans text-sm font-normal text-muted">/{% translate "month" %}</span></p>
+          <ul class="my-7 space-y-3 text-sm text-ink">
+            <li>◉ {% translate "Unlimited communities and homes" %}</li>
+            <li>◉ {% translate "Advanced reports" %}</li>
+            <li>◉ {% translate "Reduced commission" %}</li>
+          </ul>
+          <a href="{% url 'users:signup' %}" class="rr-btn-primary w-full">{% translate "Choose Pro" %}</a>
+        </article>
+      </div>
+    </section>
+    <section class="bg-primary">
+      <div class="rr-container py-20 text-center">
+        <h2 class="font-display text-3xl font-semibold text-white sm:text-4xl">
+          {% translate "Give your community" %}<br />
+          <em class="font-normal text-secondary">{% translate "calm management at last." %}</em>
+        </h2>
+        <p class="mx-auto mt-5 max-w-xl leading-7 text-slate-300">
+          {% translate "Create your account in minutes. Add homes, tenants and leases — we will guide you through the rest." %}
+        </p>
+        <a href="{% url 'users:signup' %}" class="rr-btn-primary mt-8">{% translate "Create an account" %} →</a>
+      </div>
+    </section>
+  </main>
 {% endblock main %}

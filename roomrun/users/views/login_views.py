@@ -4,19 +4,19 @@ from django.contrib.auth import login
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.utils.translation import get_language_from_request
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
 from django.views.generic import RedirectView
 from users.forms import SigninForm
+from users.mixins import OtpEmailMixin
+from users.mixins import OtpSessionKeyMixin
 from users.mixins import RedirectToNextOrReferrerMixin
-from users.services import OtpEmailService
 from users.services import OtpRateLimitError
 from users.services import OtpService
 from utils.enums import OtpPurpose
 
 
-class SigninView(RedirectToNextOrReferrerMixin, FormView):
+class SigninView(OtpEmailMixin, OtpSessionKeyMixin, RedirectToNextOrReferrerMixin, FormView):
     template_name = "home/pages/auth/signin.html"
     form_class = SigninForm
 
@@ -28,14 +28,12 @@ class SigninView(RedirectToNextOrReferrerMixin, FormView):
         if not user.email_verified:
             try:
                 otp, token = OtpService.create(user, OtpPurpose.LOGIN)
-                OtpEmailService.send(
-                    user, otp, language=get_language_from_request(self.request)
-                )
+                self.send_otp_email(user, otp)
             except OtpRateLimitError as error:
                 messages.warning(self.request, error)
                 return self.form_invalid(form)
 
-            self.request.session["pending_otp_token:login"] = token
+            self.set_otp_token(OtpPurpose.LOGIN, token)
             messages.info(self.request, _("A verification code has been sent to you."))
             return redirect("users:verify_otp", purpose=OtpPurpose.LOGIN)
 

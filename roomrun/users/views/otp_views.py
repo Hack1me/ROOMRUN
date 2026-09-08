@@ -4,13 +4,13 @@ from django.contrib.auth import login
 from django.db import transaction
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
-from django.utils.translation import get_language_from_request
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import FormView
 from django_ratelimit.decorators import ratelimit
 from users.forms import OtpVerificationForm
-from users.services import OtpEmailService
+from users.mixins import OtpEmailMixin
+from users.mixins import OtpSessionKeyMixin
 from users.services import OtpRateLimitError
 from users.services import OtpService
 from users.services import OtpVerificationError
@@ -25,14 +25,9 @@ from utils.enums import OtpPurpose
 @method_decorator(
     ratelimit(key="ip", rate="30/m", method="GET", block=True), name="get"
 )
-class VerifyOtpView(FormView):
+class VerifyOtpView(OtpEmailMixin, OtpSessionKeyMixin, FormView):
     template_name = "home/pages/auth/verify_otp.html"
     form_class = OtpVerificationForm
-
-    _SESSION_KEY_PREFIX = "pending_otp_token"
-
-    def _session_key(self, purpose: str) -> str:
-        return f"{self._SESSION_KEY_PREFIX}:{purpose}"
 
     def dispatch(self, request, *args, **kwargs):
         self.purpose = kwargs["purpose"]
@@ -43,7 +38,7 @@ class VerifyOtpView(FormView):
         }:
             messages.error(request, _("This verification is not available."))
             return redirect("users:signin")
-        self.token = request.session.get(self._session_key(self.purpose))
+        self.token = request.session.get(self.otp_session_key(self.purpose))
         if not self.token:
             messages.error(
                 request,
@@ -81,7 +76,7 @@ class VerifyOtpView(FormView):
             return self.form_invalid(form)
 
         # Consume the session-stored token to prevent reuse.
-        self.request.session.pop(self._session_key(self.purpose), None)
+        self.pop_otp_token(self.purpose)
 
         user = otp.user
         if self.purpose == OtpPurpose.PASSWORD_RESET:
@@ -104,15 +99,12 @@ class VerifyOtpView(FormView):
 @method_decorator(
     ratelimit(key="ip", rate="5/m", method="POST", block=True), name="post"
 )
-class ResendOtpView(View):
+class ResendOtpView(OtpEmailMixin, OtpSessionKeyMixin, View):
     http_method_names = ["post"]
-
-    def _session_key(self, purpose: str) -> str:
-        return f"pending_otp_token:{purpose}"
 
     def post(self, request, *args, **kwargs):
         purpose = kwargs["purpose"]
-        token = request.session.get(self._session_key(purpose))
+        token = request.session.get(self.otp_session_key(purpose))
         if not token:
             messages.error(
                 request,
@@ -121,16 +113,14 @@ class ResendOtpView(View):
             return redirect("users:signin")
         try:
             with transaction.atomic():
-                otp = OtpVerifyService._resolve_otp(token, purpose)  # noqa: SLF001
+                otp = OtpVerifyService.resolve_otp(token, purpose)
                 new_otp, new_token = OtpService.create(otp.user, purpose)
         except (OtpVerificationError, OtpRateLimitError, ValueError) as error:
             messages.error(request, error)
             return redirect("users:verify_otp", purpose=purpose)
-        request.session[self._session_key(purpose)] = new_token
+        self.set_otp_token(purpose, new_token)
         try:
-            OtpEmailService.send(
-                otp.user, new_otp, language=get_language_from_request(request)
-            )
+            self.send_otp_email(otp.user, new_otp)
         except Exception:  # noqa: BLE001
             messages.warning(
                 request, _("Server Error. Request a new code on the next page.")

@@ -1,22 +1,6 @@
-/** Maintenance dashboard interactions. */
+/** Maintenance dashboard interactions: nav active state. */
 (function () {
   'use strict';
-
-  const sidebar = document.getElementById('sidebar');
-  const mobileMenu = document.getElementById('mobileMenu');
-  const overlay = document.getElementById('overlay');
-
-  if (mobileMenu && sidebar && overlay) {
-    mobileMenu.addEventListener('click', () => {
-      sidebar.classList.add('open');
-      overlay.classList.add('active');
-    });
-
-    overlay.addEventListener('click', () => {
-      sidebar.classList.remove('open');
-      overlay.classList.remove('active');
-    });
-  }
 
   const navItems = document.querySelectorAll('.nav-item');
   navItems.forEach((item) => {

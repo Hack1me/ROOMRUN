@@ -4,14 +4,14 @@ from django.contrib import messages
 from django.db import IntegrityError
 from django.db import transaction
 from django.shortcuts import redirect
-from django.utils.translation import get_language_from_request
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
 from users.forms import SignupForm
+from users.mixins import OtpEmailMixin
+from users.mixins import OtpSessionKeyMixin
 from users.mixins import RedirectToNextOrReferrerMixin
 from users.models import Landlord
 from users.models import Tenant
-from users.services import OtpEmailService
 from users.services import OtpRateLimitError
 from users.services import OtpService
 from utils.enums import OtpPurpose
@@ -19,7 +19,7 @@ from utils.enums import OtpPurpose
 logger = logging.getLogger(__name__)
 
 
-class SignupView(RedirectToNextOrReferrerMixin, FormView):
+class SignupView(OtpEmailMixin, OtpSessionKeyMixin, RedirectToNextOrReferrerMixin, FormView):
     template_name = "home/pages/auth/signup.html"
     form_class = SignupForm
 
@@ -44,16 +44,14 @@ class SignupView(RedirectToNextOrReferrerMixin, FormView):
             return self.form_invalid(form)
 
         try:
-            OtpEmailService.send(
-                user, otp, language=get_language_from_request(self.request)
-            )
+            self.send_otp_email(user, otp)
         except Exception:
             logger.exception("Unable to send the sign-up verification email")
             messages.warning(
                 self.request, _("Server Error. Request a new code on the next page.")
             )
 
-        self.request.session["pending_otp_token:signup"] = token
+        self.set_otp_token(OtpPurpose.SIGNUP, token)
         messages.success(
             self.request,
             _(

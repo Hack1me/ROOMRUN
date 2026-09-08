@@ -1,252 +1,294 @@
 {% extends "dashboard/layout.html" %}
+
 {% load i18n static %}
 
 {% block title %}{% translate "Dashboard" %} — ROOMRUN{% endblock title %}
-
 {% block bodyclass %}dashboard-page{% endblock bodyclass %}
-
 {% block content %}
-<div class="app">
-
-  <!-- Sidebar -->
-  <aside class="sidebar" id="sidebar">
-    <div class="logo">
-      <div class="logo-icon"><i class="ti ti-building-community"></i></div>
-      <span>ROOMRUN</span>
-    </div>
-
-    <div class="nav-title">{% translate "Main" %}</div>
-    <nav class="nav">
-      <a href="#" class="nav-item active"><i class="ti ti-layout-dashboard"></i><span>{% translate "Dashboard" %}</span></a>
-      <a href="#" class="nav-item"><i class="ti ti-building"></i><span>{% translate "Properties" %}</span></a>
-      <a href="#" class="nav-item"><i class="ti ti-file-text"></i><span>{% translate "Leases" %}</span></a>
-      <a href="#" class="nav-item"><i class="ti ti-credit-card"></i><span>{% translate "Payments" %}</span></a>
-      <a href="#" class="nav-item"><i class="ti ti-tool"></i><span>{% translate "Maintenance" %}</span><span class="nav-badge">3</span></a>
-      <a href="#" class="nav-item"><i class="ti ti-message"></i><span>{% translate "Messages" %}</span><span class="nav-badge">2</span></a>
-    </nav>
-
-    <div class="nav-title">{% translate "Management" %}</div>
-    <nav class="nav">
-      <a href="#" class="nav-item"><i class="ti ti-users"></i><span>{% translate "Tenants" %}</span></a>
-      <a href="#" class="nav-item"><i class="ti ti-calendar"></i><span>{% translate "Calendar" %}</span></a>
-      <a href="#" class="nav-item"><i class="ti ti-bell"></i><span>{% translate "Notifications" %}</span></a>
-    </nav>
-
-    <div class="sidebar-bottom">
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar landlord-sidebar" id="sidebar">
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="ti ti-building-community"></i>
+        </div>
+        <span>ROOMRUN</span>
+      </div>
+      <div class="nav-title">{% translate "Main" %}</div>
       <nav class="nav">
-        <a href="{% url 'users:profile' %}" class="nav-item"><i class="ti ti-user"></i><span>{% translate "My profile" %}</span></a>
-        <a href="#" class="nav-item"><i class="ti ti-settings"></i><span>{% translate "Settings" %}</span></a>
-        <a href="#" class="nav-item"><i class="ti ti-help-circle"></i><span>{% translate "Help" %}</span></a>
+        <a href="#" class="nav-item active"><i class="ti ti-layout-dashboard"></i><span>{% translate "Dashboard" %}</span></a>
+        <a href="#" class="nav-item"><i class="ti ti-building"></i><span>{% translate "Properties" %}</span></a>
+        <a href="#" class="nav-item"><i class="ti ti-file-text"></i><span>{% translate "Leases" %}</span></a>
+        <a href="#" class="nav-item"><i class="ti ti-credit-card"></i><span>{% translate "Payments" %}</span></a>
+        <a href="#" class="nav-item"><i class="ti ti-tool"></i><span>{% translate "Maintenance" %}</span><span class="nav-badge">3</span></a>
+        <a href="#" class="nav-item"><i class="ti ti-message"></i><span>{% translate "Messages" %}</span><span class="nav-badge">2</span></a>
       </nav>
-
-      <a href="{% url 'users:profile' %}" class="sidebar-user profile-link">
-        {% if user.profile_picture %}<img class="avatar object-cover" src="{{ user.profile_picture.url }}" alt="">{% else %}<div class="avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>{% endif %}
-        <div class="sidebar-user-info">
-          <div class="sidebar-user-name">{{ user.full_name|default:user.email }}</div>
-          <div class="sidebar-user-role">{% if user.is_landlord %}{% translate "Landlord" %}{% elif user.is_tenant %}{% translate "Tenant" %}{% else %}{% translate "User" %}{% endif %}</div>
+      <div class="nav-title">{% translate "Management" %}</div>
+      <nav class="nav">
+        <a href="#" class="nav-item"><i class="ti ti-users"></i><span>{% translate "Tenants" %}</span></a>
+        <a href="#" class="nav-item"><i class="ti ti-calendar"></i><span>{% translate "Calendar" %}</span></a>
+        <a href="#" class="nav-item"><i class="ti ti-bell"></i><span>{% translate "Notifications" %}</span></a>
+      </nav>
+      <div class="sidebar-bottom">
+        <nav class="nav">
+          <a href="#" class="nav-item"><i class="ti ti-settings"></i><span>{% translate "Settings" %}</span></a>
+          <a href="#" class="nav-item"><i class="ti ti-help-circle"></i><span>{% translate "Help" %}</span></a>
+        </nav>
+        <a href="{% url 'users:profile' %}" class="sidebar-user profile-link">
+          {% if user.profile_picture %}<img class="avatar object-cover"
+     src="{{ user.profile_picture.url }}"
+     alt="" />{% else %}<div class="avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>{% endif %}
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name">{{ user.full_name|default:user.email }}</div>
+            <div class="sidebar-user-role">
+              {% if user.is_landlord %}
+                {% translate "Landlord" %}
+              {% elif user.is_tenant %}
+                {% translate "Tenant" %}
+              {% else %}
+                {% translate "User" %}
+              {% endif %}
+            </div>
+          </div>
+        </a>
+      </div>
+    </aside>
+    <!-- Main -->
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-button mobile-menu" id="mobile-menu">
+            <i class="ti ti-menu-2"></i>
+          </button>
+          <div class="page-heading">
+            <h1>{% translate "Dashboard" %}</h1>
+            <p>{% translate "Overview of your activity" %}</p>
+          </div>
         </div>
-      </a>
-    </div>
-  </aside>
-
-  <!-- Main -->
-  <main class="main">
-    <header class="topbar">
-      <div class="topbar-left">
-        <button class="icon-button mobile-menu" id="mobile-menu"><i class="ti ti-menu-2"></i></button>
-        <div class="page-heading">
-          <h1>{% translate "Dashboard" %}</h1>
-          <p>{% translate "Overview of your activity" %}</p>
+        <div class="topbar-search">
+          <i class="ti ti-search"></i>
+          <input type="text"
+                 placeholder="{% translate 'Search a property, a tenant…' %}" />
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-button">
+            <i class="ti ti-bell"></i><span class="notification-dot"></span>
+          </button>
+          <a href="{% url 'users:profile' %}"
+             class="icon-button profile-button rounded-full overflow-hidden"
+             aria-label="{% translate 'Profile' %}">
+            {% if user.profile_picture %}
+              <img class="h-full w-full object-cover"
+                   src="{{ user.profile_picture.url }}"
+                   alt="" />
+            {% else %}
+              <i class="ti ti-user"></i>
+            {% endif %}
+          </a>
+        </div>
+      </header>
+      <div class="content">
+        <section class="welcome">
+          <div>
+            <div class="welcome-heading">
+              <h2>{% translate "Hello, Sahit" %}</h2>
+              <i class="ti ti-sparkles" aria-hidden="true"></i>
+            </div>
+            <p>{% translate "Here is what is happening with your properties." %}</p>
+          </div>
+          <div class="date-pill"><i class="ti ti-calendar"></i>{% translate "Friday, September 4, 2026" %}</div>
+        </section>
+        <section class="stats">
+          <div class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">{% translate "Properties" %}</span>
+              <div class="stat-icon stat-icon--primary">
+                <i class="ti ti-building"></i>
+              </div>
+            </div>
+            <div class="stat-value">12</div>
+            <div class="stat-change positive"><i class="ti ti-trending-up"></i>{% translate "+2 this month" %}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">{% translate "Rented units" %}</span>
+              <div class="stat-icon stat-icon--secondary">
+                <i class="ti ti-home"></i>
+              </div>
+            </div>
+            <div class="stat-value">18 / 24</div>
+            <div class="stat-change positive"><i class="ti ti-trending-up"></i>75 % {% translate "occupied" %}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">{% translate "Monthly revenue" %}</span>
+              <div class="stat-icon stat-icon--success">
+                <i class="ti ti-cash"></i>
+              </div>
+            </div>
+            <div class="stat-value">1,25M XAF</div>
+            <div class="stat-change positive"><i class="ti ti-trending-up"></i>+8,4 %</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">{% translate "Maintenance" %}</span>
+              <div class="stat-icon stat-icon--warning">
+                <i class="ti ti-tool"></i>
+              </div>
+            </div>
+            <div class="stat-value">3</div>
+            <div class="stat-change warning"><i class="ti ti-alert-circle"></i>{% translate "To process" %}</div>
+          </div>
+        </section>
+        <div class="dashboard-grid">
+          <div>
+            <section class="card">
+              <div class="card-header">
+                <h3 class="card-title">{% translate "Recent rentals" %}</h3>
+                <a href="#" class="card-link">{% translate "See all" %}</a>
+              </div>
+              <div class="rental-list">
+                <div class="rental">
+                  <div class="property-image">
+                    <i class="ti ti-home"></i>
+                  </div>
+                  <div class="rental-info">
+                    <div class="rental-name">{% translate "Apartment T2 — Bonamoussadi" %}</div>
+                    <div class="rental-address">{% translate "Résidence Les Palmiers · Door A12" %}</div>
+                  </div>
+                  <span class="status success">{% translate "Active" %}</span>
+                  <div class="rental-price"><strong>150 000 XAF</strong><span>/ {% translate "month" %}</span></div>
+                </div>
+                <div class="rental">
+                  <div class="property-image">
+                    <i class="ti ti-home"></i>
+                  </div>
+                  <div class="rental-info">
+                    <div class="rental-name">{% translate "Studio — Deido" %}</div>
+                    <div class="rental-address">{% translate "Résidence La Paix · Door B04" %}</div>
+                  </div>
+                  <span class="status success">{% translate "Active" %}</span>
+                  <div class="rental-price"><strong>90 000 XAF</strong><span>/ {% translate "month" %}</span></div>
+                </div>
+                <div class="rental">
+                  <div class="property-image">
+                    <i class="ti ti-home"></i>
+                  </div>
+                  <div class="rental-info">
+                    <div class="rental-name">{% translate "Apartment T3 — Akwa" %}</div>
+                    <div class="rental-address">{% translate "Central Building · Door C08" %}</div>
+                  </div>
+                  <span class="status warning">{% translate "Arrears" %}</span>
+                  <div class="rental-price"><strong>225 000 XAF</strong><span>/ {% translate "month" %}</span></div>
+                </div>
+                <div class="rental">
+                  <div class="property-image">
+                    <i class="ti ti-home"></i>
+                  </div>
+                  <div class="rental-info">
+                    <div class="rental-name">{% translate "Studio — Makepe" %}</div>
+                    <div class="rental-address">{% translate "Résidence Horizon · Door A07" %}</div>
+                  </div>
+                  <span class="status success">{% translate "Active" %}</span>
+                  <div class="rental-price"><strong>100 000 XAF</strong><span>/ {% translate "month" %}</span></div>
+                </div>
+              </div>
+            </section>
+            <section class="card">
+              <div class="card-header">
+                <h3 class="card-title">{% translate "Quick actions" %}</h3>
+              </div>
+              <div class="quick-actions">
+                <a href="#" class="quick-action"><i class="ti ti-plus"></i>{% translate "Add a property" %}</a>
+                <a href="#" class="quick-action"><i class="ti ti-file-plus"></i>{% translate "New lease" %}</a>
+                <a href="#" class="quick-action"><i class="ti ti-receipt"></i>{% translate "Add a charge" %}</a>
+                <a href="#" class="quick-action"><i class="ti ti-message-plus"></i>{% translate "New message" %}</a>
+              </div>
+            </section>
+          </div>
+          <div class="right-column">
+            <section class="card">
+              <div class="card-header">
+                <h3 class="card-title">{% translate "Recent payments" %}</h3>
+                <a href="#" class="card-link">{% translate "See all" %}</a>
+              </div>
+              <div class="payment-list">
+                <div class="payment">
+                  <div class="payment-icon">
+                    <i class="ti ti-check"></i>
+                  </div>
+                  <div class="payment-info">
+                    <div class="payment-title">{% translate "Rent — Apartment T2" %}</div>
+                    <div class="payment-date">{% translate "Today" %}</div>
+                  </div>
+                  <div class="payment-amount">+150 000 XAF</div>
+                </div>
+                <div class="payment">
+                  <div class="payment-icon">
+                    <i class="ti ti-check"></i>
+                  </div>
+                  <div class="payment-info">
+                    <div class="payment-title">{% translate "Rent — Studio Deido" %}</div>
+                    <div class="payment-date">{% translate "September 2" %}</div>
+                  </div>
+                  <div class="payment-amount">+90 000 XAF</div>
+                </div>
+                <div class="payment">
+                  <div class="payment-icon">
+                    <i class="ti ti-check"></i>
+                  </div>
+                  <div class="payment-info">
+                    <div class="payment-title">{% translate "Electricity — Door C08" %}</div>
+                    <div class="payment-date">{% translate "September 1" %}</div>
+                  </div>
+                  <div class="payment-amount">+25 000 XAF</div>
+                </div>
+              </div>
+            </section>
+            <section class="card">
+              <div class="card-header">
+                <h3 class="card-title">{% translate "Maintenance" %}</h3>
+                <a href="#" class="card-link">{% translate "See all" %}</a>
+              </div>
+              <div class="tasks">
+                <div class="task">
+                  <div class="task-icon">
+                    <i class="ti ti-droplet"></i>
+                  </div>
+                  <div class="task-content">
+                    <div class="task-title">{% translate "Water leak" %}</div>
+                    <div class="task-description">{% translate "Apartment T3 · Akwa" %}</div>
+                    <div class="task-time">{% translate "2 hours ago" %}</div>
+                  </div>
+                </div>
+                <div class="task">
+                  <div class="task-icon">
+                    <i class="ti ti-bolt"></i>
+                  </div>
+                  <div class="task-content">
+                    <div class="task-title">{% translate "Electrical issue" %}</div>
+                    <div class="task-description">{% translate "Studio · Makepe" %}</div>
+                    <div class="task-time">{% translate "Yesterday" %}</div>
+                  </div>
+                </div>
+                <div class="task">
+                  <div class="task-icon">
+                    <i class="ti ti-door"></i>
+                  </div>
+                  <div class="task-content">
+                    <div class="task-title">{% translate "Lock to replace" %}</div>
+                    <div class="task-description">{% translate "Apartment T2 · Bonamoussadi" %}</div>
+                    <div class="task-time">{% translate "September 2" %}</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
         </div>
       </div>
-
-      <div class="topbar-search">
-        <i class="ti ti-search"></i>
-        <input type="text" placeholder="{% translate 'Search a property, a tenant…' %}">
-      </div>
-
-      <div class="topbar-actions">
-        <button class="icon-button"><i class="ti ti-bell"></i><span class="notification-dot"></span></button>
-        <a href="{% url 'users:profile' %}" class="icon-button profile-button rounded-full overflow-hidden" aria-label="{% translate 'Profile' %}">{% if user.profile_picture %}<img class="h-full w-full object-cover" src="{{ user.profile_picture.url }}" alt="">{% else %}<i class="ti ti-user"></i>{% endif %}</a>
-      </div>
-    </header>
-
-    <div class="content">
-      <section class="welcome">
-        <div>
-          <div class="welcome-heading">
-            <h2>{% translate "Hello, Sahit" %}</h2>
-            <i class="ti ti-sparkles" aria-hidden="true"></i>
-          </div>
-          <p>{% translate "Here is what is happening with your properties." %}</p>
-        </div>
-        <div class="date-pill"><i class="ti ti-calendar"></i>{% translate "Friday, September 4, 2026" %}</div>
-      </section>
-
-      <section class="stats">
-        <div class="stat-card">
-          <div class="stat-top">
-            <span class="stat-label">{% translate "Properties" %}</span>
-            <div class="stat-icon stat-icon--primary"><i class="ti ti-building"></i></div>
-          </div>
-          <div class="stat-value">12</div>
-          <div class="stat-change positive"><i class="ti ti-trending-up"></i>{% translate "+2 this month" %}</div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-top">
-            <span class="stat-label">{% translate "Rented units" %}</span>
-            <div class="stat-icon stat-icon--secondary"><i class="ti ti-home"></i></div>
-          </div>
-          <div class="stat-value">18 / 24</div>
-          <div class="stat-change positive"><i class="ti ti-trending-up"></i>75 % {% translate "occupied" %}</div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-top">
-            <span class="stat-label">{% translate "Monthly revenue" %}</span>
-            <div class="stat-icon stat-icon--success"><i class="ti ti-cash"></i></div>
-          </div>
-          <div class="stat-value">1,25M XAF</div>
-          <div class="stat-change positive"><i class="ti ti-trending-up"></i>+8,4 %</div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-top">
-            <span class="stat-label">{% translate "Maintenance" %}</span>
-            <div class="stat-icon stat-icon--warning"><i class="ti ti-tool"></i></div>
-          </div>
-          <div class="stat-value">3</div>
-          <div class="stat-change warning"><i class="ti ti-alert-circle"></i>{% translate "To process" %}</div>
-        </div>
-      </section>
-
-      <div class="dashboard-grid">
-        <div>
-          <section class="card">
-            <div class="card-header">
-              <h3 class="card-title">{% translate "Recent rentals" %}</h3>
-              <a href="#" class="card-link">{% translate "See all" %}</a>
-            </div>
-            <div class="rental-list">
-              <div class="rental">
-                <div class="property-image"><i class="ti ti-home"></i></div>
-                <div class="rental-info">
-                  <div class="rental-name">{% translate "Apartment T2 — Bonamoussadi" %}</div>
-                  <div class="rental-address">{% translate "Résidence Les Palmiers · Door A12" %}</div>
-                </div>
-                <span class="status success">{% translate "Active" %}</span>
-                <div class="rental-price"><strong>150 000 XAF</strong><span>/ {% translate "month" %}</span></div>
-              </div>
-
-              <div class="rental">
-                <div class="property-image"><i class="ti ti-home"></i></div>
-                <div class="rental-info">
-                  <div class="rental-name">{% translate "Studio — Deido" %}</div>
-                  <div class="rental-address">{% translate "Résidence La Paix · Door B04" %}</div>
-                </div>
-                <span class="status success">{% translate "Active" %}</span>
-                <div class="rental-price"><strong>90 000 XAF</strong><span>/ {% translate "month" %}</span></div>
-              </div>
-
-              <div class="rental">
-                <div class="property-image"><i class="ti ti-home"></i></div>
-                <div class="rental-info">
-                  <div class="rental-name">{% translate "Apartment T3 — Akwa" %}</div>
-                  <div class="rental-address">{% translate "Central Building · Door C08" %}</div>
-                </div>
-                <span class="status warning">{% translate "Arrears" %}</span>
-                <div class="rental-price"><strong>225 000 XAF</strong><span>/ {% translate "month" %}</span></div>
-              </div>
-
-              <div class="rental">
-                <div class="property-image"><i class="ti ti-home"></i></div>
-                <div class="rental-info">
-                  <div class="rental-name">{% translate "Studio — Makepe" %}</div>
-                  <div class="rental-address">{% translate "Résidence Horizon · Door A07" %}</div>
-                </div>
-                <span class="status success">{% translate "Active" %}</span>
-                <div class="rental-price"><strong>100 000 XAF</strong><span>/ {% translate "month" %}</span></div>
-              </div>
-            </div>
-          </section>
-
-          <section class="card">
-            <div class="card-header"><h3 class="card-title">{% translate "Quick actions" %}</h3></div>
-            <div class="quick-actions">
-              <a href="#" class="quick-action"><i class="ti ti-plus"></i>{% translate "Add a property" %}</a>
-              <a href="#" class="quick-action"><i class="ti ti-file-plus"></i>{% translate "New lease" %}</a>
-              <a href="#" class="quick-action"><i class="ti ti-receipt"></i>{% translate "Add a charge" %}</a>
-              <a href="#" class="quick-action"><i class="ti ti-message-plus"></i>{% translate "New message" %}</a>
-            </div>
-          </section>
-        </div>
-
-        <div class="right-column">
-          <section class="card">
-            <div class="card-header">
-              <h3 class="card-title">{% translate "Recent payments" %}</h3>
-              <a href="#" class="card-link">{% translate "See all" %}</a>
-            </div>
-            <div class="payment-list">
-              <div class="payment">
-                <div class="payment-icon"><i class="ti ti-check"></i></div>
-                <div class="payment-info"><div class="payment-title">{% translate "Rent — Apartment T2" %}</div><div class="payment-date">{% translate "Today" %}</div></div>
-                <div class="payment-amount">+150 000 XAF</div>
-              </div>
-              <div class="payment">
-                <div class="payment-icon"><i class="ti ti-check"></i></div>
-                <div class="payment-info"><div class="payment-title">{% translate "Rent — Studio Deido" %}</div><div class="payment-date">{% translate "September 2" %}</div></div>
-                <div class="payment-amount">+90 000 XAF</div>
-              </div>
-              <div class="payment">
-                <div class="payment-icon"><i class="ti ti-check"></i></div>
-                <div class="payment-info"><div class="payment-title">{% translate "Electricity — Door C08" %}</div><div class="payment-date">{% translate "September 1" %}</div></div>
-                <div class="payment-amount">+25 000 XAF</div>
-              </div>
-            </div>
-          </section>
-
-          <section class="card">
-            <div class="card-header">
-              <h3 class="card-title">{% translate "Maintenance" %}</h3>
-              <a href="#" class="card-link">{% translate "See all" %}</a>
-            </div>
-            <div class="tasks">
-              <div class="task">
-                <div class="task-icon"><i class="ti ti-droplet"></i></div>
-                <div class="task-content">
-                  <div class="task-title">{% translate "Water leak" %}</div>
-                  <div class="task-description">{% translate "Apartment T3 · Akwa" %}</div>
-                  <div class="task-time">{% translate "2 hours ago" %}</div>
-                </div>
-              </div>
-              <div class="task">
-                <div class="task-icon"><i class="ti ti-bolt"></i></div>
-                <div class="task-content">
-                  <div class="task-title">{% translate "Electrical issue" %}</div>
-                  <div class="task-description">{% translate "Studio · Makepe" %}</div>
-                  <div class="task-time">{% translate "Yesterday" %}</div>
-                </div>
-              </div>
-              <div class="task">
-                <div class="task-icon"><i class="ti ti-door"></i></div>
-                <div class="task-content">
-                  <div class="task-title">{% translate "Lock to replace" %}</div>
-                  <div class="task-description">{% translate "Apartment T2 · Bonamoussadi" %}</div>
-                  <div class="task-time">{% translate "September 2" %}</div>
-                </div>
-              </div>
-            </div>
-          </section>
-        </div>
-
-      </div>
-    </div>
-  </main>
-</div>
+    </main>
+  </div>
 {% endblock content %}
-
 {% block inline_javascript %}
-<script defer src="{% static 'js/dashboard.js' %}"></script>
+  <script defer src="{% static 'js/dashboard.js' %}"></script>
 {% endblock inline_javascript %}

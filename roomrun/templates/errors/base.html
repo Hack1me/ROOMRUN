@@ -1,12 +1,16 @@
 {% extends "base.html" %}
+
 {% load i18n %}
 
 {% block main %}
-<main class="rr-container flex min-h-[65vh] items-center py-14">
-  <section class="rr-card mx-auto max-w-xl p-8 text-center sm:p-12">
-    <p class="rr-eyebrow">ROOMRUN</p>
-    <div class="mt-6">{% block content %}{% endblock content %}</div>
-    <a href="{% url 'home' %}" class="rr-btn-primary mt-8">{% translate "Back to home" %} →</a>
-  </section>
-</main>
+  <main class="rr-container flex min-h-[65vh] items-center py-14">
+    <section class="rr-card mx-auto max-w-xl p-8 text-center sm:p-12">
+      <p class="rr-eyebrow">ROOMRUN</p>
+      <div class="mt-6">
+        {% block content %}
+        {% endblock content %}
+      </div>
+      <a href="{% url 'home' %}" class="rr-btn-primary mt-8">{% translate "Back to home" %} →</a>
+    </section>
+  </main>
 {% endblock main %}

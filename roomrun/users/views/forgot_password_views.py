@@ -2,12 +2,12 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.shortcuts import redirect
-from django.utils.translation import get_language_from_request
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
 from users.forms import ForgotPasswordForm
 from users.forms import PasswordResetConfirmForm
-from users.services import OtpEmailService
+from users.mixins import OtpEmailMixin
+from users.mixins import OtpSessionKeyMixin
 from users.services import OtpRateLimitError
 from users.services import OtpService
 from users.services import PasswordResetTokenService
@@ -16,7 +16,7 @@ from utils.enums import OtpPurpose
 User = get_user_model()
 
 
-class ForgotPasswordView(FormView):
+class ForgotPasswordView(OtpEmailMixin, OtpSessionKeyMixin, FormView):
     template_name = "home/pages/auth/forgot_password.html"
     form_class = ForgotPasswordForm
 
@@ -26,9 +26,7 @@ class ForgotPasswordView(FormView):
         if user:
             try:
                 otp, token = OtpService.create(user, OtpPurpose.PASSWORD_RESET)
-                OtpEmailService.send(
-                    user, otp, language=get_language_from_request(self.request)
-                )
+                self.send_otp_email(user, otp)
             except OtpRateLimitError:
                 messages.info(
                     self.request,
@@ -36,7 +34,7 @@ class ForgotPasswordView(FormView):
                 )
                 return redirect("users:signin")
 
-            self.request.session["pending_otp_token:password_reset"] = token
+            self.set_otp_token(OtpPurpose.PASSWORD_RESET, token)
             messages.info(self.request, _("A reset code has been sent to you."))
             return redirect("users:verify_otp", purpose=OtpPurpose.PASSWORD_RESET)
 

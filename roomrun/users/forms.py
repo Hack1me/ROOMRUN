@@ -2,12 +2,13 @@ from core.validators import validate_phone_number_for_country
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth import forms as admin_forms
-from django.contrib.auth.password_validation import validate_password
 from django.forms import EmailField
 from django.utils.translation import gettext_lazy as _
 from django_countries.widgets import CountrySelectWidget
 from phonenumber_field.formfields import PhoneNumberField
 
+from .mixins import NormalizedEmailMixin
+from .mixins import PasswordConfirmMixin
 from .models import User
 
 
@@ -57,7 +58,7 @@ class SigninForm(forms.Form):
         return cleaned_data
 
 
-class SignupForm(forms.ModelForm):
+class SignupForm(NormalizedEmailMixin, PasswordConfirmMixin, forms.ModelForm):
     ROLE_CHOICES = [
         ("tenant", _("Tenant")),
         ("landlord", _("Landlord")),
@@ -165,25 +166,12 @@ class SignupForm(forms.ModelForm):
         }
 
     def clean_email(self):
-        email = self.cleaned_data["email"].lower().strip()
+        email = super().clean_email()
         if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError(
                 _("An account already exists with this email address.")
             )
         return email
-
-    def clean(self):
-        cleaned_data = super().clean()
-        password1 = cleaned_data.get("password1")
-        password2 = cleaned_data.get("password2")
-        if password1 and password2 and password1 != password2:
-            self.add_error("password2", _("The passwords do not match."))
-        if password1:
-            try:
-                validate_password(password1)
-            except forms.ValidationError as error:
-                self.add_error("password1", error)
-        return cleaned_data
 
     def save(self, *, commit=True):
         user = super().save(commit=False)
@@ -195,11 +183,8 @@ class SignupForm(forms.ModelForm):
         return user
 
 
-class ForgotPasswordForm(forms.Form):
+class ForgotPasswordForm(NormalizedEmailMixin, forms.Form):
     email = forms.EmailField(label=_("Email address"))
-
-    def clean_email(self):
-        return self.cleaned_data["email"].lower().strip()
 
 
 class OtpVerificationForm(forms.Form):
@@ -213,7 +198,7 @@ class OtpVerificationForm(forms.Form):
         return code
 
 
-class PasswordResetConfirmForm(forms.Form):
+class PasswordResetConfirmForm(PasswordConfirmMixin, forms.Form):
     token = forms.CharField(widget=forms.HiddenInput)
     password1 = forms.CharField(
         label=_("New password"), strip=False, widget=forms.PasswordInput
@@ -221,19 +206,6 @@ class PasswordResetConfirmForm(forms.Form):
     password2 = forms.CharField(
         label=_("Password confirmation"), strip=False, widget=forms.PasswordInput
     )
-
-    def clean(self):
-        cleaned_data = super().clean()
-        password1 = cleaned_data.get("password1")
-        password2 = cleaned_data.get("password2")
-        if password1 and password2 and password1 != password2:
-            self.add_error("password2", _("The passwords do not match."))
-        if password1:
-            try:
-                validate_password(password1)
-            except forms.ValidationError as error:
-                self.add_error("password1", error)
-        return cleaned_data
 
 # User Profile form
 class ProfileForm(forms.ModelForm):

@@ -1,204 +1,216 @@
 {% extends "dashboard/layout.html" %}
+
 {% load i18n static %}
 
 {% block title %}{% translate "Maintenance dashboard" %} — ROOMRUN{% endblock %}
-
-{% block header %}{% endblock header %}
-
+{% block header %}
+{% endblock header %}
 {% block dashboard_body %}
-<div class="app">
-  <aside class="sidebar maintenance-sidebar overflow-y-auto" id="sidebar">
-    <div class="logo">
-      <div class="logo-mark"><i class="ti ti-building-community"></i></div>
-      <div>
-        <div class="logo-text">ROOMRUN</div>
-        <span class="logo-subtitle">{% translate "Property Management" %}</span>
-      </div>
-    </div>
-
-    <div class="sidebar-content">
-      <div class="nav-section">
-        <div class="nav-title">{% translate "Main" %}</div>
-        <a href="{% url 'dashboard:maintenance' %}" class="nav-item active"><i class="ti ti-layout-dashboard"></i><span>{% translate "Dashboard" %}</span></a>
-        <a href="#" class="nav-item"><i class="ti ti-tool"></i><span>{% translate "My tasks" %}</span><span class="badge">{{ pending_tasks }}</span></a>
-        <a href="#" class="nav-item"><i class="ti ti-clipboard-list"></i><span>{% translate "Requests" %}</span></a>
-        <a href="#" class="nav-item"><i class="ti ti-calendar"></i><span>{% translate "Calendar" %}</span></a>
-        <a href="#" class="nav-item"><i class="ti ti-message"></i><span>{% translate "Messages" %}</span></a>
-        <a href="#" class="nav-item"><i class="ti ti-bell"></i><span>{% translate "Notifications" %}</span></a>
-      </div>
-
-      <div class="nav-section">
-        <div class="nav-title">{% translate "Account" %}</div>
-        <a href="#" class="nav-item"><i class="ti ti-settings"></i><span>{% translate "Settings" %}</span></a>
-        <a href="#" class="nav-item"><i class="ti ti-help-circle"></i><span>{% translate "Help" %}</span></a>
-      </div>
-    </div>
-
-    <a href="{% url 'users:profile' %}" class="sidebar-user profile-link">
-      {% if user.profile_picture %}<img class="avatar object-cover" src="{{ user.profile_picture.url }}" alt="">{% else %}<div class="avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>{% endif %}
-      <div class="user-info">
-        <div class="user-name">{{ user.full_name }}</div>
-        <div class="user-role">{% translate "Maintenance agent" %}</div>
-      </div>
-      <i class="ti ti-chevron-right" style="margin-left:auto;color:var(--muted);font-size:16px;"></i>
-    </a>
-  </aside>
-
-  <div class="overlay" id="overlay"></div>
-
-  <main class="main">
-    <header class="topbar">
-      <div class="topbar-left">
-        <button class="mobile-menu" id="mobileMenu" type="button"><i class="ti ti-menu-2"></i></button>
-        <div class="search"><i class="ti ti-search"></i><input type="text" placeholder="{% translate 'Search an intervention...' %}"></div>
-      </div>
-      <div class="topbar-right">
-        <button class="icon-button" type="button"><i class="ti ti-bell"></i><span class="notification-dot"></span></button>
-        <a href="{% url 'users:profile' %}" class="top-user profile-link" aria-label="{% translate 'Profile' %}">
-          {% if user.profile_picture %}<img class="avatar object-cover" src="{{ user.profile_picture.url }}" alt="">{% else %}<div class="avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>{% endif %}
-          <span class="user-name">{{ user.full_name }}</span>
-          <i class="ti ti-chevron-down" style="font-size:14px;color:var(--muted);"></i>
-        </a>
-      </div>
-    </header>
-
-    <section class="content">
-      <div class="welcome">
-        <h1>{% blocktranslate with name=user.first_name|default:user.full_name %}Hello, {{ name }}{% endblocktranslate %} 👋</h1>
-        <p>{% translate "Here is the status of your interventions and pending tasks." %}</p>
-      </div>
-
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-header">
-            <span class="stat-label">{% translate "To do" %}</span>
-            <div class="stat-icon blue"><i class="ti ti-list-check"></i></div>
-          </div>
-          <div class="stat-value">{{ pending_tasks }}</div>
-          <div class="stat-description">{% translate "assigned interventions" %}</div>
+  <div class="app">
+    <aside class="sidebar maintenance-sidebar overflow-y-auto" id="sidebar">
+      <div class="logo">
+        <div class="logo-mark">
+          <i class="ti ti-building-community"></i>
         </div>
-
-        <div class="stat-card">
-          <div class="stat-header">
-            <span class="stat-label">{% translate "In progress" %}</span>
-            <div class="stat-icon orange"><i class="ti ti-loader"></i></div>
-          </div>
-          <div class="stat-value">{{ in_progress_tasks }}</div>
-          <div class="stat-description">{% translate "currently ongoing" %}</div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-header">
-            <span class="stat-label">{% translate "Completed" %}</span>
-            <div class="stat-icon green"><i class="ti ti-circle-check"></i></div>
-          </div>
-          <div class="stat-value">{{ completed_tasks }}</div>
-          <div class="stat-description">{% translate "this month" %}</div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-header">
-            <span class="stat-label">{% translate "Urgent" %}</span>
-            <div class="stat-icon red"><i class="ti ti-alert-triangle"></i></div>
-          </div>
-          <div class="stat-value">{{ urgent_requests }}</div>
-          <div class="stat-description">{% translate "need your attention" %}</div>
+        <div>
+          <div class="logo-text">ROOMRUN</div>
+          <span class="logo-subtitle">{% translate "Property Management" %}</span>
         </div>
       </div>
-
-      <div class="dashboard-grid">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">{% translate "My interventions" %}</div>
-            <span class="card-link">{% translate "See all" %}</span>
+      <div class="sidebar-content">
+        <div class="nav-section">
+          <div class="nav-title">{% translate "Main" %}</div>
+          <a href="{% url 'dashboard:maintenance' %}" class="nav-item active"><i class="ti ti-layout-dashboard"></i><span>{% translate "Dashboard" %}</span></a>
+          <a href="#" class="nav-item"><i class="ti ti-tool"></i><span>{% translate "My tasks" %}</span><span class="badge">{{ pending_tasks }}</span></a>
+          <a href="#" class="nav-item"><i class="ti ti-clipboard-list"></i><span>{% translate "Requests" %}</span></a>
+          <a href="#" class="nav-item"><i class="ti ti-calendar"></i><span>{% translate "Calendar" %}</span></a>
+          <a href="#" class="nav-item"><i class="ti ti-message"></i><span>{% translate "Messages" %}</span></a>
+          <a href="#" class="nav-item"><i class="ti ti-bell"></i><span>{% translate "Notifications" %}</span></a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-title">{% translate "Account" %}</div>
+          <a href="#" class="nav-item"><i class="ti ti-settings"></i><span>{% translate "Settings" %}</span></a>
+          <a href="#" class="nav-item"><i class="ti ti-help-circle"></i><span>{% translate "Help" %}</span></a>
+        </div>
+      </div>
+      <a href="{% url 'users:profile' %}" class="sidebar-user profile-link">
+        {% if user.profile_picture %}<img class="avatar object-cover"
+     src="{{ user.profile_picture.url }}"
+     alt="" />{% else %}<div class="avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>{% endif %}
+        <div class="user-info">
+          <div class="user-name">{{ user.full_name }}</div>
+          <div class="user-role">{% translate "Maintenance agent" %}</div>
+        </div>
+        <i class="ti ti-chevron-right"
+           style="margin-left:auto;
+                  color:var(--muted);
+                  font-size:16px"></i>
+      </a>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu" id="mobile-menu" type="button">
+            <i class="ti ti-menu-2"></i>
+          </button>
+          <div class="search">
+            <i class="ti ti-search"></i>
+            <input type="text" placeholder="{% translate 'Search an intervention...' %}" />
           </div>
-
-          <div class="interventions-list">
-            {% for task in recent_tasks %}
-            <div class="intervention">
-              <div class="task-icon general"><i class="ti ti-tool"></i></div>
-              <div class="task-content">
-                <div class="task-title">{{ task.title }}</div>
-                <div class="task-location"><i class="ti ti-map-pin"></i>{{ task.maintenance_request.unit.building.property_ref.name }} · {{ task.maintenance_request.unit.building.name }} · {{ task.maintenance_request.unit.unit_number }}</div>
-              </div>
-              <div class="task-meta">
-                <span class="badge-status {% if task.status == 'PENDING' or task.status == 'ASSIGNED' %}pending{% elif task.status == 'IN_PROGRESS' %}progress{% elif task.status == 'COMPLETED' %}done{% endif %}">{{ task.get_status_display }}</span>
-                <span class="task-date">{% translate "Today" %} {% if task.scheduled_at %}· {{ task.scheduled_at|time:"H:i" }}{% endif %}</span>
+        </div>
+        <div class="topbar-right">
+          <button class="icon-button" type="button">
+            <i class="ti ti-bell"></i><span class="notification-dot"></span>
+          </button>
+          <a href="{% url 'users:profile' %}"
+             class="top-user profile-link"
+             aria-label="{% translate 'Profile' %}">
+            {% if user.profile_picture %}<img class="avatar object-cover"
+     src="{{ user.profile_picture.url }}"
+     alt="" />{% else %}<div class="avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>{% endif %}
+            <span class="user-name">{{ user.full_name }}</span>
+            <i class="ti ti-chevron-down" style="font-size:14px;color:var(--muted);"></i>
+          </a>
+        </div>
+      </header>
+      <section class="content">
+        <div class="welcome">
+          <h1>{% blocktranslate with name=user.first_name|default:user.full_name %}Hello, {{ name }}{% endblocktranslate %} 👋</h1>
+          <p>{% translate "Here is the status of your interventions and pending tasks." %}</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-label">{% translate "To do" %}</span>
+              <div class="stat-icon blue">
+                <i class="ti ti-list-check"></i>
               </div>
             </div>
-            {% empty %}
-            <p class="p-5 text-sm text-muted">{% translate "No intervention assigned yet." %}</p>
-            {% endfor %}
+            <div class="stat-value">{{ pending_tasks }}</div>
+            <div class="stat-description">{% translate "assigned interventions" %}</div>
           </div>
-
-        <div>
-          <div class="card side-card">
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-label">{% translate "In progress" %}</span>
+              <div class="stat-icon orange">
+                <i class="ti ti-loader"></i>
+              </div>
+            </div>
+            <div class="stat-value">{{ in_progress_tasks }}</div>
+            <div class="stat-description">{% translate "currently ongoing" %}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-label">{% translate "Completed" %}</span>
+              <div class="stat-icon green">
+                <i class="ti ti-circle-check"></i>
+              </div>
+            </div>
+            <div class="stat-value">{{ completed_tasks }}</div>
+            <div class="stat-description">{% translate "this month" %}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-label">{% translate "Urgent" %}</span>
+              <div class="stat-icon red">
+                <i class="ti ti-alert-triangle"></i>
+              </div>
+            </div>
+            <div class="stat-value">{{ urgent_requests }}</div>
+            <div class="stat-description">{% translate "need your attention" %}</div>
+          </div>
+        </div>
+        <div class="dashboard-grid">
+          <div class="card">
             <div class="card-header">
-              <div class="card-title">{% translate "Recent requests" %}</div>
+              <div class="card-title">{% translate "My interventions" %}</div>
               <span class="card-link">{% translate "See all" %}</span>
             </div>
-            <div class="requests-list">
-              {% for request in recent_requests %}
-              <div class="request">
-                <div class="request-title">{{ request.title }}</div>
-                <div class="request-info">
-                  <span>{{ request.unit.building.property_ref.name }} · {{ request.unit.unit_number }}</span>
-                  <span class="badge-status {% if request.priority == 'URGENT' %}urgent{% elif request.priority == 'HIGH' %}progress{% else %}pending{% endif %}">{{ request.get_priority_display }}</span>
-                </div>
-              </div>
-              {% empty %}
-              <p class="p-5 text-sm text-muted">{% translate "No recent request." %}</p>
-              {% endfor %}
-            </div>
-
-          <div class="card side-card">
-            <div class="card-header">
-              <div class="card-title">{% translate "Today" %}</div>
-              <span class="card-link">{% translate "Calendar" %}</span>
-            </div>
-            <div class="schedule">
+            <div class="interventions-list">
               {% for task in recent_tasks %}
-              <div class="schedule-item">
-                <div class="schedule-time">{% if task.scheduled_at %}{{ task.scheduled_at|time:"H:i" }}{% else %}--{% endif %}</div>
-                <div class="schedule-content">
-                  <div class="schedule-title">{{ task.title }}</div>
-                  <div class="schedule-place">{{ task.maintenance_request.unit.building.name }} · {{ task.maintenance_request.unit.unit_number }}</div>
+                <div class="intervention">
+                  <div class="task-icon general">
+                    <i class="ti ti-tool"></i>
+                  </div>
+                  <div class="task-content">
+                    <div class="task-title">{{ task.title }}</div>
+                    <div class="task-location"><i class="ti ti-map-pin"></i>{{ task.maintenance_request.unit.building.property_ref.name }} · {{ task.maintenance_request.unit.building.name }} · {{ task.maintenance_request.unit.unit_number }}</div>
+                  </div>
+                  <div class="task-meta">
+                    <span class="badge-status {% if task.status == 'PENDING' or task.status == 'ASSIGNED' %}pending{% elif task.status == 'IN_PROGRESS' %}progress{% elif task.status == 'COMPLETED' %}done{% endif %}">{{ task.get_status_display }}</span>
+                    <span class="task-date">{% translate "Today" %} {% if task.scheduled_at %}· {{ task.scheduled_at|time:"H:i" }}{% endif %}</span>
+                  </div>
                 </div>
-              </div>
               {% empty %}
-              <p class="p-5 text-sm text-muted">{% translate "No scheduled task for today." %}</p>
+                <p class="p-5 text-sm text-muted">{% translate "No intervention assigned yet." %}</p>
               {% endfor %}
             </div>
-          </div>
-        </div>
+            <div>
+              <div class="card side-card">
+                <div class="card-header">
+                  <div class="card-title">{% translate "Recent requests" %}</div>
+                  <span class="card-link">{% translate "See all" %}</span>
+                </div>
+                <div class="requests-list">
+                  {% for request in recent_requests %}
+                    <div class="request">
+                      <div class="request-title">{{ request.title }}</div>
+                      <div class="request-info">
+                        <span>{{ request.unit.building.property_ref.name }} · {{ request.unit.unit_number }}</span>
+                        <span class="badge-status {% if request.priority == 'URGENT' %}urgent{% elif request.priority == 'HIGH' %}progress{% else %}pending{% endif %}">{{ request.get_priority_display }}</span>
+                      </div>
+                    </div>
+                  {% empty %}
+                    <p class="p-5 text-sm text-muted">{% translate "No recent request." %}</p>
+                  {% endfor %}
+                </div>
+                <div class="card side-card">
+                  <div class="card-header">
+                    <div class="card-title">{% translate "Today" %}</div>
+                    <span class="card-link">{% translate "Calendar" %}</span>
+                  </div>
+                  <div class="schedule">
+                    {% for task in recent_tasks %}
+                      <div class="schedule-item">
+                        <div class="schedule-time">{% if task.scheduled_at %}{{ task.scheduled_at|time:"H:i" }}{% else %}--{% endif %}</div>
+                        <div class="schedule-content">
+                          <div class="schedule-title">{{ task.title }}</div>
+                          <div class="schedule-place">{{ task.maintenance_request.unit.building.name }} · {{ task.maintenance_request.unit.unit_number }}</div>
+                        </div>
+                      </div>
+                    {% empty %}
+                      <p class="p-5 text-sm text-muted">{% translate "No scheduled task for today." %}</p>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bottom-grid">
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title">{% translate "Recent activity" %}</div>
+                  <span class="card-link">{% translate "History" %}</span>
+                </div>
+                <p class="p-5 text-sm text-muted">{% translate "No recent activity to display." %}</p>
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title">{% translate "Quick actions" %}</div>
+                </div>
+                <div class="quick-actions">
+                  <div class="quick-action"><i class="ti ti-plus"></i><span>{% translate "New task" %}</span></div>
+                  <div class="quick-action"><i class="ti ti-camera"></i><span>{% translate "Add a photo" %}</span></div>
+                  <div class="quick-action"><i class="ti ti-message"></i><span>{% translate "New message" %}</span></div>
+                  <div class="quick-action"><i class="ti ti-calendar-plus"></i><span>{% translate "View calendar" %}</span></div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
       </div>
-
-      <div class="bottom-grid">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">{% translate "Recent activity" %}</div>
-            <span class="card-link">{% translate "History" %}</span>
-          </div>
-          <p class="p-5 text-sm text-muted">{% translate "No recent activity to display." %}</p>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">{% translate "Quick actions" %}</div>
-          </div>
-          <div class="quick-actions">
-            <div class="quick-action"><i class="ti ti-plus"></i><span>{% translate "New task" %}</span></div>
-            <div class="quick-action"><i class="ti ti-camera"></i><span>{% translate "Add a photo" %}</span></div>
-            <div class="quick-action"><i class="ti ti-message"></i><span>{% translate "New message" %}</span></div>
-            <div class="quick-action"><i class="ti ti-calendar-plus"></i><span>{% translate "View calendar" %}</span></div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-</div>
 {% endblock dashboard_body %}
-
-{% block footer %}{% endblock footer %}
-
-{% block inline_javascript %}<script defer src="{% static 'js/maintenance.js' %}"></script>{% endblock %}
+{% block footer %}
+{% endblock footer %}
+{% block inline_javascript %}
+  <script defer src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

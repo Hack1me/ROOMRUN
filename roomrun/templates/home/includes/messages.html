@@ -3,7 +3,10 @@
     {% for message in messages %}
       <div class="rr-alert {% if 'error' in message.tags %}rr-alert-error{% elif 'warning' in message.tags %}rr-alert-warning{% else %}rr-alert-success{% endif %}">
         <p>{{ message }}</p>
-        <button type="button" class="shrink-0 text-current/70 hover:text-current" onclick="this.parentElement.remove()" aria-label="Close">×</button>
+        <button type="button"
+                class="shrink-0 text-current/70 hover:text-current"
+                onclick="this.parentElement.remove()"
+                aria-label="Close">×</button>
       </div>
     {% endfor %}
   </div>

@@ -1,145 +1,126 @@
 {% extends "home/pages/auth/layout.html" %}
+
 {% load i18n static %}
 
 {% block title %}{% translate "Sign in" %} | ROOMRUN{% endblock title %}
-
 {% block content %}
   <section class="flex w-full items-center justify-center bg-white px-6 py-10 shadow-lg shadow-primary/5 lg:w-[58%]">
     <div class="w-full max-w-md">
       <!-- Mobile logo -->
-      <a href="{% url 'home' %}" class="mb-9 flex items-center justify-center gap-2 lg:hidden" aria-label="ROOMRUN">
+      <a href="{% url 'home' %}"
+         class="mb-9 flex items-center justify-center gap-2 lg:hidden"
+         aria-label="ROOMRUN">
         <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary shadow-md shadow-primary/20">
-          <img src="{% static 'images/logo/logo.png' %}" alt="ROOMRUN" class="size-7 object-contain">
+          <img src="{% static 'images/logo/logo.png' %}"
+               alt="ROOMRUN"
+               class="size-7 object-contain" />
         </span>
         <span class="text-lg font-semibold text-primary">ROOMRUN</span>
       </a>
-
       <!-- Form Header -->
       <div class="mb-8">
-        <p class="mb-2 text-xs font-semibold text-secondary tracking-widest">
-          {% translate "WELCOME BACK" %}
-        </p>
-        <h2 class="text-2xl font-bold tracking-tight text-primary leading-tight">
-          {% translate "Sign in" %}
-        </h2>
-        <p class="mt-2 text-sm text-muted">
-          {% translate "Sign in to your ROOMRUN workspace." %}
-        </p>
+        <p class="mb-2 text-xs font-semibold text-secondary tracking-widest">{% translate "WELCOME BACK" %}</p>
+        <h2 class="text-2xl font-bold tracking-tight text-primary leading-tight">{% translate "Sign in" %}</h2>
+        <p class="mt-2 text-sm text-muted">{% translate "Sign in to your ROOMRUN workspace." %}</p>
       </div>
-
       <!-- Messages -->
       {% include "home/pages/auth/_messages.html" %}
-
       <!-- Form -->
       <form method="post" class="mt-8 space-y-5" novalidate>
         {% csrf_token %}
-        
         {% if form.non_field_errors %}
           <div class="rounded-lg border border-danger/20 bg-danger/5 px-3 py-2 text-sm text-danger">
             {{ form.non_field_errors }}
           </div>
         {% endif %}
-
         <!-- Email -->
         <div class="space-y-1.5">
-          <label for="{{ form.email.id_for_label }}" class="block text-xs font-semibold text-text tracking-wider">
-            {% translate "Email address" %}
-          </label>
+          <label for="{{ form.email.id_for_label }}"
+                 class="block text-xs font-semibold text-text tracking-wider">{% translate "Email address" %}</label>
           <div class="relative input-group">
-            <i class="ti ti-mail absolute left-3 top-1/2 -translate-y-1/2 text-muted input-icon text-[17px]" aria-hidden="true"></i>
-            <input 
-              id="{{ form.email.id_for_label }}"
-              type="email"
-              name="email"
-              value="{{ form.email.value|default:'' }}"
-              placeholder="you@example.com"
-              class="form-input input-focus w-full"
-              autocomplete="email"
-              required>
+            <i class="ti ti-mail absolute left-3 top-1/2 -translate-y-1/2 text-muted input-icon text-[17px]"
+               aria-hidden="true"></i>
+            <input id="{{ form.email.id_for_label }}"
+                   type="email"
+                   name="email"
+                   value="{{ form.email.value|default:'' }}"
+                   placeholder="you@example.com"
+                   class="form-input input-focus w-full"
+                   autocomplete="email"
+                   required />
           </div>
           {% for error in form.email.errors %}<p class="mt-1 text-xs text-danger">{{ error }}</p>{% endfor %}
         </div>
-
         <!-- Password -->
         <div class="space-y-1.5">
-          <label for="{{ form.password.id_for_label }}" class="block text-xs font-semibold text-text tracking-wider">
-            {% translate "Password" %}
-          </label>
+          <label for="{{ form.password.id_for_label }}"
+                 class="block text-xs font-semibold text-text tracking-wider">{% translate "Password" %}</label>
           <div class="relative input-group">
-            <i class="ti ti-lock absolute left-3 top-1/2 -translate-y-1/2 text-muted input-icon text-[17px]" aria-hidden="true"></i>
-            <input 
-              id="{{ form.password.id_for_label }}"
-              type="password"
-              name="password"
-              placeholder="••••••••"
-              class="form-input input-focus w-full pr-10"
-              autocomplete="current-password"
-              required>
-            <button
-              type="button"
-              class="password-toggle"
-              id="togglePassword"
-              data-i18n-show="{% translate 'Show password' %}"
-              data-i18n-hide="{% translate 'Hide password' %}"
-              aria-label="{% translate 'Show password' %}">
+            <i class="ti ti-lock absolute left-3 top-1/2 -translate-y-1/2 text-muted input-icon text-[17px]"
+               aria-hidden="true"></i>
+            <input id="{{ form.password.id_for_label }}"
+                   type="password"
+                   name="password"
+                   placeholder="••••••••"
+                   class="form-input input-focus w-full pr-10"
+                   autocomplete="current-password"
+                   required />
+            <button type="button"
+                    class="password-toggle"
+                    id="togglePassword"
+                    data-i18n-show="{% translate 'Show password' %}"
+                    data-i18n-hide="{% translate 'Hide password' %}"
+                    aria-label="{% translate 'Show password' %}">
               <i class="ti ti-eye text-lg" aria-hidden="true"></i>
             </button>
           </div>
           {% for error in form.password.errors %}<p class="mt-1 text-xs text-danger">{{ error }}</p>{% endfor %}
         </div>
-
         <!-- Remember & Forgot Password -->
         <div class="flex items-center justify-between pt-1">
           <label class="flex items-center gap-2 cursor-pointer">
-            <input 
-              type="checkbox" 
-              name="remember_me"
-              class="checkbox-custom rounded border border-gray-300 w-4 h-4"
-              {% if form.remember_me.value %}checked{% endif %}>
+            <input type="checkbox"
+                   name="remember_me"
+                   class="checkbox-custom rounded border border-gray-300 w-4 h-4"
+                   {% if form.remember_me.value %}checked{% endif %} />
             <span class="text-xs text-muted">{% translate "Remember me" %}</span>
           </label>
-          <a href="{% url 'users:forgot_password' %}" class="text-xs font-semibold text-primary transition hover:text-secondary">
+          <a href="{% url 'users:forgot_password' %}"
+             class="text-xs font-semibold text-primary transition hover:text-secondary">
             {% translate "Forgot password?" %}
           </a>
         </div>
-
         <!-- Submit Button -->
-        <button
-          type="submit"
-          class="btn-primary group mt-6 flex h-11.5 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-semibold text-white focus:outline-none focus:ring-4 focus:ring-secondary/30">
+        <button type="submit"
+                class="btn-primary group mt-6 flex h-11.5 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-semibold text-white focus:outline-none focus:ring-4 focus:ring-secondary/30">
           {% translate "Sign in" %}
-          <i class="ti ti-arrow-right text-base transition-transform group-hover:translate-x-1" aria-hidden="true"></i>
+          <i class="ti ti-arrow-right text-base transition-transform group-hover:translate-x-1"
+             aria-hidden="true"></i>
         </button>
       </form>
-
       <!-- Divider -->
       <div class="my-6 flex items-center gap-3">
         <div class="flex-1 h-px bg-border"></div>
         <span class="text-[10px] text-muted font-semibold tracking-widest text-center">OR</span>
         <div class="flex-1 h-px bg-border"></div>
       </div>
-
       <!-- Google Sign In -->
-      <button
-        type="button"
-        class="social-btn w-full h-11.5 flex items-center justify-center gap-2.5 border-2 border-border rounded-lg bg-white text-sm font-semibold text-text transition">
+      <button type="button"
+              class="social-btn w-full h-11.5 flex items-center justify-center gap-2.5 border-2 border-border rounded-lg bg-white text-sm font-semibold text-text transition">
         <svg width="17" height="17" viewBox="0 0 24 24">
-          <path fill="#4285F4" d="M21.35 12.23c0-.79-.07-1.55-.23-2.27H12v4.3h5.23a4.47 4.47 0 0 1-1.94 2.93v2.44h3.14c1.84-1.69 2.92-4.18 2.92-7.4Z"/>
-          <path fill="#34A853" d="M12 21.77c2.63 0 4.84-.87 6.45-2.36l-3.14-2.44c-.87.58-1.98.93-3.31.93-2.54 0-4.69-1.72-5.46-4.03H3.3v2.52A9.74 9.74 0 0 0 12 21.77Z"/>
-          <path fill="#FBBC05" d="M6.54 13.87A5.85 5.85 0 0 1 6.23 12c0-.65.11-1.28.31-1.87V7.61H3.3A9.76 9.76 0 0 0 2.27 12c0 1.58.38 3.08 1.03 4.39l3.24-2.52Z"/>
-          <path fill="#EA4335" d="M12 6.1c1.43 0 2.72.49 3.73 1.45l2.8-2.8C16.83 3.09 14.63 2.23 12 2.23a9.74 9.74 0 0 0-8.7 5.38l3.24 2.52C7.31 7.82 9.46 6.1 12 6.1Z"/>
+          <path fill="#4285F4" d="M21.35 12.23c0-.79-.07-1.55-.23-2.27H12v4.3h5.23a4.47 4.47 0 0 1-1.94 2.93v2.44h3.14c1.84-1.69 2.92-4.18 2.92-7.4Z" />
+          <path fill="#34A853" d="M12 21.77c2.63 0 4.84-.87 6.45-2.36l-3.14-2.44c-.87.58-1.98.93-3.31.93-2.54 0-4.69-1.72-5.46-4.03H3.3v2.52A9.74 9.74 0 0 0 12 21.77Z" />
+          <path fill="#FBBC05" d="M6.54 13.87A5.85 5.85 0 0 1 6.23 12c0-.65.11-1.28.31-1.87V7.61H3.3A9.76 9.76 0 0 0 2.27 12c0 1.58.38 3.08 1.03 4.39l3.24-2.52Z" />
+          <path fill="#EA4335" d="M12 6.1c1.43 0 2.72.49 3.73 1.45l2.8-2.8C16.83 3.09 14.63 2.23 12 2.23a9.74 9.74 0 0 0-8.7 5.38l3.24 2.52C7.31 7.82 9.46 6.1 12 6.1Z" />
         </svg>
         {% translate "Continue with Google" %}
       </button>
-
       <!-- Sign Up Link -->
       <p class="mt-6 text-center text-xs text-muted">
         {% translate "Don't have an account yet?" %}
-        <a href="{% url 'users:signup' %}" class="font-semibold text-primary transition hover:text-secondary">
-          {% translate "Create an account" %}
-        </a>
+        <a href="{% url 'users:signup' %}"
+           class="font-semibold text-primary transition hover:text-secondary">{% translate "Create an account" %}</a>
       </p>
-
       <!-- Security Note -->
       <div class="mt-6 flex items-center justify-center gap-1.5 text-[10px] text-muted">
         <i class="ti ti-shield-check text-success text-sm" aria-hidden="true"></i>
@@ -148,7 +129,6 @@
     </div>
   </section>
 {% endblock content %}
-
 {% block extra_js %}
   <script defer src="{% static 'js/auth/signin.js' %}"></script>
 {% endblock extra_js %}

@@ -1,26 +1,28 @@
 {% extends "base.html" %}
+
 {% load i18n static %}
 
 {% block bodyclass %}dashboard-page{% endblock bodyclass %}
-
 {% block extra_css %}
-  <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}">
+  <link rel="stylesheet"
+        href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
 {% endblock extra_css %}
-
 {% block header %}
   {% if not skip_dashboard_header %}
     {% include "dashboard/includes/site_header.html" %}
   {% endif %}
 {% endblock header %}
-
 {% block body %}
   {% block dashboard_body %}
     <main class="min-h-screen">
       <div class="rr-container">
         {% include "common/includes/messages.html" %}
-        {% block content %}{% endblock content %}
+        {% block content %}
+        {% endblock content %}
       </div>
     </main>
   {% endblock dashboard_body %}
-  {% block footer %}{% include "dashboard/includes/site_footer.html" %}{% endblock footer %}
+  {% block footer %}
+    {% include "dashboard/includes/site_footer.html" %}
+  {% endblock footer %}
 {% endblock body %}

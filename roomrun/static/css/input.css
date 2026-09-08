@@ -436,31 +436,61 @@
 
   .mobile-menu { @apply hidden; }
 
-  /* Landlord dashboard */
-  .landlord-sidebar { @apply border-border bg-primary text-white; }
-  .landlord-sidebar .logo-icon { @apply bg-white text-primary; }
-  .landlord-sidebar .logo span { @apply text-white; }
-  .landlord-sidebar .nav-title { @apply text-white/60; }
-  .landlord-sidebar .nav-item { @apply text-white/80 hover:bg-white/10 hover:text-white; }
-  .landlord-sidebar .nav-item.active { @apply bg-white/15 text-white shadow-none; }
-  .landlord-sidebar .nav-item.active i { @apply text-white; }
-  .landlord-sidebar .sidebar-bottom { @apply border-white/10; }
-  .landlord-sidebar .avatar { @apply bg-white/15 text-white; }
-  .landlord-sidebar .sidebar-user-name { @apply text-white; }
-  .landlord-sidebar .sidebar-user-role { @apply text-white/60; }
-
-  /* Tenant dashboard */
+  /* Landlord + Tenant dashboards */
+  .landlord-sidebar,
   .tenant-sidebar { @apply border-border bg-primary text-white; }
+  .landlord-sidebar .logo-icon,
   .tenant-sidebar .logo-icon { @apply bg-white text-primary; }
+  .landlord-sidebar .logo span,
   .tenant-sidebar .logo span { @apply text-white; }
+  .landlord-sidebar .nav-title,
   .tenant-sidebar .nav-title { @apply text-white/60; }
+  .landlord-sidebar .nav-item,
   .tenant-sidebar .nav-item { @apply text-white/80 hover:bg-white/10 hover:text-white; }
+  .landlord-sidebar .nav-item.active,
   .tenant-sidebar .nav-item.active { @apply bg-white/15 text-white shadow-none; }
+  .landlord-sidebar .nav-item.active i,
   .tenant-sidebar .nav-item.active i { @apply text-white; }
+  .landlord-sidebar .sidebar-bottom,
   .tenant-sidebar .sidebar-bottom { @apply border-white/10; }
+  .landlord-sidebar .avatar,
   .tenant-sidebar .avatar { @apply bg-white/15 text-white; }
+  .landlord-sidebar .sidebar-user-name,
   .tenant-sidebar .sidebar-user-name { @apply text-white; }
+  .landlord-sidebar .sidebar-user-role,
   .tenant-sidebar .sidebar-user-role { @apply text-white/60; }
+
+  /* Guard + Maintenance dashboards */
+  .guard-sidebar,
+  .maintenance-sidebar { @apply border-border bg-primary text-white; }
+  .guard-sidebar .sidebar-content,
+  .maintenance-sidebar .sidebar-content { @apply overflow-y-auto; }
+  .guard-sidebar .logo-mark,
+  .maintenance-sidebar .logo-mark { @apply bg-white text-primary; }
+  .guard-sidebar .logo-text,
+  .maintenance-sidebar .logo-text { @apply text-white; }
+  .guard-sidebar .logo-subtitle,
+  .maintenance-sidebar .logo-subtitle { @apply text-white/60; }
+  .guard-sidebar .nav-title,
+  .maintenance-sidebar .nav-title { @apply text-white/60; }
+  .guard-sidebar .nav-item,
+  .maintenance-sidebar .nav-item { @apply text-white/80 hover:bg-white/10 hover:text-white; }
+  .guard-sidebar .nav-item.active,
+  .maintenance-sidebar .nav-item.active { @apply bg-white/15 text-white; }
+  .guard-sidebar .nav-item.active i,
+  .maintenance-sidebar .nav-item.active i { @apply text-white; }
+  .guard-sidebar .nav-item .badge,
+  .maintenance-sidebar .nav-item .badge { @apply bg-white/20 text-white; }
+  .guard-sidebar .sidebar-user,
+  .maintenance-sidebar .sidebar-user { @apply border-t border-white/10; }
+  .guard-sidebar .sidebar-user .avatar,
+  .maintenance-sidebar .sidebar-user .avatar { @apply bg-white/15 text-white; }
+  .guard-sidebar .sidebar-user .user-name,
+  .maintenance-sidebar .sidebar-user .user-name { @apply text-white; }
+  .guard-sidebar .sidebar-user .user-role,
+  .maintenance-sidebar .sidebar-user .user-role { @apply text-white/60; }
+  .guard-sidebar .icon-button:hover,
+  .maintenance-sidebar .icon-button:hover { @apply bg-white/10 text-white border-white/20; }
 
   .tenant-welcome h2 { @apply flex items-center gap-2; }
   .tenant-welcome h2 i { @apply text-secondary text-lg; }
@@ -514,44 +544,7 @@
   .tenant-payment-success { @apply text-xs text-success; }
   .topbar-avatar { @apply flex h-9 w-9 items-center justify-center rounded-full bg-accent-bg text-xs font-semibold text-primary; }
 
-  /* Guard dashboard */
-  .guard-sidebar { @apply border-border bg-primary text-white; }
-  .guard-sidebar .sidebar-content { @apply overflow-y-auto; }
-  .guard-sidebar .logo-mark { @apply bg-white text-primary; }
-  .guard-sidebar .logo-text { @apply text-white; }
-  .guard-sidebar .logo-subtitle { @apply text-white/60; }
-  .guard-sidebar .nav-title { @apply text-white/60; }
-  .guard-sidebar .nav-item { @apply text-white/80 hover:bg-white/10 hover:text-white; }
-  .guard-sidebar .nav-item.active { @apply bg-white/15 text-white; }
-  .guard-sidebar .nav-item.active i { @apply text-white; }
-  .guard-sidebar .nav-item .badge { @apply bg-white/20 text-white; }
-  .guard-sidebar .sidebar-user { @apply border-t border-white/10; }
-  .guard-sidebar .sidebar-user .avatar { @apply bg-white/15 text-white; }
-  .guard-sidebar .sidebar-user .user-name { @apply text-white; }
-  .guard-sidebar .sidebar-user .user-role { @apply text-white/60; }
-  .guard-sidebar .icon-button:hover { @apply bg-white/10 text-white border-white/20; }
-  .shift-detail { @apply px-4 py-3; }
-  .shift-row { @apply flex items-center justify-between gap-4 border-b border-border py-2.5; }
-  .shift-row:last-child { @apply border-b-0; }
-  .shift-row span { @apply text-xs text-text-secondary; }
-  .shift-row strong { @apply text-sm font-medium; }
-
-  /* Maintenance dashboard */
-  .maintenance-sidebar { @apply border-border bg-primary text-white; }
-  .maintenance-sidebar .sidebar-content { @apply overflow-y-auto; }
-  .maintenance-sidebar .logo-mark { @apply bg-white text-primary; }
-  .maintenance-sidebar .logo-text { @apply text-white; }
-  .maintenance-sidebar .logo-subtitle { @apply text-white/60; }
-  .maintenance-sidebar .nav-title { @apply text-white/60; }
-  .maintenance-sidebar .nav-item { @apply text-white/80 hover:bg-white/10 hover:text-white; }
-  .maintenance-sidebar .nav-item.active { @apply bg-white/15 text-white; }
-  .maintenance-sidebar .nav-item.active i { @apply text-white; }
-  .maintenance-sidebar .nav-item .badge { @apply bg-white/20 text-white; }
-  .maintenance-sidebar .sidebar-user { @apply border-t border-white/10; }
-  .maintenance-sidebar .sidebar-user .avatar { @apply bg-white/15 text-white; }
-  .maintenance-sidebar .sidebar-user .user-name { @apply text-white; }
-  .maintenance-sidebar .sidebar-user .user-role { @apply text-white/60; }
-  .maintenance-sidebar .icon-button:hover { @apply bg-white/10 text-white border-white/20; }
+  /* Guard + Maintenance dashboards */
   .stats-grid { @apply grid grid-cols-4 gap-3.5 mb-5; }
   .stat-card { @apply rounded-xl border border-border bg-white p-4 shadow-sm; }
   .stat-header { @apply flex items-center justify-between; }
@@ -703,4 +696,134 @@
     .rental { @apply items-start; }
     .rental-price { @apply hidden; }
   }
+
+  /* ========== PROFILE PAGE ========== */
+  .profile-page { @apply min-h-screen bg-bg font-sans text-ink antialiased; }
+  .profile-page * { box-sizing: border-box; }
+  .profile-main { @apply min-h-screen; }
+  .profile-topbar {
+    @apply sticky top-0 z-40 h-16 px-7 flex items-center justify-between bg-white border-b border-border;
+  }
+  .profile-breadcrumb {
+    @apply inline-flex items-center gap-2 text-xs text-text-secondary;
+  }
+  .profile-breadcrumb .back-link {
+    @apply inline-flex items-center gap-1.5 rounded-md border border-border bg-white px-2.5 py-1.5 text-xs font-medium text-text no-underline;
+  }
+  .profile-breadcrumb .back-link i { @apply text-base text-text-secondary; }
+  .profile-breadcrumb .back-link:hover { @apply border-secondary text-secondary; }
+  .profile-breadcrumb .sep { @apply text-muted text-xs; }
+  .profile-breadcrumb strong { @apply text-text font-medium; }
+  .profile-content { @apply max-w-[1180px] mx-auto px-7; }
+  .profile-page-header { @apply mb-5; }
+  .profile-page-header h1 { @apply text-xl font-semibold mb-0.5; }
+  .profile-page-header p { @apply text-xs text-text-secondary; }
+  .profile-header {
+    @apply bg-white border border-border rounded-xl p-5 flex items-center justify-between gap-5 mb-4 shadow-sm;
+  }
+  .profile-identity { @apply flex items-center gap-4; }
+  .profile-avatar-wrapper { @apply relative; }
+  .profile-avatar {
+    @apply w-19 h-19 rounded-full bg-accent-bg text-primary border-3 border-white shadow-[0_0_0_1px_rgba(229,231,235,1)] flex items-center justify-center text-2xl font-semibold;
+  }
+  .profile-avatar img { @apply w-full h-full rounded-full object-cover; }
+  .avatar-edit {
+    @apply absolute -right-0.5 -bottom-0.5 w-6.75 h-6.75 rounded-full bg-primary text-white border-2 border-white flex items-center justify-center text-xs cursor-pointer;
+  }
+  .profile-name { @apply text-xl font-semibold mb-0.5; }
+  .profile-email { @apply text-xs text-text-secondary mb-2; }
+  .profile-meta { @apply flex items-center gap-2 flex-wrap; }
+  .role-badge {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-accent-bg text-primary px-2 py-0.5 text-[10px] font-medium;
+  }
+  .verified { @apply inline-flex items-center gap-1 text-success text-[10px]; }
+  .verified i { @apply text-base; }
+  .edit-profile {
+    @apply h-9 px-3.5 border border-border bg-white text-primary rounded-md inline-flex items-center gap-1.5 text-xs font-medium cursor-pointer;
+  }
+  .edit-profile:hover { @apply bg-accent-bg border-secondary; }
+  .profile-grid { @apply grid grid-cols-[1.5fr_1fr] gap-5; }
+  .card { @apply bg-white border border-border rounded-xl shadow-sm; }
+  .card-header {
+    @apply flex items-center justify-between border-b border-border px-4.5 py-4;
+  }
+  .card-title { @apply text-sm font-semibold; }
+  .card-description { @apply text-xs text-text-secondary mt-0.5; }
+  .card-body { @apply p-4.5; }
+  .info-grid { @apply grid grid-cols-2 gap-4.5; }
+  .info-item label { @apply block text-[10px] text-text-secondary mb-1.5 font-medium; }
+  .info-value {
+    @apply min-h-9 px-2.5 py-2 bg-bg border border-border rounded-md text-xs flex items-center text-ink;
+  }
+  .info-value.muted { @apply text-muted; }
+  .security-item { @apply flex items-center gap-2.5 py-3 border-b border-border; }
+  .security-item:last-child { @apply border-b-0; }
+  .security-icon {
+    @apply w-8.5 h-8.5 rounded-lg bg-accent-bg text-primary flex items-center justify-center text-base shrink-0;
+  }
+  .security-content { @apply flex-1 min-w-0; }
+  .security-title { @apply text-xs font-medium; }
+  .security-description { @apply text-[10px] text-text-secondary mt-0.5; }
+  .security-action {
+    @apply border-0 bg-transparent text-secondary text-[10px] font-medium cursor-pointer;
+  }
+  .security-action:hover { @apply underline; }
+  .role-box { @apply flex items-center gap-3 p-3 border border-border rounded-lg bg-bg; }
+  .role-icon {
+    @apply w-9 h-9 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center text-lg;
+  }
+  .role-content { @apply flex-1 min-w-0; }
+  .role-title { @apply text-xs font-medium; }
+  .role-description { @apply text-[10px] text-text-secondary mt-0.5 leading-normal; }
+  .danger-card { @apply mt-5; }
+  .danger-header { @apply text-danger; }
+  .danger-body { @apply flex items-center justify-between gap-4; }
+  .danger-text strong { @apply block text-xs font-medium mb-0.5; }
+  .danger-text span { @apply text-[10px] text-text-secondary; }
+  .danger-actions { @apply flex items-center gap-2.5; }
+  .logout-link {
+    @apply inline-flex items-center gap-1.5 rounded-md border border-border bg-white px-3 py-2 text-xs font-medium text-text-secondary no-underline;
+  }
+  .logout-link:hover { @apply border-secondary text-secondary; }
+  .danger-button {
+    @apply h-8 px-3 border border-danger/30 bg-white text-danger rounded-md text-[10px] font-medium cursor-pointer;
+  }
+  .danger-button:hover { @apply bg-danger-soft; }
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/40 z-50 hidden items-center justify-center p-5;
+  }
+  .modal-overlay.active { @apply flex; }
+  .modal {
+    @apply w-full max-w-[560px] bg-white rounded-xl shadow-2xl overflow-hidden;
+  }
+  .modal-header {
+    @apply px-5 py-4 border-b border-border flex items-center justify-between;
+  }
+  .modal-title { @apply text-sm font-semibold; }
+  .close-modal {
+    @apply w-7.5 h-7.5 border-0 bg-transparent text-muted rounded-md text-base cursor-pointer;
+  }
+  .close-modal:hover { @apply bg-bg text-text; }
+  .modal-body { @apply p-5; }
+  .form-grid { @apply grid grid-cols-2 gap-3.5; }
+  .form-group.full { @apply col-span-2; }
+  .form-group label { @apply block text-[10px] text-text-secondary mb-1.5 font-medium; }
+  .form-group input,
+  .form-group select {
+    @apply w-full h-9 px-2.5 border border-border rounded-md bg-white text-xs text-text outline-none;
+  }
+  .form-group input:focus,
+  .form-group select:focus {
+    @apply border-secondary shadow-[0_0_0_2px_rgba(74,144,217,0.15)];
+  }
+  .country-select select { @apply w-full; }
+  .modal-footer {
+    @apply px-5 py-3.5 border-t border-border flex justify-end gap-2;
+  }
+  .btn {
+    @apply h-9 px-3.5 rounded-md text-xs font-medium cursor-pointer inline-flex items-center justify-center gap-1.5;
+  }
+  .btn-secondary { @apply border border-border bg-white text-text-secondary; }
+  .btn-primary { @apply border border-primary bg-primary text-white; }
+  .btn-primary:hover { @apply bg-primary-hover; }
 }

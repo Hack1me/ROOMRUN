@@ -1,13 +1,16 @@
 {% extends "base.html" %}
+
 {% load i18n %}
 
 {% block title %}{% translate "About" %} · ROOMRUN{% endblock title %}
-
 {% block content %}
-<section class="mx-auto max-w-3xl py-10 sm:py-18">
-  <p class="rr-eyebrow">{% translate "ABOUT ROOMRUN" %}</p>
-  <h1 class="rr-display mt-5 text-4xl leading-tight sm:text-5xl">{% translate "A calmer way to manage residential communities." %}</h1>
-  <div class="mt-8 space-y-5 text-base leading-8 text-muted"><p>{% translate "ROOMRUN brings everyone involved in a community onto the same reliable source of truth: landlords, tenants, maintenance teams and guards." %}</p><p>{% translate "We believe property management should feel clear, considerate and accountable—not like another spreadsheet or message thread to chase." %}</p></div>
-  <a href="{% url 'users:signup' %}" class="rr-btn-primary mt-9">{% translate "Create an account" %} →</a>
-</section>
+  <section class="mx-auto max-w-3xl py-10 sm:py-18">
+    <p class="rr-eyebrow">{% translate "ABOUT ROOMRUN" %}</p>
+    <h1 class="rr-display mt-5 text-4xl leading-tight sm:text-5xl">{% translate "A calmer way to manage residential communities." %}</h1>
+    <div class="mt-8 space-y-5 text-base leading-8 text-muted">
+      <p>{% translate "ROOMRUN brings everyone involved in a community onto the same reliable source of truth: landlords, tenants, maintenance teams and guards." %}</p>
+      <p>{% translate "We believe property management should feel clear, considerate and accountable—not like another spreadsheet or message thread to chase." %}</p>
+    </div>
+    <a href="{% url 'users:signup' %}" class="rr-btn-primary mt-9">{% translate "Create an account" %} →</a>
+  </section>
 {% endblock content %}

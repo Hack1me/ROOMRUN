@@ -92,7 +92,7 @@ class OtpEmailService:
 
 class OtpVerifyService:
     @staticmethod
-    def _resolve_otp(token: str, purpose: str) -> Otp:
+    def resolve_otp(token: str, purpose: str) -> Otp:
         token_data = validate_otp_token(token, purpose)
         try:
             return (
@@ -112,7 +112,7 @@ class OtpVerifyService:
     @staticmethod
     def verify(token: str, code: str, purpose: str) -> Otp:
         with transaction.atomic():
-            otp = OtpVerifyService._resolve_otp(token, purpose)
+            otp = OtpVerifyService.resolve_otp(token, purpose)
             if otp.is_used or otp.is_expired():
                 raise OtpVerificationError(
                     _("This code has expired. Request a new one.")

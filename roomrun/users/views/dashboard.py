@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import TemplateView
+from users.mixins import DashboardProfileMixin
 from users.services import DashboardService
 from users.services import GuardDashboardService
 from users.services import LandlordDashboardService
@@ -45,84 +46,29 @@ class DashboardView(LoginRequiredMixin, View):
 
         return redirect(url)
 
-# Landlord dashboard view
-class LandlordDashboardView(LoginRequiredMixin, TemplateView):
+class LandlordDashboardView(LoginRequiredMixin, DashboardProfileMixin, TemplateView):
     template_name = "dashboard/pages/landlord.html"
+    profile_attr = "landlord_profile"
+    error_message = _("You do not have access to the landlord dashboard.")
+    service_class = LandlordDashboardService
 
-    def dispatch(self, request, *args, **kwargs):
-        if not hasattr(request.user, "landlord_profile"):
-            messages.error(
-                request,
-                _("You do not have access to the landlord dashboard.")
-            )
-            return redirect("dashboard:dashboard")
-        return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(
-            LandlordDashboardService.get_context(self.request.user)
-        )
-        return context
-
-# Tenat Dashboard view
-class TenantDashboardView(LoginRequiredMixin, TemplateView):
+class TenantDashboardView(LoginRequiredMixin, DashboardProfileMixin, TemplateView):
     template_name = "dashboard/pages/tenant.html"
+    profile_attr = "tenant_profile"
+    error_message = _("You do not have access to the tenant dashboard.")
+    service_class = TenantDashboardService
 
-    def dispatch(self, request, *args, **kwargs):
-        if not hasattr(request.user, "tenant_profile"):
-            messages.error(
-                request,
-                _("You do not have access to the tenant dashboard.")
-            )
-            return redirect("dashboard:dashboard")
-        return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(
-            TenantDashboardService.get_context(self.request.user)
-        )
-        return context
-
-# Maintenace Agent  Dashboard view
-class MaintenanceDashboardView(LoginRequiredMixin, TemplateView):
+class MaintenanceDashboardView(LoginRequiredMixin, DashboardProfileMixin, TemplateView):
     template_name = "dashboard/pages/maintenance.html"
+    profile_attr = "employee_profile.maintenance_agent_profile"
+    error_message = _("You do not have access to the maintenance dashboard.")
+    service_class = MaintenanceDashboardService
 
-    def dispatch(self, request, *args, **kwargs):
-        if not hasattr(request.user, "employee_profile") or \
-           not hasattr(request.user.employee_profile, "maintenance_agent_profile"):
-            messages.error(
-                request,
-                _("You do not have access to the maintenance dashboard.")
-            )
-            return redirect("dashboard:dashboard")
-        return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(
-            MaintenanceDashboardService.get_context(self.request.user)
-        )
-        return context
-
-# Guard Dashboard View
-class GuardDashboardView(LoginRequiredMixin, TemplateView):
+class GuardDashboardView(LoginRequiredMixin, DashboardProfileMixin, TemplateView):
     template_name = "dashboard/pages/guard.html"
-
-    def dispatch(self, request, *args, **kwargs):
-        if not hasattr(request.user, "employee_profile") or \
-           not hasattr(request.user.employee_profile, "guard_profile"):
-            messages.error(
-                request,
-                _("You do not have access to the guard dashboard.")
-            )
-            return redirect("dashboard:dashboard")
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(
-            GuardDashboardService.get_context(self.request.user)
-        )
-        return context
+    profile_attr = "employee_profile.guard_profile"
+    error_message = _("You do not have access to the guard dashboard.")
+    service_class = GuardDashboardService
