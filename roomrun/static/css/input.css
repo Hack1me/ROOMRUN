@@ -269,6 +269,13 @@
   .tenant-sidebar {
     padding: 0;
   }
+  .tenant-sidebar .sidebar-content {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .tenant-sidebar .sidebar-content::-webkit-scrollbar {
+    display: none;
+  }
   .logo { @apply flex items-center gap-2.5 px-1.5 mb-7; }
   .logo-icon {
     @apply flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white;
@@ -870,6 +877,7 @@
     @apply bg-white border border-border rounded-xl p-5 flex items-center justify-between gap-5 mb-4 shadow-sm;
   }
   .profile-identity { @apply flex items-center gap-4; }
+  .profile-info { @apply flex flex-col gap-1; }
   .profile-avatar-wrapper { @apply relative; }
   .profile-avatar {
     @apply w-19 h-19 rounded-full bg-accent-bg text-primary border-3 border-white shadow-[0_0_0_1px_#16283f,0_0_0_1px_rgba(229,231,235,1)] flex items-center justify-center text-2xl font-semibold;
@@ -881,6 +889,11 @@
   .profile-name { @apply text-xl font-semibold mb-0.5; }
   .profile-email { @apply text-xs text-text-secondary mb-2; }
   .profile-meta { @apply flex items-center gap-2 flex-wrap; }
+  @media (min-width: 1024px) {
+    .profile-info { @apply flex-row items-center gap-4; }
+    .profile-info .profile-name { @apply mb-0; }
+    .profile-info .profile-email { @apply mb-0; }
+  }
   .role-badge {
     @apply inline-flex items-center gap-1.5 rounded-full bg-accent-bg text-primary px-2 py-0.5 text-[10px] font-medium;
   }
