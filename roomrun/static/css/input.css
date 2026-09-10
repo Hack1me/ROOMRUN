@@ -1211,4 +1211,55 @@
   }
   .quick-action i { @apply text-lg text-primary; }
   .quick-action span { @apply text-[10px] text-center; }
+
+  /* ========== MAINTENANCE DASHBOARD ========== */
+  .maintenance-app { @apply min-h-screen bg-bg; }
+  .main-grid { @apply grid grid-cols-[1.55fr_.8fr] gap-4 mb-4; }
+  .task-list { @apply flex flex-col; }
+  .task {
+    @apply flex items-center justify-between gap-3 border-b border-border px-4 py-3 last:border-b-0;
+  }
+  .task-left { @apply flex items-center gap-3 min-w-0; }
+  .task-icon {
+    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-lg;
+  }
+  .task-icon.electric { @apply bg-warning-soft text-warning; }
+  .task-icon.water { @apply bg-accent-bg text-secondary; }
+  .task-icon.plumbing { @apply bg-danger-soft text-danger; }
+  .task-icon.general { @apply bg-success-soft text-success; }
+  .task-content { @apply flex-1 min-w-0; }
+  .task-title { @apply text-xs font-medium mb-1; }
+  .task-location {
+    @apply flex items-center gap-1 text-[10px] text-text-secondary;
+  }
+  .task-location i { @apply text-xs; }
+  .task-meta { @apply flex flex-col items-end gap-1; }
+  .task-date { @apply text-[10px] text-text-secondary; }
+
+  .badge-status { @apply rounded-full px-2 py-0.5 text-[10px] font-medium whitespace-nowrap; }
+  .badge-status.pending { @apply bg-warning-soft text-warning; }
+  .badge-status.progress { @apply bg-accent-bg text-secondary; }
+  .badge-status.done { @apply bg-success-soft text-success; }
+  .badge-status.urgent { @apply bg-danger-soft text-danger; }
+
+  .side-card { @apply mt-4; }
+  .request-list { @apply flex flex-col; }
+  .request-item {
+    @apply flex items-center justify-between gap-3 border-b border-border px-4 py-3 last:border-b-0;
+  }
+  .request-title { @apply text-xs font-medium mb-1; }
+  .request-info {
+    @apply flex items-center justify-between gap-2 text-[10px] text-text-secondary;
+  }
+
+  .schedule-list { @apply flex flex-col; }
+  .schedule-item { @apply flex gap-3 border-b border-border py-2; }
+  .schedule-item:last-child { @apply border-b-0; }
+  .schedule-time { @apply w-10 text-[10px] font-medium text-primary; }
+  .schedule-content { @apply border-l-2 border-accent-bg pl-2; }
+  .schedule-title { @apply text-xs font-medium; }
+  .schedule-location { @apply mt-1 text-[10px] text-text-secondary; }
+  .schedule-place { @apply mt-1 text-[10px] text-text-secondary; }
+
+  .bottom-grid { @apply mt-4 grid grid-cols-2 gap-4; }
 }
