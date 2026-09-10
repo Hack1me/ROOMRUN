@@ -453,10 +453,22 @@
   /* Landlord + Tenant dashboards */
   .landlord-sidebar,
   .tenant-sidebar { @apply border-border bg-primary text-white; }
-  .landlord-sidebar .logo-icon,
-  .tenant-sidebar .logo-icon { @apply bg-white text-primary; }
-  .landlord-sidebar .logo span,
-  .tenant-sidebar .logo span { @apply text-white; }
+  .landlord-sidebar {
+    padding: 0;
+  }
+  .landlord-sidebar .sidebar-content {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .landlord-sidebar .sidebar-content::-webkit-scrollbar {
+    display: none;
+  }
+  .landlord-sidebar .brand-mark,
+  .tenant-sidebar .brand-mark { @apply bg-white text-primary; }
+  .landlord-sidebar .brand-name,
+  .tenant-sidebar .brand-name { @apply text-white; }
+  .landlord-sidebar .brand-subtitle,
+  .tenant-sidebar .brand-subtitle { @apply text-white/60; }
   .landlord-sidebar .nav-title,
   .tenant-sidebar .nav-title { @apply text-white/60; }
   .landlord-sidebar .nav-item,
@@ -465,14 +477,14 @@
   .tenant-sidebar .nav-item.active { @apply bg-white/15 text-white shadow-none; }
   .landlord-sidebar .nav-item.active i,
   .tenant-sidebar .nav-item.active i { @apply text-white; }
-  .landlord-sidebar .sidebar-bottom,
-  .tenant-sidebar .sidebar-bottom { @apply border-white/10; }
-  .landlord-sidebar .avatar,
-  .tenant-sidebar .avatar { @apply bg-white/15 text-white; }
-  .landlord-sidebar .sidebar-user-name,
-  .tenant-sidebar .sidebar-user-name { @apply text-white; }
-  .landlord-sidebar .sidebar-user-role,
-  .tenant-sidebar .sidebar-user-role { @apply text-white/60; }
+  .landlord-sidebar .sidebar-user,
+  .tenant-sidebar .sidebar-user { @apply border-white/10; }
+  .landlord-sidebar .user-avatar,
+  .tenant-sidebar .user-avatar { @apply bg-white/15 text-white; }
+  .landlord-sidebar .user-name,
+  .tenant-sidebar .user-name { @apply text-white; }
+  .landlord-sidebar .user-role,
+  .tenant-sidebar .user-role { @apply text-white/60; }
 
   /* Guard + Maintenance dashboards */
   .guard-sidebar,
@@ -984,4 +996,114 @@
   .btn-secondary { @apply border border-border bg-white text-text-secondary; }
   .btn-primary { @apply border border-primary bg-primary text-white; }
   .btn-primary:hover { @apply bg-primary-hover; }
+
+  /* ========== LANDLORD DASHBOARD ========== */
+  .landlord-app { @apply min-h-screen bg-bg; }
+  .kpi-grid { @apply grid grid-cols-4 gap-3.5 mb-5; }
+  .kpi-card {
+    @apply rounded-xl border border-border bg-white p-4 shadow-sm transition-all duration-150;
+  }
+  .kpi-card:hover { @apply -translate-y-px border-line-strong shadow-md; }
+  .kpi-top { @apply flex items-center justify-between; }
+  .kpi-title { @apply text-[11px] font-medium text-secondary; }
+  .kpi-icon {
+    @apply flex h-8 w-8 items-center justify-center rounded-lg text-base;
+  }
+  .icon-green { @apply bg-success-soft text-success; }
+  .icon-blue { @apply bg-accent-bg text-primary; }
+  .icon-orange { @apply bg-warning-soft text-warning; }
+  .icon-purple { @apply bg-purple-soft text-purple; }
+  .kpi-value { @apply mt-3 text-[22px] font-semibold tracking-tight text-primary; }
+  .kpi-footer {
+    @apply mt-2 inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10.5px] font-semibold;
+  }
+  .kpi-footer.positive { @apply bg-success-soft text-success; }
+  .kpi-footer.warning { @apply bg-warning-soft text-warning; }
+  .kpi-footer.danger { @apply bg-danger-soft text-danger; }
+
+  .section-card { @apply overflow-hidden rounded-xl border border-border bg-white shadow-sm; }
+  .section-header { @apply flex items-center justify-between border-b border-border px-5 py-4; }
+  .section-title { @apply text-sm font-semibold; }
+  .section-link {
+    @apply inline-flex items-center gap-1 text-[11.5px] font-medium text-secondary no-underline hover:underline;
+  }
+
+  .actions-grid { @apply grid grid-cols-4 gap-3 p-4; }
+  .action {
+    @apply flex items-center gap-3 rounded-lg border border-border bg-white p-3 text-left transition-all duration-150 hover:border-secondary hover:-translate-y-px;
+  }
+  .action-icon {
+    @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-lg;
+  }
+  .action-content { @apply min-w-0 flex-1; }
+  .action-title { @apply text-xs font-semibold; }
+  .action-description { @apply text-[10px] text-muted; }
+  .action-arrow { @apply ml-auto text-secondary text-sm; }
+
+  .charts-top,
+  .charts { @apply grid grid-cols-[1.6fr_1fr] gap-4 mb-4; }
+  .chart-card { @apply p-4; }
+  .chart-header { @apply flex items-start justify-between gap-4 mb-3; }
+  .chart-title { @apply text-sm font-semibold; }
+  .chart-description { @apply mt-1 text-[10px] text-muted; }
+  .chart-filter {
+    @apply h-[29px] rounded-md border border-border bg-white px-2 text-[10px] text-secondary outline-none;
+  }
+  .maintenance-chart { @apply mb-4; }
+
+  .lower-grid { @apply grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4; }
+  .list-card { @apply overflow-hidden; }
+  .list-header {
+    @apply flex items-center justify-between border-b border-border px-4 py-3;
+  }
+  .list-header h3 { @apply text-sm font-semibold; }
+  .list-body { @apply p-1.5; }
+  .attention-item,
+  .deadline-item {
+    @apply flex items-center gap-3 border-b border-border px-4 py-3 last:border-b-0;
+  }
+  .item-icon {
+    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-base;
+  }
+  .item-icon.icon-blue { @apply bg-accent-bg text-primary; }
+  .item-icon.icon-orange { @apply bg-warning-soft text-warning; }
+  .item-icon.icon-green { @apply bg-success-soft text-success; }
+  .item-icon.icon-purple { @apply bg-purple-soft text-purple; }
+  .item-icon.icon-danger { @apply bg-danger-soft text-danger; }
+  .item-content { @apply min-w-0 flex-1; }
+  .item-title { @apply text-xs font-medium; }
+  .item-meta { @apply mt-1 text-[10px] text-muted; }
+  .item-status {
+    @apply rounded-full px-2.5 py-1 text-[10.5px] font-medium whitespace-nowrap;
+  }
+  .item-status.status-success { @apply bg-success-soft text-success; }
+  .item-status.status-warning { @apply bg-warning-soft text-warning; }
+  .item-status.status-blue { @apply bg-accent-bg text-primary; }
+  .item-status.status-danger { @apply bg-danger-soft text-danger; }
+  .item-amount { @apply shrink-0 text-xs font-semibold text-success; }
+
+  .maintenance-section { @apply mt-4; }
+  .maintenance-list { @apply flex flex-col; }
+  .maintenance-item {
+    @apply flex items-center gap-3 border-b border-border px-4 py-3 last:border-b-0;
+  }
+  .item-time {
+    @apply flex items-center gap-1 shrink-0 text-[10px] text-muted;
+  }
+  .item-time i { @apply text-xs; }
+
+  .activity-card { @apply mt-4 overflow-hidden; }
+  .activity-list { @apply flex flex-col; }
+  .activity {
+    @apply flex items-center gap-3 border-b border-border px-4 py-3 last:border-b-0;
+  }
+  .activity-icon { @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs; }
+  .activity-icon.green { @apply bg-success-soft text-success; }
+  .activity-icon.orange { @apply bg-warning-soft text-warning; }
+  .activity-icon.blue { @apply bg-accent-bg text-primary; }
+  .activity-icon.purple { @apply bg-purple-soft text-purple; }
+  .activity-content { @apply min-w-0 flex-1; }
+  .activity-title { @apply text-xs font-semibold; }
+  .activity-meta { @apply mt-1 text-[10px] text-muted leading-normal; }
+  .activity-time { @apply shrink-0 text-[10px] text-muted; }
 }
