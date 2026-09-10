@@ -7,6 +7,8 @@
   --color-primary-soft: #f5e4da;
   --color-bg: #f5f6f8;
   --color-accent-bg: #eaf2fb;
+  --color-blue: #4A90D9;
+  --color-blue-soft: #EAF2FB;
   --color-secondary: #c1622d;
   --color-secondary-hover: #a34f22;
   --color-secondary-soft: #fef3e2;
@@ -18,6 +20,8 @@
   --color-warning-soft: #fef3e2;
   --color-danger: #d64545;
   --color-danger-soft: #fcebec;
+  --color-purple: #7C3AED;
+  --color-purple-soft: #F3E8FF;
   --color-ink: #1e293b;
   --color-muted: #5b6675;
   --color-text: #1e293b;
@@ -261,6 +265,9 @@
     @apply fixed inset-y-0 left-0 z-50 flex flex-col border-r border-border bg-white;
     width: 232px;
     padding: 20px 14px;
+  }
+  .tenant-sidebar {
+    padding: 0;
   }
   .logo { @apply flex items-center gap-2.5 px-1.5 mb-7; }
   .logo-icon {
@@ -544,6 +551,147 @@
   .tenant-payment-success { @apply text-xs text-success; }
   .topbar-avatar { @apply flex h-9 w-9 items-center justify-center rounded-full bg-accent-bg text-xs font-semibold text-primary; }
 
+  .tenant-content { @apply max-w-[1550px] mx-auto p-7 pb-11; }
+  .date-pill {
+    @apply flex items-center gap-2 rounded-lg border border-border bg-white px-3.5 py-2 text-xs text-secondary;
+  }
+
+  .chart-container { position: relative; height: 225px; }
+  .chart-card { @apply p-4; }
+  .chart-head { @apply flex items-start justify-between gap-4 mb-3; }
+  .chart-title { @apply text-sm font-semibold; }
+  .chart-description { @apply mt-1 text-[10px] text-muted; }
+  .chart-select {
+    @apply h-[29px] rounded-md border border-border bg-white px-2 text-[10px] text-secondary outline-none;
+  }
+
+  .information-grid { @apply grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-4 mb-4; }
+  .housing-card { @apply overflow-hidden; }
+  .housing-image {
+    @apply flex h-[145px] items-center justify-center text-4xl text-primary;
+    background: linear-gradient(135deg, #dbe7f3, #edf3f8);
+  }
+  .housing-content { @apply p-4; }
+  .housing-title-row { @apply flex items-start justify-between gap-4; }
+  .housing-title { @apply text-sm font-semibold; }
+  .housing-location { @apply mt-1 inline-flex items-center gap-1.5 text-xs text-secondary; }
+  .housing-details { @apply mt-4 grid grid-cols-3 gap-2; }
+  .detail { @apply rounded-lg bg-bg p-2; }
+  .detail-label { @apply text-[10px] text-muted; }
+  .detail-value { @apply mt-1 text-xs font-medium; }
+
+  .contract-card { @apply p-4; }
+  .contract-number { @apply mt-4 text-lg font-semibold; }
+  .contract-grid { @apply mt-4 grid grid-cols-2 gap-3.5; }
+  .contract-item-label { @apply text-[10px] text-muted; }
+  .contract-item-value { @apply mt-1 text-xs font-medium; }
+  .contract-footer {
+    @apply mt-5 flex items-center justify-between border-t border-border pt-3.5;
+  }
+  .contract-price { @apply text-base font-semibold; }
+
+  .payment-card { @apply mb-4 overflow-hidden; }
+  .table-wrapper { @apply w-full overflow-x-auto; }
+  .payment-reference { @apply font-medium text-primary; }
+  .payment-status {
+    @apply inline-flex items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-[10px] font-medium text-success;
+  }
+  .payment-amount { @apply font-semibold; }
+
+  .lower-grid { @apply grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4; }
+  .list-card { @apply overflow-hidden; }
+  .list-item {
+    @apply flex items-center gap-3 border-b border-border px-4 py-3 last:border-b-0;
+  }
+  .list-icon { @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-base; }
+  .list-icon.blue { @apply bg-accent-bg text-primary; }
+  .list-icon.orange { @apply bg-warning-soft text-warning; }
+  .list-icon.green { @apply bg-success-soft text-success; }
+  .list-content { @apply min-w-0 flex-1; }
+  .list-title { @apply text-xs font-medium; }
+  .list-meta { @apply mt-1 text-[10px] text-muted; }
+
+  .activity-card { @apply mb-4 overflow-hidden; }
+  .activities { @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4; }
+  .activity {
+    @apply flex gap-2 border-b border-border p-3 last:border-b-0;
+  }
+  @media (min-width: 1024px) {
+    .activity {
+      @apply border-r last:border-r-0;
+    }
+  }
+  .activity-icon { @apply flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs; }
+  .activity-icon.green { @apply bg-success-soft text-success; }
+  .activity-icon.orange { @apply bg-warning-soft text-warning; }
+  .activity-icon.blue { @apply bg-accent-bg text-primary; }
+  .activity-icon.purple { @apply bg-purple-soft text-purple; }
+  .activity-title { @apply text-xs font-semibold; }
+  .activity-meta { @apply mt-1 text-[10px] text-muted leading-normal; }
+
+  .quick-actions { @apply p-4; }
+  .action-btn {
+    @apply flex flex-col items-center justify-center gap-2.5 rounded-lg border border-border bg-white p-4 text-center transition-all duration-150 hover:border-secondary hover:-translate-y-px;
+    min-height: 120px;
+  }
+  .action-btn .action-icon { @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-xl; }
+  .action-icon.green { @apply bg-success-soft text-success; }
+  .action-icon.orange { @apply bg-warning-soft text-warning; }
+  .action-icon.blue { @apply bg-accent-bg text-primary; }
+  .action-icon.purple { @apply bg-purple-soft text-purple; }
+  .action-name { @apply text-xs font-semibold; }
+  .action-description { @apply text-[10px] text-muted; }
+  .action-btn i:last-child { @apply hidden; }
+
+  .outline-button {
+    @apply inline-flex items-center justify-center rounded-md border border-border bg-white px-3 py-2 text-xs font-medium text-primary transition-colors hover:border-secondary hover:text-secondary;
+  }
+  .view-link {
+    @apply inline-flex items-center gap-1 text-[11px] font-medium text-secondary no-underline hover:underline;
+  }
+  .section-head { @apply flex items-center justify-between mb-3; }
+  .section-title { @apply text-sm font-semibold; }
+
+  .brand {
+    @apply flex h-[70px] items-center gap-2.5 px-5;
+    border-bottom: 1px solid rgba(255,255,255,.12);
+  }
+  .brand-mark {
+    @apply h-8 w-8 shrink-0 rounded-lg bg-white;
+  }
+  .brand-name {
+    @apply text-base font-semibold tracking-tight text-white;
+  }
+  .brand-subtitle {
+    @apply text-[9px] text-white/55;
+  }
+  .sidebar-content {
+    @apply flex-1 overflow-y-auto px-2.5 py-3;
+  }
+  .nav-section {
+    @apply mb-5;
+  }
+  .nav-title {
+    @apply px-2.5 mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-white/45;
+  }
+  .nav-item {
+    @apply flex h-9 items-center gap-2.5 rounded-md px-2.5 text-xs font-medium text-white/80 transition-colors;
+  }
+  .nav-item i { @apply text-center text-lg; }
+  .nav-item:hover { @apply bg-white/10 text-white; }
+  .nav-item.active { @apply bg-white/15 text-white; }
+  .nav-badge {
+    @apply ml-auto flex min-w-4.5 h-4.5 items-center justify-center rounded-full bg-danger px-1.5 text-[10px] font-semibold text-white;
+  }
+  .sidebar-user {
+    @apply flex items-center gap-2.5 border-t border-white/10 px-4 py-3;
+  }
+  .user-avatar {
+    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/15 text-xs font-semibold text-white;
+  }
+  .user-name { @apply text-xs font-medium text-white; }
+  .user-role { @apply text-[10px] text-white/60; }
+
   /* Guard + Maintenance dashboards */
   .stats-grid { @apply grid grid-cols-4 gap-3.5 mb-5; }
   .stat-card { @apply rounded-xl border border-border bg-white p-4 shadow-sm; }
@@ -708,10 +856,10 @@
     @apply inline-flex items-center gap-2 text-xs text-text-secondary;
   }
   .profile-breadcrumb .back-link {
-    @apply inline-flex items-center gap-1.5 rounded-md border border-border bg-white px-2.5 py-1.5 text-xs font-medium text-text no-underline;
+    @apply inline-flex items-center gap-1.5 rounded-md border border-primary bg-primary px-2.5 py-1.5 text-xs font-medium text-white no-underline;
   }
-  .profile-breadcrumb .back-link i { @apply text-base text-text-secondary; }
-  .profile-breadcrumb .back-link:hover { @apply border-secondary text-secondary; }
+  .profile-breadcrumb .back-link i { @apply text-base text-white; }
+  .profile-breadcrumb .back-link:hover { @apply border-primary-hover bg-primary-hover text-white; }
   .profile-breadcrumb .sep { @apply text-muted text-xs; }
   .profile-breadcrumb strong { @apply text-text font-medium; }
   .profile-content { @apply max-w-[1180px] mx-auto px-7; }
@@ -724,7 +872,7 @@
   .profile-identity { @apply flex items-center gap-4; }
   .profile-avatar-wrapper { @apply relative; }
   .profile-avatar {
-    @apply w-19 h-19 rounded-full bg-accent-bg text-primary border-3 border-white shadow-[0_0_0_1px_rgba(229,231,235,1)] flex items-center justify-center text-2xl font-semibold;
+    @apply w-19 h-19 rounded-full bg-accent-bg text-primary border-3 border-white shadow-[0_0_0_1px_#16283f,0_0_0_1px_rgba(229,231,235,1)] flex items-center justify-center text-2xl font-semibold;
   }
   .profile-avatar img { @apply w-full h-full rounded-full object-cover; }
   .avatar-edit {
@@ -739,9 +887,9 @@
   .verified { @apply inline-flex items-center gap-1 text-success text-[10px]; }
   .verified i { @apply text-base; }
   .edit-profile {
-    @apply h-9 px-3.5 border border-border bg-white text-primary rounded-md inline-flex items-center gap-1.5 text-xs font-medium cursor-pointer;
+    @apply h-9 px-3.5 border border-primary bg-primary text-white rounded-md inline-flex items-center gap-1.5 text-xs font-medium cursor-pointer;
   }
-  .edit-profile:hover { @apply bg-accent-bg border-secondary; }
+  .edit-profile:hover { @apply bg-primary-hover border-primary-hover; }
   .profile-grid { @apply grid grid-cols-[1.5fr_1fr] gap-5; }
   .card { @apply bg-white border border-border rounded-xl shadow-sm; }
   .card-header {
