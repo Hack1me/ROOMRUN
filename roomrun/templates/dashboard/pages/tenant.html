@@ -446,55 +446,39 @@
               {% if last_payment %}
               <div class="activity">
                 <div class="activity-icon green"><i class="ti ti-credit-card"></i></div>
-                <div>
+                <div class="activity-content">
                   <div class="activity-title">{% translate "Payment made" %}</div>
-                  <div class="activity-meta">
-                    {{ last_payment.amount }} FCFA<br>
-                    {% blocktranslate with days=last_payment.paid_at|timesince %}{{ days }} ago{% endblocktranslate %}
-                  </div>
+                  <div class="activity-meta">{{ last_payment.amount }} FCFA</div>
+                </div>
+                <div class="activity-time">
+                  {% blocktranslate with days=last_payment.paid_at|timesince %}{{ days }} ago{% endblocktranslate %}
                 </div>
               </div>
               {% endif %}
             {% endwith %}
-            {% if recent_maintenance_requests %}
+            {% for req in recent_maintenance_requests %}
               <div class="activity">
-                <div class="activity-icon orange"><i class="ti ti-tool"></i></div>
-                <div>
-                  <div class="activity-title">{% translate "Request created" %}</div>
-                  <div class="activity-meta">
-                    {{ recent_maintenance_requests.0.title }}<br>
-                    {% blocktranslate with days=recent_maintenance_requests.0.created_at|timesince %}{{ days }} ago{% endblocktranslate %}
+                <div class="activity-icon {% if req.status == 'RESOLVED' %}blue{% else %}orange{% endif %}">
+                  <i class="ti {% if req.status == 'RESOLVED' %}ti-check{% else %}ti-tool{% endif %}"></i>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-title">
+                    {% if req.status == 'RESOLVED' %}{% translate "Intervention completed" %}{% else %}{% translate "Request created" %}{% endif %}
                   </div>
+                  <div class="activity-meta">{{ req.title }}</div>
+                </div>
+                <div class="activity-time">
+                  {% blocktranslate with days=req.created_at|timesince %}{{ days }} ago{% endblocktranslate %}
                 </div>
               </div>
-            {% endif %}
-            {% if recent_maintenance_requests %}
-              {% with resolved=recent_maintenance_requests|slice:":1" %}
-                {% for req in resolved %}
-                  {% if req.status == 'RESOLVED' %}
-                  <div class="activity">
-                    <div class="activity-icon blue"><i class="ti ti-check"></i></div>
-                    <div>
-                      <div class="activity-title">{% translate "Intervention completed" %}</div>
-                      <div class="activity-meta">
-                        {{ req.title }}<br>
-                        {% blocktranslate with days=req.updated_at|timesince %}{{ days }} ago{% endblocktranslate %}
-                      </div>
-                    </div>
-                  </div>
-                  {% endif %}
-                {% endfor %}
-              {% endwith %}
-            {% endif %}
+            {% endfor %}
             <div class="activity">
               <div class="activity-icon purple"><i class="ti ti-speakerphone"></i></div>
-              <div>
+              <div class="activity-content">
                 <div class="activity-title">{% translate "New announcement" %}</div>
-                <div class="activity-meta">
-                  {% translate "Building A works" %}<br>
-                  {% blocktranslate with days=8 %}{{ days }} days ago{% endblocktranslate %}
-                </div>
+                <div class="activity-meta">{% translate "Building A works" %}</div>
               </div>
+              <div class="activity-time">{% translate "8 days ago" %}</div>
             </div>
           </div>
         </section>

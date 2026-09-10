@@ -619,22 +619,19 @@
   .list-meta { @apply mt-1 text-[10px] text-muted; }
 
   .activity-card { @apply mb-4 overflow-hidden; }
-  .activities { @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4; }
+  .activities { @apply flex flex-col; }
   .activity {
-    @apply flex gap-2 border-b border-border p-3 last:border-b-0;
+    @apply flex items-center gap-3 border-b border-border px-4 py-3 last:border-b-0;
   }
-  @media (min-width: 1024px) {
-    .activity {
-      @apply border-r last:border-r-0;
-    }
-  }
-  .activity-icon { @apply flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs; }
+  .activity-icon { @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs; }
   .activity-icon.green { @apply bg-success-soft text-success; }
   .activity-icon.orange { @apply bg-warning-soft text-warning; }
   .activity-icon.blue { @apply bg-accent-bg text-primary; }
   .activity-icon.purple { @apply bg-purple-soft text-purple; }
+  .activity-content { @apply min-w-0 flex-1; }
   .activity-title { @apply text-xs font-semibold; }
   .activity-meta { @apply mt-1 text-[10px] text-muted leading-normal; }
+  .activity-time { @apply shrink-0 text-[10px] text-muted; }
 
   .quick-actions { @apply p-4; }
   .action-btn {
