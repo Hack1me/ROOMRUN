@@ -59,13 +59,6 @@
                   {% else %}
                     {% translate "User" %}
                   {% endif %}
-                </span>
-                {% if profile_user.email_verified %}
-                  <span class="verified">
-                    <i class="ti ti-circle-check"></i>
-                    {% translate "Email verified" %}
-                  </span>
-                {% endif %}
               </div>
             </div>
           </div>
@@ -145,13 +138,16 @@
                   </div>
                   <div class="security-content">
                     <div class="security-title">{% translate "Email address" %}</div>
-                    <div class="security-description">
-                      {% if profile_user.email_verified %}
+                    {% if profile_user.email_verified %}
+                      <span class="verified">
+                        <i class="ti ti-circle-check"></i>
                         {% translate "Email verified" %}
-                      {% else %}
+                      </span>
+                    {% else %}
+                      <div class="security-description">
                         {% translate "Email not verified" %}
-                      {% endif %}
-                    </div>
+                      </div>
+                    {% endif %}
                   </div>
                 </div>
               </div>
