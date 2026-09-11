@@ -40,6 +40,7 @@
                 <div id="pp-avatar" class="profile-avatar">{{ profile_user.first_name|first }}{{ profile_user.last_name|first }}</div>
               {% endif %}
               <button id="pp-camera"
+                      data-profile-picture-input="{{ form.profile_picture.id_for_label }}"
                       class="avatar-edit"
                       type="button"
                       aria-label="{% translate 'Change profile picture' %}">
@@ -275,51 +276,4 @@
 {% endblock footer %}
 {% block inline_javascript %}
   <script defer src="{% static 'js/auth/profile.js' %}"></script>
-  <script>
-    (function() {
-      var countrySelect = document.querySelector('.country-select select');
-      var modal = document.getElementById('pp-modal');
-      var editButton = document.getElementById('pp-edit');
-      var closeButton = document.getElementById('pp-close');
-      var cancelButton = document.getElementById('pp-cancel');
-      var cameraButton = document.getElementById('pp-camera');
-
-      function openModal() {
-        modal.classList.add('active');
-        modal.setAttribute('aria-hidden', 'false');
-      }
-
-      function closeModal() {
-        modal.classList.remove('active');
-        modal.setAttribute('aria-hidden', 'true');
-      }
-
-      if (editButton) {
-        editButton.addEventListener('click', openModal);
-      }
-      if (closeButton) {
-        closeButton.addEventListener('click', closeModal);
-      }
-      if (cancelButton) {
-        cancelButton.addEventListener('click', closeModal);
-      }
-      if (cameraButton) {
-        cameraButton.addEventListener('click', function() {
-          openModal();
-          var fileInput = document.getElementById('{{ form.profile_picture.id_for_label }}');
-          if (fileInput) {
-            fileInput.click();
-          }
-        });
-      }
-      if (modal) {
-        modal.addEventListener('click', function(e) {
-          if (e.target === modal) {
-            closeModal();
-          }
-        });
-      }
-      document.addEventListener('profile:updated', closeModal);
-    })();
-  </script>
 {% endblock %}

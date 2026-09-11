@@ -1,5 +1,5 @@
 /**
- * Profile page AJAX interactions.
+ * Profile page AJAX interactions and modal behavior.
  */
 (function () {
   'use strict';
@@ -118,4 +118,47 @@
         showAlert('Erreur de communication avec le serveur. Veuillez réessayer.', 'error');
       });
   });
+
+  var modal = document.getElementById('pp-modal');
+  var editButton = document.getElementById('pp-edit');
+  var closeButton = document.getElementById('pp-close');
+  var cancelButton = document.getElementById('pp-cancel');
+  var cameraButton = document.getElementById('pp-camera');
+
+  function openModal() {
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeModal() {
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+  }
+
+  if (editButton) {
+    editButton.addEventListener('click', openModal);
+  }
+  if (closeButton) {
+    closeButton.addEventListener('click', closeModal);
+  }
+  if (cancelButton) {
+    cancelButton.addEventListener('click', closeModal);
+  }
+  if (cameraButton) {
+    cameraButton.addEventListener('click', function () {
+      openModal();
+      var fileInput = document.getElementById(cameraButton.dataset.profilePictureInput);
+      if (fileInput) {
+        fileInput.click();
+      }
+    });
+  }
+  if (modal) {
+    modal.addEventListener('click', function (e) {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+  }
+  document.addEventListener('profile:updated', closeModal);
 })();

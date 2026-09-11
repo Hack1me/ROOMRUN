@@ -31,4 +31,4 @@ def server_error(request: HttpRequest) -> HttpResponse:
 
 def csrf_failure(request: HttpRequest, reason: str = "") -> HttpResponse:
     """Render the custom CSRF failure page without leaking the failure reason."""
-    return render(request, "errors/403_csrf.html", status=403)
+    return render(request, "errors/403.html", status=403)

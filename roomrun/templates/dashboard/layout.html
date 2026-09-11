@@ -9,7 +9,7 @@
 {% endblock extra_css %}
 {% block header %}
   {% if not skip_dashboard_header %}
-    {% include "dashboard/includes/site_header.html" %}
+    {% include "home/includes/site_header.html" %}
   {% endif %}
 {% endblock header %}
 {% block body %}
@@ -23,6 +23,6 @@
     </main>
   {% endblock dashboard_body %}
   {% block footer %}
-    {% include "dashboard/includes/site_footer.html" %}
+    {% include "home/includes/site_footer.html" %}
   {% endblock footer %}
 {% endblock body %}

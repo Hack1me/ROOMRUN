@@ -1,31 +1,18 @@
 {% extends "base.html" %}
 
-{% load static %}
+{% load i18n static %}
 
-{% block title %}
-  User:
-  {{ object.name }}
-{% endblock title %}
+{% block title %}{% translate "User" %}: {{ object.name }}{% endblock title %}
 {% block content %}
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-12">
-        <h2>{{ object.name }}</h2>
-      </div>
-    </div>
+  <section class="mx-auto max-w-3xl py-10 sm:py-18">
+    <p class="rr-eyebrow">{% translate "USER PROFILE" %}</p>
+    <h1 class="rr-display mt-5 text-4xl leading-tight sm:text-5xl">{{ object.name }}</h1>
     {% if object == request.user %}
-      <!-- Action buttons -->
-      <div class="row">
-        <div class="col-sm-12">
-          <a class="btn btn-primary" href="{% url 'users:update' %}" role="button">My Info</a>
-          <a class="btn btn-primary"
-             href="{% url 'account_email' %}"
-             role="button">E-Mail</a>
-          <a class="btn btn-primary" href="{% url 'mfa_index' %}" role="button">MFA</a>
-          <!-- Your Stuff: Custom user template urls -->
-        </div>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="{% url 'users:update' %}" class="rr-btn-primary">{% translate "My Info" %} →</a>
+        <a href="{% url 'account_email' %}" class="rr-btn-outline">{% translate "E-Mail" %}</a>
+        <a href="{% url 'mfa_index' %}" class="rr-btn-outline">{% translate "MFA" %}</a>
       </div>
-      <!-- End Action buttons -->
     {% endif %}
-  </div>
+  </section>
 {% endblock content %}

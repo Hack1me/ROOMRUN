@@ -57,7 +57,7 @@
     <main class="main">
       <header class="topbar">
         <div class="topbar-left">
-          <button class="icon-button mobile-menu" id="mobile-menu">
+          <button class="icon-button mobile-menu" id="mobile-menu" data-sidebar-breakpoint="700">
             <i class="ti ti-menu-2"></i>
           </button>
           <div class="page-heading">
@@ -290,5 +290,5 @@
   </div>
 {% endblock content %}
 {% block inline_javascript %}
-  <script defer src="{% static 'js/dashboard.js' %}"></script>
+  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
 {% endblock inline_javascript %}
