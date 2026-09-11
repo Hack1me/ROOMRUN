@@ -38,6 +38,10 @@ urlpatterns += i18n_patterns(
         "users/",
         include("users.urls.users_urls", namespace="users"),
     ),
+    path(
+        "properties/",
+        include("properties.urls.urls", namespace="properties"),
+    ),
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 )
 if settings.DEBUG:

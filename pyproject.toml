@@ -39,6 +39,7 @@ dependencies = [
   "django-money>=3.6.1",
   "django-ratelimit>=4.1.0",
   "pre-commit>=4.6.2",
+  "campay>=1.1.0",
 ]
 
 [dependency-groups]
