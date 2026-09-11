@@ -248,7 +248,7 @@ class Building(BaseModel):
     building_number = models.CharField(
         max_length=50,
         unique=True,
-        editable=False,  # Not editable, Auto-generated In signal.py
+        editable=False,
         blank=True,
         verbose_name=_("Building number"),
         help_text=_("Auto-generated unique identifier for the building."),
@@ -367,7 +367,7 @@ class Unit(BaseModel):
 
     unit_type = models.CharField(
         max_length=50,
-        choices=UnitType.choices,  # <-- FIXED: Now uses choices.
+        choices=UnitType.choices,
         default=UnitType.APARTMENT,
         verbose_name=_("Unit type"),
         help_text=_("Category of the unit (e.g., studio, apartment, office)."),
@@ -388,7 +388,7 @@ class Unit(BaseModel):
     area = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        null=True,  # Optional field.
+        null=True,
         blank=True,
         verbose_name=_("Area"),
         help_text=_("Total area of the unit in square meters."),

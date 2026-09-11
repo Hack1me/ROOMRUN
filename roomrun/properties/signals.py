@@ -6,6 +6,7 @@ from utils.helpers import assign_reference_identifier
 from .models import Building
 from .models import Property
 from .models import PropertyImage
+from .models import Unit
 
 
 @receiver(pre_save, sender=Property)
@@ -19,6 +20,11 @@ def set_building_number(sender, instance, **kwargs):
     """Auto-generate building_number if not already set."""
     assign_reference_identifier(instance, field="building_number", prefix="BLD")
 
+
+@receiver(pre_save, sender=Unit)
+def set_unit_number(sender, instance, **kwargs):
+    """Auto-generate unit_number if not already set."""
+    assign_reference_identifier(instance, field="unit_number", prefix="UNT")
 
 # PROPERTY IMAGE
 @receiver(pre_save, sender=PropertyImage)

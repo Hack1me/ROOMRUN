@@ -1262,4 +1262,133 @@
   .schedule-place { @apply mt-1 text-[10px] text-text-secondary; }
 
   .bottom-grid { @apply mt-4 grid grid-cols-2 gap-4; }
+
+  /* Properties page */
+  .page-header {
+    @apply flex items-start justify-between gap-4 mb-6;
+  }
+  .page-title {
+    @apply text-[22px] font-semibold tracking-tight text-primary;
+  }
+  .page-description {
+    @apply mt-1 text-[12.5px] text-secondary;
+  }
+  .add-property {
+    @apply inline-flex h-10 shrink-0 items-center gap-2 rounded-lg bg-secondary px-4 text-sm font-semibold text-white transition hover:bg-secondary-hover hover:-translate-y-px;
+  }
+  .add-property i { @apply text-base; }
+
+  .filters {
+    @apply grid grid-cols-[minmax(280px,1fr)_176px_164px_164px] gap-4 mb-6 bg-white border border-border rounded-xl p-4;
+  }
+  .filter-search {
+    @apply flex h-10 items-center gap-2 rounded-lg border border-line bg-bg px-3;
+  }
+  .filter-search i { @apply text-[15px] text-primary; }
+  .filter-search input {
+    @apply w-full border-0 bg-transparent text-sm text-text outline-none;
+  }
+  .filter-search input::placeholder { @apply text-muted; }
+  .filter-select {
+    @apply h-10 rounded-lg border border-line bg-bg px-3 text-xs font-medium text-primary outline-none;
+  }
+
+  .property-card .status {
+    @apply absolute top-3 right-3 rounded-full px-2.5 py-1 text-[10.5px] font-semibold text-white;
+  }
+  .property-card .status::before { @apply hidden; }
+  .property-card .status.active { @apply bg-success; }
+  .property-card .status.inactive { @apply bg-danger; }
+  .property-card .status.under_construction { @apply bg-warning; }
+  .property-card .status.maintenance { @apply bg-warning; }
+
+  .property-grid {
+    @apply grid grid-cols-3 gap-5;
+  }
+  .property-card {
+    @apply overflow-hidden rounded-xl border border-border bg-white shadow-sm transition-all duration-150 hover:-translate-y-px hover:shadow-md;
+  }
+  .property-image-wrapper {
+    @apply relative h-[126px] overflow-hidden bg-bg;
+  }
+  .property-image {
+    @apply h-full w-full object-cover;
+  }
+  .property-image i {
+    @apply flex h-full w-full items-center justify-center text-3xl text-primary;
+  }
+  .property-body {
+    @apply p-4 pb-5;
+  }
+  .property-title-row {
+    @apply flex items-center justify-between gap-2 mb-1;
+  }
+  .property-name {
+    @apply text-sm font-semibold text-primary truncate;
+  }
+  .more-btn {
+    @apply shrink-0 w-6 h-6 flex items-center justify-center rounded border-0 bg-transparent text-muted hover:bg-bg;
+  }
+  .more-btn i { @apply text-sm; }
+  .location {
+    @apply flex items-center gap-1.5 text-[11px] text-secondary mb-4;
+  }
+  .location i { @apply text-xs text-primary; }
+  .property-stats {
+    @apply grid grid-cols-3 mb-3;
+  }
+  .stat {
+    @apply flex items-center gap-1.5 min-w-0 pr-2;
+  }
+  .stat:not(:first-child) { @apply pl-3; }
+  .stat:not(:last-child) { @apply border-r border-border; }
+  .stat i { @apply text-sm text-primary shrink-0; }
+  .stat-text { @apply text-[10.5px] text-secondary truncate; }
+  .property-footer {
+    @apply flex items-end justify-between gap-2 border-t border-line pt-3;
+  }
+  .rent-label {
+    @apply text-[10.5px] text-secondary mb-0.5;
+  }
+  .rent-value {
+    @apply text-sm font-semibold text-primary;
+  }
+  .details-link {
+    @apply inline-flex items-center gap-1 shrink-0 text-[11px] font-medium text-secondary no-underline hover:underline;
+  }
+  .details-link i { @apply text-xs; }
+
+  .empty-state {
+    @apply hidden col-span-full bg-white border border-border rounded-xl py-16 text-center text-muted;
+  }
+  .empty-state i {
+    @apply mx-auto mb-3 text-[38px] text-muted;
+  }
+  .empty-state h3 {
+    @apply text-base font-semibold text-primary mb-1;
+  }
+
+  .pagination {
+    @apply mt-6 flex items-center justify-center gap-3;
+  }
+  .pagination-btn {
+    @apply inline-flex items-center gap-1 rounded-lg border border-border bg-white px-3 py-1.5 text-xs font-medium text-primary no-underline transition hover:border-primary hover:text-primary;
+  }
+  .pagination-info {
+    @apply text-xs text-muted;
+  }
+
+  @media (max-width: 1200px) {
+    .property-grid { @apply grid-cols-2; }
+  }
+  @media (max-width: 900px) {
+    .filters { @apply grid-cols-2; }
+    .filter-search { grid-column: 1 / -1; }
+  }
+  @media (max-width: 680px) {
+    .property-grid { @apply grid-cols-1; }
+    .filters { @apply grid-cols-1; }
+    .page-header { @apply flex-col; }
+    .add-property { @apply w-full justify-center; }
+  }
 }

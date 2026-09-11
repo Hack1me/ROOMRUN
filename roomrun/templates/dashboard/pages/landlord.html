@@ -26,7 +26,7 @@
         </div>
         <div class="nav-section">
           <div class="nav-title">{% translate "Management" %}</div>
-          <a href="#" class="nav-item">
+          <a href="{% url 'properties:property-list' %}" class="nav-item">
             <i class="ti ti-building"></i>
             <span>{% translate "Properties" %}</span>
           </a>
@@ -301,7 +301,7 @@
           <div class="list-card">
             <div class="list-header">
               <h3>{% translate "Recent properties" %}</h3>
-              <a href="#" class="section-link">{% translate "See all" %} →</a>
+              <a href="{% url 'properties:property-list' %}" class="section-link">{% translate "See all" %} →</a>
             </div>
             <div class="list-body">
               {% for property in recent_properties %}

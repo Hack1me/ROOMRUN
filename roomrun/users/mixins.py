@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.password_validation import validate_password
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -25,7 +26,7 @@ class PasswordConfirmMixin:
             self.add_error(self.password2_field, _("The passwords do not match."))
         if password1:
             try:
-                
+
                 validate_password(password1)
             except Exception as error:
                 self.add_error(self.password1_field, error)

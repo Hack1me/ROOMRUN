@@ -3,6 +3,7 @@
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
+from django.db import models
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -20,25 +21,89 @@ class PropertyListView(LandlordRequiredMixin, View):
     """List all properties owned by the authenticated landlord."""
 
     template_name = "dashboard/properties/list.html"
-    paginate_by = 10
+    paginate_by = 12
 
     def get(self, request):
         landlord = self.get_landlord()
 
+        search = request.GET.get("search", "").strip()
+        status_filter = request.GET.get("status", "").strip()
+        city_filter = request.GET.get("city", "").strip()
+        sort = request.GET.get("sort", "").strip()
+
         queryset = (
             Property.objects
             .filter(landlord=landlord)
-            .prefetch_related("images")
-            .order_by("-created_at")
+            .prefetch_related("images", "buildings__units")
+            .annotate(
+                _occupied_units=models.Count(
+                    "buildings__units",
+                    filter=models.Q(buildings__units__status="OCCUPIED"),
+                    distinct=True,
+                ),
+                _unit_count=models.Count(
+                    "buildings__units",
+                    distinct=True,
+                ),
+            )
         )
+
+        if search:
+            queryset = queryset.filter(
+                models.Q(name__icontains=search)
+                | models.Q(address__icontains=search)
+                | models.Q(property_number__icontains=search)
+            )
+
+        if status_filter:
+            queryset = queryset.filter(status=status_filter.upper())
+
+        if city_filter:
+            queryset = queryset.filter(city__icontains=city_filter)
+
+        if sort == "name":
+            queryset = queryset.order_by("name")
+        else:
+            queryset = queryset.order_by("-created_at")
 
         paginator = Paginator(queryset, self.paginate_by)
         page_obj = paginator.get_page(request.GET.get("page"))
 
+        for prop in page_obj:
+            prop.occupied_units = prop._occupied_units or 0
+            prop.unit_count = prop._unit_count or 0
+            prop.building_count = len(prop.buildings.all())
+
+            total_rent = 0.0
+            for building in prop.buildings.all():
+                for unit in building.units.all():
+                    total_rent += float(unit.monthly_rent.amount)
+
+            prop.total_rent = total_rent
+            prop.average_rent = (
+                total_rent / prop.unit_count if prop.unit_count else 0.0
+            )
+
+        cities = (
+            Property.objects
+            .filter(landlord=landlord)
+            .values_list("city", flat=True)
+            .distinct()
+            .order_by("city")
+        )
+
         return render(
             request,
             self.template_name,
-            {"properties": page_obj, "page_obj": page_obj},
+            {
+                "properties": page_obj,
+                "page_obj": page_obj,
+                "search": search,
+                "status_filter": status_filter,
+                "city_filter": city_filter,
+                "sort": sort,
+                "cities": cities,
+            },
         )
 
 

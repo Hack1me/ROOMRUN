@@ -1,0 +1,359 @@
+{% extends "base.html" %}
+
+{% load i18n static %}
+
+{% block title %}{% translate "Properties" %} — ROOMRUN{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet"
+        href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
+{% endblock extra_css %}
+{% block header %}{% endblock header %}
+{% block footer %}{% endblock footer %}
+
+{% block body %}
+  <div class="app landlord-app">
+    <aside class="sidebar landlord-sidebar overflow-y-auto" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <div>
+          <div class="brand-name">ROOMRUN</div>
+          <div class="brand-subtitle">
+            {% translate "Property Management" %}
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-content">
+        <div class="nav-section">
+          <div class="nav-title">{% translate "Overview" %}</div>
+          <a href="{% url 'dashboard:landlord' %}" class="nav-item">
+            <i class="ti ti-layout-dashboard"></i>
+            <span>{% translate "Dashboard" %}</span>
+          </a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-title">{% translate "Management" %}</div>
+          <a href="{% url 'properties:property-list' %}" class="nav-item active">
+            <i class="ti ti-building"></i>
+            <span>{% translate "Properties" %}</span>
+          </a>
+          <a href="#" class="nav-item">
+            <i class="ti ti-home"></i>
+            <span>{% translate "Housing units" %}</span>
+          </a>
+          <a href="#" class="nav-item">
+            <i class="ti ti-users"></i>
+            <span>{% translate "Tenants" %}</span>
+          </a>
+          <a href="#" class="nav-item">
+            <i class="ti ti-file-text"></i>
+            <span>{% translate "Leases" %}</span>
+          </a>
+          <a href="#" class="nav-item">
+            <i class="ti ti-credit-card"></i>
+            <span>{% translate "Payments" %}</span>
+          </a>
+          <a href="#" class="nav-item">
+            <i class="ti ti-tool"></i>
+            <span>{% translate "Maintenance" %}</span>
+          </a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-title">{% translate "Communication" %}</div>
+          <a href="#" class="nav-item">
+            <i class="ti ti-message"></i>
+            <span>{% translate "Messages" %}</span>
+          </a>
+          <a href="#" class="nav-item">
+            <i class="ti ti-bell"></i>
+            <span>{% translate "Notifications" %}</span>
+          </a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-title">{% translate "Operations" %}</div>
+          <a href="#" class="nav-item">
+            <i class="ti ti-calendar"></i>
+            <span>{% translate "Calendar" %}</span>
+          </a>
+          <a href="#" class="nav-item">
+            <i class="ti ti-door-enter"></i>
+            <span>{% translate "Visitors" %}</span>
+          </a>
+          <a href="#" class="nav-item">
+            <i class="ti ti-clipboard-list"></i>
+            <span>{% translate "Requests" %}</span>
+          </a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-title">{% translate "System" %}</div>
+          <a href="#" class="nav-item">
+            <i class="ti ti-settings"></i>
+            <span>{% translate "Settings" %}</span>
+          </a>
+          <a href="#" class="nav-item">
+            <i class="ti ti-help-circle"></i>
+            <span>{% translate "Help" %}</span>
+          </a>
+          <a href="{% url 'users:logout' %}" class="nav-item">
+            <i class="ti ti-logout"></i>
+            <span>{% translate "Sign out" %}</span>
+          </a>
+        </div>
+      </div>
+      <div class="sidebar-user">
+        <div class="user-avatar">
+          {{ user.first_name|first }}{{ user.last_name|first }}
+        </div>
+        <div>
+          <div class="user-name">{{ user.full_name }}</div>
+          <div class="user-role">{% translate "Landlord" %}</div>
+        </div>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button type="button"
+                  class="menu-button"
+                  id="mobile-menu"
+                  aria-label="{% translate 'Open menu' %}">
+            <i class="ti ti-menu-2"></i>
+          </button>
+          <div class="page-heading">
+            <h1>{% translate "Properties" %}</h1>
+            <p>{% translate "Manage your properties and track their occupancy." %}</p>
+          </div>
+        </div>
+        <label class="topbar-search">
+          <i class="ti ti-search"></i>
+          <input type="search"
+                 placeholder="{% translate 'Search a property, a tenant…' %}" />
+        </label>
+        <div class="topbar-right">
+          <button type="button"
+                  class="icon-button"
+                  aria-label="{% translate 'Notifications' %}">
+            <i class="ti ti-bell"></i>
+          </button>
+          <a href="{% url 'users:profile' %}"
+             class="icon-button profile-button"
+             aria-label="{% translate 'Profile' %}">
+            {% if user.profile_picture %}
+              <img class="h-full w-full object-cover"
+                   src="{{ user.profile_picture.url }}"
+                   alt="" />
+            {% else %}
+              <i class="ti ti-user"></i>
+            {% endif %}
+          </a>
+        </div>
+      </header>
+      <div class="content">
+        {% include "common/includes/messages.html" %}
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">{% translate "Properties" %}</h1>
+            <p class="page-description">{% translate "Manage your properties and track their occupancy." %}</p>
+          </div>
+          <a href="{% url 'properties:property-create' %}" class="add-property">
+            <i class="ti ti-plus"></i>
+            <span>{% translate "Add property" %}</span>
+          </a>
+        </div>
+
+        <!-- FILTERS -->
+        <form method="get" class="filters">
+          <div class="filter-search">
+            <i class="ti ti-search"></i>
+            <input type="text"
+                   name="search"
+                   placeholder="{% translate 'Search properties…' %}"
+                   value="{{ search }}"
+                   id="propertySearch" />
+          </div>
+
+          <select name="status"
+                  class="filter-select"
+                  id="statusFilter">
+            <option value="">{% translate "Status" %}</option>
+            <option value="ACTIVE" {% if status_filter == 'ACTIVE' %}selected{% endif %}>{% translate "Active" %}</option>
+            <option value="INACTIVE" {% if status_filter == 'INACTIVE' %}selected{% endif %}>{% translate "Inactive" %}</option>
+            <option value="UNDER_CONSTRUCTION" {% if status_filter == 'UNDER_CONSTRUCTION' %}selected{% endif %}>{% translate "Under construction" %}</option>
+          </select>
+
+          <select name="city"
+                  class="filter-select"
+                  id="cityFilter">
+            <option value="">{% translate "City" %}</option>
+            {% for city in cities %}
+              <option value="{{ city }}" {% if city_filter == city %}selected{% endif %}>{{ city }}</option>
+            {% endfor %}
+          </select>
+
+          <select name="sort"
+                  class="filter-select"
+                  id="sortFilter">
+            <option value="">{% translate "Sort by" %}</option>
+            <option value="name" {% if sort == 'name' %}selected{% endif %}>{% translate "Name" %}</option>
+            <option value="rent-high" {% if sort == 'rent-high' %}selected{% endif %}>{% translate "Rent: High to low" %}</option>
+            <option value="rent-low" {% if sort == 'rent-low' %}selected{% endif %}>{% translate "Rent: Low to high" %}</option>
+          </select>
+        </form>
+
+        <!-- PROPERTY GRID -->
+        <div class="property-grid" id="propertyGrid">
+          {% for property in properties %}
+            <article class="property-card"
+                     data-name="{{ property.name|lower }}"
+                     data-city="{{ property.city|lower }}"
+                     data-status="{{ property.status|lower }}"
+                     data-rent="{{ property.average_rent|floatformat:0 }}">
+              <div class="property-image-wrapper">
+                {% if property.images.first %}
+                  <img class="property-image"
+                       src="{{ property.images.first.image.url }}"
+                       alt="{{ property.name }}" />
+                {% else %}
+                  <div class="property-image">
+                    <i class="ti ti-building"></i>
+                  </div>
+                {% endif %}
+                <span class="status {{ property.status|lower }}">
+                  {{ property.get_status_display }}
+                </span>
+              </div>
+
+              <div class="property-body">
+                <div class="property-title-row">
+                  <h2 class="property-name">{{ property.name }}</h2>
+                  <a href="{% url 'properties:property-edit' pk=property.pk %}" class="more-btn" aria-label="{% translate 'More options' %}">
+                    <i class="ti ti-dots"></i>
+                  </a>
+                </div>
+
+                <div class="location">
+                  <i class="ti ti-map-pin"></i>
+                  <span>{{ property.address }} · {{ property.city }}</span>
+                </div>
+
+                <div class="property-stats">
+                  <div class="stat">
+                    <i class="ti ti-building-2"></i>
+                    <span class="stat-text">{{ property.building_count }} {% translate "buildings" %}</span>
+                  </div>
+                  <div class="stat">
+                    <i class="ti ti-home"></i>
+                    <span class="stat-text">{{ property.unit_count }} {% translate "units" %}</span>
+                  </div>
+                  <div class="stat">
+                    <i class="ti ti-user"></i>
+                    <span class="stat-text">{{ property.occupied_units }} {% translate "occupied" %}</span>
+                  </div>
+                </div>
+
+                <div class="property-footer">
+                  <div>
+                    <div class="rent-label">{% translate "Monthly rent (avg.)" %}</div>
+                    <div class="rent-value">{{ property.average_rent|floatformat:0 }} FCFA</div>
+                  </div>
+                  <a href="{% url 'properties:property-detail' pk=property.pk %}" class="details-link">
+                    {% translate "View details" %}
+                    <i class="ti ti-arrow-right"></i>
+                  </a>
+                </div>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div class="empty-state" id="emptyState">
+          <i class="ti ti-building-2"></i>
+          <h3>{% translate "No properties found" %}</h3>
+          <p>{% translate "Try changing your search or filters." %}</p>
+        </div>
+
+        <!-- PAGINATION -->
+        {% if page_obj.has_other_pages %}
+          <div class="pagination">
+            {% if page_obj.has_previous %}
+              <a href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if city_filter %}&city={{ city_filter }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}" class="pagination-btn">{% translate "Previous" %}</a>
+            {% endif %}
+            <span class="pagination-info">{% translate "Page" %} {{ page_obj.number }} {% translate "of" %} {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if city_filter %}&city={{ city_filter }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}" class="pagination-btn">{% translate "Next" %}</a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </main>
+  </div>
+{% endblock body %}
+
+{% block inline_javascript %}
+  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.querySelector('.filters');
+      const searchInput = document.getElementById('propertySearch');
+      const emptyState = document.getElementById('emptyState');
+      const grid = document.getElementById('propertyGrid');
+      const cards = grid ? grid.querySelectorAll('.property-card') : [];
+
+      function filterCards() {
+        const search = (searchInput ? searchInput.value.toLowerCase().trim() : '');
+        const status = (document.getElementById('statusFilter') ? document.getElementById('statusFilter').value : '').toLowerCase();
+        const city = (document.getElementById('cityFilter') ? document.getElementById('cityFilter').value : '').toLowerCase();
+
+        let visibleCount = 0;
+
+        cards.forEach(function (card) {
+          const name = (card.dataset.name || '').toLowerCase();
+          const cardStatus = (card.dataset.status || '').toLowerCase();
+          const cardCity = (card.dataset.city || '').toLowerCase();
+
+          const matchesSearch = !search || name.includes(search);
+          const matchesStatus = !status || cardStatus === status;
+          const matchesCity = !city || cardCity === city;
+
+          const visible = matchesSearch && matchesStatus && matchesCity;
+          card.style.display = visible ? '' : 'none';
+
+          if (visible) {
+            visibleCount++;
+          }
+        });
+
+        if (emptyState) {
+          emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener('input', filterCards);
+      }
+
+      const statusFilter = document.getElementById('statusFilter');
+      if (statusFilter) {
+        statusFilter.addEventListener('change', function () {
+          if (form) form.submit();
+        });
+      }
+
+      const cityFilter = document.getElementById('cityFilter');
+      if (cityFilter) {
+        cityFilter.addEventListener('change', function () {
+          if (form) form.submit();
+        });
+      }
+
+      const sortFilter = document.getElementById('sortFilter');
+      if (sortFilter) {
+        sortFilter.addEventListener('change', function () {
+          if (form) form.submit();
+        });
+      }
+    });
+  </script>
+{% endblock %}
