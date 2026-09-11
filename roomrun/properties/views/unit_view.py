@@ -5,9 +5,9 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 from django.views import View
-from properties.forms.unit import UnitForm
+from properties.forms import UnitForm
 from properties.mixins import LandlordUnitAccessMixin
-from properties.services.unit import UnitService
+from properties.services import UnitService
 
 
 class UnitListView(LandlordUnitAccessMixin, View):

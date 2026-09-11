@@ -11,8 +11,8 @@ from django.views import View
 from properties.forms import PropertyForm
 from properties.mixins import LandlordPropertyMixin
 from properties.mixins import LandlordRequiredMixin
-from properties.models.property import Property
-from properties.services.property import PropertyService
+from properties.models import Property
+from properties.services import PropertyService
 
 
 class PropertyListView(LandlordRequiredMixin, View):
