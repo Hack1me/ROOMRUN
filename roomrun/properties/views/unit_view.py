@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views import View
 from properties.forms import UnitForm
 from properties.mixins import LandlordUnitAccessMixin
+from properties.mixins import ServiceFormMixin
 from properties.services import UnitService
 
 
@@ -35,18 +36,16 @@ class UnitListView(LandlordUnitAccessMixin, View):
         )
 
 
-class UnitCreateView(LandlordUnitAccessMixin, View):
+class UnitCreateView(LandlordUnitAccessMixin, ServiceFormMixin, View):
     """Create a new unit inside a building."""
 
     template_name = "dashboard/properties/units/form.html"
 
     def get(self, request, property_id, building_id):
         building = self.get_building(property_id, building_id)
-        form = UnitForm()
-        return render(
-            request,
-            self.template_name,
-            {"building": building, "form": form},
+        return self.render_form(
+            form=UnitForm(),
+            context={"building": building},
         )
 
     def post(self, request, property_id, building_id):
@@ -54,26 +53,22 @@ class UnitCreateView(LandlordUnitAccessMixin, View):
         form = UnitForm(request.POST)
 
         if not form.is_valid():
-            return render(
-                request,
-                self.template_name,
-                {"building": building, "form": form},
+            return self.render_form(
+                form=form,
+                context={"building": building},
             )
 
         try:
             UnitService.create(building=building, data=form.cleaned_data)
         except ValidationError as e:
-            for field, errors in e.message_dict.items():
-                for error in errors:
-                    form.add_error(field, error)
-            return render(
-                request,
-                self.template_name,
-                {"building": building, "form": form},
+            self.handle_service_errors(form, e)
+            return self.render_form(
+                form=form,
+                context={"building": building},
             )
 
-        messages.success(request, _("Unit created successfully."))
-        return redirect(
+        return self.service_success(
+            _("Unit created successfully."),
             "properties:unit-list",
             property_id=property_id,
             building_id=building_id,
@@ -90,18 +85,16 @@ class UnitDetailView(LandlordUnitAccessMixin, View):
         return render(request, self.template_name, {"unit": unit})
 
 
-class UnitUpdateView(LandlordUnitAccessMixin, View):
+class UnitUpdateView(LandlordUnitAccessMixin, ServiceFormMixin, View):
     """Update an existing unit."""
 
     template_name = "dashboard/properties/units/form.html"
 
     def get(self, request, pk):
         unit = self.get_unit(pk)
-        form = UnitForm(instance=unit)
-        return render(
-            request,
-            self.template_name,
-            {"unit": unit, "building": unit.building, "form": form},
+        return self.render_form(
+            form=UnitForm(instance=unit),
+            context={"unit": unit, "building": unit.building},
         )
 
     def post(self, request, pk):
@@ -109,26 +102,25 @@ class UnitUpdateView(LandlordUnitAccessMixin, View):
         form = UnitForm(request.POST, instance=unit)
 
         if not form.is_valid():
-            return render(
-                request,
-                self.template_name,
-                {"unit": unit, "building": unit.building, "form": form},
+            return self.render_form(
+                form=form,
+                context={"unit": unit, "building": unit.building},
             )
 
         try:
             UnitService.update(unit=unit, data=form.cleaned_data)
         except ValidationError as e:
-            for field, errors in e.message_dict.items():
-                for error in errors:
-                    form.add_error(field, error)
-            return render(
-                request,
-                self.template_name,
-                {"unit": unit, "building": unit.building, "form": form},
+            self.handle_service_errors(form, e)
+            return self.render_form(
+                form=form,
+                context={"unit": unit, "building": unit.building},
             )
 
-        messages.success(request, _("Unit updated successfully."))
-        return redirect("properties:unit-detail", pk=unit.id)
+        return self.service_success(
+            _("Unit updated successfully."),
+            "properties:unit-detail",
+            pk=unit.id,
+        )
 
 
 class UnitDeleteView(LandlordUnitAccessMixin, View):

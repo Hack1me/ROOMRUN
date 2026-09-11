@@ -12,6 +12,56 @@ if TYPE_CHECKING:
     from users.models import Landlord
 
 
+class BaseService:
+    """
+    Base class for property services.
+
+    Provides shared helpers for:
+    - Applying a whitelist of fields from ``data`` onto an existing model
+      instance without overwriting unchanged fields.
+    - Saving only the fields that actually changed, including ``updated_at``
+      when the model tracks it.
+    """
+
+    ALLOWED_UPDATE_FIELDS: set[str] = set()
+
+    @classmethod
+    def _apply_changes(cls, obj, data: dict):
+        """
+        Apply only whitelisted fields from ``data`` onto ``obj`` and save.
+
+        Fields not listed in ``ALLOWED_UPDATE_FIELDS`` or not present on
+        ``obj`` are ignored. Only fields whose value actually changed are
+        included in the ``update_fields`` save.
+
+        Args:
+            obj: The model instance to update in place.
+            data: A dict of candidate field values.
+
+        Returns:
+            The updated model instance.
+        """
+        changed_fields = []
+        allowed = cls.ALLOWED_UPDATE_FIELDS
+
+        for field, value in data.items():
+            if field not in allowed:
+                continue
+            if not hasattr(obj, field):
+                continue
+            if getattr(obj, field) != value:
+                setattr(obj, field, value)
+                changed_fields.append(field)
+
+        if changed_fields:
+            obj.full_clean()
+            if hasattr(obj, "updated_at"):
+                changed_fields.append("updated_at")
+            obj.save(update_fields=changed_fields)
+
+        return obj
+
+
 class PropertyService:
     """
     Service responsible for managing property instances.
@@ -65,29 +115,7 @@ class PropertyService:
         Returns:
             The updated Property instance.
         """
-        changed_fields = []
-        allowed = PropertyService.ALLOWED_UPDATE_FIELDS
-
-        for field, value in data.items():
-            if field not in allowed:
-                continue
-
-            if not hasattr(property_obj, field):
-                continue
-
-            if getattr(property_obj, field) != value:
-                setattr(property_obj, field, value)
-                changed_fields.append(field)
-
-        if changed_fields:
-            property_obj.full_clean()
-
-            # Include `updated_at` if it exists (from BaseModel)
-            if hasattr(property_obj, "updated_at"):
-                changed_fields.append("updated_at")
-
-            property_obj.save(update_fields=changed_fields)
-
+        BaseService._apply_changes(property_obj, data)
         return property_obj
 
     @staticmethod
@@ -150,7 +178,6 @@ class PropertyImageService:
         If `is_primary` becomes True, other primary images are unset.
         """
         allowed = PropertyImageService.ALLOWED_UPDATE_FIELDS
-        changed_fields = []
 
         # Unset other primary images if this one becomes primary
         if data.get("is_primary"):
@@ -159,23 +186,7 @@ class PropertyImageService:
                 is_primary=True,
             ).exclude(pk=image.pk).update(is_primary=False)
 
-        for field, value in data.items():
-            if field not in allowed:
-                continue
-            if not hasattr(image, field):
-                continue
-            if getattr(image, field) != value:
-                setattr(image, field, value)
-                changed_fields.append(field)
-
-        if changed_fields:
-            image.full_clean()
-
-            if hasattr(image, "updated_at"):
-                changed_fields.append("updated_at")
-
-            image.save(update_fields=changed_fields)
-
+        BaseService._apply_changes(image, data)
         return image
 
     @staticmethod
@@ -272,26 +283,7 @@ class BuildingService:
         Returns:
             The updated Building instance.
         """
-        allowed = BuildingService.ALLOWED_UPDATE_FIELDS
-        changed_fields = []
-
-        for field, value in data.items():
-            if field not in allowed:
-                continue
-            if not hasattr(building, field):
-                continue
-            if getattr(building, field) != value:
-                setattr(building, field, value)
-                changed_fields.append(field)
-
-        if changed_fields:
-            building.full_clean()
-
-            if hasattr(building, "updated_at"):
-                changed_fields.append("updated_at")
-
-            building.save(update_fields=changed_fields)
-
+        BaseService._apply_changes(building, data)
         return building
 
     @staticmethod
@@ -361,26 +353,7 @@ class UnitService:
         Returns:
             The updated Unit instance.
         """
-        allowed = UnitService.ALLOWED_UPDATE_FIELDS
-        changed_fields = []
-
-        for field, value in data.items():
-            if field not in allowed:
-                continue
-            if not hasattr(unit, field):
-                continue
-            if getattr(unit, field) != value:
-                setattr(unit, field, value)
-                changed_fields.append(field)
-
-        if changed_fields:
-            unit.full_clean()
-
-            if hasattr(unit, "updated_at"):
-                changed_fields.append("updated_at")
-
-            unit.save(update_fields=changed_fields)
-
+        BaseService._apply_changes(unit, data)
         return unit
 
     @staticmethod

@@ -156,6 +156,42 @@ class LandlordBuildingAccessMixin(LandlordRequiredMixin):
         )
 
 
+class ServiceFormMixin:
+    """
+    Mixin to factorize common form + service interaction patterns.
+
+    Provides helpers for:
+    - Mapping service ValidationError back onto form fields.
+    - Rendering the form template with the proper base context.
+    - Sending a success message and redirecting.
+    - Surfacing form errors as global messages (for POST-only views that
+      redirect instead of re-rendering).
+    """
+
+    def handle_service_errors(self, form, exception: ValidationError):
+        """Add each error from a service ValidationError back onto the form."""
+        for field, errors in exception.message_dict.items():
+            for error in errors:
+                form.add_error(field, error)
+
+    def add_form_errors_as_messages(self, form):
+        """Surface each form error as a global message (for redirect flows)."""
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(self.request, f"{field}: {error}")
+
+    def render_form(self, form, context: dict):
+        """Render the view's template with the given form and context."""
+        base_context = {"form": form}
+        base_context.update(context)
+        return render(request=self.request, template_name=self.template_name, context=base_context)
+
+    def service_success(self, message, url_name, **kwargs):
+        """Flash a success message and redirect to the given named URL."""
+        messages.success(self.request, message)
+        return redirect(url_name, **kwargs)
+
+
 class LandlordUnitAccessMixin(LandlordRequiredMixin):
     """
     Provides helpers to fetch buildings and units scoped to the

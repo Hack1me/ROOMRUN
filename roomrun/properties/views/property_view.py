@@ -11,6 +11,7 @@ from django.views import View
 from properties.forms import PropertyForm
 from properties.mixins import LandlordPropertyMixin
 from properties.mixins import LandlordRequiredMixin
+from properties.mixins import ServiceFormMixin
 from properties.models import Property
 from properties.services import PropertyService
 
@@ -41,32 +42,24 @@ class PropertyListView(LandlordRequiredMixin, View):
         )
 
 
-class PropertyCreateView(LandlordRequiredMixin, View):
+class PropertyCreateView(LandlordRequiredMixin, ServiceFormMixin, View):
     """Create a new property for the authenticated landlord."""
 
     template_name = "dashboard/properties/form.html"
 
     def get(self, request):
-        return render(
-            request,
-            self.template_name,
-            {
-                "form": PropertyForm(),
-                "page_title": _("Create property"),
-            },
+        return self.render_form(
+            form=PropertyForm(),
+            context={"page_title": _("Create property")},
         )
 
     def post(self, request):
         form = PropertyForm(request.POST, request.FILES)
 
         if not form.is_valid():
-            return render(
-                request,
-                self.template_name,
-                {
-                    "form": form,
-                    "page_title": _("Create property"),
-                },
+            return self.render_form(
+                form=form,
+                context={"page_title": _("Create property")},
             )
 
         try:
@@ -75,17 +68,16 @@ class PropertyCreateView(LandlordRequiredMixin, View):
                 data=form.cleaned_data,
             )
         except ValidationError as e:
-            for field, errors in e.message_dict.items():
-                for error in errors:
-                    form.add_error(field, error)
-            return render(
-                request,
-                self.template_name,
-                {"form": form, "page_title": _("Create property")},
+            self.handle_service_errors(form, e)
+            return self.render_form(
+                form=form,
+                context={"page_title": _("Create property")},
             )
 
-        messages.success(request, _("Property created successfully."))
-        return redirect("properties:property-list")
+        return self.service_success(
+            _("Property created successfully."),
+            "properties:property-list",
+        )
 
 
 class PropertyDetailView(LandlordPropertyMixin, View):
@@ -107,20 +99,16 @@ class PropertyDetailView(LandlordPropertyMixin, View):
         )
 
 
-class PropertyUpdateView(LandlordPropertyMixin, View):
+class PropertyUpdateView(LandlordPropertyMixin, ServiceFormMixin, View):
     """Update an existing property owned by the authenticated landlord."""
 
     template_name = "dashboard/properties/form.html"
 
     def get(self, request, pk):
         property_obj = self.get_property(pk)
-        form = PropertyForm(instance=property_obj)
-
-        return render(
-            request,
-            self.template_name,
-            {
-                "form": form,
+        return self.render_form(
+            form=PropertyForm(instance=property_obj),
+            context={
                 "property": property_obj,
                 "page_title": _("Edit property"),
             },
@@ -136,11 +124,9 @@ class PropertyUpdateView(LandlordPropertyMixin, View):
         )
 
         if not form.is_valid():
-            return render(
-                request,
-                self.template_name,
-                {
-                    "form": form,
+            return self.render_form(
+                form=form,
+                context={
                     "property": property_obj,
                     "page_title": _("Edit property"),
                 },
@@ -152,21 +138,20 @@ class PropertyUpdateView(LandlordPropertyMixin, View):
                 data=form.cleaned_data,
             )
         except ValidationError as e:
-            for field, errors in e.message_dict.items():
-                for error in errors:
-                    form.add_error(field, error)
-            return render(
-                request,
-                self.template_name,
-                {
-                    "form": form,
+            self.handle_service_errors(form, e)
+            return self.render_form(
+                form=form,
+                context={
                     "property": property_obj,
                     "page_title": _("Edit property"),
                 },
             )
 
-        messages.success(request, _("Property updated successfully."))
-        return redirect("properties:property-detail", pk=property_obj.pk)
+        return self.service_success(
+            _("Property updated successfully."),
+            "properties:property-detail",
+            pk=property_obj.pk,
+        )
 
 
 class PropertyDeleteView(LandlordPropertyMixin, View):

@@ -7,10 +7,11 @@ from django.utils.translation import gettext_lazy as _
 from django.views import View
 from properties.forms import PropertyImageForm
 from properties.mixins import PropertyImageAccessMixin
+from properties.mixins import ServiceFormMixin
 from properties.services import PropertyImageService
 
 
-class PropertyImageCreateView(PropertyImageAccessMixin, View):
+class PropertyImageCreateView(PropertyImageAccessMixin, ServiceFormMixin, View):
     """
     Create a new image for a property owned by the authenticated landlord.
 
@@ -25,41 +26,34 @@ class PropertyImageCreateView(PropertyImageAccessMixin, View):
             request.FILES,
         )
 
-        # --- Form validation ---
         if not form.is_valid():
-            # Surface each field error as a message for better UX
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field}: {error}")
-
+            self.add_form_errors_as_messages(form)
             return redirect(
                 "properties:property-detail",
                 pk=property_obj.pk,
             )
 
-        # --- Service call with validation error handling ---
         try:
             PropertyImageService.create(
                 property_obj=property_obj,
                 data=form.cleaned_data,
             )
         except ValidationError as e:
-            for field, errors in e.message_dict.items():
-                for error in errors:
-                    messages.error(request, f"{field}: {error}")
+            self.handle_service_errors(form, e)
+            self.add_form_errors_as_messages(form)
             return redirect(
                 "properties:property-detail",
                 pk=property_obj.pk,
             )
 
-        messages.success(request, _("Image added successfully."))
-        return redirect(
+        return self.service_success(
+            _("Image added successfully."),
             "properties:property-detail",
             pk=property_obj.pk,
         )
 
-# Set Primary Image
-class PropertyImagePrimaryView(PropertyImageAccessMixin, View):
+
+class PropertyImagePrimaryView(PropertyImageAccessMixin, ServiceFormMixin, View):
     """
     Mark a property image as the primary image.
 
@@ -81,16 +75,14 @@ class PropertyImagePrimaryView(PropertyImageAccessMixin, View):
                 pk=image.property.pk,
             )
 
-        messages.success(
-            request,
+        return self.service_success(
             _("Primary image updated successfully."),
-        )
-        return redirect(
             "properties:property-detail",
             pk=image.property.pk,
         )
 
-class PropertyImageDeleteView(PropertyImageAccessMixin, View):
+
+class PropertyImageDeleteView(PropertyImageAccessMixin, ServiceFormMixin, View):
     """
     Delete a property image.
 
@@ -122,16 +114,14 @@ class PropertyImageDeleteView(PropertyImageAccessMixin, View):
                 pk=property_obj.pk,
             )
 
-        messages.success(
-            request,
+        return self.service_success(
             _("Image deleted successfully."),
-        )
-        return redirect(
             "properties:property-detail",
             pk=property_obj.pk,
         )
 
-class PropertyImageUpdateView(PropertyImageAccessMixin, View):
+
+class PropertyImageUpdateView(PropertyImageAccessMixin, ServiceFormMixin, View):
     """
     Update an existing property image.
 
@@ -156,24 +146,22 @@ class PropertyImageUpdateView(PropertyImageAccessMixin, View):
             instance=image,
         )
 
-        # --- Form validation ---
         if not form.is_valid():
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field}: {error}")
+            self.add_form_errors_as_messages(form)
             return redirect(redirect_url, pk=property_obj.pk)
 
-        # --- Service call with validation handling ---
         try:
             PropertyImageService.update(
                 image=image,
                 data=form.cleaned_data,
             )
         except ValidationError as e:
-            for field, errors in e.message_dict.items():
-                for error in errors:
-                    messages.error(request, f"{field}: {error}")
+            self.handle_service_errors(form, e)
+            self.add_form_errors_as_messages(form)
             return redirect(redirect_url, pk=property_obj.pk)
 
-        messages.success(request, _("Image updated successfully."))
-        return redirect(redirect_url, pk=property_obj.pk)
+        return self.service_success(
+            _("Image updated successfully."),
+            redirect_url,
+            pk=property_obj.pk,
+        )
