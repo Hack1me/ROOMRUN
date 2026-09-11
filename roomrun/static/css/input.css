@@ -1391,4 +1391,184 @@
     .page-header { @apply flex-col; }
     .add-property { @apply w-full justify-center; }
   }
+
+  /* Property form page */
+  .back-link {
+    @apply inline-flex items-center gap-2 mb-4 text-xs text-secondary no-underline hover:text-primary;
+  }
+  .back-link i { @apply text-sm; }
+  .page-header { @apply mb-6; }
+  .page-title {
+    @apply text-[27px] font-semibold tracking-tight text-primary;
+  }
+  .page-description {
+    @apply mt-1 text-[13px] text-text-secondary;
+  }
+
+  .stepper {
+    @apply flex items-center mb-8 w-full;
+  }
+  .step {
+    @apply flex items-center flex-0;
+  }
+  .step-number {
+    @apply w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold border border-line-strong bg-bg text-muted;
+  }
+  .step.active .step-number {
+    @apply bg-primary border-primary text-white;
+  }
+  .step-label {
+    @apply ml-3 text-xs font-medium text-muted;
+  }
+  .step.active .step-label {
+    @apply text-primary font-semibold;
+  }
+  .step-line {
+    @apply flex-1 h-px bg-line mx-4;
+  }
+
+  .form-layout {
+    @apply grid grid-cols-[1fr_353px] gap-5 items-stretch;
+  }
+  .card {
+    @apply overflow-hidden rounded-xl border border-border bg-white shadow-sm;
+  }
+  .form-card {
+    @apply p-5;
+  }
+  .card-heading {
+    @apply flex items-start gap-3 mb-7;
+  }
+  .card-heading-icon {
+    @apply w-9 h-9 rounded-lg bg-accent-bg text-primary flex items-center justify-center shrink-0;
+  }
+  .card-heading-icon i { @apply text-lg; }
+  .card-heading h2 {
+    @apply text-base font-semibold text-primary mb-1;
+  }
+  .card-heading p {
+    @apply text-[11px] text-text-secondary;
+  }
+
+  .form-grid {
+    @apply grid grid-cols-2 gap-5;
+  }
+  .form-group {
+    @apply min-w-0;
+  }
+  .form-group.full {
+    @apply col-span-2;
+  }
+  .form-label {
+    @apply block mb-2 text-[11px] font-semibold text-primary;
+  }
+  .required {
+    @apply text-danger;
+  }
+  .form-input,
+  .form-select,
+  .form-textarea {
+    @apply w-full rounded-lg border border-line bg-white text-text outline-none transition-colors duration-150;
+  }
+  .form-input,
+  .form-select {
+    @apply h-11 px-3 text-xs;
+  }
+  .form-input::placeholder {
+    @apply text-muted;
+  }
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    @apply border-primary-hover shadow-[0_0_0_3px_rgba(30,58,95,0.07)];
+  }
+  .form-select {
+    @apply appearance-none pr-10 text-text-secondary;
+  }
+  .select-arrow {
+    @apply absolute right-3 top-1/2 -translate-y-1/2 w-4 text-muted pointer-events-none;
+  }
+  .form-textarea {
+    @apply h-[106px] resize-y p-3 text-xs leading-relaxed;
+  }
+  .form-textarea::placeholder {
+    @apply text-muted;
+  }
+  .textarea-wrapper {
+    @apply relative;
+  }
+  .character-count {
+    @apply absolute right-3 bottom-2 text-[9px] text-muted;
+  }
+  .form-error {
+    @apply mt-1 text-[11px] text-danger;
+  }
+
+  .country-wrapper {
+    @apply relative;
+  }
+  .country-select {
+    @apply pl-11;
+  }
+  .country-flag {
+    @apply absolute left-3 top-1/2 -translate-y-1/2 w-[22px] h-[15px] rounded-sm overflow-hidden shadow-[0_0_0_1px_rgba(0,0,0,0.08)] flex;
+  }
+  .flag-green { @apply w-1/3 bg-[#007a5e]; }
+  .flag-red {
+    @apply w-1/3 bg-[#ce1126] relative;
+  }
+  .flag-yellow { @apply w-1/3 bg-[#fcd116]; }
+  .flag-star {
+    @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[8px] text-[#fcd116];
+  }
+
+  .info-card {
+    @apply p-9 flex flex-col;
+  }
+  .info-image {
+    @apply w-full h-[165px] object-cover rounded-lg mb-5 bg-accent-bg;
+  }
+  .info-title {
+    @apply text-base font-semibold text-primary mb-2;
+  }
+  .info-description {
+    @apply text-xs text-text-secondary leading-relaxed mb-6;
+  }
+  .feature-list {
+    @apply flex flex-col gap-4;
+  }
+  .feature {
+    @apply flex items-center gap-3 text-[11px] text-secondary;
+  }
+  .feature-check {
+    @apply w-4 h-4 rounded-full bg-success text-white flex items-center justify-center shrink-0;
+  }
+  .feature-check i { @apply text-[10px]; }
+
+  .actions {
+    @apply mt-8 flex items-center justify-between gap-4;
+  }
+  .btn {
+    @apply h-11 px-4 rounded-lg inline-flex items-center justify-center gap-2 text-xs font-semibold transition-colors duration-150;
+  }
+  .btn i { @apply text-sm; }
+  .btn-secondary {
+    @apply bg-white border border-line text-text-secondary hover:bg-bg;
+  }
+  .btn-primary {
+    @apply bg-secondary border border-secondary text-white hover:bg-secondary-hover hover:-translate-y-px;
+  }
+
+  @media (max-width: 1100px) {
+    .form-layout { @apply grid-cols-1; }
+    .info-card { @apply hidden; }
+  }
+  @media (max-width: 800px) {
+    .form-grid { @apply grid-cols-1; }
+    .form-group.full { @apply col-span-2; }
+  }
+  @media (max-width: 600px) {
+    .actions { @apply flex-col-reverse; }
+    .btn { @apply w-full; }
+  }
 }
