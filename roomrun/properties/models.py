@@ -1,13 +1,15 @@
 import os
 
+from cities_light.models import City
+from cities_light.models import Region
 from core.models import BaseModel
 from core.validators import validate_image_extension
 from core.validators import validate_image_size
 from django.db import models
 from django.urls import reverse as safe_reverse
 from django.utils.translation import gettext_lazy as _
-from django_countries.fields import CountryField
 from djmoney.models.fields import MoneyField
+from smart_selects.db_fields import ChainedForeignKey
 from users.models import Landlord
 from utils.enums import PropertyStatus
 from utils.enums import PropertyType
@@ -81,18 +83,39 @@ class Property(BaseModel):
         help_text=_("Street address of the property (e.g., '123 Main St')."),
     )
 
-    city = models.CharField(
-        max_length=100,
+    city = ChainedForeignKey(
+        City,
+        chained_field="region",
+        chained_model_field="region",
+        show_all=False,
+        auto_choose=True,
+        sort=True,
+        null=True,
+        blank=True,
         verbose_name=_("City"),
         help_text=_("City where the property is located."),
     )
 
-    country = CountryField(
-        verbose_name=_("Country"),
+    country = models.ForeignKey(
+        "cities_light.Country",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         help_text=_("Country where the property is located."),
-        # Uses `django-countries`; stores a two-letter country code (e.g., 'FR', 'US').
+        verbose_name=_("Country"),
     )
-
+    region = ChainedForeignKey(
+        Region,
+        chained_field="country",
+        chained_model_field="country",
+        show_all=False,
+        auto_choose=True,
+        sort=True,
+        null=True,
+        blank=True,
+        help_text=_("Region where the property is located."),
+        verbose_name=_("Region"),
+    )
     status = models.CharField(
         max_length=30,
         choices=PropertyStatus.choices,
