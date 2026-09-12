@@ -6,7 +6,6 @@ from properties.models import Building
 from properties.models import Property
 from properties.models import PropertyImage
 from properties.models import Unit
-from utils.enums import PropertyType
 
 
 class PropertyForm(forms.ModelForm):

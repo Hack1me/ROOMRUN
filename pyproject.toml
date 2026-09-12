@@ -40,6 +40,8 @@ dependencies = [
   "django-ratelimit>=4.1.0",
   "pre-commit>=4.6.2",
   "campay>=1.1.0",
+  "django-cities-light>=3.11",
+  "django-smart-selects>=1.7.2",
 ]
 
 [dependency-groups]

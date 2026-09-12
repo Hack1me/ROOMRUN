@@ -94,6 +94,8 @@ THIRD_PARTY_APPS = [
     "django_countries",
     "phonenumber_field",
     "djmoney",
+    "cities_light",
+    "smart_selects",
 ]
 
 LOCAL_APPS = [
