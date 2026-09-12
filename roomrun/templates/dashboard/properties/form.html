@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load i18n static %}
+{% load i18n static country_extras %}
 
 {% block title %}{% translate "Add Property" %} — ROOMRUN{% endblock %}
 {% block extra_css %}
@@ -216,22 +216,40 @@
                 </div>
 
                 <div class="form-group">
+                  <label class="form-label" for="{{ form.property_type.id_for_label }}">
+                    {% translate "Property type" %} <span class="required">*</span>
+                  </label>
+                  <div class="input-wrapper">
+                    <select id="{{ form.property_type.id_for_label }}"
+                            name="{{ form.property_type.name }}"
+                            class="form-select"
+                            required>
+                      <option value="">{% translate "Select property type" %}</option>
+                      {% for value, label in form.property_type.field.choices %}
+                        <option value="{{ value }}" {% if form.property_type.value == value %}selected{% endif %}>
+                          {{ label }}
+                        </option>
+                      {% endfor %}
+                    </select>
+                    <i class="ti ti-chevron-down select-arrow"></i>
+                  </div>
+                  {% if form.property_type.errors %}
+                    <div class="form-error">{{ form.property_type.errors }}</div>
+                  {% endif %}
+                </div>
+
+                <div class="form-group">
                   <label class="form-label" for="{{ form.country.id_for_label }}">
                     {% translate "Country" %} <span class="required">*</span>
                   </label>
                   <div class="country-wrapper">
-                    <div class="country-flag">
-                      <span class="flag-green"></span>
-                      <span class="flag-red"><span class="flag-star">★</span></span>
-                      <span class="flag-yellow"></span>
-                    </div>
                     <select id="{{ form.country.id_for_label }}"
                             name="{{ form.country.name }}"
                             class="form-select country-select"
                             required>
                       {% for value, label in form.country.field.choices %}
                         <option value="{{ value }}" {% if form.country.value == value %}selected{% endif %}>
-                          {{ label }}
+                          {{ value|country_flag }} {{ label }}
                         </option>
                       {% endfor %}
                     </select>

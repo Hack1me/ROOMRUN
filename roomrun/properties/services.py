@@ -71,6 +71,7 @@ class PropertyService:
     # Fields that can be updated via the service
     ALLOWED_UPDATE_FIELDS = {
         "name",
+        "property_type",
         "description",
         "address",
         "city",

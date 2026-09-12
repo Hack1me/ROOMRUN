@@ -10,6 +10,7 @@ from django_countries.fields import CountryField
 from djmoney.models.fields import MoneyField
 from users.models import Landlord
 from utils.enums import PropertyStatus
+from utils.enums import PropertyType
 from utils.enums import UnitStatus
 from utils.enums import UnitType
 
@@ -56,6 +57,14 @@ class Property(BaseModel):
         max_length=150,
         verbose_name=_("Property name"),
         help_text=_("The official name of the property (e.g., 'Sunset Tower')."),
+    )
+
+    property_type = models.CharField(
+        max_length=30,
+        choices=PropertyType.choices,
+        default=PropertyType.RESIDENTIAL,
+        verbose_name=_("Property type"),
+        help_text=_("The type of the property (e.g., Residential, Commercial)."),
     )
 
     description = models.TextField(

@@ -26,6 +26,17 @@ class GuardShift(models.TextChoices):
     ROTATING = "ROTATING", _("Rotating")
 
 
+class PropertyType(models.TextChoices):
+    """
+    Defines the possible types of a property.
+    Used as choices for the `property_type` field.
+    """
+
+    RESIDENTIAL = "RESIDENTIAL", _("Residential")
+    COMMERCIAL = "COMMERCIAL", _("Commercial")
+    MIXED = "MIXED", _("Mixed use")
+
+
 class PropertyStatus(models.TextChoices):
     """
     Defines the possible operational statuses for a property.

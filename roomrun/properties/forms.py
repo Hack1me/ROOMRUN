@@ -1,5 +1,3 @@
-# properties/forms/property.py
-
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django_countries.widgets import CountrySelectWidget
@@ -8,6 +6,7 @@ from properties.models import Building
 from properties.models import Property
 from properties.models import PropertyImage
 from properties.models import Unit
+from utils.enums import PropertyType
 
 
 class PropertyForm(forms.ModelForm):
@@ -20,6 +19,7 @@ class PropertyForm(forms.ModelForm):
         model = Property
         fields = (
             "name",
+            "property_type",
             "description",
             "address",
             "city",
@@ -32,6 +32,11 @@ class PropertyForm(forms.ModelForm):
                 attrs={
                     "class": "form-input",
                     "autocomplete": "organization",
+                }
+            ),
+            "property_type": forms.Select(
+                attrs={
+                    "class": "form-select",
                 }
             ),
             "description": forms.Textarea(
@@ -74,6 +79,10 @@ class PropertyForm(forms.ModelForm):
             )
 
         return name
+
+    def clean_property_type(self):
+        """Strip the property type field."""
+        return self.cleaned_data["property_type"].strip()
 
     def clean_city(self):
         """Strip the city field."""
