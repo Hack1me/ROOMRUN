@@ -74,9 +74,14 @@ class PropertyService:
         "property_type",
         "description",
         "address",
-        "city",
         "country",
+        "region",
+        "city",
         "status",
+        "default_currency",
+        "default_monthly_rent",
+        "tenant_management_enabled",
+        "maintenance_management_enabled",
     }
 
     @staticmethod

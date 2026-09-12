@@ -247,9 +247,10 @@
                             name="{{ form.country.name }}"
                             class="form-select country-select"
                             required>
-                      {% for value, label in form.country.field.choices %}
-                        <option value="{{ value }}" {% if form.country.value == value %}selected{% endif %}>
-                          {{ value|country_flag }} {{ label }}
+                      <option value="">{% translate "Select country" %}</option>
+                      {% for country in form.country.field.queryset %}
+                        <option value="{{ country.pk }}" {% if form.country.value == country.pk %}selected{% endif %}>
+                          {{ country.code2|country_flag }} {{ country.name }}
                         </option>
                       {% endfor %}
                     </select>
@@ -261,37 +262,29 @@
                 </div>
 
                 <div class="form-group">
+                  <label class="form-label" for="{{ form.region.id_for_label }}">
+                    {% translate "Region" %} <span class="required">*</span>
+                  </label>
+                  <div class="input-wrapper">
+                    {{ form.region }}
+                    <i class="ti ti-chevron-down select-arrow"></i>
+                  </div>
+                  {% if form.region.errors %}
+                    <div class="form-error">{{ form.region.errors }}</div>
+                  {% endif %}
+                </div>
+
+                <div class="form-group">
                   <label class="form-label" for="{{ form.city.id_for_label }}">
                     {% translate "City" %} <span class="required">*</span>
                   </label>
                   <div class="input-wrapper">
-                    <select id="{{ form.city.id_for_label }}"
-                            name="{{ form.city.name }}"
-                            class="form-select"
-                            required>
-                      <option value="">{% translate "Select city" %}</option>
-                      <option value="yaounde" {% if form.city.value == 'yaounde' %}selected{% endif %}>{% translate "Yaoundé" %}</option>
-                      <option value="douala" {% if form.city.value == 'douala' %}selected{% endif %}>{% translate "Douala" %}</option>
-                      <option value="bafoussam" {% if form.city.value == 'bafoussam' %}selected{% endif %}>{% translate "Bafoussam" %}</option>
-                      <option value="kribi" {% if form.city.value == 'kribi' %}selected{% endif %}>{% translate "Kribi" %}</option>
-                      <option value="limbe" {% if form.city.value == 'limbe' %}selected{% endif %}>{% translate "Limbe" %}</option>
-                    </select>
+                    {{ form.city }}
                     <i class="ti ti-chevron-down select-arrow"></i>
                   </div>
                   {% if form.city.errors %}
                     <div class="form-error">{{ form.city.errors }}</div>
                   {% endif %}
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="district">
-                    {% translate "District / Area" %}
-                  </label>
-                  <input id="district"
-                         name="district"
-                         type="text"
-                         class="form-input"
-                         placeholder="{% translate 'e.g. Bastos, Akwa, Bonanjo' %}" />
                 </div>
 
                 <div class="form-group">
@@ -398,6 +391,9 @@
 
 {% block inline_javascript %}
   <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="{% static 'smart-selects/admin/js/chainedfk.js' %}"></script>
+  <script src="{% static 'smart-selects/admin/js/bindfields.js' %}"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const description = document.getElementById('description');

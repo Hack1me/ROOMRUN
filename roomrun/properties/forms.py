@@ -1,6 +1,5 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from django_countries.widgets import CountrySelectWidget
 from djmoney.forms.fields import MoneyField as MoneyFormField
 from properties.models import Building
 from properties.models import Property
@@ -21,8 +20,9 @@ class PropertyForm(forms.ModelForm):
             "property_type",
             "description",
             "address",
-            "city",
             "country",
+            "region",
+            "city",
             "status",
         )
 
@@ -50,23 +50,29 @@ class PropertyForm(forms.ModelForm):
                     "autocomplete": "street-address",
                 }
             ),
-            "city": forms.TextInput(
+            "country": forms.Select(
                 attrs={
-                    "class": "form-input",
-                    "autocomplete": "address-level2",
-                }
-            ),
-            "country": CountrySelectWidget(
-                attrs={
-                    "class": "form-input",
+                    "class": "form-select country-select",
                 }
             ),
             "status": forms.Select(
                 attrs={
-                    "class": "form-input",
+                    "class": "form-select",
                 }
             ),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field_name in ("country", "region", "city"):
+            field = self.fields.get(field_name)
+            if field is not None:
+                field.required = True
+                if hasattr(field.widget, "attrs"):
+                    field.widget.attrs.setdefault("class", "")
+                    field.widget.attrs["class"] += " form-select"
+                    field.widget.attrs["class"] = field.widget.attrs["class"].strip()
 
     def clean_name(self):
         """Strip and validate the property name."""
@@ -84,8 +90,12 @@ class PropertyForm(forms.ModelForm):
         return self.cleaned_data["property_type"].strip()
 
     def clean_city(self):
-        """Strip the city field."""
-        return self.cleaned_data["city"].strip()
+        """Return the selected city."""
+        return self.cleaned_data.get("city")
+
+    def clean_region(self):
+        """Return the selected region."""
+        return self.cleaned_data.get("region")
 
     def clean_address(self):
         """Strip the address field."""
