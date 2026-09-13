@@ -1,0 +1,17 @@
+{% load i18n %}
+<div class="stepper" aria-label="{% translate 'Property creation progress' %}">
+  <div class="step {% if current_step == 1 %}active{% else %}completed{% endif %}">
+    <div class="step-number">{% if current_step > 1 %}<i class="ti ti-check step-check-icon"></i>{% else %}1{% endif %}</div>
+    <div class="step-label">{% translate "Property information" %}</div>
+  </div>
+  <div class="step-line"></div>
+  <div class="step {% if current_step == 2 %}active{% elif current_step > 2 %}completed{% endif %}">
+    <div class="step-number">{% if current_step > 2 %}<i class="ti ti-check step-check-icon"></i>{% else %}2{% endif %}</div>
+    <div class="step-label">{% translate "Configuration" %}</div>
+  </div>
+  <div class="step-line"></div>
+  <div class="step {% if current_step == 3 %}active{% endif %}">
+    <div class="step-number">3</div>
+    <div class="step-label">{% translate "Images" %}</div>
+  </div>
+</div>

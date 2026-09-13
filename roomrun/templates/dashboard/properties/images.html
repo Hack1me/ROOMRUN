@@ -7,11 +7,11 @@
 {% endblock %}
 {% block header %}{% endblock %}{% block footer %}{% endblock %}
 {% block body %}
-<div class="app landlord-app"><main class="main"><div class="content images-page" data-images-page data-existing-images="{{ images|length }}">
+<div class="app landlord-app">{% include "dashboard/includes/landlord_sidebar.html" %}<main class="main"><div class="content images-page" data-images-page data-existing-images="{{ images|length }}">
   {% include "common/includes/messages.html" %}
   <a href="{% url 'properties:property-configure' pk=property.pk %}" class="back-link"><i class="ti ti-arrow-left"></i> {% translate "Back to configuration" %}</a>
   <div class="page-header"><h1 class="page-title">{% translate "Add property" %}</h1><p class="page-description">{% translate "Create a property and configure its basic information." %}</p></div>
-  <div class="stepper"><div class="step completed"><div class="step-number"><i class="ti ti-check"></i></div><div class="step-label">{% translate "Property information" %}</div></div><div class="step-line"></div><div class="step completed"><div class="step-number"><i class="ti ti-check"></i></div><div class="step-label">{% translate "Configuration" %}</div></div><div class="step-line"></div><div class="step active"><div class="step-number">3</div><div class="step-label">{% translate "Images" %}</div></div></div>
+  {% include "dashboard/includes/property_stepper.html" with current_step=3 %}
   <div class="images-layout"><section class="images-card"><div class="images-heading"><div class="images-heading-icon"><i class="ti ti-photo"></i></div><div><h2>{% translate "Property images" %}</h2><p>{% translate "Add photos to help identify and present the property." %}</p></div></div>
     <form id="imagesForm" method="post" enctype="multipart/form-data">{% csrf_token %}<label class="drop-zone" id="dropZone" for="imageInput"><i class="ti ti-cloud-upload"></i><strong>{% translate "Drag and drop images here" %}</strong><small>{% translate "or" %}</small><span class="choose-button"><i class="ti ti-photo"></i>{% translate "Choose images" %}</span><span class="image-help">{% translate "PNG, JPG or WEBP · Maximum 8 images" %}</span><input id="imageInput" type="file" name="images" multiple accept="image/jpeg,image/png,image/webp"></label></form>
     <div class="selected-title">{% translate "Selected images" %} <span id="imageCount">{{ images|length }}/8</span></div><div class="image-grid" id="imageGrid">{% for image in images %}<div class="image-tile"><img src="{{ image.image.url }}" alt="{{ image.caption }}"></div>{% endfor %}<label class="image-tile add-tile" for="imageInput"><i class="ti ti-plus"></i><span>{% translate "Add more" %}</span></label></div>

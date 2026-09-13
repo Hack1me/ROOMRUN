@@ -16,6 +16,8 @@
 
 {% block body %}
   <div class="app landlord-app">
+    {% include "dashboard/includes/landlord_sidebar.html" %}
+    {% comment %}
     <aside class="sidebar landlord-sidebar overflow-y-auto" id="sidebar">
       <div class="brand">
         <div class="brand-mark"></div>
@@ -117,6 +119,7 @@
         </div>
       </div>
     </aside>
+    {% endcomment %}
 
     <main class="main">
       <header class="topbar">
@@ -170,7 +173,7 @@
       <div class="content configuration-page">
         {% include "common/includes/messages.html" %}
 
-        <a href="{% url 'properties:property-list' %}" class="back-link">
+        <a href="{% url 'properties:property-edit' pk=property.pk %}" class="back-link">
           <i class="ti ti-arrow-left"></i>
           <span>{% translate "Back to property information" %}</span>
         </a>
@@ -182,24 +185,7 @@
           </p>
         </div>
 
-        <div class="stepper">
-          <div class="step completed">
-            <div class="step-number">
-              <i class="ti ti-check" style="width:15px;"></i>
-            </div>
-            <div class="step-label">{% translate "Property information" %}</div>
-          </div>
-          <div class="step-line"></div>
-          <div class="step active">
-            <div class="step-number">2</div>
-            <div class="step-label">{% translate "Configuration" %}</div>
-          </div>
-          <div class="step-line"></div>
-          <div class="step">
-            <div class="step-number">3</div>
-            <div class="step-label">{% translate "Images" %}</div>
-          </div>
-        </div>
+        {% include "dashboard/includes/property_stepper.html" with current_step=2 %}
 
         <div class="content-layout">
           <div class="card configuration-card">
@@ -213,7 +199,7 @@
               </div>
             </div>
 
-            <form id="configurationForm" method="post" novalidate data-configuration-form data-back-url="{% url 'properties:property-detail' pk=property.pk %}">
+            <form id="configurationForm" method="post" novalidate data-configuration-form data-back-url="{% url 'properties:property-edit' pk=property.pk %}">
               {% csrf_token %}
               <input type="hidden" name="action" id="configurationAction" value="continue" />
               <div class="form-grid">

@@ -1412,7 +1412,7 @@
     @apply flex items-center flex-0;
   }
   .step-number {
-    @apply w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold border border-line-strong bg-bg text-muted;
+    @apply w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-xs font-semibold border border-line-strong bg-bg text-muted;
   }
   .step.active .step-number {
     @apply bg-primary border-primary text-white;
@@ -1568,6 +1568,7 @@
   .configuration-page .info-card { @apply p-5; }
   .step.completed .step-number { @apply bg-success border-success text-white; }
   .step.completed .step-label { @apply text-[#56709b]; }
+  .step-check-icon { @apply w-[15px]; }
   .status-options { @apply grid grid-cols-3 gap-3; }
   .status-option { @apply relative; }
   .status-option input { @apply absolute opacity-0 pointer-events-none; }

@@ -17,6 +17,8 @@
 
 {% block body %}
   <div class="app landlord-app">
+    {% include "dashboard/includes/landlord_sidebar.html" %}
+    {% comment %}
     <aside class="sidebar landlord-sidebar overflow-y-auto" id="sidebar">
       <div class="brand">
         <div class="brand-mark"></div>
@@ -118,6 +120,7 @@
         </div>
       </div>
     </aside>
+    {% endcomment %}
 
     <main class="main">
       <div class="content">
@@ -135,22 +138,7 @@
           </p>
         </div>
 
-        <div class="stepper">
-          <div class="step active">
-            <div class="step-number">1</div>
-            <div class="step-label">{% translate "Property information" %}</div>
-          </div>
-          <div class="step-line"></div>
-          <div class="step">
-            <div class="step-number">2</div>
-            <div class="step-label">{% translate "Configuration" %}</div>
-          </div>
-          <div class="step-line"></div>
-          <div class="step">
-            <div class="step-number">3</div>
-            <div class="step-label">{% translate "Images" %}</div>
-          </div>
-        </div>
+        {% include "dashboard/includes/property_stepper.html" with current_step=1 %}
 
         <div class="form-layout">
           <div class="card form-card">

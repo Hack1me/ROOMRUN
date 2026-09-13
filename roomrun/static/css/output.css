@@ -7102,6 +7102,7 @@
     display: flex;
     height: calc(var(--spacing) * 8);
     width: calc(var(--spacing) * 8);
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
     border-radius: calc(infinity * 1px);
@@ -7465,6 +7466,9 @@
   }
   .step.completed .step-label {
     color: #56709b;
+  }
+  .step-check-icon {
+    width: 15px;
   }
   .status-options {
     display: grid;

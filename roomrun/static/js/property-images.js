@@ -21,6 +21,10 @@
       input.files = transfer.files;
     }
 
+    function appendFiles(files) {
+      setFiles(Array.from(input.files).concat(files));
+    }
+
     function renderPreviews() {
       grid.querySelectorAll('[data-new-image]').forEach(function (tile) {
         tile.remove();
@@ -54,7 +58,11 @@
       count.textContent = String(existing + selectedFiles.length) + '/8';
     }
 
-    input.addEventListener('change', renderPreviews);
+    input.addEventListener('change', function (event) {
+      const selectedFiles = Array.from(event.target.files);
+      setFiles(selectedFiles);
+      renderPreviews();
+    });
     ['dragenter', 'dragover'].forEach(function (eventName) {
       dropZone.addEventListener(eventName, function (event) {
         event.preventDefault();
@@ -68,7 +76,7 @@
       });
     });
     dropZone.addEventListener('drop', function (event) {
-      setFiles(Array.from(event.dataTransfer.files));
+      appendFiles(Array.from(event.dataTransfer.files));
       renderPreviews();
     });
   });

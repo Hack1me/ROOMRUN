@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.db import models
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -219,6 +220,10 @@ class PropertyUpdateView(LandlordPropertyMixin, ServiceFormMixin, View):
                 },
             )
 
+        if request.POST.get("action") == "continue":
+            messages.success(request, _("Property information updated successfully."))
+            return redirect("properties:property-configure", pk=property_obj.pk)
+
         return self.service_success(
             _("Property updated successfully."),
             "properties:property-detail",
@@ -310,24 +315,35 @@ class PropertyImagesView(LandlordPropertyMixin, ServiceFormMixin, View):
             )
             return redirect("properties:property-images", pk=property_obj.pk)
 
+        has_primary_image = property_obj.images.filter(is_primary=True).exists()
+        forms = []
+
+        # Validate the complete batch first so a bad file never leaves a
+        # partially uploaded set of property images behind.
         for index, uploaded_file in enumerate(files):
             form = PropertyImageForm(
-                {"caption": _("Property image"), "is_primary": not property_obj.images.exists() and index == 0},
+                {
+                    "caption": _("Property image"),
+                    "is_primary": not has_primary_image and index == 0,
+                },
                 {"image": uploaded_file},
             )
             if not form.is_valid():
                 self.add_form_errors_as_messages(form)
                 return redirect("properties:property-images", pk=property_obj.pk)
+            forms.append(form)
 
-            try:
-                PropertyImageService.create(
-                    property_obj=property_obj,
-                    data=form.cleaned_data,
-                )
-            except ValidationError as exc:
-                self.handle_service_errors(form, exc)
-                self.add_form_errors_as_messages(form)
-                return redirect("properties:property-images", pk=property_obj.pk)
+        try:
+            with transaction.atomic():
+                for form in forms:
+                    PropertyImageService.create(
+                        property_obj=property_obj,
+                        data=form.cleaned_data,
+                    )
+        except ValidationError as exc:
+            self.handle_service_errors(forms[0], exc)
+            self.add_form_errors_as_messages(forms[0])
+            return redirect("properties:property-images", pk=property_obj.pk)
 
         messages.success(request, _("Property created successfully."))
         return redirect("properties:property-detail", pk=property_obj.pk)
