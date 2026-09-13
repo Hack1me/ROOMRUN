@@ -9,12 +9,15 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 from django.views import View
+from properties.forms import PropertyConfigurationForm
 from properties.forms import PropertyForm
+from properties.forms import PropertyImageForm
 from properties.mixins import LandlordPropertyMixin
 from properties.mixins import LandlordRequiredMixin
 from properties.mixins import ServiceFormMixin
 from properties.models import Property
 from properties.services import PropertyService
+from properties.services import PropertyImageService
 
 
 class PropertyListView(LandlordRequiredMixin, View):
@@ -128,7 +131,7 @@ class PropertyCreateView(LandlordRequiredMixin, ServiceFormMixin, View):
             )
 
         try:
-            PropertyService.create(
+            property_obj = PropertyService.create(
                 landlord=self.get_landlord(),
                 data=form.cleaned_data,
             )
@@ -139,10 +142,14 @@ class PropertyCreateView(LandlordRequiredMixin, ServiceFormMixin, View):
                 context={"page_title": _("Create property")},
             )
 
-        return self.service_success(
-            _("Property created successfully."),
-            "properties:property-list",
-        )
+        action = request.POST.get("action", "continue")
+
+        if action == "save":
+            messages.success(request, _("Property saved successfully."))
+            return redirect("properties:property-list")
+
+        messages.success(request, _("Property created successfully."))
+        return redirect("properties:property-configure", pk=property_obj.pk)
 
 
 class PropertyDetailView(LandlordPropertyMixin, View):
@@ -199,7 +206,7 @@ class PropertyUpdateView(LandlordPropertyMixin, ServiceFormMixin, View):
 
         try:
             PropertyService.update(
-                property=property_obj,
+                property_obj=property_obj,
                 data=form.cleaned_data,
             )
         except ValidationError as e:
@@ -217,6 +224,113 @@ class PropertyUpdateView(LandlordPropertyMixin, ServiceFormMixin, View):
             "properties:property-detail",
             pk=property_obj.pk,
         )
+
+
+class PropertyConfigurationView(LandlordPropertyMixin, ServiceFormMixin, View):
+    """Configure an existing property (Step 2 of the creation flow)."""
+
+    template_name = "dashboard/properties/configuration.html"
+
+    def get(self, request, pk):
+        property_obj = self.get_property(pk)
+        return self.render_form(
+            form=PropertyConfigurationForm(instance=property_obj),
+            context={
+                "property": property_obj,
+                "page_title": _("Property configuration"),
+            },
+        )
+
+    def post(self, request, pk):
+        property_obj = self.get_property(pk)
+
+        form = PropertyConfigurationForm(
+            request.POST,
+            instance=property_obj,
+        )
+
+        if not form.is_valid():
+            return self.render_form(
+                form=form,
+                context={
+                    "property": property_obj,
+                    "page_title": _("Property configuration"),
+                },
+            )
+
+        try:
+            PropertyService.update(
+                property_obj=property_obj,
+                data=form.cleaned_data,
+            )
+        except ValidationError as e:
+            self.handle_service_errors(form, e)
+            return self.render_form(
+                form=form,
+                context={
+                    "property": property_obj,
+                    "page_title": _("Property configuration"),
+                },
+            )
+
+        action = request.POST.get("action", "continue")
+
+        if action == "save":
+            messages.success(request, _("Property configuration saved successfully."))
+            return redirect("properties:property-list")
+
+        messages.success(request, _("Property configuration updated successfully."))
+        return redirect("properties:property-images", pk=property_obj.pk)
+
+
+class PropertyImagesView(LandlordPropertyMixin, ServiceFormMixin, View):
+    """Upload property images (Step 3 of the creation flow)."""
+
+    template_name = "dashboard/properties/images.html"
+    max_images = 8
+
+    def get(self, request, pk):
+        property_obj = self.get_property(pk)
+        return render(
+            request,
+            self.template_name,
+            {"property": property_obj, "images": property_obj.images.all()},
+        )
+
+    def post(self, request, pk):
+        property_obj = self.get_property(pk)
+        files = request.FILES.getlist("images")
+        existing_count = property_obj.images.count()
+
+        if existing_count + len(files) > self.max_images:
+            messages.error(
+                request,
+                _("A property can have a maximum of %(count)s images.")
+                % {"count": self.max_images},
+            )
+            return redirect("properties:property-images", pk=property_obj.pk)
+
+        for index, uploaded_file in enumerate(files):
+            form = PropertyImageForm(
+                {"caption": _("Property image"), "is_primary": not property_obj.images.exists() and index == 0},
+                {"image": uploaded_file},
+            )
+            if not form.is_valid():
+                self.add_form_errors_as_messages(form)
+                return redirect("properties:property-images", pk=property_obj.pk)
+
+            try:
+                PropertyImageService.create(
+                    property_obj=property_obj,
+                    data=form.cleaned_data,
+                )
+            except ValidationError as exc:
+                self.handle_service_errors(form, exc)
+                self.add_form_errors_as_messages(form)
+                return redirect("properties:property-images", pk=property_obj.pk)
+
+        messages.success(request, _("Property created successfully."))
+        return redirect("properties:property-detail", pk=property_obj.pk)
 
 
 class PropertyDeleteView(LandlordPropertyMixin, View):

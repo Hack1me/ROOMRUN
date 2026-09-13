@@ -124,6 +124,39 @@ class Property(BaseModel):
         help_text=_("Current operational status of the property."),
     )
 
+    default_currency = models.CharField(
+        max_length=3,
+        choices=[
+            ("XAF", "XAF — CFA Franc"),
+            ("EUR", "EUR — Euro"),
+            ("USD", "USD — US Dollar"),
+        ],
+        default="XAF",
+        verbose_name=_("Default currency"),
+        help_text=_("Default currency used for rent and charges in this property."),
+    )
+
+    default_monthly_rent = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name=_("Default monthly rent"),
+        help_text=_("Suggested monthly rent amount for new units in this property."),
+    )
+
+    tenant_management_enabled = models.BooleanField(
+        default=True,
+        verbose_name=_("Tenant management"),
+        help_text=_("Allow ROOMRUN to manage tenants and rental contracts for this property."),
+    )
+
+    maintenance_management_enabled = models.BooleanField(
+        default=True,
+        verbose_name=_("Maintenance management"),
+        help_text=_("Allow maintenance requests to be associated with this property."),
+    )
+
     # -------------------------------------------------------------------------
     # Meta Options
     # -------------------------------------------------------------------------

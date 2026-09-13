@@ -1,14 +1,19 @@
 {% extends "base.html" %}
-
 {% load i18n static country_extras %}
 
-{% block title %}{% translate "Add Property" %} — ROOMRUN{% endblock %}
+{% block title %}
+  {% translate "Add Property" %} — ROOMRUN
+{% endblock %}
+
 {% block extra_css %}
-  <link rel="stylesheet"
-        href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
 {% endblock extra_css %}
-{% block header %}{% endblock header %}
-{% block footer %}{% endblock footer %}
+
+{% block header %}
+{% endblock header %}
+
+{% block footer %}
+{% endblock footer %}
 
 {% block body %}
   <div class="app landlord-app">
@@ -17,11 +22,10 @@
         <div class="brand-mark"></div>
         <div>
           <div class="brand-name">ROOMRUN</div>
-          <div class="brand-subtitle">
-            {% translate "Property Management" %}
-          </div>
+          <div class="brand-subtitle">{% translate "Property Management" %}</div>
         </div>
       </div>
+
       <div class="sidebar-content">
         <div class="nav-section">
           <div class="nav-title">{% translate "Overview" %}</div>
@@ -30,6 +34,7 @@
             <span>{% translate "Dashboard" %}</span>
           </a>
         </div>
+
         <div class="nav-section">
           <div class="nav-title">{% translate "Management" %}</div>
           <a href="{% url 'properties:property-list' %}" class="nav-item active">
@@ -57,6 +62,7 @@
             <span>{% translate "Maintenance" %}</span>
           </a>
         </div>
+
         <div class="nav-section">
           <div class="nav-title">{% translate "Communication" %}</div>
           <a href="#" class="nav-item">
@@ -68,6 +74,7 @@
             <span>{% translate "Notifications" %}</span>
           </a>
         </div>
+
         <div class="nav-section">
           <div class="nav-title">{% translate "Operations" %}</div>
           <a href="#" class="nav-item">
@@ -83,6 +90,7 @@
             <span>{% translate "Requests" %}</span>
           </a>
         </div>
+
         <div class="nav-section">
           <div class="nav-title">{% translate "System" %}</div>
           <a href="#" class="nav-item">
@@ -99,6 +107,7 @@
           </a>
         </div>
       </div>
+
       <div class="sidebar-user">
         <div class="user-avatar">
           {{ user.first_name|first }}{{ user.last_name|first }}
@@ -109,62 +118,23 @@
         </div>
       </div>
     </aside>
+
     <main class="main">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button type="button"
-                  class="menu-button"
-                  id="mobile-menu"
-                  aria-label="{% translate 'Open menu' %}">
-            <i class="ti ti-menu-2"></i>
-          </button>
-          <div class="page-heading">
-            <h1>{% translate "Add Property" %}</h1>
-            <p>{% translate "Create a new property and configure its basic information." %}</p>
-          </div>
-        </div>
-        <label class="topbar-search">
-          <i class="ti ti-search"></i>
-          <input type="search"
-                 placeholder="{% translate 'Search a property, a tenant…' %}" />
-        </label>
-        <div class="topbar-right">
-          <button type="button"
-                  class="icon-button"
-                  aria-label="{% translate 'Notifications' %}">
-            <i class="ti ti-bell"></i>
-          </button>
-          <a href="{% url 'users:profile' %}"
-             class="icon-button profile-button"
-             aria-label="{% translate 'Profile' %}">
-            {% if user.profile_picture %}
-              <img class="h-full w-full object-cover"
-                   src="{{ user.profile_picture.url }}"
-                   alt="" />
-            {% else %}
-              <i class="ti ti-user"></i>
-            {% endif %}
-          </a>
-        </div>
-      </header>
       <div class="content">
         {% include "common/includes/messages.html" %}
 
-        <!-- BACK -->
         <a href="{% url 'properties:property-list' %}" class="back-link">
           <i class="ti ti-arrow-left"></i>
           <span>{% translate "Back to properties" %}</span>
         </a>
 
-        <!-- PAGE HEADER -->
         <div class="page-header">
-          <div>
-            <h1 class="page-title">{% translate "Add Property" %}</h1>
-            <p class="page-description">{% translate "Create a new property and configure its basic information." %}</p>
-          </div>
+          <h1 class="page-title">{% translate "Add Property" %}</h1>
+          <p class="page-description">
+            {% translate "Create a new property and configure its basic information." %}
+          </p>
         </div>
 
-        <!-- STEPPER -->
         <div class="stepper">
           <div class="step active">
             <div class="step-number">1</div>
@@ -182,9 +152,7 @@
           </div>
         </div>
 
-        <!-- FORM + INFORMATION -->
         <div class="form-layout">
-          <!-- FORM CARD -->
           <div class="card form-card">
             <div class="card-heading">
               <div class="card-heading-icon">
@@ -196,20 +164,24 @@
               </div>
             </div>
 
-            <form id="propertyForm" method="post" novalidate>
+            <form id="propertyForm" method="post" novalidate data-property-form data-cancel-url="{% url 'properties:property-list' %}">
               {% csrf_token %}
+              <input type="hidden" name="action" id="propertyAction" value="continue" />
               <div class="form-grid">
                 <div class="form-group full">
                   <label class="form-label" for="{{ form.name.id_for_label }}">
-                    {% translate "Property name" %} <span class="required">*</span>
+                    {% translate "Property name" %}
+                    <span class="required">*</span>
                   </label>
-                  <input id="{{ form.name.id_for_label }}"
-                         name="{{ form.name.name }}"
-                         type="text"
-                         class="form-input"
-                         placeholder="{% translate 'e.g. Résidence Les Palmiers' %}"
-                         value="{{ form.name.value|default:'' }}"
-                         required />
+                  <input
+                    id="{{ form.name.id_for_label }}"
+                    name="{{ form.name.name }}"
+                    type="text"
+                    class="form-input"
+                    placeholder="{% translate 'e.g. Résidence Les Palmiers' %}"
+                    value="{{ form.name.value|default:'' }}"
+                    required
+                  />
                   {% if form.name.errors %}
                     <div class="form-error">{{ form.name.errors }}</div>
                   {% endif %}
@@ -217,13 +189,16 @@
 
                 <div class="form-group">
                   <label class="form-label" for="{{ form.property_type.id_for_label }}">
-                    {% translate "Property type" %} <span class="required">*</span>
+                    {% translate "Property type" %}
+                    <span class="required">*</span>
                   </label>
                   <div class="input-wrapper">
-                    <select id="{{ form.property_type.id_for_label }}"
-                            name="{{ form.property_type.name }}"
-                            class="form-select"
-                            required>
+                    <select
+                      id="{{ form.property_type.id_for_label }}"
+                      name="{{ form.property_type.name }}"
+                      class="form-select"
+                      required
+                    >
                       <option value="">{% translate "Select property type" %}</option>
                       {% for value, label in form.property_type.field.choices %}
                         <option value="{{ value }}" {% if form.property_type.value == value %}selected{% endif %}>
@@ -240,13 +215,16 @@
 
                 <div class="form-group">
                   <label class="form-label" for="{{ form.country.id_for_label }}">
-                    {% translate "Country" %} <span class="required">*</span>
+                    {% translate "Country" %}
+                    <span class="required">*</span>
                   </label>
                   <div class="country-wrapper">
-                    <select id="{{ form.country.id_for_label }}"
-                            name="{{ form.country.name }}"
-                            class="form-select country-select"
-                            required>
+                    <select
+                      id="{{ form.country.id_for_label }}"
+                      name="{{ form.country.name }}"
+                      class="form-select country-select"
+                      required
+                    >
                       <option value="">{% translate "Select country" %}</option>
                       {% for country in form.country.field.queryset %}
                         <option value="{{ country.pk }}" {% if form.country.value == country.pk %}selected{% endif %}>
@@ -263,7 +241,8 @@
 
                 <div class="form-group">
                   <label class="form-label" for="{{ form.region.id_for_label }}">
-                    {% translate "Region" %} <span class="required">*</span>
+                    {% translate "Region" %}
+                    <span class="required">*</span>
                   </label>
                   <div class="input-wrapper">
                     {{ form.region }}
@@ -276,7 +255,8 @@
 
                 <div class="form-group">
                   <label class="form-label" for="{{ form.city.id_for_label }}">
-                    {% translate "City" %} <span class="required">*</span>
+                    {% translate "City" %}
+                    <span class="required">*</span>
                   </label>
                   <div class="input-wrapper">
                     {{ form.city }}
@@ -289,15 +269,18 @@
 
                 <div class="form-group">
                   <label class="form-label" for="{{ form.address.id_for_label }}">
-                    {% translate "Full address" %} <span class="required">*</span>
+                    {% translate "Full address" %}
+                    <span class="required">*</span>
                   </label>
-                  <input id="{{ form.address.id_for_label }}"
-                         name="{{ form.address.name }}"
-                         type="text"
-                         class="form-input"
-                         placeholder="{% translate 'e.g. Rue des Palmiers, Bastos' %}"
-                         value="{{ form.address.value|default:'' }}"
-                         required />
+                  <input
+                    id="{{ form.address.id_for_label }}"
+                    name="{{ form.address.name }}"
+                    type="text"
+                    class="form-input"
+                    placeholder="{% translate 'e.g. Rue des Palmiers, Bastos' %}"
+                    value="{{ form.address.value|default:'' }}"
+                    required
+                  />
                   {% if form.address.errors %}
                     <div class="form-error">{{ form.address.errors }}</div>
                   {% endif %}
@@ -305,13 +288,16 @@
 
                 <div class="form-group">
                   <label class="form-label" for="{{ form.status.id_for_label }}">
-                    {% translate "Status" %} <span class="required">*</span>
+                    {% translate "Status" %}
+                    <span class="required">*</span>
                   </label>
                   <div class="input-wrapper">
-                    <select id="{{ form.status.id_for_label }}"
-                            name="{{ form.status.name }}"
-                            class="form-select"
-                            required>
+                    <select
+                      id="{{ form.status.id_for_label }}"
+                      name="{{ form.status.name }}"
+                      class="form-select"
+                      required
+                    >
                       <option value="">{% translate "Select status" %}</option>
                       {% for value, label in form.status.field.choices %}
                         <option value="{{ value }}" {% if form.status.value == value %}selected{% endif %}>
@@ -331,11 +317,15 @@
                     {% translate "Description" %}
                   </label>
                   <div class="textarea-wrapper">
-                    <textarea id="{{ form.description.id_for_label }}"
-                              name="{{ form.description.name }}"
-                              class="form-textarea"
-                              maxlength="500"
-                              placeholder="{% translate 'Describe the property, its features, and any specific information...' %}">{{ form.description.value|default:'' }}</textarea>
+                    <textarea
+                      id="{{ form.description.id_for_label }}"
+                      name="{{ form.description.name }}"
+                      data-description-input
+                      class="form-textarea"
+                      maxlength="500"
+                      placeholder="{% translate 'Describe the property, its features, and any specific information...' %}"
+                    >{{ form.description.value|default:'' }}</textarea
+                    >
                     <span class="character-count" id="characterCount">0/500</span>
                   </div>
                   {% if form.description.errors %}
@@ -346,13 +336,16 @@
             </form>
           </div>
 
-          <!-- INFORMATION CARD -->
           <aside class="card info-card">
-            <img class="info-image"
-                 src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=900&q=80"
-                 alt="Property" />
+            <img
+              class="info-image"
+              src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=900&q=80"
+              alt="Property"
+            />
             <h2 class="info-title">{% translate "Add a property" %}</h2>
-            <p class="info-description">{% translate "Once created, you'll be able to add buildings, units and manage everything from your dashboard." %}</p>
+            <p class="info-description">
+              {% translate "Once created, you'll be able to add buildings, units and manage everything from your dashboard." %}
+            </p>
             <div class="feature-list">
               <div class="feature">
                 <span class="feature-check"><i class="ti ti-check"></i></span>
@@ -374,15 +367,29 @@
           </aside>
         </div>
 
-        <!-- ACTIONS -->
         <div class="actions">
           <button type="button" class="btn btn-secondary" id="cancelButton">
             {% translate "Cancel" %}
           </button>
-          <button type="submit" form="propertyForm" class="btn btn-primary" id="continueButton">
-            <span>{% translate "Continue to configuration" %}</span>
-            <i class="ti ti-arrow-right"></i>
-          </button>
+          <div class="action-group">
+            <button
+              type="submit"
+              form="propertyForm"
+              class="btn btn-secondary"
+              id="saveButton"
+            >
+              <span>{% translate "Save" %}</span>
+            </button>
+            <button
+              type="submit"
+              form="propertyForm"
+              class="btn btn-primary"
+              id="continueButton"
+            >
+              <span>{% translate "Continue to configuration" %}</span>
+              <i class="ti ti-arrow-right"></i>
+            </button>
+          </div>
         </div>
       </div>
     </main>
@@ -394,25 +401,5 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="{% static 'smart-selects/admin/js/chainedfk.js' %}"></script>
   <script src="{% static 'smart-selects/admin/js/bindfields.js' %}"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const description = document.getElementById('description');
-      const characterCount = document.getElementById('characterCount');
-      const form = document.getElementById('propertyForm');
-      const continueButton = document.getElementById('continueButton');
-      const cancelButton = document.getElementById('cancelButton');
-
-      if (description && characterCount) {
-        description.addEventListener('input', function () {
-          characterCount.textContent = description.value.length + '/500';
-        });
-      }
-
-      if (cancelButton) {
-        cancelButton.addEventListener('click', function () {
-          window.location.href = '{% url "properties:property-list" %}';
-        });
-      }
-    });
-  </script>
+  <script defer src="{% static 'js/property-form.js' %}"></script>
 {% endblock %}

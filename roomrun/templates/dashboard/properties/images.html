@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block title %}{% translate "Property images" %} — ROOMRUN{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
+{% endblock %}
+{% block header %}{% endblock %}{% block footer %}{% endblock %}
+{% block body %}
+<div class="app landlord-app"><main class="main"><div class="content images-page" data-images-page data-existing-images="{{ images|length }}">
+  {% include "common/includes/messages.html" %}
+  <a href="{% url 'properties:property-configure' pk=property.pk %}" class="back-link"><i class="ti ti-arrow-left"></i> {% translate "Back to configuration" %}</a>
+  <div class="page-header"><h1 class="page-title">{% translate "Add property" %}</h1><p class="page-description">{% translate "Create a property and configure its basic information." %}</p></div>
+  <div class="stepper"><div class="step completed"><div class="step-number"><i class="ti ti-check"></i></div><div class="step-label">{% translate "Property information" %}</div></div><div class="step-line"></div><div class="step completed"><div class="step-number"><i class="ti ti-check"></i></div><div class="step-label">{% translate "Configuration" %}</div></div><div class="step-line"></div><div class="step active"><div class="step-number">3</div><div class="step-label">{% translate "Images" %}</div></div></div>
+  <div class="images-layout"><section class="images-card"><div class="images-heading"><div class="images-heading-icon"><i class="ti ti-photo"></i></div><div><h2>{% translate "Property images" %}</h2><p>{% translate "Add photos to help identify and present the property." %}</p></div></div>
+    <form id="imagesForm" method="post" enctype="multipart/form-data">{% csrf_token %}<label class="drop-zone" id="dropZone" for="imageInput"><i class="ti ti-cloud-upload"></i><strong>{% translate "Drag and drop images here" %}</strong><small>{% translate "or" %}</small><span class="choose-button"><i class="ti ti-photo"></i>{% translate "Choose images" %}</span><span class="image-help">{% translate "PNG, JPG or WEBP · Maximum 8 images" %}</span><input id="imageInput" type="file" name="images" multiple accept="image/jpeg,image/png,image/webp"></label></form>
+    <div class="selected-title">{% translate "Selected images" %} <span id="imageCount">{{ images|length }}/8</span></div><div class="image-grid" id="imageGrid">{% for image in images %}<div class="image-tile"><img src="{{ image.image.url }}" alt="{{ image.caption }}"></div>{% endfor %}<label class="image-tile add-tile" for="imageInput"><i class="ti ti-plus"></i><span>{% translate "Add more" %}</span></label></div>
+  </section><aside class="images-summary"><h2>{% translate "Property summary" %}</h2><div class="summary-image">{% if images.first %}<img src="{{ images.first.image.url }}" alt="{{ property.name }}">{% endif %}</div><div class="property-name">{{ property.name }}</div><div class="property-location"><i class="ti ti-map-pin"></i> {{ property.city }}</div><div class="summary-details">{% translate "Details" %}<div class="summary-row"><span>{% translate "Type" %}</span><span>{{ property.get_property_type_display }}</span></div><div class="summary-row"><span>{% translate "Status" %}</span><span><i class="status-dot"></i>{{ property.get_status_display }}</span></div><div class="summary-row"><span>{% translate "Currency" %}</span><span>{{ property.default_currency }}</span></div><div class="summary-row"><span>{% translate "Buildings" %}</span><span>{% translate "To be added" %}</span></div></div><div class="info-box"><i class="ti ti-info-circle"></i><span>{% translate "You can add buildings and units once the property is created. Monthly rent is configured at the unit level." %}</span></div></aside></div>
+  <div class="images-actions"><a class="btn" href="{% url 'properties:property-configure' pk=property.pk %}"><i class="ti ti-arrow-left"></i>{% translate "Back" %}</a><div class="action-right"><span class="step-count">{% translate "Step 3 of 3" %}</span><button class="btn btn-primary" form="imagesForm" type="submit">{% translate "Create property" %}<i class="ti ti-arrow-right"></i></button></div></div>
+</div></main></div>
+{% endblock %}
+{% block inline_javascript %}<script defer src="{% static 'js/dashboard-sidebar.js' %}"></script><script defer src="{% static 'js/property-images.js' %}"></script>{% endblock %}

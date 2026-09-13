@@ -298,3 +298,54 @@ class UnitForm(forms.ModelForm):
         if area is not None and area <= 0:
             raise forms.ValidationError(_("Area must be greater than zero."))
         return area
+
+
+class PropertyConfigurationForm(forms.ModelForm):
+    """
+    Form for configuring an existing property in Step 2 of the creation flow.
+    """
+
+    class Meta:
+        model = Property
+        fields = (
+            "status",
+            "default_currency",
+            "default_monthly_rent",
+            "tenant_management_enabled",
+            "maintenance_management_enabled",
+        )
+
+        widgets = {
+            "status": forms.RadioSelect(
+                attrs={"class": "status-radio"},
+            ),
+            "default_currency": forms.Select(
+                attrs={"class": "form-select"},
+            ),
+            "default_monthly_rent": forms.NumberInput(
+                attrs={"class": "form-input", "min": 0, "step": "0.01"},
+            ),
+            "tenant_management_enabled": forms.CheckboxInput(
+                attrs={"class": "form-checkbox"},
+            ),
+            "maintenance_management_enabled": forms.CheckboxInput(
+                attrs={"class": "form-checkbox"},
+            ),
+        }
+
+        labels = {
+            "status": _("Property status"),
+            "default_currency": _("Currency"),
+            "default_monthly_rent": _("Default monthly rent"),
+            "tenant_management_enabled": _("Enable tenant management"),
+            "maintenance_management_enabled": _("Enable maintenance management"),
+        }
+
+    def clean_default_monthly_rent(self):
+        """Ensure the default monthly rent is not negative."""
+        rent = self.cleaned_data.get("default_monthly_rent")
+        if rent is not None and rent < 0:
+            raise forms.ValidationError(
+                _("Default monthly rent cannot be negative.")
+            )
+        return rent

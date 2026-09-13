@@ -3,9 +3,11 @@ from properties.views.property_img_view import PropertyImageCreateView
 from properties.views.property_img_view import PropertyImageDeleteView
 from properties.views.property_img_view import PropertyImagePrimaryView
 from properties.views.property_img_view import PropertyImageUpdateView
+from properties.views.property_view import PropertyConfigurationView
 from properties.views.property_view import PropertyCreateView
 from properties.views.property_view import PropertyDeleteView
 from properties.views.property_view import PropertyDetailView
+from properties.views.property_view import PropertyImagesView
 from properties.views.property_view import PropertyListView
 from properties.views.property_view import PropertyUpdateView
 from properties.views.unit_view import UnitCreateView
@@ -36,6 +38,16 @@ urlpatterns = [
         "<uuid:pk>/edit/",
         PropertyUpdateView.as_view(),
         name="property-edit",
+    ),
+    path(
+        "<uuid:pk>/configure/",
+        PropertyConfigurationView.as_view(),
+        name="property-configure",
+    ),
+    path(
+        "<uuid:pk>/images/",
+        PropertyImagesView.as_view(),
+        name="property-images",
     ),
     path(
         "<uuid:pk>/delete/",
