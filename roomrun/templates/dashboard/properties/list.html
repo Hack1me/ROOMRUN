@@ -204,11 +204,13 @@
         <!-- PROPERTY GRID -->
         <div class="property-grid" id="propertyGrid">
           {% for property in properties %}
-            <article class="property-card"
-                     data-name="{{ property.name|lower }}"
-                     data-city="{{ property.city|lower }}"
-                     data-status="{{ property.status|lower }}"
-                     data-rent="{{ property.average_rent|floatformat:0 }}">
+          <article class="property-card"
+                   data-name="{{ property.name|lower }}"
+                   data-address="{{ property.address|lower }}"
+                   data-property-number="{{ property.property_number|lower }}"
+                   data-city="{{ property.city|lower }}"
+                   data-status="{{ property.status|lower }}"
+                   data-rent="{{ property.average_rent|floatformat:0 }}">
               <div class="property-image-wrapper">
                 {% if property.images.first %}
                   <img class="property-image"
@@ -310,10 +312,12 @@
 
         cards.forEach(function (card) {
           const name = (card.dataset.name || '').toLowerCase();
+          const address = (card.dataset.address || '').toLowerCase();
+          const propertyNumber = (card.dataset.propertyNumber || '').toLowerCase();
           const cardStatus = (card.dataset.status || '').toLowerCase();
           const cardCity = (card.dataset.city || '').toLowerCase();
 
-          const matchesSearch = !search || name.includes(search);
+          const matchesSearch = !search || name.includes(search) || address.includes(search) || propertyNumber.includes(search);
           const matchesStatus = !status || cardStatus === status;
           const matchesCity = !city || cardCity === city;
 

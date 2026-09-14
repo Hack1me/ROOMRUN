@@ -1,4 +1,5 @@
 from django.urls import path
+from properties.views.building_view import BuildingCreateView
 from properties.views.property_img_view import PropertyImageCreateView
 from properties.views.property_img_view import PropertyImageDeleteView
 from properties.views.property_img_view import PropertyImagePrimaryView
@@ -80,6 +81,11 @@ urlpatterns += [
 ]
 
 urlpatterns += [
+    path(
+        "<uuid:property_id>/buildings/create/",
+        BuildingCreateView.as_view(),
+        name="property-buildings-create",
+    ),
     path(
         "<uuid:property_id>/buildings/<uuid:building_id>/units/",
         UnitListView.as_view(),

@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block title %}{% translate "Property Details" %} — ROOMRUN{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
+{% endblock %}
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block body %}
+<div class="app landlord-app">
+  {% include "dashboard/includes/landlord_sidebar.html" %}
+  <main class="main">
+
+    <header class="topbar">
+      <button class="menu-button">
+        <i class="ti ti-menu-2"></i>
+      </button>
+      <div class="search">
+        <i class="ti ti-search"></i>
+        <input type="text" placeholder="{% translate 'Search properties...' %}" />
+      </div>
+      <div class="top-actions">
+        <button class="top-icon">
+          <i class="ti ti-bell"></i>
+          <span class="notification">3</span>
+        </button>
+        <button class="top-icon">
+          <i class="ti ti-user-circle"></i>
+        </button>
+      </div>
+    </header>
+
+    <section class="content">
+
+      <a href="{% url 'properties:property-list' %}" class="back-link">
+        <i class="ti ti-arrow-left"></i> {% translate "Back to properties" %}
+      </a>
+
+      <div class="property-header">
+        <div class="property-heading">
+          <div class="property-icon">
+            <i class="ti ti-building-estate"></i>
+          </div>
+          <div>
+            <h1>{{ property.name }}</h1>
+            <div class="location">
+              <i class="ti ti-map-pin"></i>
+              {% if property.city %}{{ property.city }}{% endif %}, {% if property.country %}{{ property.country.name }}{% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="header-actions">
+          <span class="status-badge status-{{ property.status|lower }}">
+            <span class="status-dot"></span>
+            {{ property.get_status_display }}
+          </span>
+          <a href="{% url 'properties:property-edit' pk=property.pk %}" class="button button-secondary">
+            <i class="ti ti-edit"></i> {% translate "Edit property" %}
+          </a>
+          <button class="more-button">
+            <i class="ti ti-dots-vertical"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat-card">
+          <div>
+            <div class="stat-label">{% translate "Buildings" %}</div>
+            <div class="stat-value">{{ building_count }}</div>
+          </div>
+          <div class="stat-icon"><i class="ti ti-building"></i></div>
+        </div>
+        <div class="stat-card">
+          <div>
+            <div class="stat-label">{% translate "Units" %}</div>
+            <div class="stat-value">{{ unit_count }}</div>
+          </div>
+          <div class="stat-icon"><i class="ti ti-door"></i></div>
+        </div>
+        <div class="stat-card">
+          <div>
+            <div class="stat-label">{% translate "Occupied" %}</div>
+            <div class="stat-value">{{ occupied_count }}</div>
+          </div>
+          <div class="stat-icon"><i class="ti ti-users"></i></div>
+        </div>
+        <div class="stat-card">
+          <div>
+            <div class="stat-label">{% translate "Available" %}</div>
+            <div class="stat-value">{{ available_count }}</div>
+          </div>
+          <div class="stat-icon"><i class="ti ti-home-search"></i></div>
+        </div>
+      </div>
+
+      <div class="main-grid">
+
+        <div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">{% translate "Property information" %}</div>
+                <div class="card-subtitle">{% translate "General information about this property." %}</div>
+              </div>
+              <a href="{% url 'properties:property-edit' pk=property.pk %}" class="button button-secondary">
+                <i class="ti ti-edit"></i> {% translate "Edit" %}
+              </a>
+            </div>
+            <div class="info-content">
+              <div class="info-grid">
+                <div class="info-item">
+                  <label>{% translate "Property name" %}</label>
+                  <strong>{{ property.name }}</strong>
+                </div>
+                <div class="info-item">
+                  <label>{% translate "Property type" %}</label>
+                  <strong>{{ property.get_property_type_display }}</strong>
+                </div>
+                <div class="info-item">
+                  <label>{% translate "Country" %}</label>
+                  <strong>{% if property.country %}{{ property.country.name }}{% endif %}</strong>
+                </div>
+                <div class="info-item">
+                  <label>{% translate "City" %}</label>
+                  <strong>{% if property.city %}{{ property.city }}{% endif %}</strong>
+                </div>
+                <div class="info-item">
+                  <label>{% translate "District / Area" %}</label>
+                  <strong>{% if property.region %}{{ property.region }}{% endif %}</strong>
+                </div>
+                <div class="info-item">
+                  <label>{% translate "Currency" %}</label>
+                  <strong>{{ property.default_currency }}</strong>
+                </div>
+                <div class="info-item description">
+                  <label>{% translate "Description" %}</label>
+                  <p>{{ property.description|default:"" }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card buildings-card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">{% translate "Buildings" %}</div>
+                <div class="card-subtitle">{% translate "Manage the buildings and their units." %}</div>
+              </div>
+              <a href="{% url 'properties:property-buildings-create' property_id=property.pk %}" class="add-building">
+                <i class="ti ti-plus"></i> {% translate "Add building" %}
+              </a>
+            </div>
+            <div class="buildings-wrapper" id="buildingsWrapper">
+              {% if building_count > 0 %}
+                <table class="building-table">
+                  <thead>
+                    <tr>
+                      <th>{% translate "Building" %}</th>
+                      <th>{% translate "Units" %}</th>
+                      <th>{% translate "Occupied" %}</th>
+                      <th>{% translate "Available" %}</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for data in buildings_data %}
+                      <tr>
+                        <td>
+                          <div class="building-name">
+                            <div class="building-icon"><i class="ti ti-building"></i></div>
+                            <div>
+                              <strong>{{ data.building.name }}</strong>
+                              <div class="building-number">{{ data.building.building_number }}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td class="number">{{ data.unit_count }}</td>
+                        <td class="number">{{ data.occupied }}</td>
+                        <td class="available">{{ data.available }}</td>
+                        <td>
+                          <a href="#" class="view-link">{% translate "View" %} →</a>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              {% endif %}
+            </div>
+            <div class="empty-state {% if building_count > 0 %}hidden{% endif %}" id="emptyBuildings">
+              <div class="empty-icon"><i class="ti ti-building"></i></div>
+              <h3>{% translate "No buildings yet" %}</h3>
+              <p>{% translate "Add your first building to start creating and managing your rental units." %}</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div>
+
+          <div class="card side-card">
+            <div class="side-title">{% translate "Property overview" %}</div>
+            <div class="property-image">
+              {% if property.images.first %}
+                <img src="{{ property.images.first.image.url }}" alt="{{ property.name }}" />
+              {% else %}
+                <i class="ti ti-photo"></i>
+              {% endif %}
+            </div>
+            <div class="side-row">
+              <span>{% translate "Status" %}</span>
+              <strong style="color: var(--success);">{{ property.get_status_display }}</strong>
+            </div>
+            <div class="side-row">
+              <span>{% translate "Property number" %}</span>
+              <strong>{{ property.property_number }}</strong>
+            </div>
+            <div class="side-row">
+              <span>{% translate "Currency" %}</span>
+              <strong>{{ property.default_currency }}</strong>
+            </div>
+            <div class="side-row">
+              <span>{% translate "Created" %}</span>
+              <strong>{{ property.created_at|date:"M d, Y" }}</strong>
+            </div>
+          </div>
+
+          <div class="card actions-card">
+            <div class="action-title">{% translate "Quick actions" %}</div>
+            <a href="{% url 'properties:property-buildings-create' property_id=property.pk %}" class="quick-action">
+              <i class="ti ti-building-plus"></i>
+              <span>{% translate "Add building" %}</span>
+              <i class="ti ti-chevron-right"></i>
+            </a>
+            <a href="{% url 'properties:property-images' pk=property.pk %}" class="quick-action">
+              <i class="ti ti-photo-plus"></i>
+              <span>{% translate "Manage images" %}</span>
+              <i class="ti ti-chevron-right"></i>
+            </a>
+            <a href="#" class="quick-action">
+              <i class="ti ti-door"></i>
+              <span>{% translate "View all units" %}</span>
+              <i class="ti ti-chevron-right"></i>
+            </a>
+            <a href="#" class="quick-action">
+              <i class="ti ti-tool"></i>
+              <span>{% translate "Maintenance" %}</span>
+              <i class="ti ti-chevron-right"></i>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+</div>
+{% endblock %}
+
+{% block inline_javascript %}
+  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById("addBuilding")?.addEventListener("click", function () {
+        console.log("Opening create building page");
+      });
+      document.getElementById("addBuildingQuick")?.addEventListener("click", function () {
+        console.log("Opening create building page");
+      });
+      document.getElementById("editProperty")?.addEventListener("click", function () {
+        console.log("Opening property edit page");
+      });
+      document.getElementById("editInfo")?.addEventListener("click", function () {
+        console.log("Opening property edit page");
+      });
+    });
+  </script>
+{% endblock %}

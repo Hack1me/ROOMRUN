@@ -5,6 +5,8 @@ from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.db import models
 from django.db import transaction
+from django.db.models import Avg
+from django.db.models.functions import Coalesce
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -17,8 +19,8 @@ from properties.mixins import LandlordPropertyMixin
 from properties.mixins import LandlordRequiredMixin
 from properties.mixins import ServiceFormMixin
 from properties.models import Property
-from properties.services import PropertyService
 from properties.services import PropertyImageService
+from properties.services import PropertyService
 
 
 class PropertyListView(LandlordRequiredMixin, View):
@@ -63,10 +65,18 @@ class PropertyListView(LandlordRequiredMixin, View):
             queryset = queryset.filter(status=status_filter.upper())
 
         if city_filter:
-            queryset = queryset.filter(city__icontains=city_filter)
+            queryset = queryset.filter(city__name__icontains=city_filter)
 
         if sort == "name":
             queryset = queryset.order_by("name")
+        elif sort in ("rent-high", "rent-low"):
+            queryset = queryset.annotate(
+                _avg_rent=Coalesce(
+                    Avg("buildings__units__monthly_rent"), 0.0,
+                ),
+            ).order_by(
+                "-_avg_rent" if sort == "rent-high" else "_avg_rent",
+            )
         else:
             queryset = queryset.order_by("-created_at")
 
@@ -91,9 +101,9 @@ class PropertyListView(LandlordRequiredMixin, View):
         cities = (
             Property.objects
             .filter(landlord=landlord)
-            .values_list("city", flat=True)
+            .values_list("city__name", flat=True)
             .distinct()
-            .order_by("city")
+            .order_by("city__name")
         )
 
         return render(
@@ -162,13 +172,45 @@ class PropertyDetailView(LandlordPropertyMixin, View):
         property_obj = get_object_or_404(
             Property.objects
             .filter(landlord=self.get_landlord())
-            .prefetch_related("images"),
+            .prefetch_related("images", "buildings__units"),
             pk=pk,
         )
+        building_count = property_obj.buildings.count()
+        unit_count = 0
+        occupied_count = 0
+        available_count = 0
+        buildings_data = []
+        for building in property_obj.buildings.all():
+            b_occupied = 0
+            b_available = 0
+            b_units = 0
+            for unit in building.units.all():
+                b_units += 1
+                unit_count += 1
+                if unit.status == "OCCUPIED":
+                    occupied_count += 1
+                    b_occupied += 1
+                elif unit.status == "AVAILABLE":
+                    available_count += 1
+                    b_available += 1
+            buildings_data.append({
+                "building": building,
+                "unit_count": b_units,
+                "occupied": b_occupied,
+                "available": b_available,
+            })
+
         return render(
             request,
             self.template_name,
-            {"property": property_obj},
+            {
+                "property": property_obj,
+                "building_count": building_count,
+                "unit_count": unit_count,
+                "occupied_count": occupied_count,
+                "available_count": available_count,
+                "buildings_data": buildings_data,
+            },
         )
 
 

@@ -12,6 +12,7 @@
 
     const existing = Number(page.dataset.existingImages || 0);
     const maxImages = 8;
+    let selectedFilesList = [];
 
     function setFiles(files) {
       const transfer = new DataTransfer();
@@ -21,16 +22,17 @@
       input.files = transfer.files;
     }
 
-    function appendFiles(files) {
-      setFiles(Array.from(input.files).concat(files));
+    function addFiles(files) {
+      selectedFilesList = selectedFilesList.concat(files).slice(0, maxImages - existing);
+      setFiles(selectedFilesList);
+      renderPreviews();
     }
 
     function renderPreviews() {
       grid.querySelectorAll('[data-new-image]').forEach(function (tile) {
         tile.remove();
       });
-      const selectedFiles = Array.from(input.files).slice(0, maxImages - existing);
-      selectedFiles.forEach(function (file, index) {
+      selectedFilesList.forEach(function (file, index) {
         const reader = new FileReader();
         reader.addEventListener('load', function () {
           const tile = document.createElement('div');
@@ -45,23 +47,26 @@
           removeButton.setAttribute('aria-label', 'Remove image');
           removeButton.innerHTML = '<i class="ti ti-x"></i>';
           removeButton.addEventListener('click', function () {
-            const files = Array.from(input.files);
-            files.splice(index, 1);
-            setFiles(files);
+            selectedFilesList.splice(index, 1);
+            setFiles(selectedFilesList);
             renderPreviews();
           });
           tile.append(image, removeButton);
-          grid.insertBefore(tile, grid.lastElementChild);
+          const addTile = grid.querySelector('.add-tile');
+          if (addTile) {
+            grid.insertBefore(tile, addTile);
+          } else {
+            grid.appendChild(tile);
+          }
         });
         reader.readAsDataURL(file);
       });
-      count.textContent = String(existing + selectedFiles.length) + '/8';
+      count.textContent = String(existing + selectedFilesList.length) + '/8';
     }
 
     input.addEventListener('change', function (event) {
-      const selectedFiles = Array.from(event.target.files);
-      setFiles(selectedFiles);
-      renderPreviews();
+      const newFiles = Array.from(event.target.files);
+      addFiles(newFiles);
     });
     ['dragenter', 'dragover'].forEach(function (eventName) {
       dropZone.addEventListener(eventName, function (event) {
@@ -76,8 +81,51 @@
       });
     });
     dropZone.addEventListener('drop', function (event) {
-      appendFiles(Array.from(event.dataTransfer.files));
-      renderPreviews();
+      addFiles(Array.from(event.dataTransfer.files));
+    });
+
+    function getCSRFToken() {
+      const cookieValue = document.cookie
+        .split('; ')
+        .find(function (row) { return row.startsWith('csrftoken='); });
+      if (cookieValue) {
+        return cookieValue.split('=')[1];
+      }
+      const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+      return csrfInput ? csrfInput.value : '';
+    }
+
+    function deleteImage(imageId, url) {
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCSRFToken(),
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: '',
+      })
+      .then(function (response) {
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          return response.json().then(function (data) {
+            alert(data.message || 'Unable to delete the image.');
+          });
+        }
+      })
+      .catch(function () {
+        alert('Unable to delete the image.');
+      });
+    }
+
+    document.querySelectorAll('[data-delete-image-id]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var imageId = button.getAttribute('data-delete-image-id');
+        var url = button.getAttribute('data-delete-url');
+        if (confirm('Are you sure you want to remove this image?')) {
+          deleteImage(imageId, url);
+        }
+      });
     });
   });
 })();
