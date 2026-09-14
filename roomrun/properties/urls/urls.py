@@ -18,6 +18,10 @@ from properties.views.unit_view import UnitDeleteView
 from properties.views.unit_view import UnitDetailView
 from properties.views.unit_view import UnitListView
 from properties.views.unit_view import UnitUpdateView
+from properties.views.unit_view import UnitImagesView
+from properties.views.unit_img_view import UnitImageCreateView
+from properties.views.unit_img_view import UnitImageDeleteView
+from properties.views.unit_img_view import UnitImagePrimaryView
 
 app_name = "properties"
 
@@ -122,5 +126,25 @@ urlpatterns += [
         "units/<uuid:pk>/delete/",
         UnitDeleteView.as_view(),
         name="unit-delete",
+    ),
+    path(
+        "units/<uuid:pk>/images/",
+        UnitImagesView.as_view(),
+        name="unit-images",
+    ),
+    path(
+        "units/<uuid:unit_id>/images/add/",
+        UnitImageCreateView.as_view(),
+        name="unit-image-add",
+    ),
+    path(
+        "unit-images/<uuid:image_id>/primary/",
+        UnitImagePrimaryView.as_view(),
+        name="unit-image-primary",
+    ),
+    path(
+        "unit-images/<uuid:image_id>/delete/",
+        UnitImageDeleteView.as_view(),
+        name="unit-image-delete",
     ),
 ]

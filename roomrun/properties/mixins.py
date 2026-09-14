@@ -220,3 +220,21 @@ class LandlordUnitAccessMixin(LandlordRequiredMixin):
             id=pk,
             building__property_ref__landlord=self.get_landlord(),
         )
+
+
+class UnitImageAccessMixin(LandlordRequiredMixin):
+    """Scope unit images to units owned by the authenticated landlord."""
+
+    def get_unit(self, pk) -> Unit:
+        return get_object_or_404(
+            Unit.objects.select_related("building", "building__property_ref"),
+            pk=pk,
+            building__property_ref__landlord=self.get_landlord(),
+        )
+
+    def get_image(self, image_id) -> PropertyImage:
+        return get_object_or_404(
+            PropertyImage.objects.select_related("unit", "unit__building"),
+            pk=image_id,
+            unit__building__property_ref__landlord=self.get_landlord(),
+        )

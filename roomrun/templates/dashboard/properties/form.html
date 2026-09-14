@@ -2,7 +2,7 @@
 {% load i18n static country_extras %}
 
 {% block title %}
-  {% translate "Add Property" %} — ROOMRUN
+  {{ page_title }} — ROOMRUN
 {% endblock %}
 
 {% block extra_css %}
@@ -22,19 +22,19 @@
       <div class="content">
         {% include "common/includes/messages.html" %}
 
-        <a href="{% url 'properties:property-list' %}" class="back-link">
+        <a href="{% if property %}{% url 'properties:property-detail' pk=property.pk %}{% else %}{% url 'properties:property-list' %}{% endif %}" class="back-link">
           <i class="ti ti-arrow-left"></i>
-          <span>{% translate "Back to properties" %}</span>
+          <span>{% if property %}{% translate "Back to property" %}{% else %}{% translate "Back to properties" %}{% endif %}</span>
         </a>
 
         <div class="page-header">
-          <h1 class="page-title">{% translate "Add Property" %}</h1>
+          <h1 class="page-title">{{ page_title }}</h1>
           <p class="page-description">
-            {% translate "Create a new property and configure its basic information." %}
+            {% if property %}{% translate "Update the property's basic information." %}{% else %}{% translate "Create a new property and configure its basic information." %}{% endif %}
           </p>
         </div>
 
-        {% include "dashboard/includes/property_stepper.html" with current_step=1 %}
+        {% if not property %}{% include "dashboard/includes/property_stepper.html" with current_step=1 %}{% endif %}
 
         <div class="form-layout">
           <div class="card form-card">
@@ -48,9 +48,9 @@
               </div>
             </div>
 
-            <form id="propertyForm" method="post" novalidate data-property-form data-cancel-url="{% url 'properties:property-list' %}">
+            <form id="propertyForm" method="post" novalidate data-property-form data-cancel-url="{% if property %}{% url 'properties:property-detail' pk=property.pk %}{% else %}{% url 'properties:property-list' %}{% endif %}">
               {% csrf_token %}
-              <input type="hidden" name="action" id="propertyAction" value="continue" />
+              <input type="hidden" name="action" id="propertyAction" value="{% if property %}save{% else %}continue{% endif %}" />
               <div class="form-grid">
                 <div class="form-group full">
                   <label class="form-label" for="{{ form.name.id_for_label }}">
@@ -226,10 +226,8 @@
               src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=900&q=80"
               alt="Property"
             />
-            <h2 class="info-title">{% translate "Add a property" %}</h2>
-            <p class="info-description">
-              {% translate "Once created, you'll be able to add buildings, units and manage everything from your dashboard." %}
-            </p>
+            <h2 class="info-title">{% if property %}{% translate "Edit property" %}{% else %}{% translate "Add a property" %}{% endif %}</h2>
+            <p class="info-description">{% if property %}{% translate "Update the details of this property, then continue managing its buildings and units." %}{% else %}{% translate "Once created, you'll be able to add buildings, units and manage everything from your dashboard." %}{% endif %}</p>
             <div class="feature-list">
               <div class="feature">
                 <span class="feature-check"><i class="ti ti-check"></i></span>
@@ -262,8 +260,9 @@
               class="btn btn-secondary"
               id="saveButton"
             >
-              <span>{% translate "Save" %}</span>
+              <span>{% if property %}{% translate "Save changes" %}{% else %}{% translate "Save" %}{% endif %}</span>
             </button>
+            {% if not property %}
             <button
               type="submit"
               form="propertyForm"
@@ -273,6 +272,7 @@
               <span>{% translate "Continue to configuration" %}</span>
               <i class="ti ti-arrow-right"></i>
             </button>
+            {% endif %}
           </div>
         </div>
       </div>

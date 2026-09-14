@@ -1,11 +1,10 @@
-import os
-
 from cities_light.models import City
 from cities_light.models import Region
 from core.models import BaseModel
 from core.validators import validate_image_extension
 from core.validators import validate_image_size
 from django.db import models
+from django.db.models import Q
 from django.urls import reverse as safe_reverse
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
@@ -15,6 +14,7 @@ from utils.enums import PropertyStatus
 from utils.enums import PropertyType
 from utils.enums import UnitStatus
 from utils.enums import UnitType
+from utils.helpers import property_image_upload_path
 
 
 # PROPERTY
@@ -213,21 +213,35 @@ class Property(BaseModel):
 # PROPERTYIMAGES
 class PropertyImage(BaseModel):
     """
-    Represents an image associated with a property.
-    Each property can have multiple images, with one optionally marked as primary.
+    Represents an image associated with either a property or a unit.
+
+    Exactly one owner (property or unit) must be set — enforced by
+    database constraints. The 'is_primary' flag marks the main image
+    for that owner.
     """
 
     property = models.ForeignKey(
         Property,
         on_delete=models.CASCADE,
         related_name="images",
+        null=True,
+        blank=True,
         verbose_name=_("Property"),
         help_text=_("The property this image belongs to."),
+    )
+    unit = models.ForeignKey(
+        "Unit",
+        on_delete=models.CASCADE,
+        related_name="images",
+        null=True,
+        blank=True,
+        verbose_name=_("Unit"),
+        help_text=_("The unit this image belongs to."),
     )
 
     image = models.ImageField(
         _("Image"),
-        upload_to="properties/images/",
+        upload_to=property_image_upload_path,
         help_text=_(
             "Upload a JPG, PNG, or WebP image. "
             "Recommended size: 1920*1080 pixels, max 5MB."
@@ -239,10 +253,12 @@ class PropertyImage(BaseModel):
         ],
         # Optional: add validators for size/dimensions here
     )
+
     caption = models.CharField(
+        max_length=255,
         default="Property Image",
-        verbose_name=_("Property Image"),
-        help_text=_("Setup caption caption of Property Image."),
+        verbose_name=_("Caption"),
+        help_text=_("A short description of the image."),
     )
 
     is_primary = models.BooleanField(
@@ -252,7 +268,6 @@ class PropertyImage(BaseModel):
             "Mark this image as the main/cover image for the property. "
             "Only one image per property should be primary."
         ),
-        db_index=True,  # Since we filter by it often
     )
 
     class Meta:
@@ -261,27 +276,45 @@ class PropertyImage(BaseModel):
         verbose_name = _("Property image")
         verbose_name_plural = _("Property images")
 
+        constraints = [
+            # Exactly one of property or unit must be set (XOR).
+            models.CheckConstraint(
+                condition=(
+                    Q(property__isnull=False, unit__isnull=True)
+                    | Q(property__isnull=True, unit__isnull=False)
+                ),
+                name="image_exactly_one_owner",
+            ),
+        ]
+
         indexes = [
             models.Index(fields=["property"], name="property_image_property_idx"),
-            # Composite index speeds up queries
+            models.Index(fields=["unit"], name="property_image_unit_idx"),
             models.Index(
                 fields=["property", "is_primary"],
                 name="property_image_primary_idx",
             ),
+            models.Index(
+                fields=["unit", "is_primary"],
+                name="unit_image_primary_idx",
+            ),
         ]
 
     def __str__(self) -> str:
-        """Display property name and basename of the image file."""
-        filename = os.path.basename(self.image.name) if self.image else "no image"  # noqa: PTH119
-        return f"{self.property.name} - {filename}"
-
+        """Return a readable representation of the image."""
+        if self.property_id:
+            owner = f"Property: {self.property}"
+        elif self.unit_id:
+            owner = f"Unit: {self.unit}"
+        else:
+            owner = "Unknown owner"
+        return f"{owner} - {self.caption}"
     def get_absolute_url(self) -> str:
         """
         Return the canonical URL for the image detail view.
         Note: In practice, images are often displayed as part of the property detail.
         """
         return safe_reverse("properties:property-image-detail", kwargs={"pk": self.id})
-
 
 # BUILDING
 class Building(BaseModel):

@@ -406,7 +406,7 @@ class PropertyDeleteView(LandlordPropertyMixin, View):
 
     def post(self, request, pk):
         property_obj = self.get_property(pk)
-        PropertyService.delete(property=property_obj)
+        PropertyService.delete(property_obj=property_obj)
 
         messages.success(request, _("Property deleted successfully."))
         return redirect("properties:property-list")

@@ -2,6 +2,7 @@
 
 from typing import TYPE_CHECKING
 
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from properties.models import Building
 from properties.models import Property
@@ -121,7 +122,7 @@ class PropertyService:
         Returns:
             The updated Property instance.
         """
-        BaseService._apply_changes(property_obj, data)
+        BaseService._apply_changes(property_obj, data)  # noqa: SLF001
         return property_obj
 
     @staticmethod
@@ -151,25 +152,43 @@ class PropertyImageService:
 
     @staticmethod
     @transaction.atomic
-    def create(*, property_obj: Property, data: dict) -> PropertyImage:
+    def create(
+        *,
+        data: dict,
+        property_obj: Property | None = None,
+        unit: Unit | None = None,
+    ) -> PropertyImage:
         """
         Create a new image for a property.
 
         If `is_primary` is True, all other images for the property
         are unset as primary.
         """
-        # Prevent property from being passed twice
-        data.pop("property", None)
+        if (property_obj is None) == (unit is None):
+            msg = "An image must belong to exactly one property or unit."
+            raise ValidationError(
+                msg
+            )
 
-        # Unset other primary images if this one is primary
-        if data.get("is_primary"):
-            PropertyImage.objects.filter(
-                property=property_obj,
-                is_primary=True,
-            ).update(is_primary=False)
-
-        image = PropertyImage(property=property_obj, **data)
+        image_data = data.copy()
+        image_data.pop("property", None)
+        image_data.pop("unit", None)
+        image = PropertyImage(
+            property=property_obj,
+            unit=unit,
+            **image_data,
+        )
         image.full_clean()
+
+        # The first uploaded image becomes primary unless a caller explicitly
+        # chooses otherwise. This keeps every owner easy to identify in lists.
+        siblings = PropertyImage.objects.filter(
+            property=property_obj,
+        ) if property_obj else PropertyImage.objects.filter(unit=unit)
+        if image.is_primary or not siblings.filter(is_primary=True).exists():
+            siblings.update(is_primary=False)
+            image.is_primary = True
+
         image.save()
 
         return image
@@ -183,31 +202,38 @@ class PropertyImageService:
         Only fields in ALLOWED_UPDATE_FIELDS are considered.
         If `is_primary` becomes True, other primary images are unset.
         """
-        allowed = PropertyImageService.ALLOWED_UPDATE_FIELDS
-
-        # Unset other primary images if this one becomes primary
         if data.get("is_primary"):
-            PropertyImage.objects.filter(
-                property=image.property,
-                is_primary=True,
-            ).exclude(pk=image.pk).update(is_primary=False)
+            if image.property_id:
+                siblings = PropertyImage.objects.filter(property_id=image.property_id)
+            else:
+                siblings = PropertyImage.objects.filter(unit_id=image.unit_id)
+            siblings.exclude(pk=image.pk).update(is_primary=False)
 
-        BaseService._apply_changes(image, data)
+        BaseService._apply_changes(image, data)  # noqa: SLF001
         return image
 
     @staticmethod
     @transaction.atomic
     def set_primary(*, image: PropertyImage) -> PropertyImage:
         """
-        Mark the given image as primary and unset all others for the same property.
+        Mark the given image as primary and unset all others for the same
+        property or unit.
+
+        Works for both property-level and unit-level images.
         """
-        PropertyImage.objects.filter(
-            property=image.property,
-            is_primary=True,
-        ).exclude(pk=image.pk).update(is_primary=False)
+        # Determine the parent filter (property or unit)
+        if image.property_id:
+            siblings = PropertyImage.objects.filter(property_id=image.property_id)
+        elif image.unit_id:
+            siblings = PropertyImage.objects.filter(unit_id=image.unit_id)
+        else:
+            siblings = PropertyImage.objects.none()
 
+        # Unset primary on all siblings
+        siblings.exclude(pk=image.pk).update(is_primary=False)
+
+        # Set this image as primary
         image.is_primary = True
-
         update_fields = ["is_primary"]
         if hasattr(image, "updated_at"):
             update_fields.append("updated_at")
@@ -227,15 +253,18 @@ class PropertyImageService:
         """
 
         was_primary = image.is_primary
-        property_obj = image.property
+        if image.property_id:
+            siblings = PropertyImage.objects.filter(property_id=image.property_id)
+        else:
+            siblings = PropertyImage.objects.filter(unit_id=image.unit_id)
 
         image.delete()
 
         if was_primary:
-            next_image = property_obj.images.first()
-        if next_image:
-            next_image.is_primary = True
-            next_image.save(update_fields=["is_primary"])
+            next_image = siblings.first()
+            if next_image:
+                next_image.is_primary = True
+                next_image.save(update_fields=["is_primary"])
 
 # Building Service
 class BuildingService:
@@ -289,7 +318,7 @@ class BuildingService:
         Returns:
             The updated Building instance.
         """
-        BaseService._apply_changes(building, data)
+        BaseService._apply_changes(building, data)  # noqa: SLF001
         return building
 
     @staticmethod
@@ -359,7 +388,7 @@ class UnitService:
         Returns:
             The updated Unit instance.
         """
-        BaseService._apply_changes(unit, data)
+        BaseService._apply_changes(unit, data)  # noqa: SLF001
         return unit
 
     @staticmethod

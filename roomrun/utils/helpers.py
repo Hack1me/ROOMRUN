@@ -42,3 +42,43 @@ def assign_reference_identifier[M: models.Model](
                 prefix=prefix, model=type(instance), field=field
             ),
         )
+
+def property_image_upload_path(instance, filename):
+    if instance.unit_id:
+        return f"properties/images/unit/{instance.unit_id}/{filename}"
+
+    return f"properties/images/property/{instance.property_id}/{filename}"
+
+# import os
+
+# from django.utils.text import get_valid_filename
+
+
+# def property_image_upload_path(instance, filename: str) -> str:
+#     """
+#     Generate the upload path for a PropertyImage.
+
+#     - Unit images:      properties/images/unit/<unit_id>/<uuid>_<filename>
+#     - Property images:  properties/images/property/<property_id>/<uuid>_<filename>
+
+#     The UUID prefix prevents filename collisions when multiple images
+#     share the same original filename.
+#     """
+#     # Sanitize the incoming filename
+#     safe_name = get_valid_filename(filename)
+
+#     # Generate a short unique prefix to avoid collisions
+#     unique_prefix = uuid.uuid4().hex[:8]
+
+#     # Preserve the original extension
+#     _, ext = os.path.splitext(safe_name)
+#     final_name = f"{unique_prefix}_{safe_name}"
+
+#     if instance.unit_id:
+#         return f"properties/images/unit/{instance.unit_id}/{final_name}"
+
+#     if instance.property_id:
+#         return f"properties/images/property/{instance.property_id}/{final_name}"
+
+#     # Fallback (should not happen if constraints are enforced)
+#     return f"properties/images/misc/{final_name}"

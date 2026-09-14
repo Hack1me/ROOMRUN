@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block title %}{% translate "Unit images" %} — ROOMRUN{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />{% endblock %}
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block body %}
+  <div class="app landlord-app">
+    {% include "dashboard/includes/landlord_sidebar.html" %}
+    <main class="main"><div class="content images-page" data-images-page data-existing-images="{{ images|length }}">
+      {% include "common/includes/messages.html" %}
+      <a href="{% url 'properties:unit-detail' pk=unit.pk %}" class="back-link"><i class="ti ti-arrow-left"></i>{% translate "Back to unit" %}</a>
+      <div class="page-header"><h1 class="page-title">{% translate "Unit images" %}</h1><p class="page-description">{% translate "Add photos to help identify and present this rental unit." %}</p></div>
+      <div class="images-layout">
+        <section class="images-card"><div class="images-heading"><div class="images-heading-icon"><i class="ti ti-photo"></i></div><div><h2>{% translate "Unit images" %}</h2><p>{% translate "Add up to 8 JPG, PNG, or WebP images." %}</p></div></div>
+          <form id="imagesForm" method="post" enctype="multipart/form-data">{% csrf_token %}
+            {% if images.first %}<div class="primary-image-wrapper"><img id="primaryImage" src="{{ images.first.image.url }}" alt="{{ unit.unit_number }}" />{% if images.first.is_primary %}<span class="primary-badge">{% translate "Primary" %}</span>{% endif %}<button type="button" class="remove-image" data-delete-image-id="{{ images.first.pk }}" data-delete-url="{% url 'properties:unit-image-delete' image_id=images.first.pk %}" aria-label="{% translate 'Remove primary image' %}"><i class="ti ti-x"></i></button></div>{% endif %}
+            <label class="drop-zone" id="dropZone" for="imageInput"><i class="ti ti-cloud-upload"></i><strong>{% translate "Drag and drop images here" %}</strong><small>{% translate "or" %}</small><span class="choose-button"><i class="ti ti-photo"></i>{% translate "Choose images" %}</span><span class="image-help">{% translate "PNG, JPG or WEBP · Maximum 8 images" %}</span><input id="imageInput" type="file" name="images" multiple accept="image/jpeg,image/png,image/webp" /></label>
+            <div class="selected-title">{% translate "Selected images" %}<span id="imageCount">{{ images|length }}/8</span></div>
+            <div class="image-grid" id="imageGrid">{% for image in images|slice:"1:" %}<div class="image-tile" data-image-id="{{ image.pk }}"><img src="{{ image.image.url }}" alt="{{ image.caption }}" />{% if image.is_primary %}<span class="primary-badge-small">{% translate "Primary" %}</span>{% else %}<form method="post" action="{% url 'properties:unit-image-primary' image_id=image.pk %}">{% csrf_token %}<button class="set-primary-image" type="submit">{% translate "Set primary" %}</button></form>{% endif %}<button type="button" class="remove-image" data-delete-image-id="{{ image.pk }}" data-delete-url="{% url 'properties:unit-image-delete' image_id=image.pk %}" aria-label="{% translate 'Remove image' %}"><i class="ti ti-x"></i></button></div>{% endfor %}<label class="image-tile add-tile" for="imageInput"><i class="ti ti-plus"></i><span>{% translate "Add more" %}</span></label></div>
+          </form>
+        </section>
+        <aside class="images-summary"><h2>{% translate "Unit summary" %}</h2><div class="summary-image">{% if images.first %}<img src="{{ images.first.image.url }}" alt="{{ unit.unit_number }}" />{% else %}<i class="ti ti-home"></i>{% endif %}</div><div class="property-name">{% blocktranslate with number=unit.unit_number %}Unit {{ number }}{% endblocktranslate %}</div><div class="property-location"><i class="ti ti-building"></i> {{ building.name }}</div><div class="summary-details">{% translate "Details" %}<div class="summary-row"><span>{% translate "Type" %}</span><span>{{ unit.get_unit_type_display }}</span></div><div class="summary-row"><span>{% translate "Floor" %}</span><span>{{ unit.floor }}</span></div><div class="summary-row"><span>{% translate "Status" %}</span><span><i class="status-dot"></i>{{ unit.get_status_display }}</span></div><div class="summary-row"><span>{% translate "Images" %}</span><span>{{ images|length }}/8</span></div></div></aside>
+      </div>
+      <div class="images-actions"><a class="btn" href="{% url 'properties:unit-detail' pk=unit.pk %}"><i class="ti ti-arrow-left"></i>{% translate "Back" %}</a><div class="action-right"><button class="btn btn-primary" form="imagesForm" type="submit">{% translate "Save images" %}<i class="ti ti-arrow-right"></i></button></div></div>
+    </div></main>
+  </div>
+{% endblock %}
+{% block inline_javascript %}<script defer src="{% static 'js/dashboard-sidebar.js' %}"></script><script defer src="{% static 'js/property-images.js' %}"></script>{% endblock %}

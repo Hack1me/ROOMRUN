@@ -31,12 +31,14 @@ def set_unit_number(sender, instance, **kwargs):
 def ensure_single_primary_image(sender, instance, **kwargs):
     """
     When an image is marked as primary, unset the primary flag on all
-    other images belonging to the same property.
+    other images belonging to the same property or unit.
     """
     if instance.is_primary:
-        PropertyImage.objects.filter(
-            property=instance.property, is_primary=True
-        ).exclude(pk=instance.pk).update(is_primary=False)
+        if instance.property_id:
+            siblings = PropertyImage.objects.filter(property_id=instance.property_id)
+        else:
+            siblings = PropertyImage.objects.filter(unit_id=instance.unit_id)
+        siblings.exclude(pk=instance.pk).update(is_primary=False)
 
 
 @receiver(post_delete, sender=PropertyImage)

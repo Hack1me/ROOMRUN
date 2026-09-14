@@ -1,14 +1,17 @@
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
+from django.db import transaction
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from properties.forms import UnitForm
+from properties.forms import PropertyImageForm
 from properties.mixins import LandlordUnitAccessMixin
 from properties.mixins import ServiceFormMixin
 from properties.services import UnitService
+from properties.services import PropertyImageService
 
 
 class UnitListView(LandlordUnitAccessMixin, View):
@@ -74,6 +77,66 @@ class UnitCreateView(LandlordUnitAccessMixin, ServiceFormMixin, View):
         )
 
 
+class UnitImagesView(LandlordUnitAccessMixin, ServiceFormMixin, View):
+    """Manage the images attached to one rental unit."""
+
+    template_name = "dashboard/properties/units/images.html"
+    max_images = 8
+
+    def get(self, request, pk):
+        unit = self.get_unit(pk)
+        return render(
+            request,
+            self.template_name,
+            {
+                "unit": unit,
+                "building": unit.building,
+                "property": unit.building.property_ref,
+                "images": unit.images.all(),
+            },
+        )
+
+    def post(self, request, pk):
+        unit = self.get_unit(pk)
+        files = request.FILES.getlist("images")
+        existing_count = unit.images.count()
+
+        if not files:
+            messages.info(request, _("Choose at least one image to upload."))
+            return redirect("properties:unit-images", pk=unit.pk)
+
+        if existing_count + len(files) > self.max_images:
+            messages.error(
+                request,
+                _("A unit can have a maximum of %(count)s images.")
+                % {"count": self.max_images},
+            )
+            return redirect("properties:unit-images", pk=unit.pk)
+
+        forms = []
+        for uploaded_file in files:
+            form = PropertyImageForm(
+                {"caption": _("Unit image"), "is_primary": False},
+                {"image": uploaded_file},
+            )
+            if not form.is_valid():
+                self.add_form_errors_as_messages(form)
+                return redirect("properties:unit-images", pk=unit.pk)
+            forms.append(form)
+
+        try:
+            with transaction.atomic():
+                for form in forms:
+                    PropertyImageService.create(unit=unit, data=form.cleaned_data)
+        except ValidationError as exc:
+            self.handle_service_errors(forms[0], exc)
+            self.add_form_errors_as_messages(forms[0])
+            return redirect("properties:unit-images", pk=unit.pk)
+
+        messages.success(request, _("Unit images uploaded successfully."))
+        return redirect("properties:unit-images", pk=unit.pk)
+
+
 class UnitDetailView(LandlordUnitAccessMixin, View):
     """Display a single unit."""
 
@@ -81,7 +144,15 @@ class UnitDetailView(LandlordUnitAccessMixin, View):
 
     def get(self, request, pk):
         unit = self.get_unit(pk)
-        return render(request, self.template_name, {"unit": unit})
+        return render(
+            request,
+            self.template_name,
+            {
+                "unit": unit,
+                "building": unit.building,
+                "property": unit.building.property_ref,
+            },
+        )
 
 
 class UnitUpdateView(LandlordUnitAccessMixin, ServiceFormMixin, View):
