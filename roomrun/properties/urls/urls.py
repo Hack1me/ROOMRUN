@@ -1,5 +1,7 @@
 from django.urls import path
 from properties.views.building_view import BuildingCreateView
+from properties.views.building_view import BuildingDetailView
+from properties.views.building_view import BuildingUpdateView
 from properties.views.property_img_view import PropertyImageCreateView
 from properties.views.property_img_view import PropertyImageDeleteView
 from properties.views.property_img_view import PropertyImagePrimaryView
@@ -81,6 +83,16 @@ urlpatterns += [
 ]
 
 urlpatterns += [
+    path(
+        "buildings/<uuid:pk>/",
+        BuildingDetailView.as_view(),
+        name="building-detail",
+    ),
+    path(
+        "buildings/<uuid:pk>/edit/",
+        BuildingUpdateView.as_view(),
+        name="building-edit",
+    ),
     path(
         "<uuid:property_id>/buildings/create/",
         BuildingCreateView.as_view(),

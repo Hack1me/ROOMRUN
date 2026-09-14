@@ -45,7 +45,7 @@ class UnitCreateView(LandlordUnitAccessMixin, ServiceFormMixin, View):
         building = self.get_building(property_id, building_id)
         return self.render_form(
             form=UnitForm(),
-            context={"building": building},
+            context={"building": building, "property": building.property_ref},
         )
 
     def post(self, request, property_id, building_id):
@@ -55,7 +55,7 @@ class UnitCreateView(LandlordUnitAccessMixin, ServiceFormMixin, View):
         if not form.is_valid():
             return self.render_form(
                 form=form,
-                context={"building": building},
+                context={"building": building, "property": building.property_ref},
             )
 
         try:
@@ -64,14 +64,13 @@ class UnitCreateView(LandlordUnitAccessMixin, ServiceFormMixin, View):
             self.handle_service_errors(form, e)
             return self.render_form(
                 form=form,
-                context={"building": building},
+                context={"building": building, "property": building.property_ref},
             )
 
         return self.service_success(
             _("Unit created successfully."),
-            "properties:unit-list",
-            property_id=property_id,
-            building_id=building_id,
+            "properties:building-detail",
+            pk=building.pk,
         )
 
 
@@ -94,7 +93,11 @@ class UnitUpdateView(LandlordUnitAccessMixin, ServiceFormMixin, View):
         unit = self.get_unit(pk)
         return self.render_form(
             form=UnitForm(instance=unit),
-            context={"unit": unit, "building": unit.building},
+            context={
+                "unit": unit,
+                "building": unit.building,
+                "property": unit.building.property_ref,
+            },
         )
 
     def post(self, request, pk):
@@ -104,7 +107,11 @@ class UnitUpdateView(LandlordUnitAccessMixin, ServiceFormMixin, View):
         if not form.is_valid():
             return self.render_form(
                 form=form,
-                context={"unit": unit, "building": unit.building},
+                context={
+                    "unit": unit,
+                    "building": unit.building,
+                    "property": unit.building.property_ref,
+                },
             )
 
         try:
@@ -113,7 +120,11 @@ class UnitUpdateView(LandlordUnitAccessMixin, ServiceFormMixin, View):
             self.handle_service_errors(form, e)
             return self.render_form(
                 form=form,
-                context={"unit": unit, "building": unit.building},
+                context={
+                    "unit": unit,
+                    "building": unit.building,
+                    "property": unit.building.property_ref,
+                },
             )
 
         return self.service_success(
@@ -136,14 +147,9 @@ class UnitDeleteView(LandlordUnitAccessMixin, View):
         unit = self.get_unit(pk)
 
         building = unit.building
-        property_id = building.property_ref_id
         building_id = building.id
 
         UnitService.delete(unit=unit)
 
         messages.success(request, _("Unit deleted successfully."))
-        return redirect(
-            "properties:unit-list",
-            property_id=property_id,
-            building_id=building_id,
-        )
+        return redirect("properties:building-detail", pk=building_id)

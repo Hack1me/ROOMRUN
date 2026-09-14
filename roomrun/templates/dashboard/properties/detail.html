@@ -12,26 +12,6 @@
 <div class="app landlord-app">
   {% include "dashboard/includes/landlord_sidebar.html" %}
   <main class="main">
-
-    <header class="topbar">
-      <button class="menu-button">
-        <i class="ti ti-menu-2"></i>
-      </button>
-      <div class="search">
-        <i class="ti ti-search"></i>
-        <input type="text" placeholder="{% translate 'Search properties...' %}" />
-      </div>
-      <div class="top-actions">
-        <button class="top-icon">
-          <i class="ti ti-bell"></i>
-          <span class="notification">3</span>
-        </button>
-        <button class="top-icon">
-          <i class="ti ti-user-circle"></i>
-        </button>
-      </div>
-    </header>
-
     <section class="content">
 
       <a href="{% url 'properties:property-list' %}" class="back-link">
@@ -182,7 +162,7 @@
                         <td class="number">{{ data.occupied }}</td>
                         <td class="available">{{ data.available }}</td>
                         <td>
-                          <a href="#" class="view-link">{% translate "View" %} →</a>
+                          <a href="{% url 'properties:building-detail' pk=data.building.pk %}" class="view-link">{% translate "View" %} →</a>
                         </td>
                       </tr>
                     {% endfor %}

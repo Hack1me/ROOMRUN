@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block title %}{{ page_title }} — ROOMRUN{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
+{% endblock %}
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block body %}
+  <div class="app landlord-app building-form-page">
+    {% include "dashboard/includes/landlord_sidebar.html" %}
+    <main class="main">
+      <section class="content">
+        {% include "common/includes/messages.html" %}
+
+        <nav class="building-form-breadcrumb" aria-label="{% translate 'Breadcrumb' %}">
+          <a href="{% url 'properties:property-list' %}">{% translate "Properties" %}</a>
+          <i class="ti ti-chevron-right"></i>
+          <a href="{% url 'properties:property-detail' pk=property.pk %}">{{ property.name }}</a>
+          <i class="ti ti-chevron-right"></i>
+          <span>{% if building %}{% translate "Edit building" %}{% else %}{% translate "Add building" %}{% endif %}</span>
+        </nav>
+
+        <header class="building-form-header">
+          <h1>{% if building %}{% translate "Edit building" %}{% else %}{% translate "Add building" %}{% endif %}</h1>
+          <p>{% if building %}{% translate "Update this building's information." %}{% else %}{% translate "Create a building within this property." %}{% endif %}</p>
+        </header>
+
+        <div class="building-form-layout">
+          <section class="card building-form-card">
+            <header class="building-form-card-header">
+              <h2>{% translate "Building information" %}</h2>
+              <p>{% translate "Enter the basic information about this building." %}</p>
+            </header>
+            <form method="post" id="buildingForm" novalidate>
+              {% csrf_token %}
+              <div class="building-form-card-body">
+                <div class="building-fields-grid">
+                  <div class="building-field">
+                    <label for="{{ form.name.id_for_label }}">{% translate "Building name" %}<b>*</b></label>
+                    <input id="{{ form.name.id_for_label }}" name="{{ form.name.name }}" value="{{ form.name.value|default:'' }}" class="building-input" type="text" placeholder="{% translate 'e.g. Building A' %}" required />
+                    {% if form.name.errors %}<div class="building-field-error">{{ form.name.errors }}</div>{% endif %}
+                    <small>{% translate "A name used to easily identify the building." %}</small>
+                  </div>
+                  <div class="building-field">
+                    <label>{% translate "Building number" %}</label>
+                    <div class="building-generated-number">{% if building %}{{ building.building_number }}{% else %}<i class="ti ti-sparkles"></i>{% translate "Generated automatically" %}{% endif %}</div>
+                    <small>{% translate "A unique identifier is generated when the building is created." %}</small>
+                  </div>
+                  <div class="building-field">
+                    <label for="{{ form.floors.id_for_label }}">{% translate "Number of floors" %}<b>*</b></label>
+                    <input id="{{ form.floors.id_for_label }}" name="{{ form.floors.name }}" value="{{ form.floors.value|default:1 }}" class="building-input" type="number" min="1" required />
+                    {% if form.floors.errors %}<div class="building-field-error">{{ form.floors.errors }}</div>{% endif %}
+                  </div>
+                  <div class="building-field">
+                    <label for="{{ form.status.id_for_label }}">{% translate "Status" %}<b>*</b></label>
+                    <select id="{{ form.status.id_for_label }}" name="{{ form.status.name }}" class="building-input building-select" required>
+                      {% for value, label in form.status.field.choices %}<option value="{{ value }}" {% if form.status.value == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                    </select>
+                    {% if form.status.errors %}<div class="building-field-error">{{ form.status.errors }}</div>{% endif %}
+                  </div>
+                  <div class="building-field building-field-full">
+                    <label for="{{ form.description.id_for_label }}">{% translate "Description" %}</label>
+                    <textarea id="{{ form.description.id_for_label }}" name="{{ form.description.name }}" class="building-input building-textarea" placeholder="{% translate 'Add a short description of this building...' %}">{{ form.description.value|default:'' }}</textarea>
+                    {% if form.description.errors %}<div class="building-field-error">{{ form.description.errors }}</div>{% endif %}
+                  </div>
+                </div>
+                <div class="building-next-step"><i class="ti ti-info-circle"></i><div><strong>{% translate "What happens next?" %}</strong><p>{% translate "After creating the building, you can add rental units from its details page. Monthly rent is configured for each unit." %}</p></div></div>
+              </div>
+              <footer class="building-form-actions">
+                <a href="{% if building %}{% url 'properties:building-detail' pk=building.pk %}{% else %}{% url 'properties:property-detail' pk=property.pk %}{% endif %}" class="building-form-cancel">{% translate "Cancel" %}</a>
+                <button type="submit" class="building-form-submit"><i class="ti ti-{% if building %}device-floppy{% else %}plus{% endif %}"></i>{% if building %}{% translate "Save changes" %}{% else %}{% translate "Create building" %}{% endif %}</button>
+              </footer>
+            </form>
+          </section>
+
+          <aside class="card building-property-summary">
+            <header><h2>{% translate "Property summary" %}</h2></header>
+            <div class="building-property-summary-body">
+              <div class="building-property-identity"><span><i class="ti ti-building-community"></i></span><div><h3>{{ property.name }}</h3><p>{% if property.region %}{{ property.region }}, {% endif %}{{ property.city }}{% if property.country %}, {{ property.country.name }}{% endif %}</p></div></div>
+              <dl><div><dt>{% translate "Property number" %}</dt><dd>{{ property.property_number }}</dd></div><div><dt>{% translate "Status" %}</dt><dd><em class="building-property-status building-property-status-{{ property.status|lower }}">{{ property.get_status_display }}</em></dd></div><div><dt>{% translate "Currency" %}</dt><dd>{{ property.default_currency }}</dd></div><div><dt>{% translate "Buildings" %}</dt><dd>{{ property.buildings.count }}</dd></div><div><dt>{% translate "Units" %}</dt><dd>{{ property.total_units }}</dd></div></dl>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+{% endblock %}
+
+{% block inline_javascript %}<script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>{% endblock %}

@@ -65,8 +65,8 @@ class BuildingCreateView(LandlordBuildingAccessMixin, ServiceFormMixin, View):
             )
 
         try:
-            BuildingService.create(
-                property=property_obj,
+            building = BuildingService.create(
+                property_obj=property_obj,
                 data=form.cleaned_data,
             )
         except ValidationError as e:
@@ -81,8 +81,8 @@ class BuildingCreateView(LandlordBuildingAccessMixin, ServiceFormMixin, View):
 
         return self.service_success(
             _("Building created successfully."),
-            "properties:building-list",
-            property_id=property_obj.pk,
+            "properties:building-detail",
+            pk=building.pk,
         )
 
 
@@ -90,10 +90,31 @@ class BuildingDetailView(LandlordBuildingAccessMixin, View):
     """Display a single building owned by the landlord."""
 
     template_name = "dashboard/buildings/detail.html"
+    paginate_by = 6
 
     def get(self, request, pk):
         building = self.get_building(pk)
-        return render(request, self.template_name, {"building": building})
+        units = building.units.all().order_by("unit_number")
+        page_obj = Paginator(units, self.paginate_by).get_page(request.GET.get("page"))
+        unit_count = units.count()
+        occupied_count = units.filter(status="OCCUPIED").count()
+        available_count = units.filter(status="AVAILABLE").count()
+        occupancy_rate = round((occupied_count / unit_count) * 100) if unit_count else 0
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "building": building,
+                "property": building.property_ref,
+                "units": page_obj,
+                "page_obj": page_obj,
+                "unit_count": unit_count,
+                "occupied_count": occupied_count,
+                "available_count": available_count,
+                "occupancy_rate": occupancy_rate,
+            },
+        )
 
 
 class BuildingUpdateView(LandlordBuildingAccessMixin, ServiceFormMixin, View):
@@ -162,4 +183,4 @@ class BuildingDeleteView(LandlordBuildingAccessMixin, View):
         BuildingService.delete(building=building)
 
         messages.success(request, _("Building deleted successfully."))
-        return redirect("properties:building-list", property_id=property_obj.pk)
+        return redirect("properties:property-detail", pk=property_obj.pk)

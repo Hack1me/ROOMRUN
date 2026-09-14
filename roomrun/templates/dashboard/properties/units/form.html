@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block title %}{% if unit %}{% translate "Edit unit" %}{% else %}{% translate "Add unit" %}{% endif %} — ROOMRUN{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />{% endblock %}
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block body %}
+  <div class="app landlord-app unit-form-page">
+    {% include "dashboard/includes/landlord_sidebar.html" %}
+    <main class="main"><section class="content">
+      {% include "common/includes/messages.html" %}
+      <nav class="unit-form-breadcrumb" aria-label="{% translate 'Breadcrumb' %}"><a href="{% url 'properties:property-list' %}">{% translate "Properties" %}</a><i class="ti ti-chevron-right"></i><a href="{% url 'properties:property-detail' pk=property.pk %}">{{ property.name }}</a><i class="ti ti-chevron-right"></i><a href="{% url 'properties:building-detail' pk=building.pk %}">{{ building.name }}</a><i class="ti ti-chevron-right"></i><span>{% if unit %}{% translate "Edit unit" %}{% else %}{% translate "Add unit" %}{% endif %}</span></nav>
+      <header class="unit-form-header"><h1>{% if unit %}{% translate "Edit unit" %}{% else %}{% translate "Add unit" %}{% endif %}</h1><p>{% if unit %}{% translate "Update the information and rental details for this unit." %}{% else %}{% translate "Create a rental unit within this building." %}{% endif %}</p></header>
+
+      <div class="unit-form-layout">
+        <section class="card unit-form-card">
+          <header class="unit-form-card-header"><h2>{% translate "Unit information" %}</h2><p>{% translate "Enter the information and rental details for this unit." %}</p></header>
+          <form method="post" id="unitForm" novalidate>{% csrf_token %}
+            <div class="unit-form-card-body"><div class="unit-fields-grid">
+              <div class="unit-field"><label for="{{ form.unit_number.id_for_label }}">{% translate "Unit number" %}<b>*</b></label><input id="{{ form.unit_number.id_for_label }}" name="{{ form.unit_number.name }}" value="{{ form.unit_number.value|default:'' }}" class="unit-input" type="text" placeholder="{% translate 'e.g. A01' %}" required />{% if form.unit_number.errors %}<div class="unit-field-error">{{ form.unit_number.errors }}</div>{% endif %}<small>{% translate "The unit number must be unique within this building." %}</small></div>
+              <div class="unit-field"><label for="{{ form.unit_type.id_for_label }}">{% translate "Unit type" %}<b>*</b></label><select id="{{ form.unit_type.id_for_label }}" name="{{ form.unit_type.name }}" class="unit-input unit-select" required>{% for value, label in form.unit_type.field.choices %}<option value="{{ value }}" {% if form.unit_type.value == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>{% if form.unit_type.errors %}<div class="unit-field-error">{{ form.unit_type.errors }}</div>{% endif %}</div>
+              <div class="unit-field"><label for="{{ form.floor.id_for_label }}">{% translate "Floor" %}<b>*</b></label><input id="{{ form.floor.id_for_label }}" name="{{ form.floor.name }}" value="{{ form.floor.value|default:0 }}" class="unit-input" type="number" min="0" required />{% if form.floor.errors %}<div class="unit-field-error">{{ form.floor.errors }}</div>{% endif %}</div>
+              <div class="unit-field"><label for="{{ form.area.id_for_label }}">{% translate "Surface" %}</label><input id="{{ form.area.id_for_label }}" name="{{ form.area.name }}" value="{{ form.area.value|default:'' }}" class="unit-input" type="number" min="0" step="0.01" placeholder="{% translate 'e.g. 85' %}" />{% if form.area.errors %}<div class="unit-field-error">{{ form.area.errors }}</div>{% endif %}<small>{% translate "Surface area in square meters." %}</small></div>
+              <div class="unit-field"><label for="{{ form.bedrooms.id_for_label }}">{% translate "Bedrooms" %}<b>*</b></label><input id="{{ form.bedrooms.id_for_label }}" name="{{ form.bedrooms.name }}" value="{{ form.bedrooms.value|default:0 }}" class="unit-input" type="number" min="0" required />{% if form.bedrooms.errors %}<div class="unit-field-error">{{ form.bedrooms.errors }}</div>{% endif %}</div>
+              <div class="unit-field"><label for="{{ form.bathrooms.id_for_label }}">{% translate "Bathrooms" %}<b>*</b></label><input id="{{ form.bathrooms.id_for_label }}" name="{{ form.bathrooms.name }}" value="{{ form.bathrooms.value|default:1 }}" class="unit-input" type="number" min="1" required />{% if form.bathrooms.errors %}<div class="unit-field-error">{{ form.bathrooms.errors }}</div>{% endif %}</div>
+              <div class="unit-field"><label for="id_monthly_rent_0">{% translate "Monthly rent" %}<b>*</b></label><div class="unit-money"><input id="id_monthly_rent_0" name="monthly_rent_0" value="{{ form.monthly_rent.value.0|default:'' }}" class="unit-input" type="number" min="0" step="0.01" placeholder="150000" required /><span>{{ property.default_currency }}</span><input type="hidden" name="monthly_rent_1" value="{{ property.default_currency }}" /></div>{% if form.monthly_rent.errors %}<div class="unit-field-error">{{ form.monthly_rent.errors }}</div>{% endif %}<small>{% translate "Currency is inherited from the property." %}</small></div>
+              <div class="unit-field"><label for="{{ form.status.id_for_label }}">{% translate "Status" %}<b>*</b></label><select id="{{ form.status.id_for_label }}" name="{{ form.status.name }}" class="unit-input unit-select" required>{% for value, label in form.status.field.choices %}<option value="{{ value }}" {% if form.status.value == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>{% if form.status.errors %}<div class="unit-field-error">{{ form.status.errors }}</div>{% endif %}</div>
+            </div><div class="unit-next-step"><i class="ti ti-info-circle"></i><div><strong>{% translate "Unit rental information" %}</strong><p>{% translate "The monthly rent is configured at unit level. The currency is inherited from the property and cannot be changed here." %}</p></div></div></div>
+            <footer class="unit-form-actions"><a href="{% if unit %}{% url 'properties:unit-detail' pk=unit.pk %}{% else %}{% url 'properties:building-detail' pk=building.pk %}{% endif %}" class="unit-form-cancel">{% translate "Cancel" %}</a><button type="submit" class="unit-form-submit"><i class="ti ti-{% if unit %}device-floppy{% else %}plus{% endif %}"></i>{% if unit %}{% translate "Save changes" %}{% else %}{% translate "Create unit" %}{% endif %}</button></footer>
+          </form>
+        </section>
+        <aside class="card unit-building-summary"><header><h2>{% translate "Building summary" %}</h2></header><div class="unit-building-summary-body"><div class="unit-building-identity"><span><i class="ti ti-building"></i></span><div><h3>{{ building.name }}</h3><p>{{ property.name }}<br />{% if property.region %}{{ property.region }}, {% endif %}{{ property.city }}</p></div></div><dl><div><dt>{% translate "Property" %}</dt><dd>{{ property.name }}</dd></div><div><dt>{% translate "Building number" %}</dt><dd>{{ building.building_number }}</dd></div><div><dt>{% translate "Currency" %}</dt><dd>{{ property.default_currency }}</dd></div><div><dt>{% translate "Property status" %}</dt><dd><em class="unit-property-status unit-property-status-{{ property.status|lower }}">{{ property.get_status_display }}</em></dd></div><div><dt>{% translate "Existing units" %}</dt><dd>{{ building.units.count }}</dd></div></dl></div></aside>
+      </div>
+    </section></main>
+  </div>
+{% endblock %}
+{% block inline_javascript %}<script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>{% endblock %}

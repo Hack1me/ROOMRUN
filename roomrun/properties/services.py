@@ -268,7 +268,7 @@ class BuildingService:
         # Prevent property from being passed twice
         data.pop("property", None)
 
-        building = Building(property=property_obj, **data)
+        building = Building(property_ref=property_obj, **data)
         building.full_clean()
         building.save()
 

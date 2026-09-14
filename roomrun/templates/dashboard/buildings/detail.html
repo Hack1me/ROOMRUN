@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block title %}{{ building.name }} — ROOMRUN{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
+{% endblock %}
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block body %}
+  <div class="app landlord-app building-detail-page">
+    {% include "dashboard/includes/landlord_sidebar.html" %}
+    <main class="main">
+      <section class="content">
+        {% include "common/includes/messages.html" %}
+
+        <nav class="building-breadcrumb" aria-label="{% translate 'Breadcrumb' %}">
+          <a href="{% url 'properties:property-list' %}">{% translate "Properties" %}</a>
+          <i class="ti ti-chevron-right"></i>
+          <a href="{% url 'properties:property-detail' pk=property.pk %}">{{ property.name }}</a>
+          <i class="ti ti-chevron-right"></i>
+          <span>{{ building.name }}</span>
+        </nav>
+
+        <div class="building-page-header">
+          <div class="building-heading">
+            <a href="{% url 'properties:property-detail' pk=property.pk %}" class="building-back" aria-label="{% translate 'Back to property' %}">
+              <i class="ti ti-arrow-left"></i>
+            </a>
+            <div>
+              <h1>{{ building.name }}</h1>
+              <p>{{ property.name }} · {% if property.region %}{{ property.region }}, {% endif %}{% if property.city %}{{ property.city }}{% endif %}</p>
+            </div>
+          </div>
+          <a href="{% url 'properties:building-edit' pk=building.pk %}" class="button button-secondary">
+            <i class="ti ti-edit"></i> {% translate "Edit building" %}
+          </a>
+        </div>
+
+        <div class="building-content-grid">
+          <div>
+            <div class="building-stats">
+              <div class="building-stat-card">
+                <div class="building-stat-icon is-blue"><i class="ti ti-building"></i></div>
+                <div><span>{% translate "Units" %}</span><strong>{{ unit_count }}</strong><small>{% translate "Total units" %}</small></div>
+              </div>
+              <div class="building-stat-card">
+                <div class="building-stat-icon is-green"><i class="ti ti-users"></i></div>
+                <div><span>{% translate "Occupied" %}</span><strong>{{ occupied_count }}</strong><small>{{ occupancy_rate }}% {% translate "occupancy" %}</small></div>
+              </div>
+              <div class="building-stat-card">
+                <div class="building-stat-icon is-orange"><i class="ti ti-home-check"></i></div>
+                <div><span>{% translate "Available" %}</span><strong>{{ available_count }}</strong><small>{% translate "Ready for rental" %}</small></div>
+              </div>
+              <div class="building-stat-card">
+                <div class="building-stat-icon is-purple"><i class="ti ti-layers-subtract"></i></div>
+                <div><span>{% translate "Floors" %}</span><strong>{{ building.floors }}</strong><small>{% translate "Building floors" %}</small></div>
+              </div>
+            </div>
+
+            <article class="card building-information-card">
+              <header class="building-card-heading">
+                <span class="building-section-icon"><i class="ti ti-building"></i></span>
+                <div><h2>{% translate "Building information" %}</h2><p>{% translate "Basic information about this building." %}</p></div>
+              </header>
+              <div class="building-info-grid">
+                <div><span>{% translate "Building name" %}</span><strong>{{ building.name }}</strong></div>
+                <div><span>{% translate "Property" %}</span><strong>{{ property.name }}</strong></div>
+                <div><span>{% translate "Building number" %}</span><strong>{{ building.building_number }}</strong></div>
+                <div><span>{% translate "Status" %}</span><strong><em class="building-status building-status-{{ building.status|lower }}"><i></i>{{ building.get_status_display }}</em></strong></div>
+                <div><span>{% translate "Number of floors" %}</span><strong>{{ building.floors }} {% translate "floors" %}</strong></div>
+                <div><span>{% translate "Currency" %}</span><strong>{{ property.default_currency }}</strong></div>
+                {% if building.description %}<div class="building-description"><span>{% translate "Description" %}</span><p>{{ building.description }}</p></div>{% endif %}
+              </div>
+            </article>
+
+            <article class="card building-units-card">
+              <header class="building-card-heading building-units-heading">
+                <div class="building-card-heading-copy"><span class="building-section-icon"><i class="ti ti-building-community"></i></span><div><h2>{% translate "Units" %}</h2><p>{% translate "Manage the rental units in this building." %}</p></div></div>
+                <a href="{% url 'properties:unit-create' property_id=property.pk building_id=building.pk %}" class="building-add-unit"><i class="ti ti-plus"></i>{% translate "Add unit" %}</a>
+              </header>
+              {% if units %}
+                <div class="building-units-table-wrap"><table class="building-units-table"><thead><tr><th>{% translate "Unit" %}</th><th>{% translate "Type" %}</th><th>{% translate "Floor" %}</th><th>{% translate "Rent / month" %}</th><th>{% translate "Status" %}</th><th>{% translate "Actions" %}</th></tr></thead><tbody>
+                  {% for unit in units %}<tr><td><strong>{{ unit.unit_number }}</strong></td><td>{{ unit.get_unit_type_display }}</td><td>{{ unit.floor }}</td><td>{{ unit.monthly_rent }}</td><td><span class="unit-status unit-status-{{ unit.status|lower }}"><i></i>{{ unit.get_status_display }}</span></td><td><a href="{% url 'properties:unit-detail' pk=unit.pk %}">{% translate "View" %}<i class="ti ti-chevron-right"></i></a></td></tr>{% endfor %}
+                </tbody></table></div>
+                {% if page_obj.paginator.num_pages > 1 %}<nav class="building-pagination" aria-label="{% translate 'Units pagination' %}"><span>{% blocktranslate with count=unit_count %}{{ count }} units{% endblocktranslate %}</span><div>{% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}"><i class="ti ti-chevron-left"></i></a>{% endif %}<b>{{ page_obj.number }}</b>{% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}"><i class="ti ti-chevron-right"></i></a>{% endif %}</div></nav>{% endif %}
+              {% else %}
+                <div class="building-empty-units"><i class="ti ti-door-off"></i><p>{% translate "No units have been added to this building yet." %}</p><a href="{% url 'properties:unit-create' property_id=property.pk building_id=building.pk %}">{% translate "Add the first unit" %}</a></div>
+              {% endif %}
+            </article>
+          </div>
+
+          <aside class="building-detail-sidebar">
+            <article class="card property-summary-card">
+              <div class="property-summary-image">{% if property.images.first %}<img src="{{ property.images.first.image.url }}" alt="{{ property.name }}" />{% else %}<i class="ti ti-photo"></i>{% endif %}</div>
+              <div class="property-summary-content"><span>{% translate "Property" %}</span><h2>{{ property.name }}</h2><p><i class="ti ti-map-pin"></i>{% if property.region %} {{ property.region }},{% endif %} {{ property.city }}{% if property.country %}, {{ property.country.name }}{% endif %}</p></div>
+              <dl><div><dt>{% translate "Property number" %}</dt><dd>{{ property.property_number }}</dd></div><div><dt>{% translate "Building number" %}</dt><dd>{{ building.building_number }}</dd></div><div><dt>{% translate "Currency" %}</dt><dd>{{ property.default_currency }}</dd></div><div><dt>{% translate "Total buildings" %}</dt><dd>{{ property.buildings.count }}</dd></div><div><dt>{% translate "Total units" %}</dt><dd>{{ property.total_units }}</dd></div><div><dt>{% translate "Created" %}</dt><dd>{{ building.created_at|date:"d M Y" }}</dd></div></dl>
+            </article>
+            <article class="card building-quick-actions"><h2><i class="ti ti-bolt"></i>{% translate "Quick actions" %}</h2><a href="{% url 'properties:unit-create' property_id=property.pk building_id=building.pk %}"><i class="ti ti-home-plus"></i>{% translate "Add unit" %}</a><a href="{% url 'properties:property-detail' pk=property.pk %}"><i class="ti ti-building"></i>{% translate "View property" %}</a><a href="#"><i class="ti ti-tool"></i>{% translate "View maintenance" %}</a><a href="#"><i class="ti ti-file-description"></i>{% translate "View documents" %}</a></article>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+{% endblock %}
+
+{% block inline_javascript %}<script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>{% endblock %}
