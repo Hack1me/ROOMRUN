@@ -58,6 +58,24 @@ class RentalApplication(BaseModel):
         help_text=_("Optional message provided by the tenant."),
     )
 
+    desired_duration = models.PositiveIntegerField(
+    null=True,
+    blank=True,
+    verbose_name=_("Desired duration"),
+    help_text=_("Desired rental duration in months."),
+    )
+
+    occupants_count = models.PositiveIntegerField(
+        default=1,
+        verbose_name=_("Number of occupants"),
+    )
+
+    desired_move_in_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_("Desired move-in date"),
+    )
+
     status = models.CharField(
         max_length=20,
         choices=ApplicationStatus.choices,

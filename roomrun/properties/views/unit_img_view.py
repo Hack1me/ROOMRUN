@@ -3,7 +3,6 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django.views import View
-
 from properties.forms import PropertyImageForm
 from properties.mixins import ServiceFormMixin
 from properties.mixins import UnitImageAccessMixin

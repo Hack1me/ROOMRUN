@@ -40,7 +40,11 @@ urlpatterns += i18n_patterns(
     ),
     path(
         "properties/",
-        include("properties.urls.urls", namespace="properties"),
+        include("properties.urls", namespace="properties"),
+    ),
+    path(
+        "rentals/",
+        include("rentals.urls", namespace="rentals"),
     ),
     path(
         "chaining/",

@@ -6,12 +6,13 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 from django.views import View
-from properties.forms import UnitForm
+from djmoney.money import Money
 from properties.forms import PropertyImageForm
+from properties.forms import UnitForm
 from properties.mixins import LandlordUnitAccessMixin
 from properties.mixins import ServiceFormMixin
-from properties.services import UnitService
 from properties.services import PropertyImageService
+from properties.services import UnitService
 
 
 class UnitListView(LandlordUnitAccessMixin, View):
@@ -44,6 +45,15 @@ class UnitCreateView(LandlordUnitAccessMixin, ServiceFormMixin, View):
 
     template_name = "dashboard/properties/units/form.html"
 
+    @staticmethod
+    def apply_property_currency(form, building):
+        """Keep the unit rent in the currency configured for its property."""
+        rent = form.cleaned_data["monthly_rent"]
+        form.cleaned_data["monthly_rent"] = Money(
+            rent.amount,
+            building.property_ref.default_currency,
+        )
+
     def get(self, request, property_id, building_id):
         building = self.get_building(property_id, building_id)
         return self.render_form(
@@ -60,6 +70,8 @@ class UnitCreateView(LandlordUnitAccessMixin, ServiceFormMixin, View):
                 form=form,
                 context={"building": building, "property": building.property_ref},
             )
+
+        self.apply_property_currency(form, building)
 
         try:
             UnitService.create(building=building, data=form.cleaned_data)
@@ -184,6 +196,8 @@ class UnitUpdateView(LandlordUnitAccessMixin, ServiceFormMixin, View):
                     "property": unit.building.property_ref,
                 },
             )
+
+        UnitCreateView.apply_property_currency(form, unit.building)
 
         try:
             UnitService.update(unit=unit, data=form.cleaned_data)
