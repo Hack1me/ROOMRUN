@@ -1,11 +1,11 @@
 from django.urls import path
-from rentals.land_ren_views import LandlordRentalApplicationDetailView
-from rentals.land_ren_views import LandlordRentalApplicationListView
-from rentals.land_ren_views import RentalApplicationApproveView
-from rentals.land_ren_views import RentalApplicationRejectView
-from rentals.ten_ren_views import RentalApplicationCreateView
-from rentals.ten_ren_views import RentalApplicationDetailView
-from rentals.ten_ren_views import RentalApplicationListView
+from rentals.views.land_ren_views import LandlordRentalApplicationDetailView
+from rentals.views.land_ren_views import LandlordRentalApplicationListView
+from rentals.views.land_ren_views import RentalApplicationApproveView
+from rentals.views.land_ren_views import RentalApplicationRejectView
+from rentals.views.ten_ren_views import RentalApplicationCreateView
+from rentals.views.ten_ren_views import RentalApplicationDetailView
+from rentals.views.ten_ren_views import RentalApplicationListView
 
 app_name = "rentals"
 

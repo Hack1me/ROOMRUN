@@ -230,6 +230,12 @@ class RentalContract(BaseModel):
         help_text=_("Leave empty for an open-ended contract."),
     )
 
+    advance_rent_months = models.PositiveIntegerField(
+    default=1,
+    verbose_name=_("Advance rent (months)"),
+    help_text=_("Number of months paid in advance."),
+    )
+
     monthly_rent = MoneyField(
         max_digits=12,
         decimal_places=2,
@@ -289,6 +295,12 @@ class RentalContract(BaseModel):
     def __str__(self) -> str:
         """Return the contract number as string representation."""
         return self.contract_number
+
+    @property
+    def initial_payment(self):
+        return self.deposit + (
+            self.monthly_rent * self.advance_rent_months
+        )
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the contract detail view."""

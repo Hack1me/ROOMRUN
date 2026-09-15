@@ -2,8 +2,12 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from properties.models import Unit
 from rentals.models import RentalApplication
+from rentals.models import RentalContract
 from utils.enums import ApplicationStatus
+from utils.enums import ContractStatus
+from utils.enums import UnitStatus
 
 
 class RentalApplicationService:
@@ -59,16 +63,6 @@ class RentalApplicationService:
 
     @staticmethod
     @transaction.atomic
-    def approve(*, application: RentalApplication, reviewer) -> RentalApplication:
-        """Approve a rental application."""
-        return RentalApplicationService._review(
-            application=application,
-            reviewer=reviewer,
-            new_status=ApplicationStatus.APPROVED,
-        )
-
-    @staticmethod
-    @transaction.atomic
     def reject(*, application: RentalApplication, reviewer) -> RentalApplication:
         """Reject a rental application."""
         return RentalApplicationService._review(
@@ -84,3 +78,117 @@ class RentalApplicationService:
         application.status = ApplicationStatus.CANCELLED
         application.save(update_fields=["status", "updated_at"])
         return application
+
+
+class RentalContractService:
+    """Business logic related to rental contracts."""
+
+    @staticmethod
+    @transaction.atomic
+    def create(
+        *,
+        tenant,
+        unit,
+        data: dict,
+        application: RentalApplication | None = None,
+        reviewer=None,
+    ) -> RentalContract:
+        """
+        Create a rental contract.
+
+        Locks the unit and (optional) application to prevent concurrent
+        contract creation. Validates business rules and updates the
+        application status if provided.
+
+        Raises:
+            ValidationError: If any business rule is violated.
+        """
+        # -----------------------------------------------------------------
+        # 1. Sanitize incoming data
+        # -----------------------------------------------------------------
+        data = dict(data)
+        data.pop("tenant", None)
+        data.pop("unit", None)
+        data.pop("application", None)
+        data.pop("status", None)
+
+        # -----------------------------------------------------------------
+        # 2. Lock and validate the unit
+        # -----------------------------------------------------------------
+        unit = Unit.objects.select_for_update().get(pk=unit.pk)
+
+        if unit.status != UnitStatus.AVAILABLE:
+            raise ValidationError(_("This unit is no longer available."))
+
+        # Prevent two active contracts on the same unit
+        has_active_contract = RentalContract.objects.filter(
+            unit=unit,
+            status=ContractStatus.ACTIVE,
+        ).exists()
+        if has_active_contract:
+            raise ValidationError(
+                _("This unit already has an active contract.")
+            )
+
+        # -----------------------------------------------------------------
+        # 3. Lock and validate the application (if provided)
+        # -----------------------------------------------------------------
+        if application:
+            if reviewer is None:
+                raise ValidationError(
+                    _("A reviewer is required when approving an application.")
+                )
+
+            application = (
+                RentalApplication.objects
+                .select_for_update()
+                .get(pk=application.pk)
+            )
+
+            if application.status != ApplicationStatus.PENDING:
+                raise ValidationError(
+                    _("This application has already been reviewed.")
+                )
+            if application.tenant_id != tenant.pk:
+                raise ValidationError(
+                    _("The application tenant does not match the contract tenant.")
+                )
+            if application.unit_id != unit.pk:
+                raise ValidationError(
+                    _("The application unit does not match the contract unit.")
+                )
+            if hasattr(application, "rental_contract"):
+                raise ValidationError(
+                    _("This application already has a contract.")
+                )
+
+        # -----------------------------------------------------------------
+        # 4. Create the contract
+        # -----------------------------------------------------------------
+        contract = RentalContract(
+            tenant=tenant,
+            unit=unit,
+            application=application,
+            status=ContractStatus.ACTIVE,
+            **data,
+        )
+        contract.full_clean()
+        contract.save()
+
+        # -----------------------------------------------------------------
+        # 5. Mark the application as approved
+        # -----------------------------------------------------------------
+        if application:
+            application.status = ApplicationStatus.APPROVED
+            application.reviewed_at = timezone.now()
+            application.reviewed_by = reviewer
+            application.save(
+                update_fields=[
+                    "status",
+                    "reviewed_at",
+                    "reviewed_by",
+                    "updated_at",
+                ]
+            )
+
+        return contract
