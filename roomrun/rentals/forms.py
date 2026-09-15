@@ -5,6 +5,8 @@ from djmoney.forms.fields import MoneyField as MoneyFormField
 from properties.models import Unit
 from rentals.models import RentalApplication
 from rentals.models import RentalContract
+from users.models import Tenant
+from utils.enums import ContractStatus
 from utils.enums import UnitStatus
 
 
@@ -237,5 +239,92 @@ class RentalContractForm(forms.ModelForm):
                 "end_date",
                 _("End date must be after the start date."),
             )
+
+        return cleaned_data
+
+
+class DirectRentalContractForm(RentalContractForm):
+    """
+    Form used by a landlord to create a rental contract directly,
+    without going through a rental application.
+
+    Requires a `landlord` kwarg to scope the tenant and unit querysets.
+    """
+
+    tenant = forms.ModelChoiceField(
+        queryset=Tenant.objects.none(),
+        label=_("Tenant"),
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+
+    unit = forms.ModelChoiceField(
+        queryset=Unit.objects.none(),
+        label=_("Unit"),
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+
+    def __init__(self, *args, landlord, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.landlord = landlord
+
+        # -------------------------------------------------------------
+        # Tenants: only those linked to this landlord's history
+        # (e.g., past applications or contracts) — adjust as needed.
+        # -------------------------------------------------------------
+        tenant_ids = (
+            RentalContract.objects
+            .filter(unit__building__property_ref__landlord=landlord)
+            .values_list("tenant_id", flat=True)
+        )
+
+        self.fields["tenant"].queryset = (
+            Tenant.objects
+            .filter(pk__in=tenant_ids)
+            .select_related("user")
+            .order_by("user__last_name", "user__first_name")
+        )
+
+        # -------------------------------------------------------------
+        # Units: available units owned by this landlord
+        # -------------------------------------------------------------
+        self.fields["unit"].queryset = (
+            Unit.objects
+            .select_related("building", "building__property_ref")
+            .filter(
+                building__property_ref__landlord=landlord,
+                status=UnitStatus.AVAILABLE,
+            )
+            .order_by("building__building_number", "unit_number")
+        )
+
+    def clean(self):
+        """Cross-field validation for tenant/unit pair."""
+        cleaned_data = super().clean()
+
+        tenant = cleaned_data.get("tenant")
+        unit = cleaned_data.get("unit")
+
+        if tenant and unit:
+            # Prevent double active contract on the same unit
+            has_active = RentalContract.objects.filter(
+                unit=unit,
+                status=ContractStatus.ACTIVE,
+            ).exists()
+            if has_active:
+                self.add_error(
+                    "unit",
+                    _("This unit already has an active contract."),
+                )
+
+            # Prevent tenant from having two active contracts
+            tenant_has_active = RentalContract.objects.filter(
+                tenant=tenant,
+                status=ContractStatus.ACTIVE,
+            ).exists()
+            if tenant_has_active:
+                self.add_error(
+                    "tenant",
+                    _("This tenant already has an active rental contract."),
+                )
 
         return cleaned_data
