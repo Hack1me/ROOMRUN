@@ -44,6 +44,13 @@
           </a>
         </div>
         <div class="nav-section">
+          <div class="nav-title">{% translate "Rental" %}</div>
+          <a href="{% url 'rentals:rental-application-list' %}" class="nav-item">
+            <i class="ti ti-file-description"></i>
+            <span>{% translate "Applications" %}</span>
+          </a>
+        </div>
+        <div class="nav-section">
           <div class="nav-title">{% translate "Communication" %}</div>
           <a href="#" class="nav-item">
             <i class="ti ti-message"></i>
@@ -133,6 +140,8 @@
       </header>
       <div class="content tenant-content">
         {% include "common/includes/messages.html" %}
+
+        {% block tenant_content %}
 
         <!-- WELCOME -->
         <section class="welcome tenant-welcome">
@@ -482,6 +491,8 @@
             </div>
           </div>
         </section>
+
+        {% endblock tenant_content %}
 
       </div>
     </main>

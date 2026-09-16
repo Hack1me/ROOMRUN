@@ -1,0 +1,693 @@
+{% extends "dashboard/pages/tenant.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Rental Applications" %} — ROOMRUN{% endblock title %}
+
+{% block tenant_content %}
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-title">
+      <h1>{% translate "Rental Applications" %}</h1>
+      <p>{% translate "Track your rental requests and application status." %}</p>
+    </div>
+    <a href="{% url 'rentals:rental-application-create' %}"
+       class="btn btn-primary"
+       id="findPropertyBtn">
+      <i class="ti ti-search"></i>
+      {% translate "Find a property" %}
+    </a>
+  </div>
+
+  <!-- KPI STATS -->
+  <section class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <span class="kpi-label">{% translate "Total applications" %}</span>
+        <div class="kpi-icon"><i class="ti ti-file-description"></i></div>
+      </div>
+      <div class="kpi-value" id="kpiTotal">{{ page_obj.paginator.count }}</div>
+      <div class="kpi-meta">{% translate "All submitted applications" %}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <span class="kpi-label">{% translate "Pending" %}</span>
+        <div class="kpi-icon"><i class="ti ti-clock"></i></div>
+      </div>
+      <div class="kpi-value" id="kpiPending">—</div>
+      <div class="kpi-meta">{% translate "Waiting for landlord review" %}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <span class="kpi-label">{% translate "Approved" %}</span>
+        <div class="kpi-icon"><i class="ti ti-circle-check"></i></div>
+      </div>
+      <div class="kpi-value" id="kpiApproved">—</div>
+      <div class="kpi-meta">{% translate "Applications accepted" %}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <span class="kpi-label">{% translate "Rejected" %}</span>
+        <div class="kpi-icon"><i class="ti ti-circle-x"></i></div>
+      </div>
+      <div class="kpi-value" id="kpiRejected">—</div>
+      <div class="kpi-meta">{% translate "Applications declined" %}</div>
+    </div>
+  </section>
+
+  <!-- FILTERS -->
+  <section class="toolbar">
+    <div class="filter-search">
+      <i class="ti ti-search"></i>
+      <input type="text"
+             id="applicationSearch"
+             placeholder="{% translate 'Search application, property or unit...' %}" />
+    </div>
+    <select class="filter-select" id="statusFilter">
+      <option value="">{% translate "All statuses" %}</option>
+      <option value="PENDING">{% translate "Pending" %}</option>
+      <option value="APPROVED">{% translate "Approved" %}</option>
+      <option value="REJECTED">{% translate "Rejected" %}</option>
+      <option value="CANCELLED">{% translate "Cancelled" %}</option>
+    </select>
+    <select class="filter-select" id="sortFilter">
+      <option value="recent">{% translate "Most recent" %}</option>
+      <option value="oldest">{% translate "Oldest" %}</option>
+    </select>
+    <button class="reset-btn" id="resetFilters">{% translate "Reset filters" %}</button>
+  </section>
+
+  <!-- TABLE -->
+  <section class="table-card">
+    <div class="table-header">
+      <h2>{% translate "My applications" %}</h2>
+      <span id="applicationCount">
+        {% with total=page_obj.paginator.count %}
+          {{ total }} application{{ total|pluralize }}
+        {% endwith %}
+      </span>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>{% translate "Application" %}</th>
+            <th>{% translate "Property / Unit" %}</th>
+            <th>{% translate "Applied on" %}</th>
+            <th>{% translate "Desired start" %}</th>
+            <th>{% translate "Monthly rent" %}</th>
+            <th>{% translate "Status" %}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="applicationTable">
+          {% for application in applications %}
+            {% with unit=application.unit building=unit.building property=building.property_ref %}
+              <tr data-id="{{ application.application_number }}"
+                  data-property="{{ property.name|slugify }}"
+                  data-status="{{ application.status }}"
+                  data-rent="{{ unit.monthly_rent.amount }}"
+                  data-date="{{ application.created_at|date:'Y-m-d' }}">
+                <td>
+                  <div class="application">
+                    <div class="application-icon">
+                      <i class="ti ti-file-description"></i>
+                    </div>
+                    <div>
+                      <div class="application-number">{{ application.application_number }}</div>
+                      <div class="application-date">
+                        {% translate "Submitted" %} {{ application.created_at|date:"d M Y" }}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="property">
+                    <strong>{{ property.name }}</strong>
+                    <span>{{ building.name }} · {{ unit.unit_number }}</span>
+                  </div>
+                </td>
+                <td>{{ application.created_at|date:"d M Y" }}</td>
+                <td>
+                  {% if application.desired_move_in_date %}
+                    {{ application.desired_move_in_date|date:"d M Y" }}
+                  {% else %}
+                    —
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="rent">
+                    {{ unit.monthly_rent.amount|floatformat:0 }}
+                    <span>{{ unit.monthly_rent.currency }} / {% translate "month" %}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="status {{ application.status|lower }}">
+                    {{ application.get_status_display }}
+                  </span>
+                </td>
+                <td>
+                  <a href="{% url 'rentals:rental-application-detail' application.pk %}"
+                     class="row-action"
+                     data-id="{{ application.application_number }}">
+                    <i class="ti ti-dots"></i>
+                  </a>
+                </td>
+              </tr>
+            {% endwith %}
+          {% empty %}
+            <tr id="emptyRow">
+              <td colspan="7">
+                <div class="empty-state">
+                  <i class="ti ti-file-off"></i>
+                  <h3>{% translate "No applications found" %}</h3>
+                  <p>{% translate "Try changing your search or filters." %}</p>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="table-footer">
+      <span class="results-count" id="resultsCount">
+        {% if page_obj.has_other_pages %}
+          {% translate "Showing" %}
+          {{ page_obj.start_index }}–{{ page_obj.end_index }}
+          {% translate "of" %} {{ page_obj.paginator.count }}
+          {% translate "applications" %}
+        {% else %}
+          {% with total=page_obj.paginator.count %}
+            {{ total }} application{{ total|pluralize }}
+          {% endwith %}
+        {% endif %}
+      </span>
+      <div class="pagination">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}" class="page-btn">
+            <i class="ti ti-chevron-left"></i>
+          </a>
+        {% else %}
+          <button class="page-btn" disabled>
+            <i class="ti ti-chevron-left"></i>
+          </button>
+        {% endif %}
+        <button class="page-btn active">{{ page_obj.number }}</button>
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}" class="page-btn">
+            <i class="ti ti-chevron-right"></i>
+          </a>
+        {% else %}
+          <button class="page-btn" disabled>
+            <i class="ti ti-chevron-right"></i>
+          </button>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+{% endblock tenant_content %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <style>
+    :root {
+      --primary: #16283f;
+      --primary-hover: #1e3a5f;
+      --primary-soft: #f5e4da;
+      --bg: #f5f6f8;
+      --accent-bg: #eaf2fb;
+      --secondary: #c1622d;
+      --secondary-hover: #a34f22;
+      --secondary-soft: #fef3e2;
+      --surface: #fcfcfb;
+      --card: #ffffff;
+      --success: #2e9e5b;
+      --success-soft: #eaf7ef;
+      --warning: #b9770e;
+      --warning-soft: #fef3e2;
+      --danger: #d64545;
+      --danger-soft: #fcebec;
+      --text: #1e293b;
+      --muted: #5b6675;
+      --text-secondary: #64748b;
+      --border: #e6e8ec;
+      --line-strong: #c7cdd6;
+      --radius: 8px;
+      --radius-lg: 12px;
+      --shadow: 0 1px 2px rgba(15, 23, 42, .04);
+    }
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .page-title h1 {
+      font-size: 20px;
+      line-height: 1.3;
+      font-weight: 600;
+      letter-spacing: -.2px;
+    }
+    .page-title p {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .kpi-card {
+      padding: 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+    .kpi-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .kpi-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .kpi-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      background: var(--accent-bg);
+      color: var(--primary-hover);
+      display: grid;
+      place-items: center;
+    }
+    .kpi-icon i {
+      font-size: 16px;
+    }
+    .kpi-value {
+      margin-top: 12px;
+      font-size: 21px;
+      line-height: 1;
+      font-weight: 600;
+    }
+    .kpi-meta {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+    .toolbar {
+      padding: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .filter-search {
+      flex: 1;
+      min-width: 230px;
+      height: 35px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+    }
+    .filter-search i {
+      color: var(--muted);
+      font-size: 16px;
+    }
+    .filter-search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      font-size: 12px;
+    }
+    .filter-select {
+      height: 35px;
+      min-width: 145px;
+      padding: 0 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--text);
+      font-size: 11px;
+      outline: none;
+    }
+    .reset-btn {
+      height: 35px;
+      padding: 0 10px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .reset-btn:hover {
+      color: var(--text);
+    }
+    .table-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .table-header {
+      min-height: 54px;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .table-header h2 {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .table-header span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .table-wrapper {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      min-width: 900px;
+      border-collapse: collapse;
+    }
+    th {
+      height: 42px;
+      padding: 0 16px;
+      background: #fafafa;
+      color: var(--muted);
+      text-align: left;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    td {
+      height: 74px;
+      padding: 0 16px;
+      border-top: 1px solid var(--border);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    tbody tr:hover {
+      background: #fcfcfd;
+    }
+    .application {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .application-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--accent-bg);
+      color: var(--primary-hover);
+      display: grid;
+      place-items: center;
+    }
+    .application-icon i {
+      font-size: 17px;
+    }
+    .application-number {
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .application-date {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+    .property strong {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .property span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+    .rent {
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .rent span {
+      color: var(--muted);
+      font-weight: 400;
+    }
+    .status {
+      height: 23px;
+      padding: 0 8px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 500;
+    }
+    .status::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+    }
+    .status.pending {
+      background: var(--warning-soft);
+      color: var(--warning);
+    }
+    .status.pending::before {
+      background: var(--warning);
+    }
+    .status.approved {
+      background: var(--success-soft);
+      color: var(--success);
+    }
+    .status.approved::before {
+      background: var(--success);
+    }
+    .status.rejected {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+    .status.rejected::before {
+      background: var(--danger);
+    }
+    .status.cancelled {
+      background: #f1f2f4;
+      color: var(--muted);
+    }
+    .status.cancelled::before {
+      background: #9aa3af;
+    }
+    .row-action {
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      display: grid;
+      place-items: center;
+    }
+    .row-action:hover {
+      background: var(--bg);
+      color: var(--text);
+    }
+    .row-action i {
+      font-size: 17px;
+    }
+    .empty-state {
+      display: none;
+      padding: 55px 20px;
+      text-align: center;
+    }
+    .empty-state i {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--line-strong);
+      font-size: 32px;
+    }
+    .empty-state h3 {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .empty-state p {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .table-footer {
+      min-height: 54px;
+      padding: 0 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .results-count {
+      color: var(--muted);
+      font-size: 10px;
+    }
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .page-btn {
+      min-width: 28px;
+      height: 28px;
+      padding: 0 7px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--card);
+      color: var(--muted);
+      font-size: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+    .page-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .page-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    @media (max-width: 1100px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 800px) {
+      .page-header {
+        flex-direction: column;
+        gap: 14px;
+      }
+      .page-header .btn {
+        width: 100%;
+      }
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+      .filter-search,
+      .filter-select {
+        width: 100%;
+        min-width: 100%;
+      }
+      .table-footer {
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px;
+      }
+    }
+  </style>
+{% endblock extra_css %}
+
+{% block inline_javascript %}
+  {{ block.super }}
+  <script>
+    (function() {
+      const searchInput = document.getElementById("applicationSearch");
+      const statusFilter = document.getElementById("statusFilter");
+      const sortFilter = document.getElementById("sortFilter");
+      const resetFilters = document.getElementById("resetFilters");
+      const rows = Array.from(document.querySelectorAll("#applicationTable tr[data-id]"));
+      const emptyRow = document.getElementById("emptyRow");
+      const applicationCount = document.getElementById("applicationCount");
+      const resultsCount = document.getElementById("resultsCount");
+
+      function updateKpis() {
+        let pending = 0, approved = 0, rejected = 0;
+        rows.forEach(row => {
+          const s = row.dataset.status;
+          if (s === "PENDING") pending++;
+          else if (s === "APPROVED") approved++;
+          else if (s === "REJECTED") rejected++;
+        });
+        document.getElementById("kpiPending").textContent = pending || "0";
+        document.getElementById("kpiApproved").textContent = approved || "0";
+        document.getElementById("kpiRejected").textContent = rejected || "0";
+      }
+
+      function filterApplications() {
+        const search = searchInput.value.trim().toLowerCase();
+        const status = statusFilter.value;
+        let visible = 0;
+
+        rows.forEach(row => {
+          const text = row.innerText.toLowerCase();
+          const rowStatus = row.dataset.status;
+          const matchesSearch = !search || text.includes(search);
+          const matchesStatus = !status || rowStatus === status;
+          const show = matchesSearch && matchesStatus;
+          row.style.display = show ? "" : "none";
+          if (show) visible++;
+        });
+
+        if (emptyRow) {
+          emptyRow.style.display = visible === 0 ? "" : "none";
+        }
+
+        const total = {{ page_obj.paginator.count }};
+        const applicationLabel = total === 1
+          ? "1 application"
+          : total + " applications";
+        applicationCount.textContent = visible === total
+          ? applicationLabel
+          : total + " total";
+
+        resultsCount.textContent = visible === 0
+          ? "{% translate 'No applications found' %}"
+          : "{% translate 'Showing' %} 1–" + visible + " {% translate 'of' %} " + total + " {% translate 'applications' %}";
+      }
+
+      searchInput.addEventListener("input", filterApplications);
+      statusFilter.addEventListener("change", filterApplications);
+
+      sortFilter.addEventListener("change", () => {
+        const tbody = document.getElementById("applicationTable");
+        let sortedRows = [...rows];
+        switch (sortFilter.value) {
+          case "recent":
+            sortedRows.sort((a, b) => new Date(b.dataset.date) - new Date(a.dataset.date));
+            break;
+          case "oldest":
+            sortedRows.sort((a, b) => new Date(a.dataset.date) - new Date(b.dataset.date));
+            break;
+        }
+        sortedRows.forEach(row => tbody.appendChild(row));
+        filterApplications();
+      });
+
+      resetFilters.addEventListener("click", () => {
+        searchInput.value = "";
+        statusFilter.value = "";
+        sortFilter.value = "recent";
+        filterApplications();
+      });
+
+      updateKpis();
+    })();
+  </script>
+{% endblock inline_javascript %}

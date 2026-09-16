@@ -1,13 +1,18 @@
 from __future__ import annotations
 
 import datetime
+import hashlib
+import secrets
 import uuid
 from dataclasses import dataclass
+from datetime import timedelta
 
 from billing.models import Payment
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.db import transaction
 from django.db.models import Count
 from django.db.models import Q
@@ -15,10 +20,13 @@ from django.db.models import Sum
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from maintenance.models import MaintenanceRequest
+from operations.models import UserInvitation
 from rentals.models import RentalApplication
 from rentals.models import RentalContract
 from users.models import Otp
+from users.models import User
 from users.tasks import send_otp_email_task
+from utils.enums import InvitationStatus
 from utils.enums import OtpPurpose
 from utils.enums import UserRole
 from utils.otp import check_cooldown
@@ -1037,3 +1045,220 @@ class ProfileService:
             updated = ProfileService.update(user, data)
             updated_users.append(updated)
         return updated_users
+
+
+class UserInvitationService:
+    """Business logic for creating and managing user invitations."""
+
+    # -------------------------------------------------------------------------
+    # Internal helpers
+    # -------------------------------------------------------------------------
+
+    @staticmethod
+    def _generate_token() -> str:
+        """Generate a URL-safe random token."""
+        return secrets.token_urlsafe(32)
+
+    @staticmethod
+    def _hash_token(token: str) -> str:
+        """Hash a token with SHA-256."""
+        return hashlib.sha256(token.encode()).hexdigest()
+
+    # -------------------------------------------------------------------------
+    # Public API
+    # -------------------------------------------------------------------------
+
+    @classmethod
+    @transaction.atomic
+    def create(cls, *, email: str, invited_by, role: str) -> tuple[UserInvitation, str]:
+        """
+        Create a new invitation.
+
+        Cancels any existing PENDING invitation for the same
+        (email, invited_by, role) combination.
+
+        Returns:
+            (invitation, raw_token)
+        """
+        email = email.strip().lower()
+
+        # Cancel only this sender's own pending invitations for the same email/role.
+        UserInvitation.objects.filter(
+            email=email,
+            invited_by=invited_by,
+            role=role,
+            status=InvitationStatus.PENDING,
+        ).update(
+            status=InvitationStatus.REJECTED,
+            updated_at=timezone.now(),
+        )
+
+        raw_token = cls._generate_token()
+
+        invitation = UserInvitation(
+            email=email,
+            invited_by=invited_by,
+            role=role,
+            token_hash=cls._hash_token(raw_token),
+            expires_at=timezone.now() + timedelta(hours=settings.INVITATION_EXPIRATION_HOURS),
+        )
+
+        invitation.full_clean()
+        invitation.save()
+
+        return invitation, raw_token
+
+    @classmethod
+    def get_by_token(cls, token: str) -> UserInvitation:
+        """
+        Return a valid (PENDING + non-expired) invitation from a raw token.
+
+        Raises:
+            ValidationError: If the token is invalid, expired, or the
+            invitation is no longer in a usable state.
+        """
+        token_hash = cls._hash_token(token)
+
+        try:
+            invitation = UserInvitation.objects.get(token_hash=token_hash)
+        except UserInvitation.DoesNotExist:
+            raise ValidationError(_("This invitation is invalid."))  # noqa: B904
+
+        # Distinguish expired before generic "not valid".
+        if invitation.is_expired:
+            if invitation.status == InvitationStatus.PENDING:
+                invitation.status = InvitationStatus.EXPIRED
+                invitation.save(update_fields=["status", "updated_at"])
+            raise ValidationError(_("This invitation has expired."))
+
+        if invitation.status != InvitationStatus.PENDING:
+            raise ValidationError(_("This invitation is no longer valid."))
+
+        return invitation
+
+    @staticmethod
+    @transaction.atomic
+    def accept(invitation: UserInvitation) -> UserInvitation:
+        """Mark a valid invitation as accepted."""
+        if not invitation.can_accept:
+            raise ValidationError(_("This invitation is no longer valid."))
+
+        invitation.status = InvitationStatus.ACCEPTED
+        invitation.accepted_at = timezone.now()
+
+        invitation.save(update_fields=["status", "accepted_at", "updated_at"])
+
+        return invitation
+
+    @staticmethod
+    @transaction.atomic
+    def cancel(invitation: UserInvitation) -> UserInvitation:
+        """Cancel a pending invitation."""
+        if invitation.status != InvitationStatus.PENDING:
+            raise ValidationError(_("Only pending invitations can be cancelled."))
+
+        invitation.status = InvitationStatus.REJECTED
+
+        invitation.save(update_fields=["status", "updated_at"])
+
+        return invitation
+
+
+
+class InvitationAcceptanceService:
+    """
+    Handles the acceptance of a user invitation:
+    creates the User account and delegates role-specific profile creation.
+    """
+
+    @staticmethod
+    @transaction.atomic
+    def accept(
+        *,
+        invitation: UserInvitation,
+        password: str,
+        first_name: str = "",
+        last_name: str = "",
+    ) -> User:
+        """
+        Create the user account from an invitation and mark the invitation
+        as accepted.
+
+        Raises:
+            ValidationError: If the invitation is invalid, already used,
+            expired, or if an account already exists for the email.
+        """
+        # ---------------------------------------------------------------------
+        # 1. Validate the invitation state (property, no parens).
+        # ---------------------------------------------------------------------
+        if not invitation.can_accept:
+            raise ValidationError(_("This invitation is no longer valid."))
+
+        # ---------------------------------------------------------------------
+        # 2. Reject if a user already exists for this email.
+        # ---------------------------------------------------------------------
+        if User.objects.filter(email__iexact=invitation.email).exists():
+            raise ValidationError(_("An account already exists with this email."))
+
+        # ---------------------------------------------------------------------
+        # 3. Create the user via the manager (handles password hashing).
+        # ---------------------------------------------------------------------
+        try:
+            user = User.objects.create_user(
+                email=invitation.email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                is_active=True,
+            )
+        except IntegrityError:
+            # Concurrent creation — the unique constraint on email caught it.
+            raise ValidationError(_("An account already exists with this email."))  # noqa: B904
+
+        # ---------------------------------------------------------------------
+        # 4. Create the role-specific profile.
+        # ---------------------------------------------------------------------
+        InvitationAcceptanceService._create_profile_for_role(user, invitation.role)
+
+        # ---------------------------------------------------------------------
+        # 5. Mark the invitation as accepted.
+        # ---------------------------------------------------------------------
+        UserInvitationService.accept(invitation)
+
+        return user
+
+    # -------------------------------------------------------------------------
+    # Internal helpers
+    # -------------------------------------------------------------------------
+
+    @staticmethod
+    def _create_profile_for_role(user: User, role: str) -> None:
+        """
+        Create the profile associated with the invited role.
+
+        This is intentionally explicit so that each role's business rules
+        are easy to see and evolve.
+        """
+        if role == UserRole.LANDLORD:
+            from users.models import Landlord
+            Landlord.objects.create(user=user)
+
+        elif role == UserRole.TENANT:
+            from users.models import Tenant
+            Tenant.objects.create(user=user)
+
+        elif role == UserRole.GUARD:
+            from users.models import Employee
+            from users.models import Guard
+            employee = Employee.objects.create(user=user)
+            Guard.objects.create(employee=employee)
+
+        elif role == UserRole.MAINTENANCE:
+            from users.models import Employee
+            from users.models import MaintenanceAgent
+            employee = Employee.objects.create(user=user)
+            MaintenanceAgent.objects.create(employee=employee)
+
+        # If needed, handle a default/unexpected role:
+        else:
+            raise ValidationError(_("Unsupported role for invitation."))

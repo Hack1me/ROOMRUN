@@ -1,5 +1,3 @@
-from enum import StrEnum
-
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -253,10 +251,10 @@ class UserStatus(models.TextChoices):
     INACTIVE = "INACTIVE", _("Inactif")  # Disabled but not suspended
     SUSPENDED = "SUSPENDED", _("Suspendu")  # Temporarily blocked
 
-class UserRole(StrEnum):
+class UserRole(models.TextChoices):
     """
     Defines the possible dashboard roles for a user.
-    Values are stored as strings for database compatibility.
+    Values are stored as strings and can be used directly as Django choices.
     """
     LANDLORD = "landlord"
     TENANT = "tenant"

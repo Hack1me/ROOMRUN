@@ -1,8 +1,12 @@
 from django.urls import path
 from rentals.views.land_ren_views import LandlordRentalApplicationDetailView
 from rentals.views.land_ren_views import LandlordRentalApplicationListView
+from rentals.views.land_ren_views import LandlordRentalContractCreateView
+from rentals.views.land_ren_views import LandlordRentalContractDetailView
+from rentals.views.land_ren_views import LandlordRentalContractListView
 from rentals.views.land_ren_views import RentalApplicationApproveView
 from rentals.views.land_ren_views import RentalApplicationRejectView
+from rentals.views.land_ren_views import TenantSearchView
 from rentals.views.ten_ren_views import RentalApplicationCreateView
 from rentals.views.ten_ren_views import RentalApplicationDetailView
 from rentals.views.ten_ren_views import RentalApplicationListView
@@ -50,5 +54,25 @@ urlpatterns += [
         "landlord/applications/<uuid:pk>/reject/",
         RentalApplicationRejectView.as_view(),
         name="rental-application-reject",
+    ),
+    path(
+        "landlord/contracts/create/",
+        LandlordRentalContractCreateView.as_view(),
+        name="landlord-rental-contract-create",
+    ),
+    path(
+        "landlord/contracts/",
+        LandlordRentalContractListView.as_view(),
+        name="landlord-rental-contract-list",
+    ),
+    path(
+        "landlord/contracts/<uuid:pk>/",
+        LandlordRentalContractDetailView.as_view(),
+        name="landlord-rental-contract-detail",
+    ),
+    path(
+        "landlord/tenants/search/",
+        TenantSearchView.as_view(),
+        name="landlord-tenant-search",
     ),
 ]

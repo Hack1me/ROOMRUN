@@ -1,4 +1,6 @@
 from django import forms
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.core.validators import validate_email
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from djmoney.forms.fields import MoneyField as MoneyFormField
@@ -6,6 +8,7 @@ from properties.models import Unit
 from rentals.models import RentalApplication
 from rentals.models import RentalContract
 from users.models import Tenant
+from utils.enums import ApplicationStatus
 from utils.enums import ContractStatus
 from utils.enums import UnitStatus
 
@@ -119,7 +122,7 @@ class RentalApplicationForm(forms.ModelForm):
             exists = RentalApplication.objects.filter(
                 tenant=self.tenant,
                 unit=unit,
-                status="PENDING",
+                status=ApplicationStatus.PENDING,
             ).exists()
             if exists:
                 raise forms.ValidationError(
@@ -245,48 +248,52 @@ class RentalContractForm(forms.ModelForm):
 
 class DirectRentalContractForm(RentalContractForm):
     """
-    Form used by a landlord to create a rental contract directly,
-    without going through a rental application.
+    Form used by a landlord to create a rental contract directly.
 
-    Requires a `landlord` kwarg to scope the tenant and unit querysets.
+    The tenant is searched dynamically by name, email or tenant ID.
+    - If an existing tenant is selected → `tenant_id` is set.
+    - If no tenant is found → the landlord can enter an email to invite
+      the tenant directly in the same `tenant_search` field.
+
+    The unit remains a standard ModelChoiceField limited to the
+    landlord's available units.
     """
 
-    tenant = forms.ModelChoiceField(
-        queryset=Tenant.objects.none(),
+    tenant_id = forms.IntegerField(
+        required=False,
+        widget=forms.HiddenInput(),
+    )
+
+    tenant_search = forms.CharField(
+        required=True,
         label=_("Tenant"),
-        widget=forms.Select(attrs={"class": "form-select"}),
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-input",
+                "autocomplete": "off",
+                "placeholder": _("Search by name, email or tenant ID..."),
+                "id": "tenant-search",
+            }
+        ),
     )
 
     unit = forms.ModelChoiceField(
         queryset=Unit.objects.none(),
+        required=True,
         label=_("Unit"),
         widget=forms.Select(attrs={"class": "form-select"}),
     )
 
     def __init__(self, *args, landlord, **kwargs):
         super().__init__(*args, **kwargs)
+
         self.landlord = landlord
 
-        # -------------------------------------------------------------
-        # Tenants: only those linked to this landlord's history
-        # (e.g., past applications or contracts) — adjust as needed.
-        # -------------------------------------------------------------
-        tenant_ids = (
-            RentalContract.objects
-            .filter(unit__building__property_ref__landlord=landlord)
-            .values_list("tenant_id", flat=True)
-        )
+        # Cached values populated during validation.
+        self._tenant = None
+        self._invite_email = None
 
-        self.fields["tenant"].queryset = (
-            Tenant.objects
-            .filter(pk__in=tenant_ids)
-            .select_related("user")
-            .order_by("user__last_name", "user__first_name")
-        )
-
-        # -------------------------------------------------------------
-        # Units: available units owned by this landlord
-        # -------------------------------------------------------------
+        # Units: only available units belonging to this landlord.
         self.fields["unit"].queryset = (
             Unit.objects
             .select_related("building", "building__property_ref")
@@ -297,34 +304,164 @@ class DirectRentalContractForm(RentalContractForm):
             .order_by("building__building_number", "unit_number")
         )
 
+    # -------------------------------------------------------------------------
+    # Field-level validation
+    # -------------------------------------------------------------------------
+
+    def clean_tenant_id(self):
+        """
+        If a tenant_id is provided, validate it and cache the instance.
+        """
+        tenant_id = self.cleaned_data.get("tenant_id")
+        if not tenant_id:
+            return None
+
+        try:
+            tenant = (
+                Tenant.objects
+                .select_related("user")
+                .get(pk=tenant_id, user__is_active=True)
+            )
+        except Tenant.DoesNotExist:
+            raise forms.ValidationError(
+                _("The selected tenant does not exist.")
+            ) from None
+
+        self._tenant = tenant
+        return tenant.pk
+
+    def clean_tenant_search(self):
+        """
+        Validate the search field:
+        - If a tenant_id is set → the search field is just a label, no further check.
+        - Otherwise, the search value must be a valid email address for invitation.
+        """
+        value = self.cleaned_data["tenant_search"].strip()
+        tenant_id = self.data.get("tenant_id")
+
+        # If a tenant was selected, the search field just mirrors the choice.
+        if tenant_id:
+            return value
+
+        # No tenant selected → the value must be a valid email to invite.
+        if not value:
+            raise forms.ValidationError(
+                _("Please select a tenant or provide an email to invite.")
+            )
+
+        if "@" not in value:
+            raise forms.ValidationError(
+                _(
+                    "No tenant found. To invite someone, enter their full "
+                    "email address."
+                )
+            )
+
+        # Validate email format.
+        try:
+            validate_email(value)
+        except DjangoValidationError:
+            raise forms.ValidationError(
+                _("Please enter a valid email address.")
+            ) from None
+
+        email = value.lower()
+
+        # Reject if the email already belongs to an existing tenant.
+        if Tenant.objects.filter(user__email__iexact=email).exists():
+            raise forms.ValidationError(
+                _(
+                    "This email is already registered. "
+                    "Please search and select the existing tenant."
+                )
+            )
+
+        self._invite_email = email
+        return value
+
+    # -------------------------------------------------------------------------
+    # Cross-field validation
+    # -------------------------------------------------------------------------
+
     def clean(self):
-        """Cross-field validation for tenant/unit pair."""
+        """
+        Validate the tenant/unit combination and ensure the form is
+        neither missing a tenant nor trying to do both select + invite.
+        """
         cleaned_data = super().clean()
 
-        tenant = cleaned_data.get("tenant")
+        tenant = self._tenant
+        invite_email = self._invite_email
         unit = cleaned_data.get("unit")
 
-        if tenant and unit:
-            # Prevent double active contract on the same unit
-            has_active = RentalContract.objects.filter(
-                unit=unit,
-                status=ContractStatus.ACTIVE,
-            ).exists()
-            if has_active:
-                self.add_error(
-                    "unit",
-                    _("This unit already has an active contract."),
-                )
+        # ---- Exactly one of tenant / invite_email must be set. ----
+        if not tenant and not invite_email:
+            # The error is already on tenant_search.
+            return cleaned_data
 
-            # Prevent tenant from having two active contracts
-            tenant_has_active = RentalContract.objects.filter(
-                tenant=tenant,
-                status=ContractStatus.ACTIVE,
-            ).exists()
-            if tenant_has_active:
-                self.add_error(
-                    "tenant",
-                    _("This tenant already has an active rental contract."),
-                )
+        if tenant and invite_email:
+            self.add_error(
+                "tenant_search",
+                _("Please select an existing tenant OR invite a new one, not both."),
+            )
+            return cleaned_data
+
+        # If no unit, we can't do further checks.
+        if not unit:
+            return cleaned_data
+
+        # ---- Security: ensure unit belongs to landlord. ----
+        if unit.building.property_ref.landlord_id != self.landlord.pk:
+            self.add_error(
+                "unit",
+                _(
+                    "You cannot create a contract for a unit that does not "
+                    "belong to you."
+                ),
+            )
+            return cleaned_data
+
+        # ---- Prevent double active contract on the same unit. ----
+        if RentalContract.objects.filter(
+            unit=unit,
+            status=ContractStatus.ACTIVE,
+        ).exists():
+            self.add_error(
+                "unit",
+                _("This unit already has an active contract."),
+            )
+
+        # ---- Final availability check. ----
+        if unit.status != UnitStatus.AVAILABLE:
+            self.add_error(
+                "unit",
+                _("This unit is no longer available."),
+            )
+
+        # ---- Only check tenant active contracts if an existing tenant was chosen. ----
+        if tenant and RentalContract.objects.filter(
+            tenant=tenant,
+            status=ContractStatus.ACTIVE,
+        ).exists():
+            self.add_error(
+                "tenant_search",
+                _("This tenant already has an active rental contract."),
+            )
 
         return cleaned_data
+
+    # -------------------------------------------------------------------------
+    # Public helpers for the view
+    # -------------------------------------------------------------------------
+
+    def get_tenant(self):
+        """Return the cached tenant instance, or None if inviting."""
+        return self._tenant
+
+    def get_invite_email(self):
+        """Return the email to invite, or None if a tenant was selected."""
+        return self._invite_email
+
+    def is_inviting(self) -> bool:
+        """Return True if the form is in 'invite a new tenant' mode."""
+        return self._invite_email is not None

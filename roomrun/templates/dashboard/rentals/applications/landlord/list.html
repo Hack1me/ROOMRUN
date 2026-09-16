@@ -1,0 +1,6 @@
+{% extends "dashboard/layout.html" %}
+{% load i18n %}
+{% block content %}
+  <h1>{% translate "Rental applications" %}</h1>
+  <ul>{% for application in applications %}<li><a href="{% url 'rentals:landlord-rental-application-detail' application.pk %}">{{ application.application_number }}</a> — {{ application.tenant }} — {{ application.get_status_display }}</li>{% empty %}<li>{% translate "No rental applications." %}</li>{% endfor %}</ul>
+{% endblock content %}

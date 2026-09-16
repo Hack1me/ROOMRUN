@@ -1,0 +1,143 @@
+{% extends "dashboard/pages/tenant.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Apply for a unit" %} — ROOMRUN{% endblock title %}
+
+{% block tenant_content %}
+  <div class="page-header">
+    <div class="page-title">
+      <h1>{% translate "Apply for a unit" %}</h1>
+      <p>{% translate "Submit your rental application." %}</p>
+    </div>
+    <a href="{% url 'rentals:rental-application-list' %}"
+       class="btn btn-secondary">
+      <i class="ti ti-arrow-left"></i>
+      {% translate "Back to applications" %}
+    </a>
+  </div>
+
+  <section class="card" style="max-width: 720px;">
+    <div class="section-head">
+      <h2 class="section-title">{% translate "Application form" %}</h2>
+    </div>
+    <div class="form-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+          <div class="form-field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+              <small class="form-help">{{ field.help_text }}</small>
+            {% endif %}
+            {% if field.errors %}
+              <ul class="form-errors">
+                {% for error in field.errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+        {% endfor %}
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">
+            {% translate "Submit application" %}
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+{% endblock tenant_content %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <style>
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .page-title h1 {
+      font-size: 20px;
+      line-height: 1.3;
+      font-weight: 600;
+      letter-spacing: -.2px;
+    }
+    .page-title p {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+    .section-head {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .form-body {
+      padding: 20px 16px;
+    }
+    .form-field {
+      margin-bottom: 16px;
+    }
+    .form-field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+      width: 100%;
+      height: 36px;
+      padding: 0 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--text);
+      font-size: 12px;
+      outline: none;
+    }
+    .form-field textarea {
+      height: auto;
+      padding: 10px;
+      resize: vertical;
+    }
+    .form-field input:focus,
+    .form-field select:focus,
+    .form-field textarea:focus {
+      border-color: var(--primary-hover);
+    }
+    .form-help {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+    .form-errors {
+      margin: 6px 0 0 0;
+      padding-left: 16px;
+      color: var(--danger);
+      font-size: 11px;
+    }
+    .form-actions {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+    }
+  </style>
+{% endblock extra_css %}

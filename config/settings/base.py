@@ -96,6 +96,7 @@ THIRD_PARTY_APPS = [
     "djmoney",
     "cities_light",
     "smart_selects",
+    "django_ratelimit",
 ]
 
 LOCAL_APPS = [
@@ -362,3 +363,4 @@ RESET_TOKEN_TIMEOUT = env.int("RESET_TOKEN_TIMEOUT", 900)
 OTP_PAGE_TIMEOUT_SECONDS = env.int("OTP_PAGE_TIMEOUT_SECONDS", 30)
 # Allow LOGIN_REDIRECT_URL override via env (must be a URL name, e.g. "users:redirect")
 LOGIN_REDIRECT_URL = os.getenv("LOGIN_REDIRECT_URL", LOGIN_REDIRECT_URL)
+INVITATION_EXPIRATION_HOURS = env.int("INVITATION_EXPIRATION_HOURS", 48)

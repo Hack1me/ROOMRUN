@@ -1,0 +1,8 @@
+{% extends "dashboard/layout.html" %}
+{% load i18n %}
+{% block content %}
+  <h1>{% translate "Rental application" %} {{ application.application_number }}</h1>
+  <p>{{ application.tenant }} — {{ application.unit }} — {{ application.get_status_display }}</p>
+  <p>{{ application.message }}</p>
+  {% if application.status == "PENDING" %}<p><a href="{% url 'rentals:rental-application-approve' application.pk %}">{% translate "Approve" %}</a></p><form method="post" action="{% url 'rentals:rental-application-reject' application.pk %}">{% csrf_token %}<button type="submit">{% translate "Reject" %}</button></form>{% endif %}
+{% endblock content %}

@@ -1,0 +1,20 @@
+{% extends "dashboard/layout.html" %} {% load i18n %} {% block content %}
+<h1>{% translate "Rental contracts" %}</h1>
+<p>
+  <a href="{% url 'rentals:landlord-rental-contract-create' %}"
+    >{% translate "Create contract" %}</a
+  >
+</p>
+<ul>
+  {% for contract in contracts %}
+  <li>
+    <a href="{% url 'rentals:landlord-rental-contract-detail' contract.pk %}"
+      >{{ contract.contract_number }}</a
+    >
+    — {{ contract.tenant }} — {{ contract.get_status_display }}
+  </li>
+  {% empty %}
+  <li>{% translate "No rental contracts." %}</li>
+  {% endfor %}
+</ul>
+{% endblock content %}

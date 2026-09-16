@@ -1,0 +1,153 @@
+{% extends "dashboard/pages/tenant.html" %}
+{% load i18n %}
+
+{% block title %}
+  {{ application.application_number }} — {% translate "Rental Application" %} — ROOMRUN
+{% endblock title %}
+
+{% block tenant_content %}
+  <div class="page-header">
+    <div class="page-title">
+      <h1>{% translate "Rental application" %} {{ application.application_number }}</h1>
+      <p>{% translate "Application details" %}</p>
+    </div>
+    <a href="{% url 'rentals:rental-application-list' %}"
+       class="btn btn-secondary">
+      <i class="ti ti-arrow-left"></i>
+      {% translate "Back to applications" %}
+    </a>
+  </div>
+
+  <section class="card" style="max-width: 800px;">
+    <div class="section-head">
+      <h2 class="section-title">{% translate "Application information" %}</h2>
+      <span class="status status-{{ application.status|lower }}">
+        {{ application.get_status_display }}
+      </span>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-item">
+        <div class="detail-label">{% translate "Application number" %}</div>
+        <div class="detail-value">{{ application.application_number }}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">{% translate "Unit" %}</div>
+        <div class="detail-value">
+          <a href="{% url 'properties:unit-detail' pk=application.unit.pk %}">
+            {{ application.unit.unit_number }}
+          </a>
+        </div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">{% translate "Property" %}</div>
+        <div class="detail-value">{{ application.unit.building.property_ref.name }}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">{% translate "Monthly rent" %}</div>
+        <div class="detail-value">{{ application.unit.monthly_rent.amount|floatformat:0 }} {{ application.unit.monthly_rent.currency }}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">{% translate "Desired move-in date" %}</div>
+        <div class="detail-value">
+          {% if application.desired_move_in_date %}
+            {{ application.desired_move_in_date|date:"d M Y" }}
+          {% else %}
+            —
+          {% endif %}
+        </div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">{% translate "Desired duration" %}</div>
+        <div class="detail-value">
+          {% if application.desired_duration %}
+            {{ application.desired_duration }} month{{ application.desired_duration|pluralize }}
+          {% else %}
+            —
+          {% endif %}
+        </div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">{% translate "Occupants" %}</div>
+        <div class="detail-value">{{ application.occupants_count }}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">{% translate "Submitted on" %}</div>
+        <div class="detail-value">{{ application.applied_at|date:"d M Y" }}</div>
+      </div>
+      <div class="detail-item full-width">
+        <div class="detail-label">{% translate "Message" %}</div>
+        <div class="detail-value">{{ application.message|default:"—"|linebreaks }}</div>
+      </div>
+    </div>
+  </section>
+{% endblock tenant_content %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <style>
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .page-title h1 {
+      font-size: 20px;
+      line-height: 1.3;
+      font-weight: 600;
+      letter-spacing: -.2px;
+    }
+    .page-title p {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .detail-item {
+      padding: 16px;
+      background: var(--card);
+    }
+    .detail-item.full-width {
+      grid-column: 1 / -1;
+    }
+    .detail-label {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      margin-bottom: 6px;
+    }
+    .detail-value {
+      font-size: 13px;
+      color: var(--text);
+    }
+    @media (max-width: 560px) {
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+{% endblock extra_css %}

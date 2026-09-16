@@ -2,6 +2,8 @@ from core.validators import validate_phone_number_for_country
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth import forms as admin_forms
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.forms import EmailField
 from django.utils.translation import gettext_lazy as _
 from django_countries.widgets import CountrySelectWidget
@@ -255,3 +257,82 @@ class ProfileForm(forms.ModelForm):
             "phone": _("International format, e.g. +33123456789."),
             "profile_picture": _("Upload a JPG, PNG, or WebP image. Max size: 5 MB."),
         }
+
+
+
+class TenantInvitationAcceptForm(forms.Form):
+    """
+    Form used by an invited user to set up their account
+    (name + password) after clicking an invitation link.
+    """
+
+    first_name = forms.CharField(
+        max_length=150,
+        label=_("First name"),
+        widget=forms.TextInput(attrs={"class": "form-input", "autocomplete": "given-name"}),
+    )
+
+    last_name = forms.CharField(
+        max_length=150,
+        label=_("Last name"),
+        widget=forms.TextInput(attrs={"class": "form-input", "autocomplete": "family-name"}),
+    )
+
+    password = forms.CharField(
+        label=_("Password"),
+        widget=forms.PasswordInput(attrs={"class": "form-input", "autocomplete": "new-password"}),
+        help_text=_(
+            "At least 8 characters, not entirely numeric, and not a common password."
+        ),
+    )
+
+    password_confirm = forms.CharField(
+        label=_("Confirm password"),
+        widget=forms.PasswordInput(attrs={"class": "form-input", "autocomplete": "new-password"}),
+    )
+
+    # -------------------------------------------------------------------------
+    # Field-level validation
+    # -------------------------------------------------------------------------
+
+    def clean_first_name(self):
+        """Strip and validate the first name."""
+        first_name = self.cleaned_data["first_name"].strip()
+        if not first_name:
+            raise forms.ValidationError(_("First name cannot be empty."))
+        return first_name
+
+    def clean_last_name(self):
+        """Strip and validate the last name."""
+        last_name = self.cleaned_data["last_name"].strip()
+        if not last_name:
+            raise forms.ValidationError(_("Last name cannot be empty."))
+        return last_name
+
+    def clean_password(self):
+        """
+        Run Django's configured password validators.
+        """
+        password = self.cleaned_data["password"]
+        # validate_password raises ValidationError if the password is weak.
+        validate_password(password)
+        return password
+
+    # -------------------------------------------------------------------------
+    # Cross-field validation
+    # -------------------------------------------------------------------------
+
+    def clean(self):
+        """Ensure the two password fields match."""
+        cleaned_data = super().clean()
+
+        password = cleaned_data.get("password")
+        password_confirm = cleaned_data.get("password_confirm")
+
+        if password and password_confirm and password != password_confirm:
+            self.add_error(
+                "password_confirm",
+                _("Passwords do not match."),
+            )
+
+        return cleaned_data

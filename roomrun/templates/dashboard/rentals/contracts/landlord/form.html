@@ -1,0 +1,36 @@
+{% extends "dashboard/layout.html" %}
+{% load i18n %}
+{% block content %}
+  <h1>{% translate "Create rental contract" %}</h1>
+  <form method="post" novalidate>{% csrf_token %}{{ form.non_field_errors }}{% for field in form %}<p>{{ field.label_tag }}{{ field }}{{ field.errors }}</p>{% endfor %}<button type="submit">{% translate "Create contract" %}</button></form>
+  <script>
+    (() => {
+      const input = document.getElementById("tenant-search");
+      const selected = document.getElementById("id_tenant_id");
+      if (!input || !selected) return;
+      const resultsList = document.createElement("ul");
+      input.after(resultsList);
+      input.addEventListener("input", async () => {
+        selected.value = "";
+        resultsList.replaceChildren();
+        if (input.value.trim().length < 2) return;
+        const response = await fetch("{% url 'rentals:landlord-tenant-search' %}?q=" + encodeURIComponent(input.value));
+        if (!response.ok) return;
+        const { results } = await response.json();
+        results.forEach((tenant) => {
+          const option = document.createElement("button");
+          option.type = "button";
+          option.textContent = `${tenant.name} (${tenant.email})`;
+          option.addEventListener("click", () => {
+            selected.value = tenant.id;
+            input.value = option.textContent;
+            resultsList.replaceChildren();
+          });
+          const item = document.createElement("li");
+          item.append(option);
+          resultsList.append(item);
+        });
+      });
+    })();
+  </script>
+{% endblock content %}

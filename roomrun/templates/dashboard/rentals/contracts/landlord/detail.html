@@ -1,0 +1,15 @@
+{% extends "dashboard/layout.html" %} {% load i18n %} {% block content %}
+<h1>{% translate "Rental contract" %} {{ contract.contract_number }}</h1>
+<dl>
+  <dt>{% translate "Tenant" %}</dt>
+  <dd>{{ contract.tenant }}</dd>
+  <dt>{% translate "Unit" %}</dt>
+  <dd>{{ contract.unit }}</dd>
+  <dt>{% translate "Status" %}</dt>
+  <dd>{{ contract.get_status_display }}</dd>
+  <dt>{% translate "Period" %}</dt>
+  <dd>{{ contract.start_date }} — {{ contract.end_date|default:"—" }}</dd>
+  <dt>{% translate "Monthly rent" %}</dt>
+  <dd>{{ contract.monthly_rent }}</dd>
+</dl>
+{% endblock content %}
