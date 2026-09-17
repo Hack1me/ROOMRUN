@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.db.models import Count
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -42,12 +43,24 @@ class LandlordRentalApplicationListView(LandlordRequiredMixin, ListView):
             .filter(unit__building__property_ref__landlord=landlord)
             .select_related(
                 "tenant",
+                "tenant__user",
                 "unit",
                 "unit__building",
                 "unit__building__property_ref",
             )
             .order_by("-created_at")
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        status_counts = self.get_queryset().aggregate(
+            total=Count("pk"),
+            pending=Count("pk", filter=Q(status=ApplicationStatus.PENDING)),
+            approved=Count("pk", filter=Q(status=ApplicationStatus.APPROVED)),
+            rejected=Count("pk", filter=Q(status=ApplicationStatus.REJECTED)),
+        )
+        context["application_counts"] = status_counts
+        return context
 
 class LandlordRentalApplicationDetailView(LandlordRequiredMixin, DetailView):
     """

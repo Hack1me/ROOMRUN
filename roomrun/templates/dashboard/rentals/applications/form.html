@@ -1,143 +1,119 @@
 {% extends "dashboard/pages/tenant.html" %}
 {% load i18n %}
 
-{% block title %}{% translate "Apply for a unit" %} — ROOMRUN{% endblock title %}
+{% block title %}{% translate "Apply for a unit" %} — ROOMRUN{% endblock %}
 
 {% block tenant_content %}
-  <div class="page-header">
-    <div class="page-title">
-      <h1>{% translate "Apply for a unit" %}</h1>
-      <p>{% translate "Submit your rental application." %}</p>
-    </div>
-    <a href="{% url 'rentals:rental-application-list' %}"
-       class="btn btn-secondary">
-      <i class="ti ti-arrow-left"></i>
-      {% translate "Back to applications" %}
-    </a>
-  </div>
+  <div class="application-form-page">
+    <nav class="application-form-page__breadcrumb" aria-label="{% translate 'Breadcrumb' %}">
+      <a href="{% url 'rentals:rental-application-list' %}">{% translate "Applications" %}</a>
+      <i class="ti ti-chevron-right"></i>
+      <span>{% translate "Apply for a unit" %}</span>
+    </nav>
 
-  <section class="card" style="max-width: 720px;">
-    <div class="section-head">
-      <h2 class="section-title">{% translate "Application form" %}</h2>
-    </div>
-    <div class="form-body">
-      <form method="post" novalidate>
-        {% csrf_token %}
-        {{ form.non_field_errors }}
-        {% for field in form %}
-          <div class="form-field">
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}
-            {% if field.help_text %}
-              <small class="form-help">{{ field.help_text }}</small>
-            {% endif %}
-            {% if field.errors %}
-              <ul class="form-errors">
-                {% for error in field.errors %}
-                  <li>{{ error }}</li>
-                {% endfor %}
-              </ul>
-            {% endif %}
-          </div>
-        {% endfor %}
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">
-            {% translate "Submit application" %}
-          </button>
+    <header class="application-form-page__header">
+      <h1>{% translate "Apply for a unit" %}</h1>
+      <p>{% translate "Submit your rental application to the landlord." %}</p>
+    </header>
+
+    <form method="post" class="application-form-layout" novalidate>
+      {% csrf_token %}
+      <section class="application-form-card">
+        <header class="application-form-card__header"><h2>{% translate "Rental application" %}</h2><p>{% translate "Provide the information required for your application." %}</p></header>
+        <div class="application-form-card__body">
+          {% if form.non_field_errors %}<div class="application-form-errors">{{ form.non_field_errors }}</div>{% endif %}
+          <section class="application-form-section">
+            <h3>{% translate "Rental information" %}</h3>
+            <div class="application-form-grid">
+              <div class="application-field application-field--full">
+                <label for="{{ form.unit.id_for_label }}">{{ form.unit.label }} <b>*</b></label>
+                {{ form.unit }}
+                {% if form.unit.help_text %}<small>{{ form.unit.help_text }}</small>{% endif %}
+                {% for error in form.unit.errors %}<span class="application-field__error">{{ error }}</span>{% endfor %}
+              </div>
+              <div class="application-field">
+                <label for="{{ form.desired_move_in_date.id_for_label }}">{{ form.desired_move_in_date.label }} <b>*</b></label>
+                {{ form.desired_move_in_date }}
+                <small>{% translate "When would you like to start your tenancy?" %}</small>
+                {% for error in form.desired_move_in_date.errors %}<span class="application-field__error">{{ error }}</span>{% endfor %}
+              </div>
+              <div class="application-field">
+                <label for="{{ form.desired_duration.id_for_label }}">{{ form.desired_duration.label }} <b>*</b></label>
+                {{ form.desired_duration }}
+                <small>{% translate "Enter the number of months you would like to rent." %}</small>
+                {% for error in form.desired_duration.errors %}<span class="application-field__error">{{ error }}</span>{% endfor %}
+              </div>
+              <div class="application-field">
+                <label for="{{ form.occupants_count.id_for_label }}">{{ form.occupants_count.label }} <b>*</b></label>
+                {{ form.occupants_count }}
+                <small>{% translate "Include everyone who will live in the unit." %}</small>
+                {% for error in form.occupants_count.errors %}<span class="application-field__error">{{ error }}</span>{% endfor %}
+              </div>
+              <div class="application-field application-field--full">
+                <label for="{{ form.message.id_for_label }}">{{ form.message.label }}</label>
+                {{ form.message }}
+                <small>{% translate "Optional. Keep your message concise and relevant." %}</small>
+                {% for error in form.message.errors %}<span class="application-field__error">{{ error }}</span>{% endfor %}
+              </div>
+            </div>
+          </section>
+
+          <section class="application-form-section">
+            <h3>{% translate "Applicant information" %}</h3>
+            <div class="application-readonly-grid">
+              <div><span>{% translate "Full name" %}</span><strong>{{ user.full_name|default:user.email }}</strong></div>
+              <div><span>{% translate "Email" %}</span><strong>{{ user.email }}</strong></div>
+              <div><span>{% translate "Phone" %}</span><strong>{{ user.phone|default:"—" }}</strong></div>
+              <div><span>{% translate "Country" %}</span><strong>{{ user.country|default:"—" }}</strong></div>
+            </div>
+            <div class="application-info-box"><i class="ti ti-info-circle"></i><div><strong>{% translate "Need to update your information?" %}</strong><p>{% translate "You can update your personal information from your profile before submitting this application." %}</p></div></div>
+          </section>
+
+          <div class="application-info-box application-info-box--notice"><i class="ti ti-shield-check"></i><div><strong>{% translate "No payment is required" %}</strong><p>{% translate "Submitting this application does not create a rental contract or require payment. The landlord must review it first." %}</p></div></div>
+          <footer class="application-form-actions"><a href="{% url 'rentals:rental-application-list' %}" class="application-button application-button--secondary">{% translate "Cancel" %}</a><button class="application-button application-button--primary" type="submit"><i class="ti ti-send"></i>{% translate "Submit application" %}</button></footer>
         </div>
-      </form>
-    </div>
-  </section>
+      </section>
+
+      <aside class="application-form-side">
+        <article class="application-form-card">
+          <div class="application-unit-image"><i class="ti ti-building-estate"></i><span>{% translate "Rental unit" %}</span></div>
+          <div class="application-unit-body">
+            <h2>{% translate "Choose an available unit" %}</h2>
+            <p><i class="ti ti-home-search"></i>{% translate "Select a unit in the form to submit your application." %}</p>
+            <div class="application-unit-selection"><span>{% translate "Selected unit" %}</span><strong id="selected-unit-label">{% translate "No unit selected" %}</strong></div>
+          </div>
+        </article>
+        <article class="application-form-card">
+          <div class="application-side-section"><h3>{% translate "Application information" %}</h3><dl><div><dt>{% translate "Application type" %}</dt><dd>{% translate "Rental" %}</dd></div><div><dt>{% translate "Status after submission" %}</dt><dd>{% translate "Pending review" %}</dd></div><div><dt>{% translate "Response" %}</dt><dd>{% translate "From the landlord" %}</dd></div></dl></div>
+          <div class="application-side-section"><h3>{% translate "Before you submit" %}</h3><ul><li><i class="ti ti-circle-check"></i>{% translate "Confirm your move-in date." %}</li><li><i class="ti ti-circle-check"></i>{% translate "Make sure your contact information is up to date." %}</li><li><i class="ti ti-circle-check"></i>{% translate "The landlord will review your request." %}</li></ul></div>
+        </article>
+      </aside>
+    </form>
+  </div>
 {% endblock tenant_content %}
 
 {% block extra_css %}
   {{ block.super }}
   <style>
-    .page-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 24px;
-    }
-    .page-title h1 {
-      font-size: 20px;
-      line-height: 1.3;
-      font-weight: 600;
-      letter-spacing: -.2px;
-    }
-    .page-title p {
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow);
-    }
-    .section-head {
-      padding: 16px;
-      border-bottom: 1px solid var(--border);
-    }
-    .section-title {
-      font-size: 13px;
-      font-weight: 600;
-    }
-    .form-body {
-      padding: 20px 16px;
-    }
-    .form-field {
-      margin-bottom: 16px;
-    }
-    .form-field label {
-      display: block;
-      font-size: 12px;
-      font-weight: 500;
-      margin-bottom: 6px;
-      color: var(--text);
-    }
-    .form-field input,
-    .form-field select,
-    .form-field textarea {
-      width: 100%;
-      height: 36px;
-      padding: 0 10px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      color: var(--text);
-      font-size: 12px;
-      outline: none;
-    }
-    .form-field textarea {
-      height: auto;
-      padding: 10px;
-      resize: vertical;
-    }
-    .form-field input:focus,
-    .form-field select:focus,
-    .form-field textarea:focus {
-      border-color: var(--primary-hover);
-    }
-    .form-help {
-      display: block;
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 10px;
-    }
-    .form-errors {
-      margin: 6px 0 0 0;
-      padding-left: 16px;
-      color: var(--danger);
-      font-size: 11px;
-    }
-    .form-actions {
-      margin-top: 20px;
-      padding-top: 16px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      gap: 8px;
-    }
+    .application-form-page { --application-border:#e6e8ec; --application-text:#1e293b; --application-muted:#5b6675; --application-primary:#16283f; --application-accent:#c1622d; --application-danger:#d64545; color:var(--application-text); }.application-form-page__breadcrumb { display:flex; align-items:center; gap:7px; margin-bottom:20px; color:var(--application-muted); font-size:11px; }.application-form-page__breadcrumb a:hover { color:var(--application-text); }.application-form-page__breadcrumb i { font-size:13px; }.application-form-page__header { margin-bottom:24px; }.application-form-page__header h1 { font-size:21px; line-height:1.25; font-weight:600; }.application-form-page__header p { margin-top:5px; color:var(--application-muted); font-size:12px; }
+    .application-form-layout { display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:20px; align-items:start; }.application-form-card { overflow:hidden; border:1px solid var(--application-border); border-radius:12px; background:#fff; box-shadow:0 1px 2px rgba(15,23,42,.04); }.application-form-card__header { padding:18px 20px; border-bottom:1px solid var(--application-border); }.application-form-card__header h2 { font-size:14px; font-weight:600; }.application-form-card__header p { margin-top:3px; color:var(--application-muted); font-size:12px; }.application-form-card__body { padding:20px; }.application-form-section { margin-bottom:26px; }.application-form-section h3,.application-side-section h3 { margin-bottom:14px; font-size:13px; font-weight:600; }
+    .application-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }.application-field { display:flex; flex-direction:column; gap:6px; }.application-field--full { grid-column:1 / -1; }.application-field label { color:var(--application-text); font-size:12px; font-weight:500; }.application-field label b { color:var(--application-danger); }.application-field input,.application-field select,.application-field textarea { width:100%; border:1px solid var(--application-border); border-radius:8px; outline:0; background:#fff; color:var(--application-text); font-size:12px; transition:border-color .15s ease,box-shadow .15s ease; }.application-field input,.application-field select { height:40px; padding:0 11px; }.application-field textarea { min-height:110px; padding:10px 11px; resize:vertical; }.application-field input:focus,.application-field select:focus,.application-field textarea:focus { border-color:#1e3a5f; box-shadow:0 0 0 2px rgba(30,58,95,.08); }.application-field small { color:var(--application-muted); font-size:11px; }.application-field__error,.application-form-errors { color:var(--application-danger); font-size:11px; }.application-form-errors { margin-bottom:16px; padding:11px 12px; border:1px solid #efc8c8; border-radius:7px; background:#fcebec; }.application-form-errors ul { margin:0; padding-left:16px; }
+    .application-readonly-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }.application-readonly-grid > div { padding:11px 12px; border:1px solid var(--application-border); border-radius:7px; background:#fcfcfb; }.application-readonly-grid span { display:block; margin-bottom:3px; color:var(--application-muted); font-size:10px; font-weight:500; letter-spacing:.04em; text-transform:uppercase; }.application-readonly-grid strong { display:block; font-size:12px; font-weight:500; }.application-info-box { display:flex; gap:10px; margin-top:20px; padding:13px 14px; border:1px solid #dce6f2; border-radius:8px; background:#eaf2fb; }.application-info-box i { flex:none; color:#1e3a5f; font-size:18px; }.application-info-box strong { display:block; margin-bottom:2px; font-size:12px; }.application-info-box p { color:var(--application-muted); font-size:11px; }.application-info-box--notice { margin-top:0; }.application-form-actions { display:flex; align-items:center; justify-content:flex-end; gap:10px; margin-top:24px; padding-top:20px; border-top:1px solid var(--application-border); }.application-button { height:38px; padding:0 15px; display:inline-flex; align-items:center; justify-content:center; gap:7px; border:1px solid transparent; border-radius:7px; font-size:12px; font-weight:500; cursor:pointer; }.application-button--secondary { border-color:var(--application-border); background:#fff; }.application-button--secondary:hover { background:#f5f6f8; }.application-button--primary { background:var(--application-accent); color:#fff; }.application-button--primary:hover { background:#a34f22; }
+    .application-form-side { display:flex; flex-direction:column; gap:20px; }.application-unit-image { position:relative; height:165px; display:grid; place-items:center; background:linear-gradient(135deg,#d8d2ca,#eee9e3 48%,#c9c2ba); color:#1e3a5f; }.application-unit-image i { font-size:42px; opacity:.7; }.application-unit-image span { position:absolute; left:14px; bottom:13px; padding:5px 8px; border-radius:5px; background:rgba(22,40,63,.78); color:#fff; font-size:10px; }.application-unit-body { padding:18px; }.application-unit-body h2 { font-size:16px; font-weight:600; }.application-unit-body > p { display:flex; gap:4px; margin-top:5px; color:var(--application-muted); font-size:11px; }.application-unit-selection { margin-top:17px; padding-top:17px; border-top:1px solid var(--application-border); }.application-unit-selection span { display:block; color:var(--application-muted); font-size:11px; }.application-unit-selection strong { display:block; margin-top:3px; font-size:14px; }.application-side-section { padding:18px; border-top:1px solid var(--application-border); }.application-side-section:first-child { border-top:0; }.application-side-section dl { display:flex; flex-direction:column; gap:10px; }.application-side-section dl div { display:flex; justify-content:space-between; gap:15px; font-size:11px; }.application-side-section dt { color:var(--application-muted); }.application-side-section dd { text-align:right; font-weight:500; }.application-side-section ul { display:flex; flex-direction:column; gap:11px; list-style:none; }.application-side-section li { display:flex; gap:9px; color:var(--application-muted); font-size:11px; }.application-side-section li i { color:#2e9e5b; font-size:16px; }
+    @media (max-width:1050px) { .application-form-layout { grid-template-columns:1fr; }.application-form-side { display:grid; grid-template-columns:1fr 1fr; }.application-form-side > * { height:fit-content; } } @media (max-width:650px) { .application-form-grid,.application-readonly-grid,.application-form-side { grid-template-columns:1fr; }.application-field--full { grid-column:auto; }.application-form-actions { flex-direction:column-reverse; align-items:stretch; }.application-button { width:100%; } }
   </style>
 {% endblock extra_css %}
+
+{% block inline_javascript %}
+  {{ block.super }}
+  <script>
+    (() => {
+      const select = document.getElementById("{{ form.unit.id_for_label }}");
+      const label = document.getElementById("selected-unit-label");
+      if (!select || !label) return;
+      const updateLabel = () => { label.textContent = select.options[select.selectedIndex]?.text || "{% translate 'No unit selected' %}"; };
+      select.addEventListener("change", updateLabel);
+      updateLabel();
+    })();
+  </script>
+{% endblock inline_javascript %}

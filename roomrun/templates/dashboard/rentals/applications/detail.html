@@ -1,153 +1,121 @@
 {% extends "dashboard/pages/tenant.html" %}
 {% load i18n %}
 
-{% block title %}
-  {{ application.application_number }} — {% translate "Rental Application" %} — ROOMRUN
-{% endblock title %}
+{% block title %}{{ application.application_number }} — {% translate "Rental application" %} — ROOMRUN{% endblock %}
 
 {% block tenant_content %}
-  <div class="page-header">
-    <div class="page-title">
-      <h1>{% translate "Rental application" %} {{ application.application_number }}</h1>
-      <p>{% translate "Application details" %}</p>
-    </div>
-    <a href="{% url 'rentals:rental-application-list' %}"
-       class="btn btn-secondary">
-      <i class="ti ti-arrow-left"></i>
-      {% translate "Back to applications" %}
-    </a>
-  </div>
+  {% with unit=application.unit %}
+  {% with rental_property=unit.building.property_ref %}
+    <div class="application-detail">
+      <nav class="application-detail__breadcrumb" aria-label="{% translate 'Breadcrumb' %}">
+        <a href="{% url 'rentals:rental-application-list' %}">{% translate "Rental applications" %}</a>
+        <i class="ti ti-chevron-right"></i>
+        <span>{{ application.application_number }}</span>
+      </nav>
 
-  <section class="card" style="max-width: 800px;">
-    <div class="section-head">
-      <h2 class="section-title">{% translate "Application information" %}</h2>
-      <span class="status status-{{ application.status|lower }}">
-        {{ application.get_status_display }}
-      </span>
+      <header class="application-detail__header">
+        <div class="application-detail__heading">
+          <span class="application-detail__header-icon"><i class="ti ti-file-description"></i></span>
+          <div>
+            <h1>{% translate "Rental application" %}</h1>
+            <p>{{ application.application_number }} · {% blocktranslate with date=application.applied_at|date:"d M Y" %}Submitted {{ date }}{% endblocktranslate %}</p>
+          </div>
+        </div>
+        <div class="application-detail__header-actions">
+          <span class="application-status application-status--{{ application.status|lower }}">{{ application.get_status_display }}</span>
+          <a href="{% url 'rentals:rental-application-list' %}" class="application-detail__back"><i class="ti ti-arrow-left"></i>{% translate "Applications" %}</a>
+        </div>
+      </header>
+
+      <div class="application-detail__grid">
+        <div class="application-detail__main">
+          <article class="application-card">
+            <header class="application-card__header"><h2>{% translate "Property" %}</h2><span>{% translate "Rental unit" %}</span></header>
+            <div class="application-card__body">
+              <div class="application-property">
+                <div class="application-property__image"><i class="ti ti-building-estate"></i></div>
+                <div class="application-property__details">
+                  <h3>{{ rental_property.name }}</h3>
+                  <p class="application-property__location"><i class="ti ti-map-pin"></i>{% if rental_property.address %}{{ rental_property.address }}{% endif %}{% if rental_property.city %}{% if rental_property.address %}, {% endif %}{{ rental_property.city }}{% endif %}{% if rental_property.country %}, {{ rental_property.country.name }}{% endif %}</p>
+                  <div class="application-property__unit"><span>{% blocktranslate with number=unit.unit_number %}Unit {{ number }}{% endblocktranslate %}</span><small>{{ unit.get_unit_type_display }} · {% translate "Floor" %} {{ unit.floor }}{% if unit.area %} · {{ unit.area|floatformat:0 }} m²{% endif %}</small></div>
+                  <div class="application-rent"><strong>{{ unit.monthly_rent.amount|floatformat:0 }} {{ unit.monthly_rent.currency }}</strong><span>/ {% translate "month" %}</span></div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="application-card">
+            <header class="application-card__header"><h2>{% translate "Application information" %}</h2></header>
+            <div class="application-card__body application-info-grid">
+              <div><label>{% translate "Application number" %}</label><strong>{{ application.application_number }}</strong></div>
+              <div><label>{% translate "Status" %}</label><span class="application-status application-status--{{ application.status|lower }}">{{ application.get_status_display }}</span></div>
+              <div><label>{% translate "Application date" %}</label><strong>{{ application.applied_at|date:"d M Y" }}</strong></div>
+              <div><label>{% translate "Desired start date" %}</label><strong>{% if application.desired_move_in_date %}{{ application.desired_move_in_date|date:"d M Y" }}{% else %}—{% endif %}</strong></div>
+              <div><label>{% translate "Desired duration" %}</label><strong>{% if application.desired_duration %}{% blocktranslate count months=application.desired_duration %}{{ months }} month{% plural %}{{ months }} months{% endblocktranslate %}{% else %}—{% endif %}</strong></div>
+              <div><label>{% translate "Occupants" %}</label><strong>{{ application.occupants_count }}</strong></div>
+            </div>
+          </article>
+
+          <article class="application-card">
+            <header class="application-card__header"><h2>{% translate "Message to landlord" %}</h2></header>
+            <div class="application-card__body"><div class="application-message">{{ application.message|default:"—"|linebreaksbr }}</div></div>
+          </article>
+
+          <article class="application-card">
+            <header class="application-card__header"><h2>{% translate "Application timeline" %}</h2></header>
+            <div class="application-card__body"><div class="application-timeline">
+              <div class="application-timeline__item application-timeline__item--complete"><i></i><strong>{% translate "Application submitted" %}</strong><span>{{ application.applied_at|date:"d M Y · H:i" }}</span><p>{% translate "Your rental application was successfully sent to the landlord." %}</p></div>
+              {% if application.status == "PENDING" %}
+                <div class="application-timeline__item application-timeline__item--current"><i></i><strong>{% translate "Under review" %}</strong><span>{% translate "Current status" %}</span><p>{% translate "The landlord is currently reviewing your application." %}</p></div>
+                <div class="application-timeline__item"><i></i><strong>{% translate "Decision" %}</strong><span>{% translate "Waiting for landlord response" %}</span></div>
+              {% else %}
+                <div class="application-timeline__item application-timeline__item--complete"><i></i><strong>{{ application.get_status_display }}</strong><span>{% if application.reviewed_at %}{{ application.reviewed_at|date:"d M Y · H:i" }}{% else %}—{% endif %}</span></div>
+              {% endif %}
+            </div></div>
+          </article>
+        </div>
+
+        <aside class="application-detail__side">
+          <article class="application-card">
+            <header class="application-card__header"><h2>{% translate "Summary" %}</h2></header>
+            <div class="application-card__body application-summary">
+              <div><span>{% translate "Application" %}</span><strong>{{ application.application_number }}</strong></div>
+              <div><span>{% translate "Status" %}</span><strong><span class="application-status application-status--{{ application.status|lower }}">{{ application.get_status_display }}</span></strong></div>
+              <div><span>{% translate "Property" %}</span><strong>{{ rental_property.name }}</strong></div>
+              <div><span>{% translate "Unit" %}</span><strong>{{ unit.unit_number }}</strong></div>
+              <div><span>{% translate "Monthly rent" %}</span><strong>{{ unit.monthly_rent.amount|floatformat:0 }} {{ unit.monthly_rent.currency }}</strong></div>
+              <div><span>{% translate "Desired start" %}</span><strong>{% if application.desired_move_in_date %}{{ application.desired_move_in_date|date:"d M Y" }}{% else %}—{% endif %}</strong></div>
+            </div>
+          </article>
+          <article class="application-card">
+            <header class="application-card__header"><h2>{% translate "Actions" %}</h2></header>
+            <div class="application-card__body application-actions">
+              <a href="{% url 'properties:property-detail' rental_property.pk %}"><i class="ti ti-building"></i>{% translate "View property" %}</a>
+              <a href="{% url 'properties:unit-detail' unit.pk %}"><i class="ti ti-door"></i>{% translate "View unit" %}</a>
+              <a href="{% url 'rentals:rental-application-list' %}"><i class="ti ti-list"></i>{% translate "All applications" %}</a>
+            </div>
+          </article>
+          <article class="application-card"><header class="application-card__header"><h2>{% translate "What's next?" %}</h2></header><div class="application-card__body application-next"><p>{% if application.status == "PENDING" %}{% translate "Your application is being reviewed. You will be notified once the landlord makes a decision." %}{% elif application.status == "APPROVED" %}{% translate "Your application has been approved. The landlord will contact you about the rental contract." %}{% else %}{% translate "This application has been reviewed. You can explore other available properties at any time." %}{% endif %}</p></div></article>
+        </aside>
+      </div>
     </div>
-    <div class="detail-grid">
-      <div class="detail-item">
-        <div class="detail-label">{% translate "Application number" %}</div>
-        <div class="detail-value">{{ application.application_number }}</div>
-      </div>
-      <div class="detail-item">
-        <div class="detail-label">{% translate "Unit" %}</div>
-        <div class="detail-value">
-          <a href="{% url 'properties:unit-detail' pk=application.unit.pk %}">
-            {{ application.unit.unit_number }}
-          </a>
-        </div>
-      </div>
-      <div class="detail-item">
-        <div class="detail-label">{% translate "Property" %}</div>
-        <div class="detail-value">{{ application.unit.building.property_ref.name }}</div>
-      </div>
-      <div class="detail-item">
-        <div class="detail-label">{% translate "Monthly rent" %}</div>
-        <div class="detail-value">{{ application.unit.monthly_rent.amount|floatformat:0 }} {{ application.unit.monthly_rent.currency }}</div>
-      </div>
-      <div class="detail-item">
-        <div class="detail-label">{% translate "Desired move-in date" %}</div>
-        <div class="detail-value">
-          {% if application.desired_move_in_date %}
-            {{ application.desired_move_in_date|date:"d M Y" }}
-          {% else %}
-            —
-          {% endif %}
-        </div>
-      </div>
-      <div class="detail-item">
-        <div class="detail-label">{% translate "Desired duration" %}</div>
-        <div class="detail-value">
-          {% if application.desired_duration %}
-            {{ application.desired_duration }} month{{ application.desired_duration|pluralize }}
-          {% else %}
-            —
-          {% endif %}
-        </div>
-      </div>
-      <div class="detail-item">
-        <div class="detail-label">{% translate "Occupants" %}</div>
-        <div class="detail-value">{{ application.occupants_count }}</div>
-      </div>
-      <div class="detail-item">
-        <div class="detail-label">{% translate "Submitted on" %}</div>
-        <div class="detail-value">{{ application.applied_at|date:"d M Y" }}</div>
-      </div>
-      <div class="detail-item full-width">
-        <div class="detail-label">{% translate "Message" %}</div>
-        <div class="detail-value">{{ application.message|default:"—"|linebreaks }}</div>
-      </div>
-    </div>
-  </section>
+  {% endwith %}
+  {% endwith %}
 {% endblock tenant_content %}
 
 {% block extra_css %}
   {{ block.super }}
   <style>
-    .page-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 24px;
-    }
-    .page-title h1 {
-      font-size: 20px;
-      line-height: 1.3;
-      font-weight: 600;
-      letter-spacing: -.2px;
-    }
-    .page-title p {
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow);
-    }
-    .section-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px;
-      border-bottom: 1px solid var(--border);
-    }
-    .section-title {
-      font-size: 13px;
-      font-weight: 600;
-    }
-    .detail-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1px;
-      background: var(--border);
-    }
-    .detail-item {
-      padding: 16px;
-      background: var(--card);
-    }
-    .detail-item.full-width {
-      grid-column: 1 / -1;
-    }
-    .detail-label {
-      color: var(--muted);
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .04em;
-      margin-bottom: 6px;
-    }
-    .detail-value {
-      font-size: 13px;
-      color: var(--text);
-    }
-    @media (max-width: 560px) {
-      .detail-grid {
-        grid-template-columns: 1fr;
-      }
-    }
+    .application-detail { --app-card:#fff; --app-border:#e6e8ec; --app-text:#1e293b; --app-muted:#5b6675; --app-success:#2e9e5b; --app-warning:#b9770e; --app-danger:#d64545; color:var(--app-text); }
+    .application-detail__breadcrumb { display:flex; align-items:center; gap:7px; margin-bottom:18px; color:var(--app-muted); font-size:11px; }.application-detail__breadcrumb a:hover { color:var(--app-text); }.application-detail__breadcrumb i { color:#9aa3af; font-size:13px; }
+    .application-detail__header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:24px; }.application-detail__heading { display:flex; gap:13px; }.application-detail__header-icon { display:grid; width:44px; height:44px; place-items:center; border-radius:10px; background:#eaf2fb; color:#1e3a5f; }.application-detail__header-icon i { font-size:21px; }.application-detail__heading h1 { font-size:20px; line-height:1.3; font-weight:600; }.application-detail__heading p { margin-top:5px; color:var(--app-muted); font-size:12px; }.application-detail__header-actions { display:flex; align-items:center; gap:8px; }.application-detail__back { height:36px; padding:0 13px; display:inline-flex; align-items:center; gap:7px; border:1px solid var(--app-border); border-radius:7px; background:#fff; font-size:12px; font-weight:500; }.application-detail__back:hover { background:#fcfcfb; }
+    .application-status { display:inline-flex; align-items:center; gap:5px; min-height:23px; padding:4px 8px; border-radius:12px; font-size:10px; font-weight:500; }.application-status::before { width:5px; height:5px; border-radius:50%; background:currentColor; content:""; }.application-status--pending { background:#fef3e2; color:var(--app-warning); }.application-status--approved { background:#eaf7ef; color:var(--app-success); }.application-status--rejected,.application-status--cancelled { background:#fcebec; color:var(--app-danger); }
+    .application-detail__grid { display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:16px; align-items:start; }.application-detail__main,.application-detail__side { display:flex; flex-direction:column; gap:16px; }.application-card { overflow:hidden; border:1px solid var(--app-border); border-radius:12px; background:var(--app-card); box-shadow:0 1px 2px rgba(15,23,42,.04); }.application-card__header { min-height:52px; padding:0 18px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--app-border); }.application-card__header h2 { font-size:13px; font-weight:600; }.application-card__header > span { color:var(--app-muted); font-size:10px; }.application-card__body { padding:18px; }
+    .application-property { display:flex; gap:16px; }.application-property__image { width:150px; height:110px; flex:none; display:grid; place-items:center; border-radius:8px; background:linear-gradient(135deg,#eaf2fb,#f5e4da); color:#1e3a5f; }.application-property__image i { font-size:30px; opacity:.7; }.application-property__details { flex:1; }.application-property h3 { font-size:14px; font-weight:600; }.application-property__location { display:flex; align-items:center; gap:5px; margin-top:5px; color:var(--app-muted); font-size:11px; }.application-property__location i { font-size:14px; }.application-property__unit { display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-top:13px; }.application-property__unit span { padding:5px 8px; border-radius:5px; background:#f5e4da; color:#1e3a5f; font-size:10px; font-weight:500; }.application-property__unit small { color:var(--app-muted); font-size:10px; }.application-rent { display:flex; align-items:baseline; gap:5px; margin-top:12px; }.application-rent strong { font-size:14px; font-weight:600; }.application-rent span { color:var(--app-muted); font-size:10px; }
+    .application-info-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:18px 30px; }.application-info-grid label { display:block; margin-bottom:5px; color:var(--app-muted); font-size:10px; font-weight:500; }.application-info-grid strong { display:block; font-size:12px; font-weight:500; }.application-message { padding:14px; border:1px solid var(--app-border); border-radius:8px; background:#fcfcfb; color:#64748b; font-size:12px; line-height:1.7; }
+    .application-timeline { position:relative; padding-left:25px; }.application-timeline::before { position:absolute; top:7px; bottom:7px; left:6px; width:1px; background:var(--app-border); content:""; }.application-timeline__item { position:relative; padding-bottom:22px; }.application-timeline__item:last-child { padding-bottom:0; }.application-timeline__item i { position:absolute; top:3px; left:-25px; z-index:1; width:13px; height:13px; border:2px solid #c7cdd6; border-radius:50%; background:#fff; }.application-timeline__item--complete i { border-color:var(--app-success); background:var(--app-success); }.application-timeline__item--current i { border-color:var(--app-warning); background:var(--app-warning); }.application-timeline__item strong,.application-timeline__item span { display:block; font-size:11px; }.application-timeline__item span { margin-top:3px; color:var(--app-muted); font-size:10px; }.application-timeline__item p { margin-top:5px; color:#64748b; font-size:10px; line-height:1.5; }
+    .application-summary > div { display:flex; justify-content:space-between; gap:15px; padding:11px 0; border-bottom:1px solid var(--app-border); }.application-summary > div:first-child { padding-top:0; }.application-summary > div:last-child { padding-bottom:0; border:0; }.application-summary span { color:var(--app-muted); font-size:10px; }.application-summary strong { text-align:right; font-size:11px; font-weight:500; }.application-summary strong .application-status { color:inherit; }.application-actions { display:flex; flex-direction:column; gap:7px; }.application-actions a { min-height:36px; padding:8px 11px; display:flex; align-items:center; gap:8px; border:1px solid var(--app-border); border-radius:7px; font-size:11px; font-weight:500; }.application-actions a:hover { border-color:#c7cdd6; background:#fcfcfb; }.application-actions i { color:var(--app-muted); font-size:16px; }.application-next p { color:#64748b; font-size:11px; line-height:1.7; }
+    @media (max-width:1000px) { .application-detail__grid { grid-template-columns:1fr; }.application-detail__side { display:grid; grid-template-columns:repeat(2,1fr); }.application-detail__side > :last-child { grid-column:1 / -1; } }
+    @media (max-width:650px) { .application-detail__header { flex-direction:column; }.application-detail__header-actions { width:100%; justify-content:space-between; }.application-property { flex-direction:column; }.application-property__image { width:100%; height:150px; }.application-info-grid { grid-template-columns:1fr; }.application-detail__side { display:flex; } }
   </style>
 {% endblock extra_css %}
