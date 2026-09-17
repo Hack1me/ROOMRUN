@@ -14,13 +14,27 @@
 {% endblock header %}
 {% block body %}
   {% block dashboard_body %}
-    <main class="min-h-screen">
-      <div class="rr-container">
-        {% include "common/includes/messages.html" %}
-        {% block content %}
-        {% endblock content %}
+    <div class="app {% block app_class %}{% endblock app_class %}">
+      {% block sidebar %}
+        {% if sidebar_template %}
+          {% include sidebar_template %}
+        {% endif %}
+      {% endblock sidebar %}
+      <div class="dashboard-main">
+        {% block topbar %}
+          {% if topbar_template %}
+            {% include topbar_template %}
+          {% endif %}
+        {% endblock topbar %}
+        <main class="main">
+          <div class="content">
+            {% include "common/includes/messages.html" %}
+            {% block content %}
+            {% endblock content %}
+          </div>
+        </main>
       </div>
-    </main>
+    </div>
   {% endblock dashboard_body %}
   {% block footer %}
     {% include "home/includes/site_footer.html" %}
