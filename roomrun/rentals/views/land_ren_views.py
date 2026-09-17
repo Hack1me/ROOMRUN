@@ -12,6 +12,7 @@ from django.views.generic import DetailView
 from django.views.generic import FormView
 from django.views.generic import ListView
 from django_ratelimit.decorators import ratelimit
+from djmoney.money import Money
 from properties.mixins import LandlordRequiredMixin
 from rentals.forms import DirectRentalContractForm
 from rentals.forms import RentalContractForm
@@ -58,6 +59,7 @@ class LandlordRentalApplicationListView(LandlordRequiredMixin, ListView):
             pending=Count("pk", filter=Q(status=ApplicationStatus.PENDING)),
             approved=Count("pk", filter=Q(status=ApplicationStatus.APPROVED)),
             rejected=Count("pk", filter=Q(status=ApplicationStatus.REJECTED)),
+            cancelled=Count("pk", filter=Q(status=ApplicationStatus.CANCELLED)),
         )
         context["application_counts"] = status_counts
         return context
@@ -162,8 +164,8 @@ class RentalApplicationApproveView(LandlordRequiredMixin, FormView):
 
         initial.update({
             "start_date": self.application.desired_move_in_date,
-            "monthly_rent": unit.monthly_rent.amount if unit.monthly_rent else 0,
-            "deposit": 0,
+            "monthly_rent": unit.monthly_rent,
+            "deposit": Money(0, unit.monthly_rent.currency),
             "advance_rent_months": 1,
         })
 

@@ -26,6 +26,7 @@
       <div class="nav-title">{% translate "Management" %}</div>
       <nav class="nav">
         <a href="#" class="nav-item"><i class="ti ti-users"></i><span>{% translate "Tenants" %}</span></a>
+        <a href="{% url 'rentals:landlord-rental-application-list' %}" class="nav-item"><i class="ti ti-inbox"></i><span>{% translate "Applications" %}</span></a>
         <a href="#" class="nav-item"><i class="ti ti-calendar"></i><span>{% translate "Calendar" %}</span></a>
         <a href="#" class="nav-item"><i class="ti ti-bell"></i><span>{% translate "Notifications" %}</span></a>
       </nav>
