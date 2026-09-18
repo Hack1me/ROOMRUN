@@ -143,6 +143,92 @@
       gap: 8px;
     }
 
+    .menu-button {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--la-muted);
+    }
+
+    .menu-button:hover {
+      background: var(--bg);
+      border-color: var(--la-border);
+    }
+
+    .page-heading {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .page-heading h1 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .page-heading p {
+      margin: 3px 0 0;
+      font-size: 11px;
+      color: var(--la-muted);
+    }
+
+    .topbar-search {
+      width: 300px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 11px;
+      border: 1px solid var(--la-border);
+      border-radius: 7px;
+      color: var(--la-muted);
+    }
+
+    .topbar-search i { font-size: 17px; }
+
+    .topbar-search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      font-size: 12px;
+      background: transparent;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .icon-button {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--la-muted);
+    }
+
+    .icon-button:hover {
+      background: var(--bg);
+      border-color: var(--la-border);
+    }
+
+    .icon-button i { font-size: 18px; }
+
+    .profile-button img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
     .search-box {
       width: 280px;
       height: 36px;
@@ -452,31 +538,39 @@
     <main class="main">
       <header class="topbar">
         <div class="topbar-left">
-          <button type="button" class="icon-button mobile-menu" id="mobileMenu" aria-label="{% translate 'Open menu' %}">
+          <button type="button"
+                  class="menu-button"
+                  id="mobile-menu"
+                  aria-label="{% translate 'Open menu' %}">
             <i class="ti ti-menu-2"></i>
           </button>
-          <div class="topbar-search">
-            <i class="ti ti-search"></i>
-            <input type="text" placeholder="{% translate 'Search...' %}" />
+          <div class="page-heading">
+            <h1>{% translate "Tenants" %}</h1>
+            <p>{% translate "Manage your tenants, their homes and rental contracts." %}</p>
           </div>
         </div>
+        <label class="topbar-search">
+          <i class="ti ti-search"></i>
+          <input type="search"
+                 placeholder="{% translate 'Search a property, a tenant…' %}" />
+        </label>
         <div class="topbar-right">
-          <button type="button" class="icon-button" aria-label="{% translate 'Notifications' %}">
+          <button type="button"
+                  class="icon-button"
+                  aria-label="{% translate 'Notifications' %}">
             <i class="ti ti-bell"></i>
           </button>
-          <div class="profile">
-            <div class="avatar">
-              {% if user.first_name or user.last_name %}
-                {{ user.first_name|first }}{{ user.last_name|first }}
-              {% else %}
-                <i class="ti ti-user"></i>
-              {% endif %}
-            </div>
-            <div class="profile-text">
-              <div class="profile-name">{{ user.full_name }}</div>
-              <div class="profile-role">{% translate "Landlord" %}</div>
-            </div>
-          </div>
+          <a href="{% url 'users:profile' %}"
+             class="icon-button profile-button"
+             aria-label="{% translate 'Profile' %}">
+            {% if user.profile_picture %}
+              <img class="h-full w-full object-cover"
+                   src="{{ user.profile_picture.url }}"
+                   alt="" />
+            {% else %}
+              <i class="ti ti-user"></i>
+            {% endif %}
+          </a>
         </div>
       </header>
 

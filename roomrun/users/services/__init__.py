@@ -6,6 +6,7 @@ from users.services.dashboard import LandlordDashboardService
 from users.services.dashboard import MaintenanceDashboardService
 from users.services.dashboard import TenantDashboardContext
 from users.services.dashboard import TenantDashboardService
+from users.services.employee import EmployeeService
 from users.services.invitation import InvitationAcceptanceService
 from users.services.invitation import UserInvitationService
 from users.services.otp import OtpEmailService
@@ -20,6 +21,7 @@ from users.services.tenant import TenantService
 __all__ = [
     "DashboardData",
     "DashboardService",
+    "EmployeeService",
     "GuardDashboardService",
     "InvitationAcceptanceService",
     "LandlordDashboardContext",
