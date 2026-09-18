@@ -1,0 +1,765 @@
+{% extends "base.html" %}
+
+{% load i18n static %}
+
+{% block title %}{% translate "Tenants" %} — ROOMRUN{% endblock title %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
+  <style>
+    :root {
+      --la-primary: #16283f;
+      --la-surface: #fcfcfb;
+      --la-card: #ffffff;
+      --la-text: #1e293b;
+      --la-muted: #5b6675;
+      --la-border: #e6e8ec;
+      --la-success: #2e9e5b;
+      --la-warning: #b9770e;
+      --la-danger: #d64545;
+    }
+
+    .landlord-app { color: var(--la-text); }
+    .landlord-app .content { max-width: 1400px; margin: 0 auto; padding: 28px; }
+
+    .page-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -.3px;
+      margin-bottom: 5px;
+    }
+
+    .page-description {
+      color: var(--la-muted);
+      font-size: 12px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      height: 38px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      border-radius: 7px;
+      border: 1px solid transparent;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .btn i { font-size: 16px; }
+
+    .btn-primary {
+      background: var(--secondary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--secondary-hover);
+    }
+
+    .btn-secondary {
+      background: #fff;
+      border-color: var(--la-border);
+      color: var(--la-text);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg);
+    }
+
+    .overview {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin-bottom: 20px;
+      background: var(--la-card);
+      border: 1px solid var(--la-border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .overview-item {
+      min-height: 94px;
+      padding: 18px 20px;
+      border-right: 1px solid var(--la-border);
+    }
+
+    .overview-item:last-child { border-right: 0; }
+
+    .overview-label {
+      color: var(--la-muted);
+      font-size: 10px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .overview-value {
+      font-size: 21px;
+      font-weight: 600;
+      letter-spacing: -.5px;
+    }
+
+    .overview-meta {
+      margin-top: 4px;
+      color: var(--la-muted);
+      font-size: 10px;
+    }
+
+    .tenant-card {
+      background: var(--la-card);
+      border: 1px solid var(--la-border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .toolbar {
+      min-height: 68px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      border-bottom: 1px solid var(--la-border);
+    }
+
+    .toolbar-left {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .search-box {
+      width: 280px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 10px;
+      border: 1px solid var(--la-border);
+      border-radius: 7px;
+      color: var(--la-muted);
+    }
+
+    .search-box i { font-size: 16px; }
+
+    .search-box input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      font-size: 11px;
+    }
+
+    .filter {
+      height: 36px;
+      min-width: 135px;
+      padding: 0 9px;
+      background: #fff;
+      border: 1px solid var(--la-border);
+      border-radius: 7px;
+      color: var(--la-text);
+      font-size: 11px;
+      outline: none;
+    }
+
+    .filter:focus { border-color: var(--la-primary); }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1050px;
+      border-collapse: collapse;
+    }
+
+    thead { background: #fafbfc; }
+
+    th {
+      padding: 11px 16px;
+      text-align: left;
+      color: var(--la-muted);
+      font-size: 10px;
+      font-weight: 600;
+      white-space: nowrap;
+      border-bottom: 1px solid var(--la-border);
+    }
+
+    td {
+      padding: 13px 16px;
+      vertical-align: middle;
+      border-bottom: 1px solid var(--la-border);
+      font-size: 11px;
+    }
+
+    tbody tr { transition: background .12s ease; }
+
+    tbody tr:hover { background: #fafafa; }
+
+    tbody tr:last-child td { border-bottom: 0; }
+
+    .tenant {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 210px;
+    }
+
+    .tenant-avatar {
+      width: 38px;
+      height: 38px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--la-primary-soft, #f5e4da);
+      color: var(--la-primary, #16283f);
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .tenant-name {
+      margin-bottom: 3px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .tenant-email {
+      color: var(--la-muted);
+      font-size: 10px;
+    }
+
+    .property-name {
+      margin-bottom: 3px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .property-location {
+      color: var(--la-muted);
+      font-size: 10px;
+    }
+
+    .unit-name { font-weight: 600; margin-bottom: 3px; }
+
+    .unit-meta {
+      color: var(--la-muted);
+      font-size: 9px;
+    }
+
+    .rent { font-weight: 600; }
+
+    .rent-frequency {
+      color: var(--la-muted);
+      margin-top: 3px;
+      font-size: 9px;
+    }
+
+    .contract-number {
+      font-family: monospace;
+      font-size: 10px;
+      color: var(--la-muted);
+    }
+
+    .contract-end {
+      margin-top: 3px;
+      color: var(--la-muted);
+      font-size: 9px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 8px;
+      border-radius: 20px;
+      font-size: 9px;
+      font-weight: 600;
+    }
+
+    .status::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .status-active {
+      background: var(--la-success-soft, #eaf7ef);
+      color: var(--la-success, #2e9e5b);
+    }
+
+    .status-expiring {
+      background: var(--la-warning-soft, #fef3e2);
+      color: var(--la-warning, #b9770e);
+    }
+
+    .status-ended {
+      background: var(--bg);
+      color: var(--la-muted);
+    }
+
+    .status-pending {
+      background: var(--accent-bg);
+      color: var(--primary);
+    }
+
+    .row-action {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--la-muted);
+    }
+
+    .row-action:hover {
+      background: var(--bg);
+      color: var(--la-text);
+    }
+
+    .row-action i { font-size: 17px; }
+
+    .empty-state {
+      display: none;
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .empty-icon {
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 12px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: var(--bg);
+      color: var(--la-muted);
+    }
+
+    .empty-icon i { font-size: 21px; }
+
+    .empty-title {
+      margin-bottom: 5px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .empty-description {
+      color: var(--la-muted);
+      font-size: 10px;
+    }
+
+    .pagination {
+      min-height: 58px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--la-border);
+    }
+
+    .pagination-info {
+      color: var(--la-muted);
+      font-size: 10px;
+    }
+
+    .pagination-buttons {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .page-btn {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--la-border);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--la-muted);
+      font-size: 10px;
+    }
+
+    .page-btn:hover { background: var(--bg); }
+
+    .page-btn.active {
+      background: var(--la-primary, #16283f);
+      border-color: var(--la-primary, #16283f);
+      color: #fff;
+    }
+
+    .page-btn.active:hover {
+      background: var(--la-primary-hover, #1e3a5f);
+    }
+
+    @media (max-width: 1050px) {
+      .overview { grid-template-columns: repeat(2, 1fr); }
+      .overview-item:nth-child(2) { border-right: 0; }
+      .overview-item:nth-child(-n+2) { border-bottom: 1px solid var(--la-border); }
+    }
+
+    @media (max-width: 760px) {
+      .content { padding: 20px 16px; }
+      .page-header { flex-direction: column; align-items: flex-start; }
+      .header-actions { width: 100%; }
+      .header-actions .btn { width: 100%; }
+      .overview { grid-template-columns: 1fr; }
+      .overview-item, .overview-item:nth-child(2) { border-right: 0; border-bottom: 1px solid var(--la-border); }
+      .overview-item:last-child { border-bottom: 0; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .toolbar-left { flex-direction: column; align-items: stretch; }
+      .search-box { width: 100%; }
+      .filter { width: 100%; }
+      .toolbar-right { justify-content: flex-end; }
+    }
+  </style>
+{% endblock extra_css %}
+
+{% block header %}{% endblock header %}
+{% block footer %}{% endblock footer %}
+
+{% block body %}
+  <div class="app landlord-app">
+    {% include "dashboard/includes/landlord_sidebar.html" %}
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button type="button" class="icon-button mobile-menu" id="mobileMenu" aria-label="{% translate 'Open menu' %}">
+            <i class="ti ti-menu-2"></i>
+          </button>
+          <div class="topbar-search">
+            <i class="ti ti-search"></i>
+            <input type="text" placeholder="{% translate 'Search...' %}" />
+          </div>
+        </div>
+        <div class="topbar-right">
+          <button type="button" class="icon-button" aria-label="{% translate 'Notifications' %}">
+            <i class="ti ti-bell"></i>
+          </button>
+          <div class="profile">
+            <div class="avatar">
+              {% if user.first_name or user.last_name %}
+                {{ user.first_name|first }}{{ user.last_name|first }}
+              {% else %}
+                <i class="ti ti-user"></i>
+              {% endif %}
+            </div>
+            <div class="profile-text">
+              <div class="profile-name">{{ user.full_name }}</div>
+              <div class="profile-role">{% translate "Landlord" %}</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        {% include "common/includes/messages.html" %}
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">{% translate "Tenants" %}</h1>
+            <p class="page-description">{% translate "Manage your tenants, their homes and rental contracts." %}</p>
+          </div>
+          <div class="header-actions">
+            <button type="button" class="btn btn-secondary" id="exportButton">
+              <i class="ti ti-download"></i>
+              {% translate "Export" %}
+            </button>
+            <button type="button" class="btn btn-primary" id="inviteTenantButton">
+              <i class="ti ti-user-plus"></i>
+              {% translate "Invite tenant" %}
+            </button>
+          </div>
+        </div>
+
+        <!-- OVERVIEW -->
+        <section class="overview">
+          <div class="overview-item">
+            <div class="overview-label">{% translate "Total tenants" %}</div>
+            <div class="overview-value">{{ page_obj.paginator.count }}</div>
+            <div class="overview-meta">{% translate "Current tenant accounts" %}</div>
+          </div>
+          <div class="overview-item">
+            <div class="overview-label">{% translate "Active contracts" %}</div>
+            <div class="overview-value">—</div>
+            <div class="overview-meta">{% translate "Currently renting" %}</div>
+          </div>
+          <div class="overview-item">
+            <div class="overview-label">{% translate "Expiring soon" %}</div>
+            <div class="overview-value">—</div>
+            <div class="overview-meta">{% translate "Within the next 60 days" %}</div>
+          </div>
+          <div class="overview-item">
+            <div class="overview-label">{% translate "Occupied units" %}</div>
+            <div class="overview-value">—</div>
+            <div class="overview-meta">{% translate "Across your properties" %}</div>
+          </div>
+        </section>
+
+        <!-- TENANTS -->
+        <section class="tenant-card">
+          <!-- TOOLBAR -->
+          <form method="get" class="toolbar">
+            <div class="toolbar-left">
+              <div class="search-box">
+                <i class="ti ti-search"></i>
+                <input
+                  type="search"
+                  name="q"
+                  placeholder="{% translate 'Search tenants, contracts or units...' %}"
+                  value="{{ request.GET.q|default:'' }}"
+                  id="searchInput"
+                />
+              </div>
+
+              <select class="filter" name="status" id="statusFilter">
+                <option value="">{% translate "All statuses" %}</option>
+                <option value="ACTIVE" {% if request.GET.status == 'ACTIVE' %}selected{% endif %}>{% translate "Active" %}</option>
+                <option value="INACTIVE" {% if request.GET.status == 'INACTIVE' %}selected{% endif %}>{% translate "Inactive" %}</option>
+              </select>
+
+              <select class="filter" name="verified" id="verifiedFilter">
+                <option value="">{% translate "All verification" %}</option>
+                <option value="true" {% if request.GET.verified == 'true' %}selected{% endif %}>{% translate "Verified" %}</option>
+                <option value="false" {% if request.GET.verified == 'false' %}selected{% endif %}>{% translate "Not verified" %}</option>
+              </select>
+            </div>
+            <div class="toolbar-right">
+              <button type="button" class="btn btn-secondary" id="resetFilters">
+                <i class="ti ti-refresh"></i>
+                {% translate "Reset" %}
+              </button>
+            </div>
+          </form>
+
+          <!-- TABLE -->
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>{% translate "Tenant" %}</th>
+                  <th>{% translate "Property" %}</th>
+                  <th>{% translate "Unit" %}</th>
+                  <th>{% translate "Contract" %}</th>
+                  <th>{% translate "Monthly rent" %}</th>
+                  <th>{% translate "Status" %}</th>
+                  <th>{% translate "Actions" %}</th>
+                </tr>
+              </thead>
+              <tbody id="tenantTable">
+                {% for tenant in tenants %}
+                  {% with contract=tenant.rental_contracts.first %}
+                    <tr
+                      data-name="{{ tenant.user.first_name }} {{ tenant.user.last_name }}"
+                      data-property="{% if contract and contract.unit and contract.unit.building.property_ref %}{{ contract.unit.building.property_ref.name|lower }}{% endif %}"
+                      data-status="{% if contract %}{{ contract.status|lower }}{% else %}pending{% endif %}"
+                    >
+                      <td>
+                        <div class="tenant">
+                          <div class="tenant-avatar">
+                            {{ tenant.user.first_name|first }}{{ tenant.user.last_name|first }}
+                          </div>
+                          <div>
+                            <div class="tenant-name">{{ tenant.user.first_name }} {{ tenant.user.last_name }}</div>
+                            <div class="tenant-email">{{ tenant.user.email }}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        {% if contract and contract.unit and contract.unit.building.property_ref %}
+                          <div class="property-name">{{ contract.unit.building.property_ref.name }}</div>
+                          <div class="property-location">
+                            {% if contract.unit.building.property_ref.city %}{{ contract.unit.building.property_ref.city }}{% endif %}
+                            {% if contract.unit.building.property_ref.country %}
+                              {% if contract.unit.building.property_ref.city %} · {% endif %}{{ contract.unit.building.property_ref.country }}
+                            {% endif %}
+                          </div>
+                        {% else %}
+                          <div class="property-location">—</div>
+                        {% endif %}
+                      </td>
+                      <td>
+                        {% if contract and contract.unit %}
+                          <div class="unit-name">{{ contract.unit.unit_number }}</div>
+                          <div class="unit-meta">{% translate "Unit" %} · {% if contract.unit.floor %}{% blocktranslate count floor=contract.unit.floor %}{{ floor }} floor{% plural %}{{ floor }} floors{% endblocktranslate %}{% endif %}</div>
+                        {% else %}
+                          <div class="unit-meta">—</div>
+                        {% endif %}
+                      </td>
+                      <td>
+                        {% if contract %}
+                          <div class="contract-number">{{ contract.contract_number }}</div>
+                          <div class="contract-end">
+                            {% if contract.end_date %}
+                              {% blocktranslate with date=contract.end_date|date:"d M Y" %}Ends {{ date }}{% endblocktranslate %}
+                            {% else %}
+                              {% translate "Open-ended" %}
+                            {% endif %}
+                          </div>
+                        {% else %}
+                          <div class="contract-number">—</div>
+                        {% endif %}
+                      </td>
+                      <td>
+                        {% if contract %}
+                          <div class="rent">{{ contract.monthly_rent.amount|floatformat:0 }} {{ contract.monthly_rent.currency }}</div>
+                          <div class="rent-frequency">{% translate "Monthly" %}</div>
+                        {% else %}
+                          <div class="rent">—</div>
+                        {% endif %}
+                      </td>
+                      <td>
+                        {% if contract %}
+                          <span class="status status-{{ contract.status|lower }}">
+                            {{ contract.get_status_display }}
+                          </span>
+                        {% else %}
+                          <span class="status status-pending">{% translate "No contract" %}</span>
+                        {% endif %}
+                      </td>
+                      <td>
+                        <a href="{% url 'users:tenant-detail' pk=tenant.pk %}" class="row-action" aria-label="{% translate 'More options' %}">
+                          <i class="ti ti-dots"></i>
+                        </a>
+                      </td>
+                    </tr>
+                  {% endwith %}
+                {% empty %}
+                  <tr id="emptyRow">
+                    <td colspan="7">
+                      <div class="empty-state" style="display:block;">
+                        <div class="empty-icon">
+                          <i class="ti ti-users"></i>
+                        </div>
+                        <div class="empty-title">{% translate "No tenants found" %}</div>
+                        <div class="empty-description">{% translate "Try changing your search or filters." %}</div>
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+
+            {% if not tenants %}
+              <div class="empty-state" id="emptyState">
+                <div class="empty-icon">
+                  <i class="ti ti-users"></i>
+                </div>
+                <div class="empty-title">{% translate "No tenants found" %}</div>
+                <div class="empty-description">{% translate "Try changing your search or filters." %}</div>
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- PAGINATION -->
+          {% if page_obj.has_other_pages %}
+            <div class="pagination">
+              <div class="pagination-info">
+                {% blocktranslate with start=page_obj.start_index end=page_obj.end_index total=page_obj.paginator.count %}
+                  Showing {{ start }}–{{ end }} of {{ total }} tenants
+                {% endblocktranslate %}
+              </div>
+              <div class="pagination-buttons">
+                {% if page_obj.has_previous %}
+                  <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.verified %}&verified={{ request.GET.verified }}{% endif %}" class="page-btn">
+                    <i class="ti ti-chevron-left"></i>
+                  </a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                  {% if page_obj.number == num %}
+                    <button type="button" class="page-btn active">{{ num }}</button>
+                  {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.verified %}&verified={{ request.GET.verified }}{% endif %}" class="page-btn">{{ num }}</a>
+                  {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                  <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.verified %}&verified={{ request.GET.verified }}{% endif %}" class="page-btn">
+                    <i class="ti ti-chevron-right"></i>
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        </section>
+      </div>
+    </main>
+  </div>
+{% endblock body %}
+
+{% block inline_javascript %}
+  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const searchInput = document.getElementById('searchInput');
+      const tenantRows = document.querySelectorAll('#tenantTable tr');
+      const emptyState = document.getElementById('emptyState');
+
+      function filterTenants() {
+        const search = (searchInput ? searchInput.value.trim().toLowerCase() : '');
+        let visibleCount = 0;
+
+        tenantRows.forEach(function (row) {
+          const name = (row.dataset.name || '').toLowerCase();
+          const matchesSearch = !search || name.includes(search);
+          row.style.display = matchesSearch ? '' : 'none';
+          if (matchesSearch) visibleCount++;
+        });
+
+        if (emptyState) {
+          emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener('input', filterTenants);
+      }
+
+      const resetFilters = document.getElementById('resetFilters');
+      if (resetFilters) {
+        resetFilters.addEventListener('click', function () {
+          const form = resetFilters.closest('form');
+          if (form) form.reset();
+          filterTenants();
+        });
+      }
+
+      const mobileMenu = document.getElementById('mobileMenu');
+      const sidebar = document.getElementById('sidebar');
+
+      mobileMenu?.addEventListener('click', function () {
+        sidebar.classList.toggle('open');
+      });
+    });
+  </script>
+{% endblock inline_javascript %}

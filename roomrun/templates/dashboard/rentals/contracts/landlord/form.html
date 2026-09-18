@@ -1,5 +1,6 @@
 {% extends "dashboard/layout.html" %}
 {% load i18n %}
+{% block sidebar %}{% include "dashboard/includes/landlord_sidebar.html" %}{% endblock sidebar %}
 {% block content %}
   <h1>{% translate "Create rental contract" %}</h1>
   <form method="post" novalidate>{% csrf_token %}{{ form.non_field_errors }}{% for field in form %}<p>{{ field.label_tag }}{{ field }}{{ field.errors }}</p>{% endfor %}<button type="submit">{% translate "Create contract" %}</button></form>
