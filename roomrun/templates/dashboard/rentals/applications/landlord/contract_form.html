@@ -1,184 +1,657 @@
-{% extends "dashboard/layout.html" %}
-{% load i18n %}
+{% extends "base.html" %}
+
+{% load i18n static %}
+
+{% block title %}{% translate "Create Rental Contract" %} — ROOMRUN{% endblock title %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
+  <style>
+    :root {
+      --la-primary: #16283f;
+      --la-primary-hover: #1e3a5f;
+      --la-primary-soft: #f5e4da;
+      --la-surface: #fcfcfb;
+      --la-card: #ffffff;
+      --la-text: #1e293b;
+      --la-muted: #5b6675;
+      --la-border: #e6e8ec;
+      --la-success: #2e9e5b;
+      --la-success-soft: #eaf7ef;
+      --la-warning: #b9770e;
+      --la-warning-soft: #fef3e2;
+      --la-danger: #d64545;
+      --la-danger-soft: #fcebec;
+      --la-accent-bg: #eaf2fb;
+      --la-bg: #f5f6f8;
+    }
+
+    .landlord-app { color: var(--la-text); }
+    .landlord-app .content { max-width: 1400px; margin: 0 auto; padding: 28px; }
+
+    .page-header {
+      margin-bottom: 24px;
+    }
+
+    .context-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--la-warning);
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .context-line i { font-size: 15px; }
+
+    .page-header h1 {
+      font-size: 22px;
+      line-height: 1.25;
+      letter-spacing: -.4px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .page-header p {
+      color: var(--la-muted);
+      max-width: 650px;
+      font-size: 13px;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 330px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .main-column { min-width: 0; }
+    .side-column { position: sticky; top: 20px; }
+
+    .context-card {
+      background: var(--la-primary);
+      color: #fff;
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .context-main {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .context-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 9px;
+      background: rgba(255,255,255,.1);
+      display: grid;
+      place-items: center;
+      font-size: 19px;
+    }
+
+    .context-main h3 {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .context-main p {
+      color: rgba(255,255,255,.6);
+      font-size: 11px;
+    }
+
+    .context-status {
+      font-size: 10px;
+      padding: 5px 9px;
+      border-radius: 20px;
+      background: rgba(46,158,91,.18);
+      color: #9be1b4;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .context-status i { font-size: 12px; }
+
+    .card {
+      background: var(--la-card);
+      border: 1px solid var(--la-border);
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+
+    .card-header {
+      padding: 17px 20px;
+      border-bottom: 1px solid var(--la-border);
+    }
+
+    .card-header h2 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    .card-header p {
+      font-size: 11px;
+      color: var(--la-muted);
+    }
+
+    .card-body { padding: 20px; }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--la-border);
+      border-radius: 9px;
+      overflow: hidden;
+    }
+
+    .info-item {
+      padding: 13px 14px;
+      border-right: 1px solid var(--la-border);
+    }
+
+    .info-item:nth-child(3n) { border-right: 0; }
+    .info-item:nth-child(n+4) { border-top: 1px solid var(--la-border); }
+
+    .info-label {
+      font-size: 10px;
+      color: var(--la-muted);
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 17px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    .field label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--la-text);
+    }
+
+    .required { color: var(--la-danger); }
+
+    .input-wrapper { position: relative; }
+
+    .input,
+    .select,
+    .textarea {
+      width: 100%;
+      border: 1px solid var(--la-border);
+      background: #fff;
+      color: var(--la-text);
+      border-radius: 8px;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    .input,
+    .select { height: 40px; padding: 0 12px; }
+
+    .textarea {
+      min-height: 100px;
+      padding: 10px 12px;
+      resize: vertical;
+    }
+
+    .input:focus,
+    .select:focus,
+    .textarea:focus {
+      border-color: var(--la-primary);
+      box-shadow: 0 0 0 3px rgba(22,40,63,.07);
+    }
+
+    .input[readonly] {
+      background: #f8f9fa;
+      color: var(--la-muted);
+    }
+
+    .field-hint {
+      font-size: 10px;
+      color: var(--la-muted);
+    }
+
+    .money-wrapper { position: relative; }
+
+    .money-wrapper .input { padding-right: 58px; }
+
+    .currency {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--la-muted);
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--la-muted);
+      pointer-events: none;
+    }
+
+    .has-icon { padding-left: 36px; }
+
+    .summary-card {
+      background: var(--la-card);
+      border: 1px solid var(--la-border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .summary-header {
+      padding: 17px 18px;
+      border-bottom: 1px solid var(--la-border);
+    }
+
+    .summary-header h2 {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .summary-body { padding: 18px; }
+
+    .summary-property {
+      display: flex;
+      gap: 11px;
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--la-border);
+    }
+
+    .property-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      background: var(--la-accent-bg, #eaf2fb);
+      color: var(--la-primary, #16283f);
+      display: grid;
+      place-items: center;
+      font-size: 19px;
+      flex-shrink: 0;
+    }
+
+    .summary-property h3 {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .summary-property p {
+      font-size: 10px;
+      color: var(--la-muted);
+    }
+
+    .summary-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .summary-row span:first-child {
+      color: var(--la-muted);
+      font-size: 11px;
+    }
+
+    .summary-row strong {
+      font-size: 11px;
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .amount {
+      font-size: 17px !important;
+      color: var(--la-primary, #16283f);
+    }
+
+    .summary-divider {
+      height: 1px;
+      background: var(--la-border);
+      margin: 15px 0;
+    }
+
+    .application-note {
+      padding: 12px;
+      background: var(--la-accent-bg, #eaf2fb);
+      border-radius: 8px;
+      display: flex;
+      gap: 8px;
+      color: var(--la-primary, #16283f);
+      font-size: 10px;
+    }
+
+    .application-note i { font-size: 15px; flex-shrink: 0; }
+
+    .terms-box {
+      padding: 13px;
+      background: #fafafa;
+      border: 1px solid var(--la-border);
+      border-radius: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      margin-top: 17px;
+    }
+
+    .terms-box input { margin-top: 2px; accent-color: var(--la-primary); }
+
+    .terms-box label {
+      font-size: 10px;
+      color: var(--la-muted);
+      cursor: pointer;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 9px;
+      padding-top: 3px;
+    }
+
+    .btn {
+      height: 39px;
+      border-radius: 7px;
+      padding: 0 15px;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      font-size: 11px;
+      font-weight: 600;
+      transition: .15s ease;
+      text-decoration: none;
+    }
+
+    .btn i { font-size: 15px; }
+
+    .btn-primary {
+      background: var(--la-primary, #16283f);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--la-primary-hover, #1e3a5f);
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--la-text);
+      border-color: var(--la-border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--la-bg, #f5f6f8);
+    }
+
+    .btn-danger {
+      background: var(--la-danger-soft, #fcebec);
+      color: var(--la-danger, #d64545);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 8px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .status i { font-size: 11px; }
+
+    .status-ready {
+      color: var(--la-success, #2e9e5b);
+      background: var(--la-success-soft, #eaf7ef);
+    }
+
+    @media (max-width: 1050px) {
+      .workspace { grid-template-columns: 1fr; }
+      .side-column { position: static; }
+    }
+
+    @media (max-width: 800px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      .info-grid { grid-template-columns: 1fr 1fr; }
+      .content { padding: 22px 16px; }
+    }
+
+    @media (max-width: 500px) {
+      .info-grid { grid-template-columns: 1fr; }
+      .form-actions { flex-direction: column-reverse; }
+      .btn { width: 100%; }
+    }
+  </style>
+{% endblock extra_css %}
+
 {% block header %}{% endblock header %}
 {% block footer %}{% endblock footer %}
 
-{% block sidebar %}
-  {% include "dashboard/includes/landlord_sidebar.html" %}
-{% endblock sidebar %}
+{% block body %}
+  <div class="app landlord-app">
+    {% include "dashboard/includes/landlord_sidebar.html" %}
 
-{% block topbar %}
-  <header class="topbar">
-    <div class="topbar-left">
-      <button class="mobile-menu" id="mobileMenu" type="button" aria-label="{% translate 'Open menu' %}">
-        <i class="ti ti-menu-2"></i>
-      </button>
-      <div class="breadcrumb">
-        <a href="{% url 'rentals:landlord-rental-application-list' %}">{% translate "Rental applications" %}</a>
-        <i class="ti ti-chevron-right"></i>
-        <span>{% translate "Create contract" %}</span>
-      </div>
-    </div>
-    <div class="topbar-right">
-      <button class="icon-button" aria-label="{% translate 'Search' %}">
-        <i class="ti ti-search"></i>
-      </button>
-      <button class="icon-button" aria-label="{% translate 'Notifications' %}">
-        <i class="ti ti-bell"></i>
-        <span class="notification-dot"></span>
-      </button>
-      <div class="user-menu">
-        <div class="avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>
-        <div class="user-info">
-          <strong>{{ user.full_name }}</strong>
-          <span>{% translate "Landlord" %}</span>
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button type="button"
+                  class="menu-button"
+                  id="mobile-menu"
+                  aria-label="{% translate 'Open menu' %}">
+            <i class="ti ti-menu-2"></i>
+          </button>
+          <div class="page-heading">
+            <h1>{% translate "Create rental contract" %}</h1>
+            <p>{% translate "Create the rental contract for the approved tenant and define the contractual terms before activating the lease." %}</p>
+          </div>
         </div>
-      </div>
-    </div>
-  </header>
-{% endblock topbar %}
+        <label class="topbar-search">
+          <i class="ti ti-search"></i>
+          <input type="search"
+                 placeholder="{% translate 'Search a property, a tenant…' %}" />
+        </label>
+        <div class="topbar-right">
+          <button type="button"
+                  class="icon-button"
+                  aria-label="{% translate 'Notifications' %}">
+            <i class="ti ti-bell"></i>
+          </button>
+          <a href="{% url 'users:profile' %}"
+             class="icon-button profile-button"
+             aria-label="{% translate 'Profile' %}">
+            {% if user.profile_picture %}
+              <img class="h-full w-full object-cover"
+                   src="{{ user.profile_picture.url }}"
+                   alt="" />
+            {% else %}
+              <i class="ti ti-user"></i>
+            {% endif %}
+          </a>
+        </div>
+      </header>
 
-{% block content %}
-  {% with unit=application.unit %}
-  {% with rental_property=unit.building.property_ref %}
-    <div class="contract-create">
       <div class="content">
+        {% include "common/includes/messages.html" %}
+
         <!-- PAGE HEADER -->
         <div class="page-header">
-          <div class="context-line">
-            <i class="ti ti-link"></i>
-            {% translate "From approved application" %} · {{ application.application_number }}
+          <div>
+            <div class="context-line">
+              <i class="ti ti-link"></i>
+              {% translate "From approved application" %} · {{ application.application_number }}
+            </div>
+            <h1>{% translate "Create rental contract" %}</h1>
+            <p>
+              {% translate "Create the rental contract for the approved tenant and define the contractual terms before activating the lease." %}
+            </p>
           </div>
-          <h1>{% translate "Create rental contract" %}</h1>
-          <p>
-            {% translate "Create the rental contract for the approved tenant and define the contractual terms before activating the lease." %}
-          </p>
         </div>
 
         <!-- WORKSPACE -->
         <div class="workspace">
           <div class="main-column">
-            <!-- APPLICATION CONTEXT -->
-            <div class="context-card">
-              <div class="context-main">
-                <div class="context-icon">
-                  <i class="ti ti-file-check"></i>
-                </div>
-                <div>
-                  <h3>{{ application.application_number }}</h3>
-                  <p>{{ tenant_user.full_name|default:"—" }} · {{ rental_property.name }} · {% blocktranslate with number=unit.unit_number %}Unit {{ number }}{% endblocktranslate %}</p>
-                </div>
-              </div>
-              <div class="context-status">
-                <i class="ti ti-check"></i>
-                {{ application.get_status_display }}
-              </div>
-            </div>
-
-            <!-- RENTAL CONTEXT -->
-            <div class="card">
-              <div class="card-header">
-                <h2>{% translate "Rental context" %}</h2>
-                <p>{% translate "Information inherited from the approved application." %}</p>
-              </div>
-              <div class="card-body">
-                <div class="info-grid">
-                  <div class="info-item">
-                    <div class="info-label">{% translate "Tenant" %}</div>
-                    <div class="info-value">{{ tenant_user.full_name|default:"—" }}</div>
+            {% with unit=application.unit %}
+            {% with rental_property=unit.building.property_ref %}
+              <!-- APPLICATION CONTEXT -->
+              <div class="context-card">
+                <div class="context-main">
+                  <div class="context-icon">
+                    <i class="ti ti-file-check"></i>
                   </div>
-                  <div class="info-item">
-                    <div class="info-label">{% translate "Property" %}</div>
-                    <div class="info-value">{{ rental_property.name }}</div>
-                  </div>
-                  <div class="info-item">
-                    <div class="info-label">{% translate "Building" %}</div>
-                    <div class="info-value">{{ unit.building.name }}</div>
-                  </div>
-                  <div class="info-item">
-                    <div class="info-label">{% translate "Unit" %}</div>
-                    <div class="info-value">{{ unit.unit_number }}</div>
-                  </div>
-                  <div class="info-item">
-                    <div class="info-label">{% translate "Unit type" %}</div>
-                    <div class="info-value">{{ unit.get_unit_type_display }}</div>
-                  </div>
-                  <div class="info-item">
-                    <div class="info-label">{% translate "Currency" %}</div>
-                    <div class="info-value">{{ unit.monthly_rent.currency }}</div>
+                  <div>
+                    <h3>{{ application.application_number }}</h3>
+                    <p>{{ tenant_user.full_name|default:"—" }} · {{ rental_property.name }} · {% blocktranslate with number=unit.unit_number %}Unit {{ number }}{% endblocktranslate %}</p>
                   </div>
                 </div>
+                <div class="context-status">
+                  <i class="ti ti-check"></i>
+                  {{ application.get_status_display }}
+                </div>
               </div>
-            </div>
 
-            <!-- CONTRACT FORM -->
-            <form method="post" novalidate class="contract-form">
-              {% csrf_token %}
-              {{ form.non_field_errors }}
-
-              <!-- CONTRACT DATES -->
+              <!-- RENTAL CONTEXT -->
               <div class="card">
                 <div class="card-header">
-                  <h2>{% translate "Contract dates" %}</h2>
-                  <p>{% translate "Define when the rental agreement starts and ends." %}</p>
+                  <h2>{% translate "Rental context" %}</h2>
+                  <p>{% translate "Information inherited from the approved application." %}</p>
                 </div>
                 <div class="card-body">
-                  <div class="form-grid">
-                    <div class="field">
-                      {{ form.start_date.label_tag }}
-                      {{ form.start_date }}
-                      {{ form.start_date.errors }}
-                      <span class="field-hint">{% translate "Requested start date from the application." %}</span>
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <div class="info-label">{% translate "Tenant" %}</div>
+                      <div class="info-value">{{ tenant_user.full_name|default:"—" }}</div>
                     </div>
-                    <div class="field">
-                      {{ form.end_date.label_tag }}
-                      {{ form.end_date }}
-                      {{ form.end_date.errors }}
-                      <span class="field-hint">{% translate "Leave empty for an open-ended contract." %}</span>
+                    <div class="info-item">
+                      <div class="info-label">{% translate "Property" %}</div>
+                      <div class="info-value">{{ rental_property.name }}</div>
+                    </div>
+                    <div class="info-item">
+                      <div class="info-label">{% translate "Building" %}</div>
+                      <div class="info-value">{{ unit.building.name }}</div>
+                    </div>
+                    <div class="info-item">
+                      <div class="info-label">{% translate "Unit" %}</div>
+                      <div class="info-value">{{ unit.unit_number }}</div>
+                    </div>
+                    <div class="info-item">
+                      <div class="info-label">{% translate "Unit type" %}</div>
+                      <div class="info-value">{{ unit.get_unit_type_display }}</div>
+                    </div>
+                    <div class="info-item">
+                      <div class="info-label">{% translate "Currency" %}</div>
+                      <div class="info-value">{{ unit.monthly_rent.currency }}</div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- FINANCIAL TERMS -->
-              <div class="card">
-                <div class="card-header">
-                  <h2>{% translate "Financial terms" %}</h2>
-                  <p>{% translate "Define the amounts that will be recorded on the contract." %}</p>
-                </div>
-                <div class="card-body">
-                  <div class="form-grid">
-                    <div class="field">
-                      {{ form.monthly_rent.label_tag }}
-                      {{ form.monthly_rent }}
-                      {{ form.monthly_rent.errors }}
-                    </div>
-                    <div class="field">
-                      {{ form.deposit.label_tag }}
-                      {{ form.deposit }}
-                      {{ form.deposit.errors }}
-                    </div>
-                    <div class="field">
-                      {{ form.advance_rent_months.label_tag }}
-                      {{ form.advance_rent_months }}
-                      {{ form.advance_rent_months.errors }}
+              <!-- CONTRACT FORM -->
+              <form method="post" novalidate class="contract-form">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                <!-- CONTRACT DATES -->
+                <div class="card">
+                  <div class="card-header">
+                    <h2>{% translate "Contract dates" %}</h2>
+                    <p>{% translate "Define when the rental agreement starts and ends." %}</p>
+                  </div>
+                  <div class="card-body">
+                    <div class="form-grid">
+                      <div class="field">
+                        {{ form.start_date.label_tag }}
+                        {{ form.start_date }}
+                        {{ form.start_date.errors }}
+                        <span class="field-hint">{% translate "Requested start date from the application." %}</span>
+                      </div>
+                      <div class="field">
+                        {{ form.end_date.label_tag }}
+                        {{ form.end_date }}
+                        {{ form.end_date.errors }}
+                        <span class="field-hint">{% translate "Leave empty for an open-ended contract." %}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- ACTIONS -->
-              <div class="form-actions">
-                <a href="{% if application %}{% url 'rentals:landlord-rental-application-detail' pk=application.pk %}{% else %}{% url 'rentals:landlord-rental-application-list' %}{% endif %}" class="btn btn-secondary">
-                  <i class="ti ti-arrow-left"></i>
-                  {% translate "Cancel" %}
-                </a>
-                <button type="submit" class="btn btn-primary">
-                  <i class="ti ti-file-plus"></i>
-                  {% translate "Approve and create contract" %}
-                </button>
-              </div>
-            </form>
+                <!-- FINANCIAL TERMS -->
+                <div class="card">
+                  <div class="card-header">
+                    <h2>{% translate "Financial terms" %}</h2>
+                    <p>{% translate "Define the amounts that will be recorded on the contract." %}</p>
+                  </div>
+                  <div class="card-body">
+                    <div class="form-grid">
+                      <div class="field">
+                        {{ form.monthly_rent.label_tag }}
+                        {{ form.monthly_rent }}
+                        {{ form.monthly_rent.errors }}
+                      </div>
+                      <div class="field">
+                        {{ form.deposit.label_tag }}
+                        {{ form.deposit }}
+                        {{ form.deposit.errors }}
+                      </div>
+                      <div class="field">
+                        {{ form.advance_rent_months.label_tag }}
+                        {{ form.advance_rent_months }}
+                        {{ form.advance_rent_months.errors }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="form-actions">
+                  <a href="{% if application %}{% url 'rentals:landlord-rental-application-detail' pk=application.pk %}{% else %}{% url 'rentals:landlord-rental-application-list' %}{% endif %}" class="btn btn-secondary">
+                    <i class="ti ti-arrow-left"></i>
+                    {% translate "Cancel" %}
+                  </a>
+                  <button type="submit" class="btn btn-primary">
+                    <i class="ti ti-file-plus"></i>
+                    {% translate "Approve and create contract" %}
+                  </button>
+                </div>
+              </form>
+            {% endwith %}
+            {% endwith %}
           </div>
 
           <!-- SIDE COLUMN -->
@@ -232,89 +705,6 @@
           </aside>
         </div>
       </div>
-    </div>
-  {% endwith %}
-  {% endwith %}
-{% endblock content %}
-
-{% block extra_css %}
-  {{ block.super }}
-  <style>
-    .contract-create { --app-card:#fff; --app-border:#e6e8ec; --app-text:#1e293b; --app-muted:#5b6675; --app-success:#2e9e5b; --app-warning:#b9770e; --app-danger:#d64545; color:var(--app-text); }
-    .page-header { margin-bottom:24px; }
-    .context-line { display:inline-flex; align-items:center; gap:7px; color:var(--app-warning); font-size:11px; font-weight:600; margin-bottom:8px; }
-    .context-line i { font-size:15px; }
-    .page-header h1 { font-size:22px; line-height:1.25; letter-spacing:-.4px; font-weight:600; margin-bottom:6px; }
-    .page-header p { color:var(--app-muted); max-width:650px; font-size:13px; }
-    .workspace { display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:20px; align-items:start; }
-    .main-column { min-width:0; }
-    .side-column { position:sticky; top:20px; }
-    .context-card { background:var(--app-text,#16283f); color:#fff; border-radius:12px; padding:18px 20px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; }
-    .context-main { display:flex; align-items:center; gap:13px; }
-    .context-icon { width:40px; height:40px; border-radius:9px; background:rgba(255,255,255,.1); display:grid; place-items:center; font-size:19px; }
-    .context-main h3 { font-size:13px; font-weight:600; margin-bottom:2px; }
-    .context-main p { color:rgba(255,255,255,.6); font-size:11px; }
-    .context-status { font-size:10px; padding:5px 9px; border-radius:20px; background:rgba(46,158,91,.18); color:#9be1b4; display:inline-flex; align-items:center; gap:5px; }
-    .context-status i { font-size:12px; }
-    .card { background:var(--app-card); border:1px solid var(--app-border); border-radius:12px; margin-bottom:16px; }
-    .card-header { padding:17px 20px; border-bottom:1px solid var(--app-border); }
-    .card-header h2 { font-size:14px; font-weight:600; margin-bottom:3px; }
-    .card-header p { font-size:11px; color:var(--app-muted); }
-    .card-body { padding:20px; }
-    .info-grid { display:grid; grid-template-columns:repeat(3,1fr); border:1px solid var(--app-border); border-radius:9px; overflow:hidden; }
-    .info-item { padding:13px 14px; border-right:1px solid var(--app-border); }
-    .info-item:nth-child(3n) { border-right:0; }
-    .info-item:nth-child(n+4) { border-top:1px solid var(--app-border); }
-    .info-label { font-size:10px; color:var(--app-muted); margin-bottom:4px; }
-    .info-value { font-size:12px; font-weight:500; }
-    .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:17px; }
-    .field { display:flex; flex-direction:column; gap:6px; }
-    .field label { font-size:11px; font-weight:600; color:var(--app-text); }
-    .field input, .field select { width:100%; border:1px solid var(--app-border); background:#fff; color:var(--app-text); border-radius:8px; outline:none; transition:border-color .15s, box-shadow .15s; }
-    .field input, .field select { height:40px; padding:0 12px; }
-    .field input:focus, .field select:focus { border-color:var(--app-text,#16283f); box-shadow:0 0 0 3px rgba(22,40,63,.07); }
-    .field-hint { font-size:10px; color:var(--app-muted); }
-    .form-actions { display:flex; justify-content:flex-end; gap:9px; padding-top:3px; }
-    .btn { height:39px; border-radius:7px; padding:0 15px; border:1px solid transparent; display:inline-flex; align-items:center; justify-content:center; gap:7px; font-size:11px; font-weight:600; transition:.15s ease; text-decoration:none; }
-    .btn i { font-size:15px; }
-    .btn-primary { background:var(--app-text,#16283f); border-color:var(--app-text,#16283f); color:#fff; }
-    .btn-primary:hover { background:var(--app-text,#16283f); }
-    .btn-secondary { background:#fff; color:var(--app-text); border-color:var(--app-border); }
-    .btn-secondary:hover { background:#f5f6f8; }
-    .summary-card { background:var(--app-card); border:1px solid var(--app-border); border-radius:12px; overflow:hidden; margin-bottom:16px; }
-    .summary-header { padding:17px 18px; border-bottom:1px solid var(--app-border); }
-    .summary-header h2 { font-size:13px; font-weight:600; }
-    .summary-body { padding:18px; }
-    .summary-property { display:flex; gap:11px; padding-bottom:16px; margin-bottom:16px; border-bottom:1px solid var(--app-border); }
-    .property-icon { width:42px; height:42px; border-radius:8px; background:#eaf2fb; color:#16283f; display:grid; place-items:center; font-size:19px; flex-shrink:0; }
-    .summary-property h3 { font-size:12px; font-weight:600; margin-bottom:2px; }
-    .summary-property p { font-size:10px; color:var(--app-muted); }
-    .summary-list { display:flex; flex-direction:column; gap:12px; }
-    .summary-row { display:flex; justify-content:space-between; align-items:center; gap:15px; }
-    .summary-row span:first-child { color:var(--app-muted); font-size:11px; }
-    .summary-row strong { font-size:11px; font-weight:600; text-align:right; }
-    .amount { font-size:17px !important; color:#16283f; }
-    .application-note { padding:12px; background:#eaf2fb; border-radius:8px; display:flex; gap:8px; color:#16283f; font-size:10px; }
-    .application-note i { font-size:15px; flex-shrink:0; }
-    .status { display:inline-flex; align-items:center; gap:5px; padding:5px 8px; border-radius:20px; font-size:10px; font-weight:600; }
-    .status i { font-size:11px; }
-    .status-ready { color:var(--app-success); background:#eaf7ef; }
-    .topbar { height:68px; background:#fff; border-bottom:1px solid var(--app-border); display:flex; align-items:center; justify-content:space-between; padding:0 30px; }
-    .topbar-left { display:flex; align-items:center; gap:10px; }
-    .breadcrumb { display:flex; align-items:center; gap:7px; color:var(--app-muted); font-size:12px; }
-    .breadcrumb i { font-size:14px; color:#a0a7b1; }
-    .breadcrumb-current { color:var(--app-text); font-weight:500; }
-    .topbar-right { display:flex; align-items:center; gap:8px; }
-    .icon-button { width:36px; height:36px; border:1px solid var(--app-border); background:#fff; border-radius:8px; display:grid; place-items:center; color:var(--app-muted); position:relative; }
-    .icon-button:hover { background:#f5f6f8; }
-    .notification-dot { position:absolute; top:7px; right:7px; width:6px; height:6px; background:var(--secondary,#c1622d); border-radius:50%; }
-    .user-menu { display:flex; align-items:center; gap:9px; margin-left:8px; padding-left:14px; border-left:1px solid var(--app-border); }
-    .avatar { width:34px; height:34px; border-radius:50%; background:#f5e4da; color:#16283f; display:grid; place-items:center; font-size:11px; font-weight:600; }
-    .user-info strong { display:block; font-size:12px; font-weight:600; }
-    .user-info span { display:block; color:var(--app-muted); font-size:10px; }
-    .mobile-menu { display:none; }
-    @media (max-width:1050px) { .workspace { grid-template-columns:1fr; } .side-column { position:static; } }
-    @media (max-width:800px) { .form-grid { grid-template-columns:1fr; } .info-grid { grid-template-columns:1fr 1fr; } .mobile-menu { display:grid; width:36px; height:36px; place-items:center; border:1px solid var(--app-border); border-radius:8px; background:#fff; margin-right:10px; } .topbar { padding:0 16px; } .content { padding:22px 16px; } }
-    @media (max-width:500px) { .info-grid { grid-template-columns:1fr; } .form-actions { flex-direction:column-reverse; } .btn { width:100%; } }
-  </style>
-{% endblock extra_css %}
+    </main>
+  </div>
+{% endblock body %}

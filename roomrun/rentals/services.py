@@ -13,16 +13,19 @@ from utils.enums import UnitStatus
 class RentalApplicationService:
     """Business logic related to rental applications."""
 
+    # -------------------------------------------------------------------------
+    # Create
+    # -------------------------------------------------------------------------
+
     @staticmethod
     @transaction.atomic
     def create(*, tenant, data: dict) -> RentalApplication:
-        """
-        Create a new rental application for a tenant.
+        """Create a new rental application (status forced to PENDING)."""
+        data = dict(data)
 
-        Forces the initial status to PENDING regardless of incoming data.
-        """
-        data.pop("tenant", None)
-        data.pop("status", None)
+        # Prevent the caller from controlling these fields.
+        for forbidden in ("tenant", "status", "reviewed_by", "reviewed_at"):
+            data.pop(forbidden, None)
 
         application = RentalApplication(
             tenant=tenant,
@@ -34,6 +37,10 @@ class RentalApplicationService:
 
         return application
 
+    # -------------------------------------------------------------------------
+    # Review (shared by approve / reject)
+    # -------------------------------------------------------------------------
+
     @staticmethod
     @transaction.atomic
     def _review(
@@ -43,111 +50,142 @@ class RentalApplicationService:
         new_status: str,
     ) -> RentalApplication:
         """
-        Internal helper: update the status and reviewer of an application.
+        Internal helper: lock the application, ensure it's pending,
+        and transition it to the target status.
         """
+        # Re-fetch with a row lock to prevent concurrent reviews.
+        application = (
+            RentalApplication.objects
+            .select_for_update()
+            .get(pk=application.pk)
+        )
+
         if application.status != ApplicationStatus.PENDING:
             raise ValidationError(
-                _("Only pending applications can be reviewed.")
+                _("This application has already been reviewed.")
             )
+
         application.status = new_status
-        application.reviewed_by = reviewer
         application.reviewed_at = timezone.now()
+        application.reviewed_by = reviewer
 
-        update_fields = ["status", "reviewed_by", "reviewed_at"]
-        if hasattr(application, "updated_at"):
-            update_fields.append("updated_at")
-
-        application.save(update_fields=update_fields)
+        application.save(
+            update_fields=[
+                "status",
+                "reviewed_at",
+                "reviewed_by",
+                "updated_at",
+            ]
+        )
 
         return application
 
     @staticmethod
     @transaction.atomic
-    def reject(*, application: RentalApplication, reviewer) -> RentalApplication:
-        """Reject a rental application."""
+    def approve(*, application, reviewer) -> RentalApplication:
+        """Approve a pending rental application."""
+        return RentalApplicationService._review(
+            application=application,
+            reviewer=reviewer,
+            new_status=ApplicationStatus.APPROVED,
+        )
+
+    @staticmethod
+    @transaction.atomic
+    def reject(*, application, reviewer) -> RentalApplication:
+        """Reject a pending rental application."""
         return RentalApplicationService._review(
             application=application,
             reviewer=reviewer,
             new_status=ApplicationStatus.REJECTED,
         )
 
+    # -------------------------------------------------------------------------
+    # Cancel (by tenant)
+    # -------------------------------------------------------------------------
+
     @staticmethod
     @transaction.atomic
     def cancel(*, application: RentalApplication) -> RentalApplication:
-        """Cancel a rental application (e.g., by the tenant)."""
+        """Cancel a pending rental application (typically by the tenant)."""
+        application = (
+            RentalApplication.objects
+            .select_for_update()
+            .get(pk=application.pk)
+        )
+
+        if application.status != ApplicationStatus.PENDING:
+            raise ValidationError(
+                _("Only pending applications can be cancelled.")
+            )
+
         application.status = ApplicationStatus.CANCELLED
         application.save(update_fields=["status", "updated_at"])
+
         return application
+
 
 
 class RentalContractService:
     """Business logic related to rental contracts."""
+
+    # -------------------------------------------------------------------------
+    # Create — landlord signs
+    # -------------------------------------------------------------------------
 
     @staticmethod
     @transaction.atomic
     def create(
         *,
         tenant,
-        unit,
+        unit: Unit,
         data: dict,
         application: RentalApplication | None = None,
-        reviewer=None,
+        landlord_signature: str | None = None,
     ) -> RentalContract:
         """
-        Create a rental contract.
+        Create a rental contract after the landlord signs it.
 
-        Locks the unit and (optional) application to prevent concurrent
-        contract creation. Validates business rules and updates the
-        application status if provided.
-
-        Raises:
-            ValidationError: If any business rule is violated.
+        Contract starts in SIGNING. The unit remains AVAILABLE until
+        the tenant signs (see `sign_by_tenant`).
         """
-        # -----------------------------------------------------------------
-        # 1. Sanitize incoming data
-        # -----------------------------------------------------------------
+        # 1. Validate landlord signature
+        if not landlord_signature or not landlord_signature.strip():
+            raise ValidationError(_("The landlord's signature is required."))
+
+        # 2. Sanitize incoming data
         data = dict(data)
-        data.pop("tenant", None)
-        data.pop("unit", None)
-        data.pop("application", None)
-        data.pop("status", None)
+        for forbidden in (
+            "tenant", "unit", "application", "status",
+            "landlord_signature", "landlord_signed_at",
+            "tenant_signature", "tenant_signed_at",
+        ):
+            data.pop(forbidden, None)
 
-        # -----------------------------------------------------------------
-        # 2. Lock and validate the unit
-        # -----------------------------------------------------------------
+        # 3. Lock and validate the unit
         unit = Unit.objects.select_for_update().get(pk=unit.pk)
-
         if unit.status != UnitStatus.AVAILABLE:
             raise ValidationError(_("This unit is no longer available."))
 
-        # Prevent two active contracts on the same unit
-        has_active_contract = RentalContract.objects.filter(
+        if RentalContract.objects.filter(
             unit=unit,
-            status=ContractStatus.ACTIVE,
-        ).exists()
-        if has_active_contract:
+            status__in=(ContractStatus.ACTIVE, ContractStatus.SIGNING),
+        ).exists():
             raise ValidationError(
-                _("This unit already has an active contract.")
+                _("This unit already has a contract in progress.")
             )
 
-        # -----------------------------------------------------------------
-        # 3. Lock and validate the application (if provided)
-        # -----------------------------------------------------------------
+        # 4. Lock and validate the application
         if application:
-            if reviewer is None:
-                raise ValidationError(
-                    _("A reviewer is required when approving an application.")
-                )
-
             application = (
                 RentalApplication.objects
                 .select_for_update()
                 .get(pk=application.pk)
             )
 
-            if application.status != ApplicationStatus.PENDING:
+            if application.status != ApplicationStatus.APPROVED:
                 raise ValidationError(
-                    _("This application has already been reviewed.")
+                    _("Only approved applications can create a contract.")
                 )
             if application.tenant_id != tenant.pk:
                 raise ValidationError(
@@ -157,38 +195,96 @@ class RentalContractService:
                 raise ValidationError(
                     _("The application unit does not match the contract unit.")
                 )
-            if hasattr(application, "rental_contract"):
-                raise ValidationError(
-                    _("This application already has a contract.")
-                )
+            if RentalContract.objects.filter(application=application).exists():
+                raise ValidationError(_("This application already has a contract."))
 
-        # -----------------------------------------------------------------
-        # 4. Create the contract
-        # -----------------------------------------------------------------
+        # 5. Create the contract
         contract = RentalContract(
             tenant=tenant,
             unit=unit,
             application=application,
-            status=ContractStatus.ACTIVE,
+            status=ContractStatus.SIGNING,
+            landlord_signature=landlord_signature,
+            landlord_signed_at=timezone.now(),
             **data,
         )
         contract.full_clean()
         contract.save()
 
-        # -----------------------------------------------------------------
-        # 5. Mark the application as approved
-        # -----------------------------------------------------------------
-        if application:
-            application.status = ApplicationStatus.APPROVED
-            application.reviewed_at = timezone.now()
-            application.reviewed_by = reviewer
-            application.save(
-                update_fields=[
-                    "status",
-                    "reviewed_at",
-                    "reviewed_by",
-                    "updated_at",
-                ]
+        return contract
+
+    # -------------------------------------------------------------------------
+    # Tenant signs → contract becomes ACTIVE, unit becomes OCCUPIED
+    # -------------------------------------------------------------------------
+
+    @staticmethod
+    @transaction.atomic
+    def sign_by_tenant(
+        *,
+        contract: RentalContract,
+        tenant_signature: str,
+    ) -> RentalContract:
+        """Record the tenant's signature and activate the contract."""
+        if not tenant_signature or not tenant_signature.strip():
+            raise ValidationError(_("The tenant's signature is required."))
+
+        contract = (
+            RentalContract.objects
+            .select_for_update()
+            .select_related("unit")
+            .get(pk=contract.pk)
+        )
+
+        if contract.status != ContractStatus.SIGNING:
+            raise ValidationError(
+                _("This contract is not awaiting the tenant's signature.")
             )
+
+        contract.tenant_signature = tenant_signature
+        contract.tenant_signed_at = timezone.now()
+        contract.status = ContractStatus.ACTIVE
+        contract.save(update_fields=[
+            "tenant_signature",
+            "tenant_signed_at",
+            "status",
+            "updated_at",
+        ])
+
+        # Mark the unit as occupied now that the contract is active.
+        unit = Unit.objects.select_for_update().get(pk=contract.unit_id)
+        unit.status = UnitStatus.OCCUPIED
+        unit.save(update_fields=["status", "updated_at"])
+
+        return contract
+
+    # -------------------------------------------------------------------------
+    # Cancel a contract that is still being signed
+    # -------------------------------------------------------------------------
+
+    @staticmethod
+    @transaction.atomic
+    def cancel_signing(
+        *,
+        contract: RentalContract,
+        reason: str = "",
+    ) -> RentalContract:
+        """
+        Cancel a contract still in SIGNING status.
+
+        The unit is freed (stays AVAILABLE) and the contract is cancelled.
+        """
+        contract = (
+            RentalContract.objects
+            .select_for_update()
+            .get(pk=contract.pk)
+        )
+
+        if contract.status != ContractStatus.SIGNING:
+            raise ValidationError(
+                _("Only contracts in signing can be cancelled this way.")
+            )
+
+        contract.status = ContractStatus.CANCELLED
+        contract.save(update_fields=["status", "updated_at"])
 
         return contract

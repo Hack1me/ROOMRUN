@@ -1,5 +1,6 @@
 from core.models import BaseModel
 from core.utils import safe_reverse
+from core.validators import validate_signature
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -256,11 +257,52 @@ class RentalContract(BaseModel):
     status = models.CharField(
         max_length=20,
         choices=ContractStatus.choices,
-        default=ContractStatus.ACTIVE,
+        default=ContractStatus.SIGNING,
         db_index=True,
         verbose_name=_("Status"),
         help_text=_("Current lifecycle status of the contract."),
     )
+
+    landlord_signed_at = models.DateTimeField(
+        _("Landlord signed at"),
+        null=True,
+        blank=True,
+        help_text=_("Timestamp when the landlord signed the contract."),
+    )
+
+    tenant_signed_at = models.DateTimeField(
+        _("Tenant signed at"),
+        null=True,
+        blank=True,
+        help_text=_("Timestamp when the tenant signed the contract."),
+    )
+
+    landlord_signature = models.ImageField(
+        _("Landlord signature"),
+        upload_to="contracts/signatures/",
+        validators=[
+            validate_signature,
+        ],
+        null=True,
+        blank=True,
+        help_text=_(
+            "Digital signature of the landlord (SVG, base64 PNG, or hash)."
+        ),
+    )
+
+    tenant_signature = models.ImageField(
+        _("Tenant signature"),
+        upload_to="contracts/signatures/",
+        validators=[
+        validate_signature,
+        ],
+        null=True,
+        blank=True,
+        help_text=_(
+            "Digital signature of the tenant (SVG, base64 PNG, or hash)."
+        ),
+    )
+
 
     # -------------------------------------------------------------------------
     # Meta Options

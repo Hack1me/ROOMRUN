@@ -123,7 +123,7 @@ def validate_image_dimensions(value):
     try:
         img = Image.open(value)
         width, height = img.size
-        min_width, min_height = 800, 600  # Example minimum
+        min_width, min_height = 800, 600
         if width < min_width or height < min_height:
             raise ValidationError(  # noqa: TRY301
                 _("Image must be at least %(width)d x %(height)d pixels."),
@@ -133,3 +133,47 @@ def validate_image_dimensions(value):
     except Exception:  # noqa: BLE001, S110
         # Ignore PIL errors (e.g., corrupt files) validation will pass
         pass
+
+def validate_signature(value):
+    """
+    Validate a handwritten signature image.
+    """
+    max_size = 500 * 1024  # 500 KB
+    max_width = 1000
+    max_height = 500
+
+    if value.size > max_size:
+        raise ValidationError(
+            _("Signature file must not exceed 500 KB."),
+            code="signature_too_large",
+        )
+
+    try:
+        from PIL import Image  # noqa: PLC0415
+
+        image = Image.open(value)
+        image.verify()
+
+        value.seek(0)
+
+        with Image.open(value) as image:
+            if image.width > max_width or image.height > max_height:
+                raise ValidationError(  # noqa: TRY301
+                    _(
+                        "Signature dimensions must not exceed "
+                        "%(width)d x %(height)d pixels."
+                    ),
+                    params={
+                        "width": max_width,
+                        "height": max_height,
+                    },
+                    code="signature_too_large",
+                )
+
+    except ValidationError:
+        raise
+    except Exception:
+        raise ValidationError(  # noqa: B904
+            _("Invalid or corrupted signature image."),
+            code="invalid_signature",
+        )

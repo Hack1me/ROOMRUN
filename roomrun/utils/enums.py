@@ -90,7 +90,7 @@ class ContractStatus(models.TextChoices):
     Defines the lifecycle status of a rental contract.
     Indicates the current state of a lease agreement between landlord and tenant.
     """
-
+    SIGNING = "SIGNING", _("Signing")
     ACTIVE = "ACTIVE", _("Active")
     COMPLETED = "COMPLETED", _("Completed")
     TERMINATED = "TERMINATED", _("Terminated")

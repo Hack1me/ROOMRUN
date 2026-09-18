@@ -1,10 +1,12 @@
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.db import transaction
 from django.db.models import Count
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views import View
@@ -87,10 +89,12 @@ class LandlordRentalApplicationDetailView(LandlordRequiredMixin, DetailView):
             )
         )
 
+
 class BaseRentalApplicationReviewView(LandlordRequiredMixin, View):
     """Base class for approving/rejecting rental applications."""
 
     service_method = None
+    success_message = None
 
     def post(self, request, pk):
         landlord = self.get_landlord()
@@ -105,10 +109,16 @@ class BaseRentalApplicationReviewView(LandlordRequiredMixin, View):
             pk=pk,
             unit__building__property_ref__landlord=landlord,
         )
-        self.service_method(
-            application=application,
-            reviewer=request.user,
-        )
+
+        try:
+            self.service_method(application=application, reviewer=request.user)
+        except ValidationError as exc:
+            for message in exc.messages:
+                messages.error(request, message)
+            return redirect(
+                "rentals:landlord-rental-application-detail",
+                pk=application.pk,
+            )
 
         messages.success(request, self.success_message)
         return redirect(
@@ -116,24 +126,23 @@ class BaseRentalApplicationReviewView(LandlordRequiredMixin, View):
             pk=application.pk,
         )
 
+
 class RentalApplicationRejectView(BaseRentalApplicationReviewView):
+    """Reject a rental application."""
     service_method = staticmethod(RentalApplicationService.reject)
     success_message = _("Rental application rejected successfully.")
 
 
-
 class RentalApplicationApproveView(LandlordRequiredMixin, FormView):
     """
-    Approve a rental application by creating a rental contract.
-
-    Only accessible to the landlord who owns the unit's property.
+    Approve a rental application and create its contract
+    after the landlord signs it.
     """
 
     form_class = RentalContractForm
     template_name = "dashboard/rentals/applications/landlord/contract_form.html"
 
     def dispatch(self, request, *args, **kwargs):
-        """Pre-fetch and validate the application before handling the request."""
         self.application = get_object_or_404(
             RentalApplication.objects.select_related(
                 "tenant",
@@ -148,8 +157,7 @@ class RentalApplicationApproveView(LandlordRequiredMixin, FormView):
 
         if self.application.status != ApplicationStatus.PENDING:
             messages.warning(
-                request,
-                _("This application has already been reviewed."),
+                request, _("This application has already been reviewed.")
             )
             return redirect(
                 "rentals:landlord-rental-application-detail",
@@ -161,19 +169,10 @@ class RentalApplicationApproveView(LandlordRequiredMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["application"] = self.application
-
-        tenant_user = None
-        if self.application and self.application.tenant:
-            try:
-                tenant_user = self.application.tenant.user
-            except Exception:
-                tenant_user = None
-        context["tenant_user"] = tenant_user
-
+        context["tenant_user"] = self.application.tenant.user
         return context
 
     def get_initial(self):
-        """Pre-fill the contract form from the application data."""
         initial = super().get_initial()
         unit = self.application.unit
 
@@ -183,36 +182,52 @@ class RentalApplicationApproveView(LandlordRequiredMixin, FormView):
             "deposit": Money(0, unit.monthly_rent.currency),
             "advance_rent_months": 1,
         })
-
         return initial
 
+
     def form_valid(self, form):
-        """Create the rental contract from a valid form."""
-        try:
-            contract = RentalContractService.create(
-                tenant=self.application.tenant,
-                unit=self.application.unit,
-                application=self.application,
-                reviewer=self.request.user,
-                data=form.cleaned_data,
-            )
-        except ValidationError as e:
-            # Convert service errors into form errors
-            for message in e.messages:
-                form.add_error(None, message)
-            return self.form_invalid(form)
+        """
+        Approve the application via the service, then create the
+        contract in the same transaction.
+        """
+        with transaction.atomic():
+            try:
+                # 1. Approve the application via the service (handles lock).
+                application = RentalApplicationService.approve(
+                    application=self.application,
+                    reviewer=self.request.user,
+                )
+
+                # 2. Prepare contract data.
+                contract_data = {
+                    "start_date": form.cleaned_data["start_date"],
+                    "end_date": form.cleaned_data["end_date"],
+                    "monthly_rent": form.cleaned_data["monthly_rent"],
+                    "deposit": form.cleaned_data["deposit"],
+                    "advance_rent_months": form.cleaned_data["advance_rent_months"],
+                }
+
+                # 3. Create the contract (status = SIGNING).
+                contract = RentalContractService.create(
+                    tenant=application.tenant,
+                    unit=application.unit,
+                    application=application,
+                    data=contract_data,
+                    landlord_signature=form.cleaned_data["landlord_signature"],
+                )
+            except ValidationError as exc:
+                for message in exc.messages:
+                    form.add_error(None, message)
+                return self.form_invalid(form)
 
         messages.success(
             self.request,
-            _("The rental contract has been created successfully."),
+            _(
+                "The application was approved and the rental contract "
+                "is now awaiting the tenant's signature."
+            ),
         )
-
-        # Use the contract returned by the service, not self.application
-        return redirect(
-            "rentals:landlord-rental-contract-detail",
-            pk=contract.pk,
-        )
-
+        return redirect("rentals:landlord-rental-contract-detail", pk=contract.pk)
 
 class LandlordRentalContractCreateView(LandlordRequiredMixin, FormView):
     """
