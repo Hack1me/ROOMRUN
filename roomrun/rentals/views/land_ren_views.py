@@ -137,6 +137,7 @@ class RentalApplicationApproveView(LandlordRequiredMixin, FormView):
         self.application = get_object_or_404(
             RentalApplication.objects.select_related(
                 "tenant",
+                "tenant__user",
                 "unit",
                 "unit__building",
                 "unit__building__property_ref",
@@ -156,6 +157,20 @@ class RentalApplicationApproveView(LandlordRequiredMixin, FormView):
             )
 
         return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["application"] = self.application
+
+        tenant_user = None
+        if self.application and self.application.tenant:
+            try:
+                tenant_user = self.application.tenant.user
+            except Exception:
+                tenant_user = None
+        context["tenant_user"] = tenant_user
+
+        return context
 
     def get_initial(self):
         """Pre-fill the contract form from the application data."""

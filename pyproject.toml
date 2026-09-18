@@ -42,6 +42,7 @@ dependencies = [
   "campay>=1.1.0",
   "django-cities-light>=3.11",
   "django-smart-selects>=1.7.2",
+  "weasyprint>=70.0",
 ]
 
 [dependency-groups]
