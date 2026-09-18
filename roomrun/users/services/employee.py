@@ -37,11 +37,7 @@ class EmployeeService:
                 "guard_profile",
                 "maintenance_agent_profile",
             )
-            .filter(
-                Q(guard_profile__landlord=landlord)
-                | Q(maintenance_agent_profile__landlords=landlord)
-            )
-            .distinct()   # required because of the M2M join
+            .distinct()
             .order_by("user__last_name", "user__first_name")
         )
 

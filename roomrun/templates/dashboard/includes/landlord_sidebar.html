@@ -37,6 +37,10 @@
         <i class="ti ti-users"></i>
         <span>{% translate "Tenants" %}</span>
       </a>
+      <a href="{% url 'dashboard:employee-list' %}" class="nav-item{% if current_url == 'employee-list' %} active{% endif %}">
+        <i class="ti ti-user-plus"></i>
+        <span>{% translate "Employees" %}</span>
+      </a>
       <a href="{% url 'rentals:landlord-rental-application-list' %}" class="nav-item{% if current_url == 'landlord-rental-application-list' or current_url == 'landlord-rental-application-detail' %} active{% endif %}">
         <i class="ti ti-inbox"></i>
         <span>{% translate "Applications" %}</span>

@@ -2,7 +2,7 @@
 
 {% load i18n static %}
 
-{% block title %}{% translate "Tenants" %} — ROOMRUN{% endblock title %}
+{% block title %}{% translate "Employees" %} — ROOMRUN{% endblock title %}
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
@@ -93,7 +93,7 @@
     }
 
     .overview-item {
-      min-height: 94px;
+      min-height: 92px;
       padding: 18px 20px;
       border-right: 1px solid var(--la-border);
     }
@@ -119,7 +119,7 @@
       font-size: 10px;
     }
 
-    .tenant-card {
+    .employee-card {
       background: var(--la-card);
       border: 1px solid var(--la-border);
       border-radius: 12px;
@@ -137,96 +137,10 @@
     }
 
     .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .menu-button {
-      width: 36px;
-      height: 36px;
-      display: grid;
-      place-items: center;
-      border: 1px solid transparent;
-      border-radius: 7px;
-      background: transparent;
-      color: var(--la-muted);
-    }
-
-    .menu-button:hover {
-      background: var(--bg);
-      border-color: var(--la-border);
-    }
-
-    .page-heading {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .page-heading h1 {
-      margin: 0;
-      font-size: 15px;
-      font-weight: 600;
-    }
-
-    .page-heading p {
-      margin: 3px 0 0;
-      font-size: 11px;
-      color: var(--la-muted);
-    }
-
-    .topbar-search {
-      width: 300px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0 11px;
-      border: 1px solid var(--la-border);
-      border-radius: 7px;
-      color: var(--la-muted);
-    }
-
-    .topbar-search i { font-size: 17px; }
-
-    .topbar-search input {
-      width: 100%;
-      border: 0;
-      outline: 0;
-      font-size: 12px;
-      background: transparent;
-    }
-
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .icon-button {
-      width: 36px;
-      height: 36px;
-      display: grid;
-      place-items: center;
-      border: 1px solid transparent;
-      border-radius: 7px;
-      background: transparent;
-      color: var(--la-muted);
-    }
-
-    .icon-button:hover {
-      background: var(--bg);
-      border-color: var(--la-border);
-    }
-
-    .icon-button i { font-size: 18px; }
-
-    .profile-button img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
     }
 
     .search-box {
@@ -252,11 +166,11 @@
 
     .filter {
       height: 36px;
-      min-width: 135px;
+      min-width: 130px;
       padding: 0 9px;
-      background: #fff;
       border: 1px solid var(--la-border);
       border-radius: 7px;
+      background: #fff;
       color: var(--la-text);
       font-size: 11px;
       outline: none;
@@ -277,8 +191,8 @@
 
     table {
       width: 100%;
-      min-width: 1050px;
       border-collapse: collapse;
+      min-width: 950px;
     }
 
     thead { background: #fafbfc; }
@@ -295,8 +209,8 @@
 
     td {
       padding: 13px 16px;
-      vertical-align: middle;
       border-bottom: 1px solid var(--la-border);
+      vertical-align: middle;
       font-size: 11px;
     }
 
@@ -306,16 +220,16 @@
 
     tbody tr:last-child td { border-bottom: 0; }
 
-    .tenant {
+    .employee {
       display: flex;
       align-items: center;
       gap: 10px;
-      min-width: 210px;
+      min-width: 190px;
     }
 
-    .tenant-avatar {
-      width: 38px;
-      height: 38px;
+    .employee-avatar {
+      width: 36px;
+      height: 36px;
       flex: 0 0 auto;
       display: grid;
       place-items: center;
@@ -326,53 +240,59 @@
       font-weight: 600;
     }
 
-    .tenant-name {
-      margin-bottom: 3px;
-      font-size: 11px;
+    .employee-name {
       font-weight: 600;
+      margin-bottom: 3px;
     }
 
-    .tenant-email {
+    .employee-email {
       color: var(--la-muted);
       font-size: 10px;
     }
 
-    .property-name {
-      margin-bottom: 3px;
-      font-size: 11px;
+    .employee-number {
+      color: var(--la-muted);
+      font-family: monospace;
+      font-size: 10px;
+    }
+
+    .role {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       font-weight: 500;
     }
 
-    .property-location {
+    .role-icon {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 6px;
+      background: var(--bg);
       color: var(--la-muted);
-      font-size: 10px;
     }
 
-    .unit-name { font-weight: 600; margin-bottom: 3px; }
+    .role-icon i { font-size: 13px; }
 
-    .unit-meta {
+    .role-description {
       color: var(--la-muted);
       font-size: 9px;
+      margin-top: 2px;
     }
 
-    .rent { font-weight: 600; }
+    .property-count {
+      font-weight: 500;
+    }
 
-    .rent-frequency {
+    .property-names {
       color: var(--la-muted);
       margin-top: 3px;
       font-size: 9px;
-    }
-
-    .contract-number {
-      font-family: monospace;
-      font-size: 10px;
-      color: var(--la-muted);
-    }
-
-    .contract-end {
-      margin-top: 3px;
-      color: var(--la-muted);
-      font-size: 9px;
+      max-width: 180px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .status {
@@ -398,19 +318,14 @@
       color: var(--la-success, #2e9e5b);
     }
 
-    .status-expiring {
-      background: var(--la-warning-soft, #fef3e2);
-      color: var(--la-warning, #b9770e);
-    }
-
-    .status-ended {
+    .status-inactive {
       background: var(--bg);
       color: var(--la-muted);
     }
 
-    .status-pending {
-      background: var(--accent-bg);
-      color: var(--primary);
+    .status-suspended {
+      background: var(--la-danger-soft, #fcebec);
+      color: var(--la-danger, #d64545);
     }
 
     .row-action {
@@ -451,9 +366,9 @@
     .empty-icon i { font-size: 21px; }
 
     .empty-title {
-      margin-bottom: 5px;
       font-size: 13px;
       font-weight: 600;
+      margin-bottom: 5px;
     }
 
     .empty-description {
@@ -493,13 +408,13 @@
       font-size: 10px;
     }
 
-    .page-btn:hover { background: var(--bg); }
-
     .page-btn.active {
       background: var(--la-primary, #16283f);
-      border-color: var(--la-primary, #16283f);
       color: #fff;
+      border-color: var(--la-primary, #16283f);
     }
+
+    .page-btn:hover { background: var(--bg); }
 
     .page-btn.active:hover {
       background: var(--la-primary-hover, #1e3a5f);
@@ -545,8 +460,8 @@
             <i class="ti ti-menu-2"></i>
           </button>
           <div class="page-heading">
-            <h1>{% translate "Tenants" %}</h1>
-            <p>{% translate "Manage your tenants, their homes and rental contracts." %}</p>
+            <h1>{% translate "Employees" %}</h1>
+            <p>{% translate "Manage your guards and maintenance agents." %}</p>
           </div>
         </div>
         <label class="topbar-search">
@@ -580,17 +495,13 @@
         <!-- PAGE HEADER -->
         <div class="page-header">
           <div>
-            <h1 class="page-title">{% translate "Tenants" %}</h1>
-            <p class="page-description">{% translate "Manage your tenants, their homes and rental contracts." %}</p>
+            <h1 class="page-title">{% translate "Employees" %}</h1>
+            <p class="page-description">{% translate "Manage your guards and maintenance agents." %}</p>
           </div>
           <div class="header-actions">
-            <button type="button" class="btn btn-secondary" id="exportButton">
-              <i class="ti ti-download"></i>
-              {% translate "Export" %}
-            </button>
-            <button type="button" class="btn btn-primary" id="inviteTenantButton">
+            <button type="button" class="btn btn-primary" id="inviteButton">
               <i class="ti ti-user-plus"></i>
-              {% translate "Invite tenant" %}
+              {% translate "Invite user" %}
             </button>
           </div>
         </div>
@@ -598,29 +509,35 @@
         <!-- OVERVIEW -->
         <section class="overview">
           <div class="overview-item">
-            <div class="overview-label">{% translate "Total tenants" %}</div>
+            <div class="overview-label">{% translate "Total employees" %}</div>
             <div class="overview-value">{{ page_obj.paginator.count }}</div>
-            <div class="overview-meta">{% translate "Current tenant accounts" %}</div>
+            <div class="overview-meta">{% translate "Across your workspace" %}</div>
           </div>
           <div class="overview-item">
-            <div class="overview-label">{% translate "Active contracts" %}</div>
-            <div class="overview-value">—</div>
-            <div class="overview-meta">{% translate "Currently renting" %}</div>
+            <div class="overview-label">{% translate "Active employees" %}</div>
+            <div class="overview-value">
+              {{ employees|dictsortreversed:"status"|length }}
+            </div>
+            <div class="overview-meta">{% translate "Currently active" %}</div>
           </div>
           <div class="overview-item">
-            <div class="overview-label">{% translate "Expiring soon" %}</div>
-            <div class="overview-value">—</div>
-            <div class="overview-meta">{% translate "Within the next 60 days" %}</div>
+            <div class="overview-label">{% translate "Guards" %}</div>
+            <div class="overview-value">
+              {{ employees|length }}
+            </div>
+            <div class="overview-meta">{% translate "Access & visitor management" %}</div>
           </div>
           <div class="overview-item">
-            <div class="overview-label">{% translate "Occupied units" %}</div>
-            <div class="overview-value">—</div>
-            <div class="overview-meta">{% translate "Across your properties" %}</div>
+            <div class="overview-label">{% translate "Maintenance agents" %}</div>
+            <div class="overview-value">
+              {{ employees|length }}
+            </div>
+            <div class="overview-meta">{% translate "Property maintenance" %}</div>
           </div>
         </section>
 
-        <!-- TENANTS -->
-        <section class="tenant-card">
+        <!-- EMPLOYEE LIST -->
+        <section class="employee-card">
           <!-- TOOLBAR -->
           <form method="get" class="toolbar">
             <div class="toolbar-left">
@@ -629,22 +546,23 @@
                 <input
                   type="search"
                   name="q"
-                  placeholder="{% translate 'Search tenants, contracts or units...' %}"
+                  placeholder="{% translate 'Search employees...' %}"
                   value="{{ request.GET.q|default:'' }}"
                   id="searchInput"
                 />
               </div>
 
+              <select class="filter" name="type" id="roleFilter">
+                <option value="">{% translate "All roles" %}</option>
+                <option value="guard" {% if request.GET.type == 'guard' %}selected{% endif %}>{% translate "Guard" %}</option>
+                <option value="maintenance" {% if request.GET.type == 'maintenance' %}selected{% endif %}>{% translate "Maintenance Agent" %}</option>
+              </select>
+
               <select class="filter" name="status" id="statusFilter">
                 <option value="">{% translate "All statuses" %}</option>
                 <option value="ACTIVE" {% if request.GET.status == 'ACTIVE' %}selected{% endif %}>{% translate "Active" %}</option>
                 <option value="INACTIVE" {% if request.GET.status == 'INACTIVE' %}selected{% endif %}>{% translate "Inactive" %}</option>
-              </select>
-
-              <select class="filter" name="verified" id="verifiedFilter">
-                <option value="">{% translate "All verification" %}</option>
-                <option value="true" {% if request.GET.verified == 'true' %}selected{% endif %}>{% translate "Verified" %}</option>
-                <option value="false" {% if request.GET.verified == 'false' %}selected{% endif %}>{% translate "Not verified" %}</option>
+                <option value="SUSPENDED" {% if request.GET.status == 'SUSPENDED' %}selected{% endif %}>{% translate "Suspended" %}</option>
               </select>
             </div>
             <div class="toolbar-right">
@@ -660,101 +578,90 @@
             <table>
               <thead>
                 <tr>
-                  <th>{% translate "Tenant" %}</th>
-                  <th>{% translate "Property" %}</th>
-                  <th>{% translate "Unit" %}</th>
-                  <th>{% translate "Contract" %}</th>
-                  <th>{% translate "Monthly rent" %}</th>
+                  <th>{% translate "Employee" %}</th>
+                  <th>{% translate "Employee number" %}</th>
+                  <th>{% translate "Role" %}</th>
+                  <th>{% translate "Assigned properties" %}</th>
                   <th>{% translate "Status" %}</th>
                   <th>{% translate "Actions" %}</th>
                 </tr>
               </thead>
-              <tbody id="tenantTable">
-                {% for tenant in tenants %}
-                  {% with contract=tenant.rental_contracts.first %}
-                    <tr
-                      data-name="{{ tenant.user.first_name }} {{ tenant.user.last_name }}"
-                      data-property="{% if contract and contract.unit and contract.unit.building.property_ref %}{{ contract.unit.building.property_ref.name|lower }}{% endif %}"
-                      data-status="{% if contract %}{{ contract.status|lower }}{% else %}pending{% endif %}"
-                    >
-                      <td>
-                        <div class="tenant">
-                          <div class="tenant-avatar">
-                            {{ tenant.user.first_name|first }}{{ tenant.user.last_name|first }}
+              <tbody id="employeeTable">
+                {% for employee in employees %}
+                  <tr
+                    data-name="{{ employee.user.first_name }} {{ employee.user.last_name }}"
+                    data-role="{% if employee.guard_profile %}guard{% elif employee.maintenance_agent_profile %}maintenance{% endif %}"
+                    data-status="{{ employee.status|lower }}"
+                  >
+                    <td>
+                      <div class="employee">
+                        <div class="employee-avatar">
+                          {{ employee.user.first_name|first }}{{ employee.user.last_name|first }}
+                        </div>
+                        <div>
+                          <div class="employee-name">{{ employee.user.first_name }} {{ employee.user.last_name }}</div>
+                          <div class="employee-email">{{ employee.user.email }}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="employee-number">{{ employee.employee_number }}</span>
+                    </td>
+                    <td>
+                      {% if employee.guard_profile %}
+                        <div class="role">
+                          <div class="role-icon">
+                            <i class="ti ti-shield"></i>
                           </div>
                           <div>
-                            <div class="tenant-name">{{ tenant.user.first_name }} {{ tenant.user.last_name }}</div>
-                            <div class="tenant-email">{{ tenant.user.email }}</div>
+                            {% translate "Guard" %}
+                            <div class="role-description">{% translate "Security & access" %}</div>
                           </div>
                         </div>
-                      </td>
-                      <td>
-                        {% if contract and contract.unit and contract.unit.building.property_ref %}
-                          <div class="property-name">{{ contract.unit.building.property_ref.name }}</div>
-                          <div class="property-location">
-                            {% if contract.unit.building.property_ref.city %}{{ contract.unit.building.property_ref.city }}{% endif %}
-                            {% if contract.unit.building.property_ref.country %}
-                              {% if contract.unit.building.property_ref.city %} · {% endif %}{{ contract.unit.building.property_ref.country }}
-                            {% endif %}
+                      {% elif employee.maintenance_agent_profile %}
+                        <div class="role">
+                          <div class="role-icon">
+                            <i class="ti ti-tool"></i>
                           </div>
-                        {% else %}
-                          <div class="property-location">—</div>
-                        {% endif %}
-                      </td>
-                      <td>
-                        {% if contract and contract.unit %}
-                          <div class="unit-name">{{ contract.unit.unit_number }}</div>
-                          <div class="unit-meta">{% translate "Unit" %} · {% if contract.unit.floor %}{% blocktranslate count floor=contract.unit.floor %}{{ floor }} floor{% plural %}{{ floor }} floors{% endblocktranslate %}{% endif %}</div>
-                        {% else %}
-                          <div class="unit-meta">—</div>
-                        {% endif %}
-                      </td>
-                      <td>
-                        {% if contract %}
-                          <div class="contract-number">{{ contract.contract_number }}</div>
-                          <div class="contract-end">
-                            {% if contract.end_date %}
-                              {% blocktranslate with date=contract.end_date|date:"d M Y" %}Ends {{ date }}{% endblocktranslate %}
-                            {% else %}
-                              {% translate "Open-ended" %}
-                            {% endif %}
+                          <div>
+                            {% translate "Maintenance Agent" %}
+                            <div class="role-description">{% translate "Maintenance" %}</div>
                           </div>
-                        {% else %}
-                          <div class="contract-number">—</div>
-                        {% endif %}
-                      </td>
-                      <td>
-                        {% if contract %}
-                          <div class="rent">{{ contract.monthly_rent.amount|floatformat:0 }} {{ contract.monthly_rent.currency }}</div>
-                          <div class="rent-frequency">{% translate "Monthly" %}</div>
-                        {% else %}
-                          <div class="rent">—</div>
-                        {% endif %}
-                      </td>
-                      <td>
-                        {% if contract %}
-                          <span class="status status-{{ contract.status|lower }}">
-                            {{ contract.get_status_display }}
-                          </span>
-                        {% else %}
-                          <span class="status status-pending">{% translate "No contract" %}</span>
-                        {% endif %}
-                      </td>
-                      <td>
-                        <button type="button" class="row-action" aria-label="{% translate 'More options' %}">
-                          <i class="ti ti-dots"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  {% endwith %}
+                        </div>
+                      {% else %}
+                        <span class="employee-number">—</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if employee.guard_profile %}
+                        <div class="property-count">{% translate "1 property" %}</div>
+                        <div class="property-names">{% translate "Assigned to landlord" %}</div>
+                      {% elif employee.maintenance_agent_profile %}
+                        <div class="property-count">{% translate "Multiple properties" %}</div>
+                        <div class="property-names">{% translate "See details" %}</div>
+                      {% else %}
+                        <div class="property-names">—</div>
+                      {% endif %}
+                    </td>
+                    <td>
+                      <span class="status status-{{ employee.status|lower|default:'inactive' }}">
+                        {{ employee.get_status_display }}
+                      </span>
+                    </td>
+                    <td>
+                      <button type="button" class="row-action" aria-label="{% translate 'More options' %}">
+                        <i class="ti ti-dots"></i>
+                      </button>
+                    </td>
+                  </tr>
                 {% empty %}
                   <tr id="emptyRow">
-                    <td colspan="7">
+                    <td colspan="6">
                       <div class="empty-state" style="display:block;">
                         <div class="empty-icon">
                           <i class="ti ti-users"></i>
                         </div>
-                        <div class="empty-title">{% translate "No tenants found" %}</div>
+                        <div class="empty-title">{% translate "No employees found" %}</div>
                         <div class="empty-description">{% translate "Try changing your search or filters." %}</div>
                       </div>
                     </td>
@@ -763,12 +670,12 @@
               </tbody>
             </table>
 
-            {% if not tenants %}
+            {% if not employees %}
               <div class="empty-state" id="emptyState">
                 <div class="empty-icon">
                   <i class="ti ti-users"></i>
                 </div>
-                <div class="empty-title">{% translate "No tenants found" %}</div>
+                <div class="empty-title">{% translate "No employees found" %}</div>
                 <div class="empty-description">{% translate "Try changing your search or filters." %}</div>
               </div>
             {% endif %}
@@ -779,12 +686,12 @@
             <div class="pagination">
               <div class="pagination-info">
                 {% blocktranslate with start=page_obj.start_index end=page_obj.end_index total=page_obj.paginator.count %}
-                  Showing {{ start }}–{{ end }} of {{ total }} tenants
+                  Showing {{ start }}–{{ end }} of {{ total }} employees
                 {% endblocktranslate %}
               </div>
               <div class="pagination-buttons">
                 {% if page_obj.has_previous %}
-                  <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.verified %}&verified={{ request.GET.verified }}{% endif %}" class="page-btn">
+                  <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="page-btn">
                     <i class="ti ti-chevron-left"></i>
                   </a>
                 {% endif %}
@@ -793,12 +700,12 @@
                   {% if page_obj.number == num %}
                     <button type="button" class="page-btn active">{{ num }}</button>
                   {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                    <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.verified %}&verified={{ request.GET.verified }}{% endif %}" class="page-btn">{{ num }}</a>
+                    <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="page-btn">{{ num }}</a>
                   {% endif %}
                 {% endfor %}
 
                 {% if page_obj.has_next %}
-                  <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.verified %}&verified={{ request.GET.verified }}{% endif %}" class="page-btn">
+                  <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="page-btn">
                     <i class="ti ti-chevron-right"></i>
                   </a>
                 {% endif %}
@@ -816,14 +723,14 @@
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const searchInput = document.getElementById('searchInput');
-      const tenantRows = document.querySelectorAll('#tenantTable tr');
+      const employeeRows = document.querySelectorAll('#employeeTable tr');
       const emptyState = document.getElementById('emptyState');
 
-      function filterTenants() {
+      function filterEmployees() {
         const search = (searchInput ? searchInput.value.trim().toLowerCase() : '');
         let visibleCount = 0;
 
-        tenantRows.forEach(function (row) {
+        employeeRows.forEach(function (row) {
           const name = (row.dataset.name || '').toLowerCase();
           const matchesSearch = !search || name.includes(search);
           row.style.display = matchesSearch ? '' : 'none';
@@ -836,7 +743,7 @@
       }
 
       if (searchInput) {
-        searchInput.addEventListener('input', filterTenants);
+        searchInput.addEventListener('input', filterEmployees);
       }
 
       const resetFilters = document.getElementById('resetFilters');
@@ -844,7 +751,7 @@
         resetFilters.addEventListener('click', function () {
           const form = resetFilters.closest('form');
           if (form) form.reset();
-          filterTenants();
+          filterEmployees();
         });
       }
 
