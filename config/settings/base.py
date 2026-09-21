@@ -94,6 +94,7 @@ THIRD_PARTY_APPS = [
     "django_countries",
     "phonenumber_field",
     "djmoney",
+    "weasyprint",
     "cities_light",
     "smart_selects",
     "django_ratelimit",

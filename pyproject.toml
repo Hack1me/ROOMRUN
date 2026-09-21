@@ -43,6 +43,7 @@ dependencies = [
   "django-cities-light>=3.11",
   "django-smart-selects>=1.7.2",
   "weasyprint>=70.0",
+  "pypdf>=6.19.0",
 ]
 
 [dependency-groups]

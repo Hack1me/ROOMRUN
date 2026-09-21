@@ -376,6 +376,15 @@
       cursor: pointer;
     }
 
+    #signatureCanvas {
+      width: 100%;
+      height: 220px;
+      border: 1px solid var(--la-border);
+      border-radius: 8px;
+      cursor: crosshair;
+      touch-action: none;
+    }
+
     .form-actions {
       display: flex;
       justify-content: flex-end;
@@ -583,7 +592,7 @@
               </div>
 
               <!-- CONTRACT FORM -->
-              <form method="post" novalidate class="contract-form">
+              <form method="post" enctype="multipart/form-data" novalidate class="contract-form">
                 {% csrf_token %}
                 {{ form.non_field_errors }}
 
@@ -633,6 +642,26 @@
                         {{ form.advance_rent_months.label_tag }}
                         {{ form.advance_rent_months }}
                         {{ form.advance_rent_months.errors }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- LANDLORD SIGNATURE -->
+                <div class="card">
+                  <div class="card-header">
+                    <h2>{% translate "Landlord signature" %}</h2>
+                    <p>{% translate "Sign below to send this contract to the tenant for signature." %}</p>
+                  </div>
+                  <div class="card-body">
+                    <div class="field full">
+                      <canvas id="signatureCanvas" width="720" height="220" aria-label="{% translate 'Landlord signature' %}"></canvas>
+                      <input type="hidden" name="landlord_signature" id="signatureInput" value="">
+                      {{ form.landlord_signature.errors }}
+                      <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="clearSignature">
+                          {% translate "Clear signature" %}
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -708,3 +737,60 @@
     </main>
   </div>
 {% endblock body %}
+
+{% block inline_javascript %}
+  {{ block.super }}
+  <script>
+    (() => {
+      const canvas = document.getElementById("signatureCanvas");
+      const input = document.getElementById("signatureInput");
+      const clearButton = document.getElementById("clearSignature");
+      if (!canvas || !input || !clearButton) return;
+
+      const context = canvas.getContext("2d");
+      context.lineWidth = 2;
+      context.lineCap = "round";
+      context.strokeStyle = "#16283f";
+      let drawing = false;
+      let hasSignature = false;
+
+      const point = (event) => {
+        const bounds = canvas.getBoundingClientRect();
+        return {
+          x: (event.clientX - bounds.left) * (canvas.width / bounds.width),
+          y: (event.clientY - bounds.top) * (canvas.height / bounds.height),
+        };
+      };
+      const save = () => {
+        input.value = hasSignature ? canvas.toDataURL('image/png') : "";
+      };
+      const clear = () => {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        hasSignature = false;
+        save();
+      };
+
+      canvas.addEventListener("pointerdown", (event) => {
+        drawing = true;
+        canvas.setPointerCapture(event.pointerId);
+        const start = point(event);
+        context.beginPath();
+        context.moveTo(start.x, start.y);
+      });
+      canvas.addEventListener("pointermove", (event) => {
+        if (!drawing) return;
+        const next = point(event);
+        context.lineTo(next.x, next.y);
+        context.stroke();
+        hasSignature = true;
+      });
+      canvas.addEventListener("pointerup", () => {
+        drawing = false;
+        save();
+      });
+      canvas.addEventListener("pointercancel", () => { drawing = false; });
+      clearButton.addEventListener("click", clear);
+      clear();
+    })();
+  </script>
+{% endblock inline_javascript %}

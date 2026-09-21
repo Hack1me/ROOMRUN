@@ -10,6 +10,7 @@ from rentals.views.land_ren_views import TenantSearchView
 from rentals.views.ten_ren_views import RentalApplicationCreateView
 from rentals.views.ten_ren_views import RentalApplicationDetailView
 from rentals.views.ten_ren_views import RentalApplicationListView
+from rentals.views.ten_ren_views import TenantRentalContractSignView
 
 app_name = "rentals"
 
@@ -28,6 +29,11 @@ urlpatterns = [
         "applications/<uuid:pk>/",
         RentalApplicationDetailView.as_view(),
         name="rental-application-detail",
+    ),
+    path(
+        "contracts/<uuid:pk>/sign/",
+        TenantRentalContractSignView.as_view(),
+        name="tenant-rental-contract-sign",
     ),
 ]
 

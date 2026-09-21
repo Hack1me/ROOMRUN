@@ -1,0 +1,12 @@
+{% extends "dashboard/layout.html" %}
+{% load i18n %}
+{% block content %}
+  <h1>{% translate "Sign rental contract" %}</h1>
+  <p>{% blocktranslate with number=contract.contract_number %}Contract {{ number }} is ready for your signature.{% endblocktranslate %}</p>
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <p>{{ form.tenant_signature.label_tag }}{{ form.tenant_signature }}{{ form.tenant_signature.errors }}</p>
+    <button type="submit">{% translate "Sign contract" %}</button>
+  </form>
+{% endblock content %}

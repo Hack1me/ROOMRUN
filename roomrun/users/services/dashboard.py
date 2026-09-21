@@ -228,6 +228,7 @@ class LandlordDashboardService:
 class TenantDashboardContext:
     tenant: object
     active_contract: object | None
+    signing_contract: object | None
     unit: object | None
     property: object | None
     landlord: object | None
@@ -260,6 +261,12 @@ class TenantDashboardService:
                 "unit__building__property_ref",
                 "unit__building__property_ref__landlord",
             )
+            .first()
+        )
+        signing_contract = (
+            tenant.rental_contracts
+            .filter(status="SIGNING")
+            .select_related("unit__building__property_ref")
             .first()
         )
 
@@ -307,6 +314,7 @@ class TenantDashboardService:
         return {
             "tenant": tenant,
             "active_contract": active_contract,
+            "signing_contract": signing_contract,
             "unit": unit,
             "property": property_obj,
             "landlord": landlord,

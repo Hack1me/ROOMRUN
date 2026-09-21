@@ -141,7 +141,7 @@ class RentalContractService:
         unit: Unit,
         data: dict,
         application: RentalApplication | None = None,
-        landlord_signature: str | None = None,
+        landlord_signature=None,
     ) -> RentalContract:
         """
         Create a rental contract after the landlord signs it.
@@ -150,7 +150,7 @@ class RentalContractService:
         the tenant signs (see `sign_by_tenant`).
         """
         # 1. Validate landlord signature
-        if not landlord_signature or not landlord_signature.strip():
+        if not landlord_signature:
             raise ValidationError(_("The landlord's signature is required."))
 
         # 2. Sanitize incoming data
@@ -222,10 +222,10 @@ class RentalContractService:
     def sign_by_tenant(
         *,
         contract: RentalContract,
-        tenant_signature: str,
+        tenant_signature,
     ) -> RentalContract:
         """Record the tenant's signature and activate the contract."""
-        if not tenant_signature or not tenant_signature.strip():
+        if not tenant_signature:
             raise ValidationError(_("The tenant's signature is required."))
 
         contract = (

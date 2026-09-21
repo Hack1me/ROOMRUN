@@ -1,10 +1,13 @@
+import base64
+import binascii
+
 from django import forms
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.validators import validate_email
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from djmoney.forms.fields import MoneyField as MoneyFormField
-from PIL import Image
 from properties.models import Unit
 from rentals.models import RentalApplication
 from rentals.models import RentalContract
@@ -12,6 +15,41 @@ from users.models import Tenant
 from utils.enums import ApplicationStatus
 from utils.enums import ContractStatus
 from utils.enums import UnitStatus
+
+
+class SignatureInput(forms.ClearableFileInput):
+    """Use an uploaded file when present, otherwise preserve a canvas data URL."""
+
+    def value_from_datadict(self, data, files, name):
+        return files.get(name) or data.get(name)
+
+
+class SignatureImageField(forms.ImageField):
+    """Accept either an uploaded signature image or a PNG/JPEG data URL."""
+
+    allowed_data_url_types = {"image/png": "png", "image/jpeg": "jpg"}
+
+    widget = SignatureInput
+
+    def to_python(self, data):
+        if isinstance(data, str) and data.startswith("data:"):
+            try:
+                header, encoded_image = data.split(",", 1)
+                content_type, encoding = header[5:].split(";", 1)
+                extension = self.allowed_data_url_types[content_type]
+                if encoding != "base64":
+                    raise ValueError  # noqa: TRY301
+                data = SimpleUploadedFile(
+                    name=f"signature.{extension}",
+                    content=base64.b64decode(encoded_image, validate=True),
+                    content_type=content_type,
+                )
+            except (KeyError, ValueError, binascii.Error):
+                raise forms.ValidationError(
+                    _("Submit a valid PNG or JPEG signature."),
+                    code="invalid_signature",
+                ) from None
+        return super().to_python(data)
 
 
 class RentalApplicationForm(forms.ModelForm):
@@ -158,7 +196,7 @@ class RentalContractForm(forms.ModelForm):
         label=_("Deposit"),
     )
 
-    landlord_signature = forms.ImageField(
+    landlord_signature = SignatureImageField(
         required=True,
         label=_("Landlord signature"),
         help_text=_("Upload your handwritten signature (PNG or JPEG)."),
@@ -457,3 +495,13 @@ class DirectRentalContractForm(RentalContractForm):
     def is_inviting(self) -> bool:
         """Return True if the form is in 'invite a new tenant' mode."""
         return self._invite_email is not None
+
+
+class TenantContractSignatureForm(forms.Form):
+    """Collect the signature required to activate a rental contract."""
+
+    tenant_signature = SignatureImageField(
+        required=True,
+        label=_("Your signature"),
+        help_text=_("Upload your handwritten signature (PNG or JPEG)."),
+    )

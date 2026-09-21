@@ -273,6 +273,7 @@ class LandlordRentalContractCreateView(LandlordRequiredMixin, FormView):
                     tenant=form.get_tenant(),
                     unit=unit,
                     data=contract_data,
+                    landlord_signature=form.cleaned_data["landlord_signature"],
                 )
             except ValidationError as exc:
                 for message in exc.messages:

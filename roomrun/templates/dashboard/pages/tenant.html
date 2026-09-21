@@ -159,6 +159,15 @@
             {{ today_date }}
           </div>
         </section>
+        {% if signing_contract %}
+          <section class="welcome tenant-welcome">
+            <div>
+              <h2>{% translate "Your contract is ready" %}</h2>
+              <p>{% translate "Review and sign your rental contract to activate your lease." %}</p>
+            </div>
+            <a href="{% url 'rentals:tenant-rental-contract-sign' signing_contract.pk %}" class="btn btn-primary">{% translate "Sign contract" %}</a>
+          </section>
+        {% endif %}
 
         <!-- KPI STATS -->
         <section class="stats tenant-stats">
