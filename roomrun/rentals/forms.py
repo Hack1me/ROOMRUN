@@ -497,11 +497,41 @@ class DirectRentalContractForm(RentalContractForm):
         return self._invite_email is not None
 
 
-class TenantContractSignatureForm(forms.Form):
-    """Collect the signature required to activate a rental contract."""
+class TenantContractSignatureForm(forms.ModelForm):
+    """
+    Form used by the tenant to sign a rental contract.
+
+    Contract terms are read-only for the tenant.
+    Only the tenant signature is submitted here.
+    """
 
     tenant_signature = SignatureImageField(
         required=True,
-        label=_("Your signature"),
-        help_text=_("Upload your handwritten signature (PNG or JPEG)."),
+        label=_("Tenant signature"),
+        help_text=_("Sign the contract using your handwritten signature (PNG or JPEG)."),
     )
+
+    class Meta:
+        model = RentalContract
+        fields = ("tenant_signature",)
+
+    # -------------------------------------------------------------------------
+    # Cross-field validation
+    # -------------------------------------------------------------------------
+
+    def clean(self):
+        """
+        Ensure the contract is still in SIGNING status.
+
+        Prevents signing a contract that is already ACTIVE, CANCELLED,
+        or otherwise finalized.
+        """
+        cleaned_data = super().clean()
+
+        if self.instance and self.instance.pk:
+            if self.instance.status != ContractStatus.SIGNING:
+                raise forms.ValidationError(
+                    _("This contract is no longer awaiting your signature.")
+                )
+
+        return cleaned_data

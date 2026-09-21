@@ -1,5 +1,7 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
@@ -99,3 +101,60 @@ class TenantRentalContractSignView(TenantRequiredMixin, FormView):
 
         messages.success(self.request, _("Rental contract signed successfully."))
         return redirect("dashboard:tenant")
+
+
+class TenantLeaseDetailView(LoginRequiredMixin, DetailView):
+    """
+    Display the authenticated tenant's current rental contract.
+
+    If the tenant has multiple contracts, the ACTIVE one takes priority,
+    then SIGNED, then SIGNING.
+    """
+
+    template_name = "dashboard/rentals/leases/tenant/detail.html"
+    context_object_name = "contract"
+
+    def get_queryset(self):
+        return (
+            RentalContract.objects
+            .filter(
+                tenant__user=self.request.user,
+                status__in=[
+                    ContractStatus.SIGNING,
+                    ContractStatus.SIGNED,
+                    ContractStatus.ACTIVE,
+                ],
+            )
+            .select_related(
+                "tenant",
+                "tenant__user",
+                "unit",
+                "unit__building",
+                "unit__building__property_ref",
+                "unit__building__property_ref__landlord",
+            )
+        )
+
+    def get_object(self, queryset=None):
+        """
+        Return the most relevant contract.
+
+        Priority: ACTIVE > SIGNED > SIGNING.
+        """
+        if queryset is None:
+            queryset = self.get_queryset()
+
+        # Define the priority order.
+        priority = {
+            ContractStatus.ACTIVE: 0,
+            ContractStatus.SIGNED: 1,
+            ContractStatus.SIGNING: 2,
+        }
+
+        contracts = list(queryset)
+        if not contracts:
+            msg = "No active contract found for this tenant."
+            raise Http404(msg)
+
+        contracts.sort(key=lambda c: priority.get(c.status, 99))
+        return contracts[0]

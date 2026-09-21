@@ -1,0 +1,1093 @@
+{% extends "dashboard/layout.html" %}
+{% load i18n static %}
+
+{% block title %}{% blocktranslate with number=contract.contract_number %}My Lease — {{ number }}{% endblocktranslate %} — ROOMRUN{% endblock title %}
+
+{% block sidebar %}
+  <div class="app tenant-app">
+    <aside class="sidebar tenant-sidebar overflow-y-auto" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <div>
+          <div class="brand-name">ROOMRUN</div>
+          <div class="brand-subtitle">{% translate "Property Management" %}</div>
+        </div>
+      </div>
+      <div class="sidebar-content">
+        <div class="nav-section">
+          <div class="nav-title">{% translate "Overview" %}</div>
+          <a href="{% url 'dashboard:tenant' %}" class="nav-item">
+            <i class="ti ti-layout-dashboard"></i>
+            <span>{% translate "Dashboard" %}</span>
+          </a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-title">{% translate "Management" %}</div>
+          <a href="{% url 'dashboard:tenant' %}" class="nav-item">
+            <i class="ti ti-home"></i>
+            <span>{% translate "My home" %}</span>
+          </a>
+          <a href="{% url 'rentals:tenant-lease-detail' %}" class="nav-item active">
+            <i class="ti ti-file-description"></i>
+            <span>{% translate "My lease" %}</span>
+          </a>
+          <a href="#" class="nav-item">
+            <i class="ti ti-credit-card"></i>
+            <span>{% translate "Payments" %}</span>
+          </a>
+          <a href="#" class="nav-item">
+            <i class="ti ti-tool"></i>
+            <span>{% translate "Maintenance" %}</span>
+          </a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-title">{% translate "Rental" %}</div>
+          <a href="{% url 'rentals:rental-application-list' %}" class="nav-item">
+            <i class="ti ti-file-search"></i>
+            <span>{% translate "Applications" %}</span>
+          </a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-title">{% translate "Communication" %}</div>
+          <a href="#" class="nav-item">
+            <i class="ti ti-message"></i>
+            <span>{% translate "Messages" %}</span>
+            <span class="nav-badge">2</span>
+          </a>
+          <a href="#" class="nav-item">
+            <i class="ti ti-speakerphone"></i>
+            <span>{% translate "Announcements" %}</span>
+          </a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-title">{% translate "System" %}</div>
+          <a href="#" class="nav-item">
+            <i class="ti ti-bell"></i>
+            <span>{% translate "Notifications" %}</span>
+            <span class="nav-badge">3</span>
+          </a>
+          <a href="{% url 'users:profile' %}" class="nav-item">
+            <i class="ti ti-settings"></i>
+            <span>{% translate "Settings" %}</span>
+          </a>
+          <a href="#" class="nav-item">
+            <i class="ti ti-help-circle"></i>
+            <span>{% translate "Help" %}</span>
+          </a>
+        </div>
+      </div>
+      <div class="sidebar-user">
+        <div class="user-avatar">
+          {{ user.first_name|first }}{{ user.last_name|first }}
+        </div>
+        <div>
+          <div class="user-name">{{ user.full_name }}</div>
+          <div class="user-role">{% translate "Tenant" %}</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+{% endblock sidebar %}
+
+{% block topbar %}
+  <header class="topbar">
+    <div class="topbar-left">
+      <button type="button"
+              class="icon-button mobile-menu"
+              id="mobile-menu"
+              aria-label="{% translate 'Open menu' %}">
+        <i class="ti ti-menu-2"></i>
+      </button>
+      <div class="page-heading">
+        <h1>{% translate "My lease" %}</h1>
+        <p>{% translate "View your rental agreement and manage your lease." %}</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button type="button" class="icon-button" aria-label="{% translate 'Notifications' %}">
+        <i class="ti ti-bell"></i>
+      </button>
+      <a href="{% url 'users:profile' %}" class="icon-button profile-button" aria-label="{% translate 'Profile' %}">
+        {% if user.profile_picture %}
+          <img class="h-full w-full object-cover" src="{{ user.profile_picture.url }}" alt="" />
+        {% else %}
+          <i class="ti ti-user"></i>
+        {% endif %}
+      </a>
+    </div>
+  </header>
+{% endblock topbar %}
+
+{% block content %}
+  <div class="page">
+    <div class="content">
+      {% include "common/includes/messages.html" %}
+
+      <!-- BREADCRUMB -->
+      <div class="breadcrumb">
+        <span>{% translate "Management" %}</span>
+        <i class="ti ti-chevron-right"></i>
+        <strong>{% translate "My lease" %}</strong>
+      </div>
+
+      <!-- PAGE HEADER -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">{% translate "My lease" %}</h1>
+          <p class="page-description">{% translate "View your rental agreement and manage your lease." %}</p>
+        </div>
+      </div>
+
+      <!-- LEASE CARD -->
+      <section class="lease-card">
+        <div class="lease-main">
+          <div class="lease-header">
+            <div>
+              <div class="lease-eyebrow">
+                {% translate "Rental lease" %} · {{ contract.contract_number }}
+              </div>
+              <h2 class="lease-number">
+                {{ contract.unit.building.property_ref.name }}
+              </h2>
+              <div class="lease-property">
+                {% blocktranslate with unit_number=contract.unit.unit_number building=contract.unit.building.name %}Unit {{ unit_number }} · {{ building }}{% endblocktranslate %}
+                {% if contract.unit.floor %} · {{ contract.unit.floor }}{% endif %}
+              </div>
+            </div>
+            <span class="status status-{{ contract.status|lower|default:'inactive' }}">
+              {% if contract.status == 'ACTIVE' or contract.status == 'SIGNED' %}
+                <span class="status-dot" style="background: currentColor;"></span>
+              {% else %}
+                <span class="status-dot"></span>
+              {% endif %}
+              {{ contract.get_status_display }}
+            </span>
+          </div>
+
+          <div class="lease-dates">
+            <div>
+              <div class="date-label">{% translate "Start date" %}</div>
+              <div class="date-value">
+                {% if contract.start_date %}
+                  {{ contract.start_date|date:"d F Y" }}
+                {% else %}
+                  —
+                {% endif %}
+              </div>
+            </div>
+            <div class="date-arrow">
+              <i class="ti ti-arrow-right"></i>
+            </div>
+            <div>
+              <div class="date-label">{% translate "End date" %}</div>
+              <div class="date-value">
+                {% if contract.end_date %}
+                  {{ contract.end_date|date:"d F Y" }}
+                {% else %}
+                  {% translate "Open-ended" %}
+                {% endif %}
+              </div>
+            </div>
+            <div class="rent-highlight">
+              <div class="rent-label">{% translate "Monthly rent" %}</div>
+              <div class="rent-value">
+                {{ contract.monthly_rent.amount|floatformat:0 }} {{ contract.monthly_rent.currency }}
+              </div>
+              <div class="rent-period">{% translate "per month" %}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lease-actions">
+          <div class="lease-action-note">
+            {% if contract.status == 'SIGNING' %}
+              {% translate "Your lease is waiting for activation." %}
+            {% elif contract.status == 'SIGNED' %}
+              {% translate "Your contract is signed and awaiting activation." %}
+            {% elif contract.status == 'ACTIVE' %}
+              {% translate "Your lease is active." %}
+            {% else %}
+              {% translate "Your lease is currently inactive." %}
+            {% endif %}
+          </div>
+          <div class="lease-action-buttons">
+            <a href="{% url 'rentals:landlord-rental-contract-detail' contract.pk %}" class="btn btn-secondary">
+              <i class="ti ti-file-description"></i>
+              {% translate "View contract" %}
+            </a>
+            {% if contract.status == 'SIGNING' or contract.status == 'SIGNED' %}
+              <a href="{% url 'rentals:tenant-rental-contract-sign' contract.pk %}" class="btn btn-primary">
+                <i class="ti ti-signature"></i>
+                {% translate "Sign contract" %}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTRACT SUMMARY -->
+      <section class="section">
+        <h2 class="section-title">{% translate "Contract summary" %}</h2>
+        <div class="summary-grid">
+          <div class="summary-card">
+            <div class="summary-label">{% translate "Monthly rent" %}</div>
+            <div class="summary-value">{{ contract.monthly_rent.amount|floatformat:0 }} {{ contract.monthly_rent.currency }}</div>
+            <div class="summary-note">{% translate "Per month" %}</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">{% translate "Security deposit" %}</div>
+            <div class="summary-value">
+              {% if contract.deposit %}
+                {{ contract.deposit.amount|floatformat:0 }} {{ contract.deposit.currency }}
+              {% else %}
+                —
+              {% endif %}
+            </div>
+            <div class="summary-note">{% translate "Refundable deposit" %}</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">{% translate "Advance rent" %}</div>
+            <div class="summary-value">
+              {% if contract.advance_rent_months %}
+                {% blocktranslate count months=contract.advance_rent_months %}{{ months }} month{% plural %}{{ months }} months{% endblocktranslate %}
+              {% else %}
+                —
+              {% endif %}
+            </div>
+            <div class="summary-note">
+              {% if contract.deposit %}
+                {{ contract.deposit.amount|floatformat:0 }} {{ contract.deposit.currency }}
+              {% endif %}
+            </div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">{% translate "Duration" %}</div>
+            <div class="summary-value">
+              {% if contract.start_date and contract.end_date %}
+                {{ contract.start_date|date:"Y" }} – {{ contract.end_date|date:"Y" }}
+              {% else %}
+                —
+              {% endif %}
+            </div>
+            <div class="summary-note">{% translate "Fixed-term lease" %}</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACTIVATION -->
+      {% if contract.status != 'ACTIVE' %}
+        <section class="activation">
+          <div class="activation-content">
+            <div class="activation-icon">
+              <i class="ti ti-credit-card"></i>
+            </div>
+            <div>
+              <div class="activation-title">
+                {% if contract.status == 'SIGNING' %}
+                  {% translate "Your lease is awaiting signature" %}
+                {% elif contract.status == 'SIGNED' %}
+                  {% translate "Your lease is awaiting activation" %}
+                {% else %}
+                  {% translate "Your lease is inactive" %}
+                {% endif %}
+              </div>
+              <div class="activation-text">
+                {% translate "Your landlord has created your rental contract. Review the contract and complete the required steps to activate your lease." %}
+              </div>
+              {% if contract.status == 'SIGNED' or contract.status == 'SIGNING' %}
+                <div class="activation-amount">
+                  <div class="activation-amount-label">{% translate "Amount to pay" %}</div>
+                  <div class="activation-amount-value">
+                    {% if contract.deposit %}
+                      {{ contract.deposit.amount|floatformat:0 }} {{ contract.deposit.currency }}
+                    {% else %}
+                      {{ contract.monthly_rent.amount|floatformat:0 }} {{ contract.monthly_rent.currency }}
+                    {% endif %}
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="activation-action">
+            {% if contract.status == 'SIGNING' %}
+              <a href="{% url 'rentals:tenant-rental-contract-sign' contract.pk %}" class="btn btn-primary">
+                <i class="ti ti-signature"></i>
+                {% translate "Sign contract" %}
+              </a>
+            {% elif contract.status == 'SIGNED' %}
+              <a href="#" class="btn btn-primary">
+                <i class="ti ti-arrow-right"></i>
+                {% translate "Review & Pay" %}
+              </a>
+            {% endif %}
+          </div>
+        </section>
+      {% endif %}
+
+      <!-- LOWER INFORMATION -->
+      <div class="lower-grid">
+        <!-- LEASE DETAILS -->
+        <section class="card">
+          <div class="card-header">
+            <div class="card-title">{% translate "Lease details" %}</div>
+            <a href="{% url 'rentals:landlord-rental-contract-detail' contract.pk %}" class="btn btn-secondary">
+              {% translate "View contract" %}
+            </a>
+          </div>
+          <div class="card-body">
+            <div class="details-grid">
+              <div>
+                <div class="detail-label">{% translate "Lease number" %}</div>
+                <div class="detail-value">{{ contract.contract_number }}</div>
+              </div>
+              <div>
+                <div class="detail-label">{% translate "Duration" %}</div>
+                <div class="detail-value">
+                  {% if contract.start_date and contract.end_date %}
+                    {{ contract.start_date|date:"Y" }} – {{ contract.end_date|date:"Y" }}
+                  {% else %}
+                    —
+                  {% endif %}
+                </div>
+              </div>
+              <div>
+                <div class="detail-label">{% translate "Start date" %}</div>
+                <div class="detail-value">
+                  {% if contract.start_date %}
+                    {{ contract.start_date|date:"d F Y" }}
+                  {% else %}
+                    —
+                  {% endif %}
+                </div>
+              </div>
+              <div>
+                <div class="detail-label">{% translate "End date" %}</div>
+                <div class="detail-value">
+                  {% if contract.end_date %}
+                    {{ contract.end_date|date:"d F Y" }}
+                  {% else %}
+                    {% translate "Open-ended" %}
+                  {% endif %}
+                </div>
+              </div>
+              <div>
+                <div class="detail-label">{% translate "Landlord" %}</div>
+                <div class="detail-value">
+                  {{ contract.unit.building.property_ref.landlord.user.full_name|default:"—" }}
+                </div>
+              </div>
+              <div>
+                <div class="detail-label">{% translate "Currency" %}</div>
+                <div class="detail-value">{{ contract.monthly_rent.currency }}</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PROPERTY -->
+        <section class="card">
+          <div class="card-header">
+            <div class="card-title">{% translate "My rental" %}</div>
+          </div>
+          <div class="card-body">
+            <div class="property-box">
+              <div class="property-icon">
+                <i class="ti ti-building"></i>
+              </div>
+              <div>
+                <div class="property-name">{{ contract.unit.building.property_ref.name }}</div>
+                <div class="property-location">
+                  {% if contract.unit.building.property_ref.city %}{{ contract.unit.building.property_ref.city }}{% endif %}
+                  {% if contract.unit.building.property_ref.country %}
+                    {% if contract.unit.building.property_ref.city %}<br>{% endif %}{{ contract.unit.building.property_ref.country }}
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="property-meta">
+              <div class="property-row">
+                <span>{% translate "Building" %}</span>
+                <span>{{ contract.unit.building.name }}</span>
+              </div>
+              <div class="property-row">
+                <span>{% translate "Unit" %}</span>
+                <span>{{ contract.unit.unit_number }}</span>
+              </div>
+              <div class="property-row">
+                <span>{% translate "Type" %}</span>
+                <span>{{ contract.unit.get_unit_type_display }}</span>
+              </div>
+              <div class="property-row">
+                <span>{% translate "Floor" %}</span>
+                <span>{{ contract.unit.floor|default:"—" }}</span>
+              </div>
+            </div>
+            <a href="{% url 'properties:property-detail' contract.unit.building.property_ref.pk %}" class="btn btn-secondary" style="width:100%;margin-top:14px">
+              {% translate "View property" %}
+            </a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
+  <style>
+    .tenant-app { color: #1e293b; }
+    .tenant-app .content { max-width: 1200px; margin: 0 auto; padding: 28px; }
+
+    .topbar {
+      height: 68px;
+      padding: 0 28px;
+      background: #fff;
+      border-bottom: 1px solid #e6e8ec;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .page-heading h1 {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .page-heading p {
+      margin: 3px 0 0;
+      font-size: 11px;
+      color: #5b6675;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .icon-button {
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: #5b6675;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-button:hover {
+      background: #f5f6f8;
+      color: #1e293b;
+    }
+
+    .profile-button {
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: #5b6675;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .profile-button:hover {
+      background: #f5f6f8;
+      color: #1e293b;
+    }
+
+    .profile-button img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .page {
+      padding: 28px;
+      max-width: 1200px;
+    }
+
+    .breadcrumb {
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #5b6675;
+      font-size: 11px;
+    }
+
+    .breadcrumb i {
+      font-size: 13px;
+    }
+
+    .breadcrumb strong {
+      color: #1e293b;
+      font-weight: 600;
+    }
+
+    .page-header {
+      margin-bottom: 22px;
+    }
+
+    .page-title {
+      margin: 0 0 5px;
+      font-size: 22px;
+      line-height: 1.2;
+      font-weight: 600;
+      letter-spacing: -.4px;
+    }
+
+    .page-description {
+      margin: 0;
+      color: #5b6675;
+      font-size: 12px;
+    }
+
+    /* =========================================================
+       BUTTONS
+    ========================================================= */
+
+    .btn {
+      min-height: 36px;
+      padding: 0 13px;
+      border-radius: 7px;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      transition: .15s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: #16283f;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #1e3a5f;
+    }
+
+    .btn-secondary {
+      background: #fff;
+      border-color: #e6e8ec;
+      color: #1e293b;
+    }
+
+    .btn-secondary:hover {
+      background: #f5f6f8;
+    }
+
+    /* =========================================================
+       LEASE CARD
+    ========================================================= */
+
+    .lease-card {
+      background: #fff;
+      border: 1px solid #e6e8ec;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .lease-main {
+      padding: 24px;
+    }
+
+    .lease-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    .lease-eyebrow {
+      margin-bottom: 7px;
+      color: #5b6675;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .lease-number {
+      margin: 0 0 6px;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -.02em;
+    }
+
+    .lease-property {
+      color: #5b6675;
+      font-size: 12px;
+    }
+
+    .status {
+      height: 26px;
+      padding: 0 9px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .status-active {
+      background: #eaf7ef;
+      color: #2e9e5b;
+    }
+
+    .status-signed {
+      background: #eaf7ef;
+      color: #2e9e5b;
+    }
+
+    .status-signing {
+      background: #fef3e2;
+      color: #b9770e;
+    }
+
+    .status-inactive {
+      background: #f5f6f8;
+      color: #5b6675;
+    }
+
+    .lease-dates {
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid #e6e8ec;
+      display: grid;
+      grid-template-columns: 1fr 40px 1fr 1fr;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .date-label {
+      margin-bottom: 5px;
+      color: #5b6675;
+      font-size: 10px;
+    }
+
+    .date-value {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .date-arrow {
+      color: #e6e8ec;
+      text-align: center;
+    }
+
+    .rent-highlight {
+      padding-left: 18px;
+      border-left: 1px solid #e6e8ec;
+    }
+
+    .rent-label {
+      color: #5b6675;
+      font-size: 10px;
+      margin-bottom: 5px;
+    }
+
+    .rent-value {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .rent-period {
+      color: #5b6675;
+      font-size: 10px;
+    }
+
+    .lease-actions {
+      padding: 15px 24px;
+      background: #fafafa;
+      border-top: 1px solid #e6e8ec;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .lease-action-note {
+      color: #5b6675;
+      font-size: 10px;
+    }
+
+    .lease-action-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* =========================================================
+       SUMMARY
+    ========================================================= */
+
+    .section {
+      margin-top: 18px;
+    }
+
+    .section-title {
+      margin: 0 0 10px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .summary-card {
+      padding: 17px;
+      background: #fff;
+      border: 1px solid #e6e8ec;
+      border-radius: 9px;
+    }
+
+    .summary-label {
+      color: #5b6675;
+      font-size: 10px;
+      margin-bottom: 8px;
+    }
+
+    .summary-value {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .summary-note {
+      margin-top: 4px;
+      color: #5b6675;
+      font-size: 10px;
+    }
+
+    /* =========================================================
+       ACTIVATION
+    ========================================================= */
+
+    .activation {
+      margin-top: 18px;
+      padding: 20px;
+      background: #fef3e2;
+      border: 1px solid #f1d8c1;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+    }
+
+    .activation-content {
+      display: flex;
+      align-items: flex-start;
+      gap: 13px;
+    }
+
+    .activation-icon {
+      width: 38px;
+      height: 38px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      background: #fff;
+      color: #c1622d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .activation-title {
+      margin-bottom: 5px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .activation-text {
+      max-width: 620px;
+      color: #5b6675;
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .activation-amount {
+      margin-top: 9px;
+    }
+
+    .activation-amount-label {
+      color: #5b6675;
+      font-size: 10px;
+    }
+
+    .activation-amount-value {
+      margin-top: 2px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .activation-action {
+      flex-shrink: 0;
+    }
+
+    /* =========================================================
+       LOWER GRID
+    ========================================================= */
+
+    .lower-grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 1.4fr .8fr;
+      gap: 18px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #e6e8ec;
+      border-radius: 9px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      min-height: 52px;
+      padding: 0 18px;
+      border-bottom: 1px solid #e6e8ec;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .card-body {
+      padding: 18px;
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 17px 30px;
+    }
+
+    .detail-label {
+      margin-bottom: 5px;
+      color: #5b6675;
+      font-size: 10px;
+    }
+
+    .detail-value {
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .property-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .property-icon {
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      background: #edf1f5;
+      color: #16283f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .property-name {
+      margin-bottom: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .property-location {
+      color: #5b6675;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .property-meta {
+      margin-top: 16px;
+      padding-top: 13px;
+      border-top: 1px solid #e6e8ec;
+    }
+
+    .property-row {
+      padding: 8px 0;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid #e6e8ec;
+    }
+
+    .property-row:last-child {
+      border-bottom: 0;
+    }
+
+    .property-row span:first-child {
+      color: #5b6675;
+      font-size: 10px;
+    }
+
+    .property-row span:last-child {
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    .mobile-menu {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .lower-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .lease-dates {
+        grid-template-columns: 1fr 25px 1fr;
+      }
+
+      .rent-highlight {
+        grid-column: 1 / -1;
+        padding: 15px 0 0;
+        border-left: 0;
+        border-top: 1px solid #e6e8ec;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform .2s ease;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main {
+        margin-left: 0;
+      }
+
+      .mobile-menu {
+        display: flex;
+      }
+
+      .topbar {
+        padding: 0 16px;
+      }
+
+      .search {
+        display: none;
+      }
+
+      .profile-info {
+        display: none;
+      }
+
+      .content {
+        padding: 20px 15px;
+      }
+
+      .lease-header {
+        flex-direction: column;
+      }
+
+      .lease-dates {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      .date-arrow {
+        display: none;
+      }
+
+      .lease-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .lease-action-buttons {
+        width: 100%;
+      }
+
+      .lease-action-buttons .btn {
+        flex: 1;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .activation {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .activation-action,
+      .activation-action .btn {
+        width: 100%;
+      }
+
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+{% endblock extra_css %}
+
+{% block inline_javascript %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const mobileMenu = document.getElementById('mobile-menu');
+      const sidebar = document.getElementById('sidebar');
+
+      mobileMenu?.addEventListener('click', function () {
+        sidebar.classList.toggle('open');
+      });
+    });
+  </script>
+{% endblock inline_javascript %}

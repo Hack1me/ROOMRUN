@@ -93,6 +93,7 @@ class ContractStatus(models.TextChoices):
     Indicates the current state of a lease agreement between landlord and tenant.
     """
     SIGNING = "SIGNING", _("Signing")
+    SIGNED = "SIGNED", _("Signed")
     ACTIVE = "ACTIVE", _("Active")
     COMPLETED = "COMPLETED", _("Completed")
     TERMINATED = "TERMINATED", _("Terminated")
@@ -105,6 +106,7 @@ class ChargeType(models.TextChoices):
     """
 
     RENT = "RENT", _("Rent")
+    INITIAL_PAYMENT = "INITIAL_PAYMENT", _("Initial payment")
     ELECTRICITY = "ELECTRICITY", _("Electricity")
     WATER = "WATER", _("Water")
     GAS = "GAS", _("Gas")

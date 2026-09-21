@@ -155,7 +155,17 @@ class RentalApplicationApproveView(LandlordRequiredMixin, FormView):
             unit__building__property_ref__landlord=self.get_landlord(),
         )
 
-        if self.application.status != ApplicationStatus.PENDING:
+        has_contract = RentalContract.objects.filter(
+            application=self.application
+        ).exists()
+        can_create_contract = (
+            self.application.status == ApplicationStatus.PENDING
+            or (
+                self.application.status == ApplicationStatus.APPROVED
+                and not has_contract
+            )
+        )
+        if not can_create_contract:
             messages.warning(
                 request, _("This application has already been reviewed.")
             )
@@ -175,9 +185,17 @@ class RentalApplicationApproveView(LandlordRequiredMixin, FormView):
     def get_initial(self):
         initial = super().get_initial()
         unit = self.application.unit
+        start_date = self.application.desired_move_in_date
+        today = timezone.localdate()
+
+        # An application may have been submitted for a date that has since
+        # passed.  A contract cannot start in the past, so default to today
+        # while still allowing the landlord to choose a later date.
+        if start_date and start_date < today:
+            start_date = today
 
         initial.update({
-            "start_date": self.application.desired_move_in_date,
+            "start_date": start_date,
             "monthly_rent": unit.monthly_rent,
             "deposit": Money(0, unit.monthly_rent.currency),
             "advance_rent_months": 1,
@@ -190,13 +208,23 @@ class RentalApplicationApproveView(LandlordRequiredMixin, FormView):
         Approve the application via the service, then create the
         contract in the same transaction.
         """
-        with transaction.atomic():
-            try:
-                # 1. Approve the application via the service (handles lock).
-                application = RentalApplicationService.approve(
-                    application=self.application,
-                    reviewer=self.request.user,
+        try:
+            with transaction.atomic():
+                # Lock before deciding whether this is a new approval or a
+                # retry for a previously approved application without a
+                # contract (possible before the atomic fix).
+                application = RentalApplication.objects.select_for_update().get(
+                    pk=self.application.pk
                 )
+                if application.status == ApplicationStatus.PENDING:
+                    application = RentalApplicationService.approve(
+                        application=application,
+                        reviewer=self.request.user,
+                    )
+                elif application.status != ApplicationStatus.APPROVED:
+                    raise ValidationError(
+                        _("This application can no longer create a contract.")
+                    )
 
                 # 2. Prepare contract data.
                 contract_data = {
@@ -215,10 +243,12 @@ class RentalApplicationApproveView(LandlordRequiredMixin, FormView):
                     data=contract_data,
                     landlord_signature=form.cleaned_data["landlord_signature"],
                 )
-            except ValidationError as exc:
-                for message in exc.messages:
-                    form.add_error(None, message)
-                return self.form_invalid(form)
+        except ValidationError as exc:
+            # The exception must leave the atomic block so both the approval
+            # and the attempted contract creation are rolled back together.
+            for message in exc.messages:
+                form.add_error(None, message)
+            return self.form_invalid(form)
 
         messages.success(
             self.request,

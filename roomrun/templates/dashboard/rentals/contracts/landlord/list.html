@@ -1,22 +1,356 @@
-{% extends "dashboard/layout.html" %} {% load i18n %}
-{% block sidebar %}{% include "dashboard/includes/landlord_sidebar.html" %}{% endblock sidebar %}
+{% extends "dashboard/layout.html" %}
+{% load i18n %}
+
+{% block header %}{% endblock header %}
+{% block footer %}{% endblock footer %}
+
+{% block sidebar %}
+  {% include "dashboard/includes/landlord_sidebar.html" %}
+{% endblock sidebar %}
+
+{% block topbar %}
+  <header class="flex items-center justify-between gap-4 border-b border-[#e6e8ec] bg-white px-4 py-3">
+    <div class="flex items-center gap-3">
+      <button type="button"
+              class="h-9 w-9 grid place-items-center rounded-md border border-transparent text-slate-500 hover:bg-slate-100 hover:border-[#e6e8ec]"
+              id="mobileMenu"
+              aria-label="{% translate 'Open menu' %}">
+        <i class="ti ti-menu-2 text-[18px]"></i>
+      </button>
+      <div>
+        <h1 class="text-sm font-semibold text-slate-800">{% translate "Leases" %}</h1>
+        <p class="text-[11px] text-slate-500">{% translate "Manage your rental agreements, lease periods and tenant occupancy." %}</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <label class="hidden md:flex items-center gap-2 h-9 px-3 border border-[#e6e8ec] rounded-md text-slate-500 w-64">
+        <i class="ti ti-search text-[16px]"></i>
+        <input type="search"
+               placeholder="{% translate 'Search a property, a tenant…' %}"
+               class="w-full border-0 bg-transparent text-[11px] outline-none" />
+      </label>
+      <button type="button"
+              class="h-9 w-9 grid place-items-center rounded-md border border-transparent text-slate-500 hover:bg-slate-100 hover:border-[#e6e8ec]"
+              aria-label="{% translate 'Notifications' %}">
+        <i class="ti ti-bell text-[18px]"></i>
+      </button>
+      <a href="{% url 'users:profile' %}"
+         class="h-9 w-9 grid place-items-center rounded-md border border-transparent text-slate-500 hover:bg-slate-100 hover:border-[#e6e8ec] overflow-hidden"
+         aria-label="{% translate 'Profile' %}">
+        {% if user.profile_picture %}
+          <img class="h-full w-full object-cover" src="{{ user.profile_picture.url }}" alt="" />
+        {% else %}
+          <i class="ti ti-user text-[18px]"></i>
+        {% endif %}
+      </a>
+    </div>
+  </header>
+{% endblock topbar %}
+
 {% block content %}
-<h1>{% translate "Rental contracts" %}</h1>
-<p>
-  <a href="{% url 'rentals:landlord-rental-contract-create' %}"
-    >{% translate "Create contract" %}</a
-  >
-</p>
-<ul>
-  {% for contract in contracts %}
-  <li>
-    <a href="{% url 'rentals:landlord-rental-contract-detail' contract.pk %}"
-      >{{ contract.contract_number }}</a
-    >
-    — {{ contract.tenant }} — {{ contract.get_status_display }}
-  </li>
-  {% empty %}
-  <li>{% translate "No rental contracts." %}</li>
-  {% endfor %}
-</ul>
+  <div class="page">
+    <div class="content max-w-[1400px] mx-auto p-7">
+      {% include "common/includes/messages.html" %}
+
+      <!-- BREADCRUMB -->
+      <div class="flex items-center gap-[7px] text-muted text-[11px] mb-[18px]">
+        <span>{% translate "Management" %}</span>
+        <i class="ti ti-chevron-right text-[14px]"></i>
+        <strong class="text-ink font-medium">{% translate "Leases" %}</strong>
+      </div>
+
+      <!-- HEADER -->
+      <div class="flex items-start justify-between gap-5 mb-6">
+        <div>
+          <h1 class="text-[22px] leading-[1.2] font-semibold tracking-[-0.4px]">{% translate "Leases" %}</h1>
+          <p class="mt-[7px] text-muted text-xs">{% translate "Manage your rental agreements, lease periods and tenant occupancy." %}</p>
+        </div>
+        <div class="flex gap-2">
+          <button type="button" class="h-[38px] px-[14px] rounded-[7px] text-[11px] font-medium inline-flex items-center justify-center gap-[7px] border border-border bg-white text-ink no-underline hover:border-line-strong" id="exportButton">
+            <i class="ti ti-download"></i>
+            {% translate "Export" %}
+          </button>
+          <a href="{% url 'rentals:landlord-rental-contract-create' %}" class="h-[38px] px-[14px] rounded-[7px] text-[11px] font-medium inline-flex items-center justify-center gap-[7px] border-0 bg-secondary text-white no-underline hover:bg-secondary-hover" id="newLeaseButton">
+            <i class="ti ti-plus"></i>
+            {% translate "New lease" %}
+          </a>
+        </div>
+      </div>
+
+      <!-- OVERVIEW -->
+      <section class="grid grid-cols-4 gap-3 mb-5">
+        <div class="bg-white border border-border rounded-xl py-4 px-[17px]">
+          <div class="flex items-center justify-between">
+            <span class="text-muted text-[10px] font-medium">{% translate "Active leases" %}</span>
+            <div class="w-7 h-7 rounded-[7px] bg-bg flex items-center justify-center text-primary text-[15px]"><i class="ti ti-file-check"></i></div>
+          </div>
+          <div class="mt-3 text-[20px] leading-none font-semibold tracking-[-0.4px]">{{ page_obj.paginator.count }}</div>
+          <div class="mt-[6px] text-muted text-[9px]">{% translate "Currently active rental agreements" %}</div>
+        </div>
+        <div class="bg-white border border-border rounded-xl py-4 px-[17px]">
+          <div class="flex items-center justify-between">
+            <span class="text-muted text-[10px] font-medium">{% translate "Expiring soon" %}</span>
+            <div class="w-7 h-7 rounded-[7px] bg-bg flex items-center justify-center text-primary text-[15px]"><i class="ti ti-calendar-exclamation"></i></div>
+          </div>
+          <div class="mt-3 text-[20px] leading-none font-semibold tracking-[-0.4px]">—</div>
+          <div class="mt-[6px] text-muted text-[9px]">{% translate "Ending within the next 60 days" %}</div>
+        </div>
+        <div class="bg-white border border-border rounded-xl py-4 px-[17px]">
+          <div class="flex items-center justify-between">
+            <span class="text-muted text-[10px] font-medium">{% translate "Monthly rent" %}</span>
+            <div class="w-7 h-7 rounded-[7px] bg-bg flex items-center justify-center text-primary text-[15px]"><i class="ti ti-currency-franc"></i></div>
+          </div>
+          <div class="mt-3 text-[20px] leading-none font-semibold tracking-[-0.4px]">—</div>
+          <div class="mt-[6px] text-muted text-[9px]">{% translate "XAF across active leases" %}</div>
+        </div>
+        <div class="bg-white border border-border rounded-xl py-4 px-[17px]">
+          <div class="flex items-center justify-between">
+            <span class="text-muted text-[10px] font-medium">{% translate "Occupancy" %}</span>
+            <div class="w-7 h-7 rounded-[7px] bg-bg flex items-center justify-center text-primary text-[15px]"><i class="ti ti-home-check"></i></div>
+          </div>
+          <div class="mt-3 text-[20px] leading-none font-semibold tracking-[-0.4px]">—</div>
+          <div class="mt-[6px] text-muted text-[9px]">{% translate "Units currently occupied" %}</div>
+        </div>
+      </section>
+
+      <!-- WORKSPACE -->
+      <div class="grid grid-cols-[1fr_300px] gap-5 items-start max-[1150px]:grid-cols-1">
+        <!-- LEASE LIST -->
+        <section class="bg-white border border-border rounded-xl overflow-hidden">
+          <!-- TOOLBAR -->
+          <div class="p-[15px] border-b border-border flex items-center gap-[9px] max-[850px]:flex-wrap">
+            <div class="flex-1 h-[37px] border border-border rounded-[7px] flex items-center gap-2 px-[10px] text-muted max-[850px]:flex-basis-full">
+              <i class="ti ti-search text-[16px]"></i>
+              <input type="text" id="leaseSearch" placeholder="{% translate 'Search lease, tenant, property or unit...' %}" class="w-full border-0 outline-none text-[11px]" />
+            </div>
+            <select class="h-[37px] min-w-[125px] px-[9px] border border-border rounded-[7px] bg-white text-ink text-[10px] outline-none focus:border-primary" id="statusFilter">
+              <option value="">{% translate "All statuses" %}</option>
+              <option value="ACTIVE">{% translate "Active" %}</option>
+              <option value="EXPIRING">{% translate "Expiring soon" %}</option>
+              <option value="DRAFT">{% translate "Draft" %}</option>
+              <option value="ENDED">{% translate "Ended" %}</option>
+            </select>
+            <button class="w-[37px] h-[37px] border border-border rounded-[7px] bg-white text-muted" id="resetFilters" title="{% translate 'Reset filters' %}">
+              <i class="ti ti-refresh"></i>
+            </button>
+          </div>
+
+          <!-- TABLE HEADER -->
+          <div class="grid grid-cols-[145px_minmax(170px,1fr)_minmax(150px,0.9fr)_110px_105px_30px] gap-[15px] pt-[10px] pr-[21px] pb-[7px] pl-[21px] text-muted text-[9px] font-semibold uppercase tracking-[0.04em] max-[1150px]:grid-cols-[130px_minmax(150px,1fr)_minmax(140px,0.9fr)_100px_100px_30px] max-[850px]:min-w-[780px]">
+            <span>{% translate "Lease" %}</span>
+            <span>{% translate "Tenant" %}</span>
+            <span>{% translate "Property / Unit" %}</span>
+            <span>{% translate "Monthly rent" %}</span>
+            <span>{% translate "Status" %}</span>
+            <span></span>
+          </div>
+
+          <!-- LEASES -->
+          <div class="pt-[4px] pr-[14px] pb-[14px] pl-[14px] max-[850px]:overflow-x-auto" id="leaseList">
+            {% for contract in contracts %}
+              {% with tenant_user=contract.tenant.user unit=contract.unit property=unit.building.property_ref %}
+                <div class="lease-row grid grid-cols-[145px_minmax(170px,1fr)_minmax(150px,0.9fr)_110px_105px_30px] items-center gap-[15px] py-[15px] px-[7px] border-b border-border transition duration-100 hover:bg-slate-50 last:border-b-0 max-[1150px]:grid-cols-[130px_minmax(150px,1fr)_minmax(140px,0.9fr)_100px_100px_30px] max-[850px]:min-w-[780px]"
+                     data-status="{{ contract.status|lower }}"
+                     data-property="{{ property.name|lower }}">
+                  <div>
+                    <div class="text-[11px] font-semibold text-primary">{{ contract.contract_number }}</div>
+                    <div class="mt-[5px] text-muted text-[9px]">
+                      {% if contract.start_date %}
+                        {{ contract.start_date|date:"M d, Y" }}
+                        {% if contract.end_date %}
+                          — {{ contract.end_date|date:"M d, Y" }}
+                        {% endif %}
+                      {% else %}
+                        {% translate "Not started" %}
+                      {% endif %}
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-[9px] min-w-0">
+                    <div class="shrink-0 w-[31px] h-[31px] rounded-full bg-primary-soft text-primary flex items-center justify-center text-[9px] font-semibold">{{ tenant_user.first_name|first }}{{ tenant_user.last_name|first }}</div>
+                    <div>
+                      <strong class="block text-[11px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis">{{ tenant_user.full_name }}</strong>
+                      <span class="block mt-[3px] text-muted text-[9px] whitespace-nowrap overflow-hidden text-ellipsis">{{ tenant_user.email }}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <strong class="block text-[10px] font-medium">{{ property.name }}</strong>
+                    <span class="block mt-1 text-muted text-[9px]">{{ unit.building.name }} · {% blocktranslate with number=unit.unit_number %}Unit {{ number }}{% endblocktranslate %}</span>
+                  </div>
+                  <div class="text-[11px] font-semibold">
+                    {{ contract.monthly_rent.amount|floatformat:0 }} {{ contract.monthly_rent.currency }}
+                    <span class="block mt-[3px] text-muted text-[9px] font-normal">{% translate "Monthly" %}</span>
+                  </div>
+                  <div>
+                    <span class="inline-flex items-center w-fit px-2 py-1 rounded-full text-[9px] font-medium
+                      {% if contract.status == 'ACTIVE' %}bg-success-soft text-success
+                      {% elif contract.status == 'EXPIRING' %}bg-warning-soft text-warning
+                      {% elif contract.status == 'ENDED' %}bg-slate-100 text-gray-500
+                      {% else %}bg-bg text-muted{% endif %}">
+                      {{ contract.get_status_display }}
+                    </span>
+                  </div>
+                  <a href="{% url 'rentals:landlord-rental-contract-detail' contract.pk %}" class="w-[29px] h-[29px] border-0 bg-transparent text-muted rounded-[6px] grid place-items-center no-underline hover:bg-bg" aria-label="{% translate 'More options' %}">
+                    <i class="ti ti-dots-vertical"></i>
+                  </a>
+                </div>
+              {% endwith %}
+            {% empty %}
+              <div id="emptyState">
+                <i class="ti ti-file-off text-[30px] opacity-50"></i>
+                <strong class="block mt-[9px] text-ink text-sm">{% translate "No leases found" %}</strong>
+                <span class="block mt-1 text-[10px]">{% translate "Try changing your search or filters." %}</span>
+              </div>
+            {% endfor %}
+          </div>
+
+          <!-- PAGINATION -->
+          {% if page_obj.has_other_pages %}
+            <div class="flex items-center justify-between px-[21px] py-[13px] border-t border-border text-muted text-[9px]">
+              <span>
+                {% blocktranslate with start=page_obj.start_index end=page_obj.end_index total=page_obj.paginator.count %}
+                  Showing {{ start }}–{{ end }} of {{ total }} leases
+                {% endblocktranslate %}
+              </span>
+              <div class="flex gap-[5px]">
+                {% if page_obj.has_previous %}
+                  <a href="?page={{ page_obj.previous_page_number }}" class="w-[28px] h-[28px] border border-border rounded-[6px] bg-white text-muted grid place-items-center no-underline">
+                    <i class="ti ti-chevron-left"></i>
+                  </a>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                  {% if page_obj.number == num %}
+                    <button type="button" class="w-[28px] h-[28px] border border-primary rounded-[6px] bg-primary text-white grid place-items-center">{{ num }}</button>
+                  {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}" class="w-[28px] h-[28px] border border-border rounded-[6px] bg-white text-muted grid place-items-center no-underline">{{ num }}</a>
+                  {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                  <a href="?page={{ page_obj.next_page_number }}" class="w-[28px] h-[28px] border border-border rounded-[6px] bg-white text-muted grid place-items-center no-underline">
+                    <i class="ti ti-chevron-right"></i>
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        </section>
+
+        <!-- SIDE COLUMN -->
+        <aside class="flex flex-col gap-[14px] max-[1150px]:grid max-[1150px]:grid-cols-2 max-[850px]:grid-cols-1">
+          <section class="bg-white border border-border rounded-xl overflow-hidden">
+            <div class="px-4 py-[15px] border-b border-border">
+              <div class="text-xs font-semibold">{% translate "Expiring leases" %}</div>
+            </div>
+            <div class="p-4">
+              <div class="py-3 border-b border-border first:pt-0">
+                <div class="flex items-center justify-between gap-[10px]">
+                  <span class="text-[10px] font-semibold">{% translate "Paul Nguema" %}</span>
+                  <span class="text-warning text-[9px] font-medium">12 days</span>
+                </div>
+                <div class="mt-1 text-muted text-[9px]">{% translate "Horizon" %} · B04</div>
+                <div class="mt-[6px] flex items-center gap-[5px] text-muted text-[9px]"><i class="ti ti-calendar"></i> Sep 30, 2026</div>
+              </div>
+              <div class="py-3 border-b border-border">
+                <div class="flex items-center justify-between gap-[10px]">
+                  <span class="text-[10px] font-semibold">{% translate "Alice Martin" %}</span>
+                  <span class="text-warning text-[9px] font-medium">21 days</span>
+                </div>
+                <div class="mt-1 text-muted text-[9px]">{% translate "Les Palmiers" %} · A02</div>
+                <div class="mt-[6px] flex items-center gap-[5px] text-muted text-[9px]"><i class="ti ti-calendar"></i> Aug 31, 2027</div>
+              </div>
+              <div class="py-3 last:border-b-0 last:pb-0">
+                <div class="flex items-center justify-between gap-[10px]">
+                  <span class="text-[10px] font-semibold">{% translate "Sarah Kamga" %}</span>
+                  <span class="text-warning text-[9px] font-medium">45 days</span>
+                </div>
+                <div class="mt-1 text-muted text-[9px]">{% translate "Horizon" %} · B07</div>
+                <div class="mt-[6px] flex items-center gap-[5px] text-muted text-[9px]"><i class="ti ti-calendar"></i> Jul 31, 2027</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="bg-white border border-border rounded-xl overflow-hidden">
+            <div class="px-4 py-[15px] border-b border-border">
+              <div class="text-xs font-semibold">{% translate "Quick actions" %}</div>
+            </div>
+            <div class="p-4">
+              <a href="{% url 'rentals:landlord-rental-contract-create' %}" class="flex items-center gap-[10px] w-full py-[9px] border-0 border-b border-border bg-transparent text-ink text-left text-[10px] no-underline hover:text-primary-hover last:border-b-0">
+                <i class="ti ti-file-plus"></i>
+                <span>{% translate "Create new lease" %}</span>
+              </a>
+              <a href="{% url 'dashboard:tenant-list' %}" class="flex items-center gap-[10px] w-full py-[9px] border-0 border-b border-border bg-transparent text-ink text-left text-[10px] no-underline hover:text-primary-hover last:border-b-0">
+                <i class="ti ti-users"></i>
+                <span>{% translate "View tenants" %}</span>
+              </a>
+              <a href="#" class="flex items-center gap-[10px] w-full py-[9px] border-0 border-b border-border bg-transparent text-ink text-left text-[10px] no-underline hover:text-primary-hover last:border-b-0">
+                <i class="ti ti-home"></i>
+                <span>{% translate "View available units" %}</span>
+              </a>
+              <a href="#" class="flex items-center gap-[10px] w-full py-[9px] border-0 bg-transparent text-ink text-left text-[10px] no-underline hover:text-primary-hover last:border-b-0">
+                <i class="ti ti-wallet"></i>
+                <span>{% translate "View rent payments" %}</span>
+              </a>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </div>
+  </div>
 {% endblock content %}
+
+{% block extra_css %}
+  {{ block.super }}
+{% endblock extra_css %}
+
+{% block inline_javascript %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const searchInput = document.getElementById('leaseSearch');
+      const statusFilter = document.getElementById('statusFilter');
+      const propertyFilter = document.getElementById('propertyFilter');
+      const leaseRows = document.querySelectorAll('.lease-row');
+      const emptyState = document.getElementById('emptyState');
+
+      function filterLeases() {
+        const query = searchInput.value.trim().toLowerCase();
+        const status = statusFilter.value;
+        const property = propertyFilter.value;
+        let visibleCount = 0;
+
+        leaseRows.forEach(function (row) {
+          const text = row.textContent.toLowerCase();
+          const rowStatus = row.dataset.status || '';
+          const rowProperty = row.dataset.property || '';
+          const matchesSearch = !query || text.includes(query);
+          const matchesStatus = !status || rowStatus === status.toLowerCase();
+          const matchesProperty = !property || rowProperty === property.toLowerCase();
+          const visible = matchesSearch && matchesStatus && matchesProperty;
+          row.style.display = visible ? 'grid' : 'none';
+          if (visible) visibleCount++;
+        });
+
+        if (emptyState) {
+          emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+      }
+
+      if (searchInput) searchInput.addEventListener('input', filterLeases);
+      if (statusFilter) statusFilter.addEventListener('change', filterLeases);
+      if (propertyFilter) propertyFilter.addEventListener('change', filterLeases);
+
+      document.getElementById('resetFilters').addEventListener('click', function () {
+        searchInput.value = '';
+        statusFilter.value = '';
+        propertyFilter.value = '';
+        filterLeases();
+      });
+
+      const mobileMenu = document.getElementById('mobileMenu');
+      const sidebar = document.getElementById('sidebar');
+      if (mobileMenu && sidebar) {
+        mobileMenu.addEventListener('click', function () {
+          sidebar.classList.toggle('open');
+        });
+      }
+    });
+  </script>
+{% endblock inline_javascript %}

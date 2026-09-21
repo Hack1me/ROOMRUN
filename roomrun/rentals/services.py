@@ -1,3 +1,7 @@
+from typing import TYPE_CHECKING
+
+from billing.models import Charge
+from billing.models import Payment
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
@@ -6,8 +10,14 @@ from properties.models import Unit
 from rentals.models import RentalApplication
 from rentals.models import RentalContract
 from utils.enums import ApplicationStatus
+from utils.enums import ChargeType
 from utils.enums import ContractStatus
+from utils.enums import PaymentMethod
+from utils.enums import PaymentStatus
 from utils.enums import UnitStatus
+
+if TYPE_CHECKING:
+    from djmoney.money import Money
 
 
 class RentalApplicationService:
@@ -216,7 +226,6 @@ class RentalContractService:
     # -------------------------------------------------------------------------
     # Tenant signs → contract becomes ACTIVE, unit becomes OCCUPIED
     # -------------------------------------------------------------------------
-
     @staticmethod
     @transaction.atomic
     def sign_by_tenant(
@@ -224,14 +233,20 @@ class RentalContractService:
         contract: RentalContract,
         tenant_signature,
     ) -> RentalContract:
-        """Record the tenant's signature and activate the contract."""
+        """
+        Record the tenant's signature.
+
+        The contract remains inactive until the initial payment
+        has been successfully validated.
+        """
         if not tenant_signature:
-            raise ValidationError(_("The tenant's signature is required."))
+            raise ValidationError(
+                _("The tenant's signature is required.")
+            )
 
         contract = (
             RentalContract.objects
             .select_for_update()
-            .select_related("unit")
             .get(pk=contract.pk)
         )
 
@@ -242,18 +257,16 @@ class RentalContractService:
 
         contract.tenant_signature = tenant_signature
         contract.tenant_signed_at = timezone.now()
-        contract.status = ContractStatus.ACTIVE
-        contract.save(update_fields=[
-            "tenant_signature",
-            "tenant_signed_at",
-            "status",
-            "updated_at",
-        ])
+        contract.status = ContractStatus.SIGNED
 
-        # Mark the unit as occupied now that the contract is active.
-        unit = Unit.objects.select_for_update().get(pk=contract.unit_id)
-        unit.status = UnitStatus.OCCUPIED
-        unit.save(update_fields=["status", "updated_at"])
+        contract.save(
+            update_fields=[
+                "tenant_signature",
+                "tenant_signed_at",
+                "status",
+                "updated_at",
+            ]
+        )
 
         return contract
 
@@ -288,3 +301,182 @@ class RentalContractService:
         contract.save(update_fields=["status", "updated_at"])
 
         return contract
+
+
+    # -------------------------------------------------------------------------
+    # Activate a signed contract after payment
+    # -------------------------------------------------------------------------
+
+    @staticmethod
+    @transaction.atomic
+    def activate(
+        *,
+        contract: RentalContract,
+    ) -> RentalContract:
+        """
+        Activate a signed rental contract after successful payment.
+
+        The contract must be SIGNED by both parties, and a completed
+        payment must exist. On success, the contract becomes ACTIVE
+        and the unit becomes OCCUPIED.
+
+        Lock order: contract → unit (documented for deadlock prevention).
+        """
+        # --- 1. Lock and validate the contract ---
+        contract = (
+            RentalContract.objects
+            .select_for_update()
+            .select_related("unit")
+            .get(pk=contract.pk)
+        )
+
+        if contract.status != ContractStatus.SIGNED:
+            raise ValidationError(
+                _("Only a signed contract can be activated.")
+            )
+
+        if not contract.landlord_signature:
+            raise ValidationError(_("The landlord's signature is missing."))
+
+        if not contract.tenant_signature:
+            raise ValidationError(_("The tenant's signature is missing."))
+
+        # --- 2. Ensure the contract has been paid ---
+        # (assuming a related Payment model with FK to contract)
+        if not hasattr(contract, "payment") or contract.payment is None:
+            raise ValidationError(
+                _("This contract cannot be activated until payment is completed.")
+            )
+
+        if contract.payment.status != PaymentStatus.COMPLETED:
+            raise ValidationError(
+                _("The payment for this contract is not yet completed.")
+            )
+
+        # --- 3. Lock and validate the unit ---
+        unit = (
+            Unit.objects
+            .select_for_update()
+            .get(pk=contract.unit_id)
+        )
+
+        if unit.status != UnitStatus.AVAILABLE:
+            raise ValidationError(
+                _("This unit is not available for activation "
+                  "(current status: %(status)s).")
+                % {"status": unit.get_status_display()}
+            )
+
+        # --- 4. Activate ---
+        contract.status = ContractStatus.ACTIVE
+        contract.save(update_fields=["status", "updated_at"])
+
+        unit.status = UnitStatus.OCCUPIED
+        unit.save(update_fields=["status", "updated_at"])
+
+        return contract
+
+    # -------------------------------------------------------------------------
+    # Initial payment calculation
+    # -------------------------------------------------------------------------
+
+    @staticmethod
+    def calculate_initial_payment(*, contract: RentalContract) -> Money:
+        """
+        Calculate the initial amount required for the contract.
+
+        Formula:
+            deposit + (monthly_rent * advance_rent_months)
+        """
+        if contract.advance_rent_months is None or contract.advance_rent_months < 1:
+            raise ValidationError(_("Advance rent months must be at least 1."))
+
+        if contract.deposit.currency != contract.monthly_rent.currency:
+            raise ValidationError(
+                _("Deposit and monthly rent must use the same currency.")
+            )
+
+        return contract.deposit + (
+            contract.monthly_rent * contract.advance_rent_months
+        )
+
+    # -------------------------------------------------------------------------
+    # Initial payment creation
+    # -------------------------------------------------------------------------
+
+    @staticmethod
+    @transaction.atomic
+    def create_initial_payment(
+        *,
+        contract: RentalContract,
+        payment_method: str,
+    ) -> Payment:
+        """
+        Create the initial charge and its pending payment.
+
+        Idempotent: if an initial charge already exists for this contract,
+        the existing pending payment is returned instead of creating a new one.
+
+        The contract is not activated here — see `activate()`.
+        """
+        # --- 1. Validate payment_method ---
+        if payment_method not in PaymentMethod.values:
+            raise ValidationError(_("Invalid payment method."))
+
+        # --- 2. Lock the contract ---
+        contract = (
+            RentalContract.objects
+            .select_for_update()
+            .get(pk=contract.pk)
+        )
+
+        if contract.status != ContractStatus.SIGNED:
+            raise ValidationError(
+                _("The initial payment can only be created for a signed contract.")
+            )
+
+        # --- 3. Idempotency: reuse existing initial charge ---
+        existing_charge = (
+            Charge.objects
+            .filter(contract=contract, charge_type=ChargeType.INITIAL_PAYMENT)
+            .first()
+        )
+        if existing_charge:
+            existing_payment = existing_charge.payments.exclude(
+                status=PaymentStatus.FAILED
+            ).first()
+            if existing_payment:
+                return existing_payment
+
+        # --- 4. Calculate amount ---
+        amount = RentalContractService.calculate_initial_payment(contract=contract)
+
+        if amount.amount <= 0:
+            raise ValidationError(
+                _("The initial payment amount must be greater than zero.")
+            )
+
+        # --- 5. Create the charge ---
+        charge = Charge(
+            contract=contract,
+            charge_type=ChargeType.INITIAL_PAYMENT,
+            amount=amount,
+            due_date=contract.start_date,
+            description=_(
+                "Initial payment for rental contract %(contract)s."
+            ) % {"contract": contract.contract_number},
+        )
+        charge.full_clean()
+        charge.save()
+
+        # --- 6. Create the payment ---
+        payment = Payment(
+            charge=charge,
+            amount=amount,
+            payment_method=payment_method,
+            status=PaymentStatus.PENDING,
+        )
+        payment.full_clean()
+        payment.save()
+
+        return payment

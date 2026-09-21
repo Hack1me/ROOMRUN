@@ -6,500 +6,66 @@
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
-  <style>
-    :root {
-      --la-primary: #16283f;
-      --la-surface: #fcfcfb;
-      --la-card: #ffffff;
-      --la-text: #1e293b;
-      --la-muted: #5b6675;
-      --la-border: #e6e8ec;
-      --la-success: #2e9e5b;
-      --la-warning: #b9770e;
-      --la-danger: #d64545;
-    }
-
-    .landlord-app { color: var(--la-text); }
-    .landlord-app .content { max-width: 1400px; margin: 0 auto; padding: 28px; }
-
-    .page-header {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 20px;
-      margin-bottom: 24px;
-    }
-
-    .page-title {
-      font-size: 20px;
-      font-weight: 600;
-      letter-spacing: -.3px;
-      margin-bottom: 5px;
-    }
-
-    .page-description {
-      color: var(--la-muted);
-      font-size: 12px;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn {
-      height: 38px;
-      padding: 0 14px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-      border-radius: 7px;
-      border: 1px solid transparent;
-      font-size: 11px;
-      font-weight: 500;
-    }
-
-    .btn i { font-size: 16px; }
-
-    .btn-primary {
-      background: var(--secondary);
-      color: #fff;
-    }
-
-    .btn-primary:hover {
-      background: var(--secondary-hover);
-    }
-
-    .btn-secondary {
-      background: #fff;
-      border-color: var(--la-border);
-      color: var(--la-text);
-    }
-
-    .btn-secondary:hover {
-      background: var(--bg);
-    }
-
-    .overview {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      margin-bottom: 20px;
-      background: var(--la-card);
-      border: 1px solid var(--la-border);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    .overview-item {
-      min-height: 92px;
-      padding: 18px 20px;
-      border-right: 1px solid var(--la-border);
-    }
-
-    .overview-item:last-child { border-right: 0; }
-
-    .overview-label {
-      color: var(--la-muted);
-      font-size: 10px;
-      font-weight: 500;
-      margin-bottom: 8px;
-    }
-
-    .overview-value {
-      font-size: 21px;
-      font-weight: 600;
-      letter-spacing: -.5px;
-    }
-
-    .overview-meta {
-      margin-top: 4px;
-      color: var(--la-muted);
-      font-size: 10px;
-    }
-
-    .employee-card {
-      background: var(--la-card);
-      border: 1px solid var(--la-border);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    .toolbar {
-      min-height: 68px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      border-bottom: 1px solid var(--la-border);
-    }
-
-    .toolbar-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex: 1;
-    }
-
-    .search-box {
-      width: 280px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0 10px;
-      border: 1px solid var(--la-border);
-      border-radius: 7px;
-      color: var(--la-muted);
-    }
-
-    .search-box i { font-size: 16px; }
-
-    .search-box input {
-      width: 100%;
-      border: 0;
-      outline: 0;
-      font-size: 11px;
-    }
-
-    .filter {
-      height: 36px;
-      min-width: 130px;
-      padding: 0 9px;
-      border: 1px solid var(--la-border);
-      border-radius: 7px;
-      background: #fff;
-      color: var(--la-text);
-      font-size: 11px;
-      outline: none;
-    }
-
-    .filter:focus { border-color: var(--la-primary); }
-
-    .toolbar-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .table-wrapper {
-      width: 100%;
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 950px;
-    }
-
-    thead { background: #fafbfc; }
-
-    th {
-      padding: 11px 16px;
-      text-align: left;
-      color: var(--la-muted);
-      font-size: 10px;
-      font-weight: 600;
-      white-space: nowrap;
-      border-bottom: 1px solid var(--la-border);
-    }
-
-    td {
-      padding: 13px 16px;
-      border-bottom: 1px solid var(--la-border);
-      vertical-align: middle;
-      font-size: 11px;
-    }
-
-    tbody tr { transition: background .12s ease; }
-
-    tbody tr:hover { background: #fafafa; }
-
-    tbody tr:last-child td { border-bottom: 0; }
-
-    .employee {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 190px;
-    }
-
-    .employee-avatar {
-      width: 36px;
-      height: 36px;
-      flex: 0 0 auto;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background: var(--la-primary-soft, #f5e4da);
-      color: var(--la-primary, #16283f);
-      font-size: 10px;
-      font-weight: 600;
-    }
-
-    .employee-name {
-      font-weight: 600;
-      margin-bottom: 3px;
-    }
-
-    .employee-email {
-      color: var(--la-muted);
-      font-size: 10px;
-    }
-
-    .employee-number {
-      color: var(--la-muted);
-      font-family: monospace;
-      font-size: 10px;
-    }
-
-    .role {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: 500;
-    }
-
-    .role-icon {
-      width: 24px;
-      height: 24px;
-      display: grid;
-      place-items: center;
-      border-radius: 6px;
-      background: var(--bg);
-      color: var(--la-muted);
-    }
-
-    .role-icon i { font-size: 13px; }
-
-    .role-description {
-      color: var(--la-muted);
-      font-size: 9px;
-      margin-top: 2px;
-    }
-
-    .property-count {
-      font-weight: 500;
-    }
-
-    .property-names {
-      color: var(--la-muted);
-      margin-top: 3px;
-      font-size: 9px;
-      max-width: 180px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .status {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 8px;
-      border-radius: 20px;
-      font-size: 9px;
-      font-weight: 600;
-    }
-
-    .status::before {
-      content: "";
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: currentColor;
-    }
-
-    .status-active {
-      background: var(--la-success-soft, #eaf7ef);
-      color: var(--la-success, #2e9e5b);
-    }
-
-    .status-inactive {
-      background: var(--bg);
-      color: var(--la-muted);
-    }
-
-    .status-suspended {
-      background: var(--la-danger-soft, #fcebec);
-      color: var(--la-danger, #d64545);
-    }
-
-    .row-action {
-      width: 32px;
-      height: 32px;
-      display: grid;
-      place-items: center;
-      border: 0;
-      border-radius: 6px;
-      background: transparent;
-      color: var(--la-muted);
-    }
-
-    .row-action:hover {
-      background: var(--bg);
-      color: var(--la-text);
-    }
-
-    .row-action i { font-size: 17px; }
-
-    .empty-state {
-      display: none;
-      padding: 60px 20px;
-      text-align: center;
-    }
-
-    .empty-icon {
-      width: 44px;
-      height: 44px;
-      margin: 0 auto 12px;
-      display: grid;
-      place-items: center;
-      border-radius: 10px;
-      background: var(--bg);
-      color: var(--la-muted);
-    }
-
-    .empty-icon i { font-size: 21px; }
-
-    .empty-title {
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 5px;
-    }
-
-    .empty-description {
-      color: var(--la-muted);
-      font-size: 10px;
-    }
-
-    .pagination {
-      min-height: 58px;
-      padding: 0 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-top: 1px solid var(--la-border);
-    }
-
-    .pagination-info {
-      color: var(--la-muted);
-      font-size: 10px;
-    }
-
-    .pagination-buttons {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .page-btn {
-      width: 30px;
-      height: 30px;
-      display: grid;
-      place-items: center;
-      border: 1px solid var(--la-border);
-      border-radius: 6px;
-      background: #fff;
-      color: var(--la-muted);
-      font-size: 10px;
-    }
-
-    .page-btn.active {
-      background: var(--la-primary, #16283f);
-      color: #fff;
-      border-color: var(--la-primary, #16283f);
-    }
-
-    .page-btn:hover { background: var(--bg); }
-
-    .page-btn.active:hover {
-      background: var(--la-primary-hover, #1e3a5f);
-    }
-
-    @media (max-width: 1050px) {
-      .overview { grid-template-columns: repeat(2, 1fr); }
-      .overview-item:nth-child(2) { border-right: 0; }
-      .overview-item:nth-child(-n+2) { border-bottom: 1px solid var(--la-border); }
-    }
-
-    @media (max-width: 760px) {
-      .content { padding: 20px 16px; }
-      .page-header { flex-direction: column; align-items: flex-start; }
-      .header-actions { width: 100%; }
-      .header-actions .btn { width: 100%; }
-      .overview { grid-template-columns: 1fr; }
-      .overview-item, .overview-item:nth-child(2) { border-right: 0; border-bottom: 1px solid var(--la-border); }
-      .overview-item:last-child { border-bottom: 0; }
-      .toolbar { flex-direction: column; align-items: stretch; }
-      .toolbar-left { flex-direction: column; align-items: stretch; }
-      .search-box { width: 100%; }
-      .filter { width: 100%; }
-      .toolbar-right { justify-content: flex-end; }
-    }
-  </style>
 {% endblock extra_css %}
 
 {% block header %}{% endblock header %}
 {% block footer %}{% endblock footer %}
 
 {% block body %}
-  <div class="app landlord-app">
+  <div class="text-slate-800">
     {% include "dashboard/includes/landlord_sidebar.html" %}
 
     <main class="main">
-      <header class="topbar">
-        <div class="topbar-left">
+      <header class="flex items-center justify-between gap-4 border-b border-[#e6e8ec] bg-white px-4 py-3">
+        <div class="flex items-center gap-3">
           <button type="button"
-                  class="menu-button"
-                  id="mobile-menu"
+                  class="h-9 w-9 grid place-items-center rounded-md border border-transparent text-slate-500 hover:bg-slate-100 hover:border-[#e6e8ec]"
+                  id="mobileMenu"
                   aria-label="{% translate 'Open menu' %}">
-            <i class="ti ti-menu-2"></i>
+            <i class="ti ti-menu-2 text-[18px]"></i>
           </button>
-          <div class="page-heading">
-            <h1>{% translate "Employees" %}</h1>
-            <p>{% translate "Manage your guards and maintenance agents." %}</p>
+          <div>
+            <h1 class="text-sm font-semibold text-slate-800">{% translate "Employees" %}</h1>
+            <p class="text-[11px] text-slate-500">{% translate "Manage your guards and maintenance agents." %}</p>
           </div>
         </div>
-        <label class="topbar-search">
-          <i class="ti ti-search"></i>
-          <input type="search"
-                 placeholder="{% translate 'Search a property, a tenant…' %}" />
-        </label>
-        <div class="topbar-right">
+        <div class="flex items-center gap-3">
+          <label class="hidden md:flex items-center gap-2 h-9 px-3 border border-[#e6e8ec] rounded-md text-slate-500 w-64">
+            <i class="ti ti-search text-[16px]"></i>
+            <input type="search"
+                   placeholder="{% translate 'Search employees...' %}"
+                   class="w-full border-0 bg-transparent text-[11px] outline-none" />
+          </label>
           <button type="button"
-                  class="icon-button"
+                  class="h-9 w-9 grid place-items-center rounded-md border border-transparent text-slate-500 hover:bg-slate-100 hover:border-[#e6e8ec]"
                   aria-label="{% translate 'Notifications' %}">
-            <i class="ti ti-bell"></i>
+            <i class="ti ti-bell text-[18px]"></i>
           </button>
           <a href="{% url 'users:profile' %}"
-             class="icon-button profile-button"
+             class="h-9 w-9 grid place-items-center rounded-md border border-transparent text-slate-500 hover:bg-slate-100 hover:border-[#e6e8ec] overflow-hidden"
              aria-label="{% translate 'Profile' %}">
             {% if user.profile_picture %}
               <img class="h-full w-full object-cover"
                    src="{{ user.profile_picture.url }}"
                    alt="" />
             {% else %}
-              <i class="ti ti-user"></i>
+              <i class="ti ti-user text-[18px]"></i>
             {% endif %}
           </a>
         </div>
       </header>
 
-      <div class="content">
+      <div class="max-w-[1400px] mx-auto p-7">
         {% include "common/includes/messages.html" %}
 
         <!-- PAGE HEADER -->
-        <div class="page-header">
+        <div class="flex items-end justify-between gap-5 mb-6">
           <div>
-            <h1 class="page-title">{% translate "Employees" %}</h1>
-            <p class="page-description">{% translate "Manage your guards and maintenance agents." %}</p>
+            <h1 class="text-xl font-semibold tracking-tight mb-1.25">{% translate "Employees" %}</h1>
+            <p class="text-slate-500 text-xs">{% translate "Manage your guards and maintenance agents." %}</p>
           </div>
-          <div class="header-actions">
-            <button type="button" class="btn btn-primary" id="inviteButton">
+          <div class="flex items-center gap-2">
+            <button type="button" class="h-[38px] px-3.5 inline-flex items-center justify-center gap-1.75 rounded-md border border-transparent text-[11px] font-medium bg-[var(--secondary)] text-white hover:bg-[var(--secondary-hover)]" id="inviteButton">
               <i class="ti ti-user-plus"></i>
               {% translate "Invite user" %}
             </button>
@@ -507,66 +73,67 @@
         </div>
 
         <!-- OVERVIEW -->
-        <section class="overview">
-          <div class="overview-item">
-            <div class="overview-label">{% translate "Total employees" %}</div>
-            <div class="overview-value">{{ page_obj.paginator.count }}</div>
-            <div class="overview-meta">{% translate "Across your workspace" %}</div>
+        <section class="grid grid-cols-4 gap-px mb-5 bg-white border border-[#e6e8ec] rounded-xl overflow-hidden">
+          <div class="min-h-[92px] p-[18px_20px] border-r border-[#e6e8ec] last:border-r-0">
+            <div class="text-slate-500 text-[10px] font-medium mb-2">{% translate "Total employees" %}</div>
+            <div class="text-[21px] font-semibold tracking-tight">{{ page_obj.paginator.count }}</div>
+            <div class="text-slate-500 text-[10px] mt-1">{% translate "Across your workspace" %}</div>
           </div>
-          <div class="overview-item">
-            <div class="overview-label">{% translate "Active employees" %}</div>
-            <div class="overview-value">
+          <div class="min-h-[92px] p-[18px_20px] border-r border-[#e6e8ec] last:border-r-0">
+            <div class="text-slate-500 text-[10px] font-medium mb-2">{% translate "Active employees" %}</div>
+            <div class="text-[21px] font-semibold tracking-tight">
               {{ employees|dictsortreversed:"status"|length }}
             </div>
-            <div class="overview-meta">{% translate "Currently active" %}</div>
+            <div class="text-slate-500 text-[10px] mt-1">{% translate "Currently active" %}</div>
           </div>
-          <div class="overview-item">
-            <div class="overview-label">{% translate "Guards" %}</div>
-            <div class="overview-value">
+          <div class="min-h-[92px] p-[18px_20px] border-r border-[#e6e8ec] last:border-r-0">
+            <div class="text-slate-500 text-[10px] font-medium mb-2">{% translate "Guards" %}</div>
+            <div class="text-[21px] font-semibold tracking-tight">
               {{ employees|length }}
             </div>
-            <div class="overview-meta">{% translate "Access & visitor management" %}</div>
+            <div class="text-slate-500 text-[10px] mt-1">{% translate "Access & visitor management" %}</div>
           </div>
-          <div class="overview-item">
-            <div class="overview-label">{% translate "Maintenance agents" %}</div>
-            <div class="overview-value">
+          <div class="min-h-[92px] p-[18px_20px] border-r border-[#e6e8ec] last:border-r-0">
+            <div class="text-slate-500 text-[10px] font-medium mb-2">{% translate "Maintenance agents" %}</div>
+            <div class="text-[21px] font-semibold tracking-tight">
               {{ employees|length }}
             </div>
-            <div class="overview-meta">{% translate "Property maintenance" %}</div>
+            <div class="text-slate-500 text-[10px] mt-1">{% translate "Property maintenance" %}</div>
           </div>
         </section>
 
         <!-- EMPLOYEE LIST -->
-        <section class="employee-card">
+        <section class="bg-white border border-[#e6e8ec] rounded-xl overflow-hidden">
           <!-- TOOLBAR -->
-          <form method="get" class="toolbar">
-            <div class="toolbar-left">
-              <div class="search-box">
-                <i class="ti ti-search"></i>
+          <form method="get" class="min-h-[68px] p-[14px_16px] flex items-center justify-between gap-3.75 border-b border-[#e6e8ec]">
+            <div class="flex items-center gap-2 flex-1">
+              <div class="w-[280px] h-[36px] flex items-center gap-2 px-2.5 border border-[#e6e8ec] rounded-md text-slate-500">
+                <i class="ti ti-search text-base"></i>
                 <input
                   type="search"
                   name="q"
                   placeholder="{% translate 'Search employees...' %}"
                   value="{{ request.GET.q|default:'' }}"
                   id="searchInput"
+                  class="w-full border-0 outline-none text-[11px]"
                 />
               </div>
 
-              <select class="filter" name="type" id="roleFilter">
+              <select class="h-[36px] min-w-[130px] px-2.25 border border-[#e6e8ec] rounded-md bg-white text-slate-800 text-[11px] outline-none focus:border-[#16283f]" name="type" id="roleFilter">
                 <option value="">{% translate "All roles" %}</option>
                 <option value="guard" {% if request.GET.type == 'guard' %}selected{% endif %}>{% translate "Guard" %}</option>
                 <option value="maintenance" {% if request.GET.type == 'maintenance' %}selected{% endif %}>{% translate "Maintenance Agent" %}</option>
               </select>
 
-              <select class="filter" name="status" id="statusFilter">
+              <select class="h-[36px] min-w-[130px] px-2.25 border border-[#e6e8ec] rounded-md bg-white text-slate-800 text-[11px] outline-none focus:border-[#16283f]" name="status" id="statusFilter">
                 <option value="">{% translate "All statuses" %}</option>
                 <option value="ACTIVE" {% if request.GET.status == 'ACTIVE' %}selected{% endif %}>{% translate "Active" %}</option>
                 <option value="INACTIVE" {% if request.GET.status == 'INACTIVE' %}selected{% endif %}>{% translate "Inactive" %}</option>
                 <option value="SUSPENDED" {% if request.GET.status == 'SUSPENDED' %}selected{% endif %}>{% translate "Suspended" %}</option>
               </select>
             </div>
-            <div class="toolbar-right">
-              <button type="button" class="btn btn-secondary" id="resetFilters">
+            <div class="flex items-center gap-2">
+              <button type="button" class="h-[38px] px-3.5 inline-flex items-center justify-center gap-1.75 rounded-md border border-[#e6e8ec] bg-white text-slate-800 text-[11px] font-medium hover:bg-[var(--bg)]" id="resetFilters">
                 <i class="ti ti-refresh"></i>
                 {% translate "Reset" %}
               </button>
@@ -574,16 +141,16 @@
           </form>
 
           <!-- TABLE -->
-          <div class="table-wrapper">
-            <table>
-              <thead>
+          <div class="w-full overflow-x-auto">
+            <table class="w-full border-collapse min-w-[950px]">
+              <thead class="bg-[#fafbfc]">
                 <tr>
-                  <th>{% translate "Employee" %}</th>
-                  <th>{% translate "Employee number" %}</th>
-                  <th>{% translate "Role" %}</th>
-                  <th>{% translate "Assigned properties" %}</th>
-                  <th>{% translate "Status" %}</th>
-                  <th>{% translate "Actions" %}</th>
+                  <th class="p-2.75 text-left text-slate-500 text-[10px] font-semibold whitespace-nowrap border-b border-[#e6e8ec]">{% translate "Employee" %}</th>
+                  <th class="p-2.75 text-left text-slate-500 text-[10px] font-semibold whitespace-nowrap border-b border-[#e6e8ec]">{% translate "Employee number" %}</th>
+                  <th class="p-2.75 text-left text-slate-500 text-[10px] font-semibold whitespace-nowrap border-b border-[#e6e8ec]">{% translate "Role" %}</th>
+                  <th class="p-2.75 text-left text-slate-500 text-[10px] font-semibold whitespace-nowrap border-b border-[#e6e8ec]">{% translate "Assigned properties" %}</th>
+                  <th class="p-2.75 text-left text-slate-500 text-[10px] font-semibold whitespace-nowrap border-b border-[#e6e8ec]">{% translate "Status" %}</th>
+                  <th class="p-2.75 text-left text-slate-500 text-[10px] font-semibold whitespace-nowrap border-b border-[#e6e8ec]">{% translate "Actions" %}</th>
                 </tr>
               </thead>
               <tbody id="employeeTable">
@@ -592,77 +159,78 @@
                     data-name="{{ employee.user.first_name }} {{ employee.user.last_name }}"
                     data-role="{% if employee.guard_profile %}guard{% elif employee.maintenance_agent_profile %}maintenance{% endif %}"
                     data-status="{{ employee.status|lower }}"
+                    class="transition-colors duration-75 ease-out hover:bg-[#fafafa]"
                   >
-                    <td>
-                      <div class="employee">
-                        <div class="employee-avatar">
+                    <td class="p-3.25 border-b border-[#e6e8ec] align-middle text-[11px]">
+                      <div class="flex items-center gap-2.5 min-w-[190px]">
+                        <div class="w-9 h-9 flex-shrink-0 grid place-items-center rounded-full bg-[#f5e4da] text-[#16283f] text-[10px] font-semibold">
                           {{ employee.user.first_name|first }}{{ employee.user.last_name|first }}
                         </div>
                         <div>
-                          <div class="employee-name">{{ employee.user.first_name }} {{ employee.user.last_name }}</div>
-                          <div class="employee-email">{{ employee.user.email }}</div>
+                          <div class="font-semibold mb-0.75">{{ employee.user.first_name }} {{ employee.user.last_name }}</div>
+                          <div class="text-slate-500 text-[10px]">{{ employee.user.email }}</div>
                         </div>
                       </div>
                     </td>
-                    <td>
-                      <span class="employee-number">{{ employee.employee_number }}</span>
+                    <td class="p-3.25 border-b border-[#e6e8ec] align-middle text-[11px]">
+                      <span class="text-slate-500 font-mono text-[10px]">{{ employee.employee_number }}</span>
                     </td>
-                    <td>
+                    <td class="p-3.25 border-b border-[#e6e8ec] align-middle text-[11px]">
                       {% if employee.guard_profile %}
-                        <div class="role">
-                          <div class="role-icon">
-                            <i class="ti ti-shield"></i>
+                        <div class="inline-flex items-center gap-1.5 font-medium">
+                          <div class="w-6 h-6 grid place-items-center rounded-md bg-[var(--bg)] text-slate-500">
+                            <i class="ti ti-shield text-[13px]"></i>
                           </div>
                           <div>
                             {% translate "Guard" %}
-                            <div class="role-description">{% translate "Security & access" %}</div>
+                            <div class="text-slate-500 text-[9px] mt-0.5">{% translate "Security & access" %}</div>
                           </div>
                         </div>
                       {% elif employee.maintenance_agent_profile %}
-                        <div class="role">
-                          <div class="role-icon">
-                            <i class="ti ti-tool"></i>
+                        <div class="inline-flex items-center gap-1.5 font-medium">
+                          <div class="w-6 h-6 grid place-items-center rounded-md bg-[var(--bg)] text-slate-500">
+                            <i class="ti ti-tool text-[13px]"></i>
                           </div>
                           <div>
                             {% translate "Maintenance Agent" %}
-                            <div class="role-description">{% translate "Maintenance" %}</div>
+                            <div class="text-slate-500 text-[9px] mt-0.5">{% translate "Maintenance" %}</div>
                           </div>
                         </div>
                       {% else %}
-                        <span class="employee-number">—</span>
+                        <span class="text-slate-500 font-mono text-[10px]">—</span>
                       {% endif %}
                     </td>
-                    <td>
+                    <td class="p-3.25 border-b border-[#e6e8ec] align-middle text-[11px]">
                       {% if employee.guard_profile %}
-                        <div class="property-count">{% translate "1 property" %}</div>
-                        <div class="property-names">{% translate "Assigned to landlord" %}</div>
+                        <div class="font-medium">{% translate "1 property" %}</div>
+                        <div class="text-slate-500 text-[9px] mt-0.75 max-w-[180px] whitespace-nowrap overflow-hidden text-ellipsis">{% translate "Assigned to landlord" %}</div>
                       {% elif employee.maintenance_agent_profile %}
-                        <div class="property-count">{% translate "Multiple properties" %}</div>
-                        <div class="property-names">{% translate "See details" %}</div>
+                        <div class="font-medium">{% translate "Multiple properties" %}</div>
+                        <div class="text-slate-500 text-[9px] mt-0.75 max-w-[180px] whitespace-nowrap overflow-hidden text-ellipsis">{% translate "See details" %}</div>
                       {% else %}
-                        <div class="property-names">—</div>
+                        <div class="text-slate-500 text-[9px]">—</div>
                       {% endif %}
                     </td>
-                    <td>
-                      <span class="status status-{{ employee.status|lower|default:'inactive' }}">
+                    <td class="p-3.25 border-b border-[#e6e8ec] align-middle text-[11px]">
+                      <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-semibold relative pl-3.5 before:content-[''] before:absolute before:left-1.25 before:top-1/2 before:-translate-y-1/2 before:w-[5px] before:h-[5px] before:rounded-full before:bg-current {% if employee.status == 'ACTIVE' %}bg-[#eaf7ef] text-[#2e9e5b]{% elif employee.status == 'SUSPENDED' %}bg-[#fcebec] text-[#d64545]{% else %}bg-[var(--bg)] text-slate-500{% endif %}">
                         {{ employee.get_status_display }}
                       </span>
                     </td>
-                    <td>
-                      <button type="button" class="row-action" aria-label="{% translate 'More options' %}">
-                        <i class="ti ti-dots"></i>
+                    <td class="p-3.25 border-b border-[#e6e8ec] align-middle text-[11px]">
+                      <button type="button" class="w-8 h-8 grid place-items-center border-0 rounded-md bg-transparent text-slate-500 hover:bg-[var(--bg)] hover:text-slate-800" aria-label="{% translate 'More options' %}">
+                        <i class="ti ti-dots text-[17px]"></i>
                       </button>
                     </td>
                   </tr>
                 {% empty %}
                   <tr id="emptyRow">
                     <td colspan="6">
-                      <div class="empty-state" style="display:block;">
-                        <div class="empty-icon">
-                          <i class="ti ti-users"></i>
+                      <div class="hidden p-[60px_20px] text-center" id="emptyRowState" style="display:block;">
+                        <div class="w-11 h-11 mx-auto mb-3 grid place-items-center rounded-[10px] bg-[var(--bg)] text-slate-500">
+                          <i class="ti ti-users text-[21px]"></i>
                         </div>
-                        <div class="empty-title">{% translate "No employees found" %}</div>
-                        <div class="empty-description">{% translate "Try changing your search or filters." %}</div>
+                        <div class="text-sm font-semibold mb-1.25">{% translate "No employees found" %}</div>
+                        <div class="text-slate-500 text-[10px]">{% translate "Try changing your search or filters." %}</div>
                       </div>
                     </td>
                   </tr>
@@ -671,41 +239,41 @@
             </table>
 
             {% if not employees %}
-              <div class="empty-state" id="emptyState">
-                <div class="empty-icon">
-                  <i class="ti ti-users"></i>
+              <div class="hidden p-[60px_20px] text-center" id="emptyState">
+                <div class="w-11 h-11 mx-auto mb-3 grid place-items-center rounded-[10px] bg-[var(--bg)] text-slate-500">
+                  <i class="ti ti-users text-[21px]"></i>
                 </div>
-                <div class="empty-title">{% translate "No employees found" %}</div>
-                <div class="empty-description">{% translate "Try changing your search or filters." %}</div>
+                <div class="text-sm font-semibold mb-1.25">{% translate "No employees found" %}</div>
+                <div class="text-slate-500 text-[10px]">{% translate "Try changing your search or filters." %}</div>
               </div>
             {% endif %}
           </div>
 
           <!-- PAGINATION -->
           {% if page_obj.has_other_pages %}
-            <div class="pagination">
-              <div class="pagination-info">
+            <div class="min-h-[58px] px-4 flex items-center justify-between border-t border-[#e6e8ec]">
+              <div class="text-slate-500 text-[10px]">
                 {% blocktranslate with start=page_obj.start_index end=page_obj.end_index total=page_obj.paginator.count %}
                   Showing {{ start }}–{{ end }} of {{ total }} employees
                 {% endblocktranslate %}
               </div>
-              <div class="pagination-buttons">
+              <div class="flex items-center gap-1">
                 {% if page_obj.has_previous %}
-                  <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="page-btn">
+                  <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="w-7.5 h-7.5 grid place-items-center border border-[#e6e8ec] rounded-md bg-white text-slate-500 text-[10px] hover:bg-[var(--bg)]">
                     <i class="ti ti-chevron-left"></i>
                   </a>
                 {% endif %}
 
                 {% for num in page_obj.paginator.page_range %}
                   {% if page_obj.number == num %}
-                    <button type="button" class="page-btn active">{{ num }}</button>
+                    <button type="button" class="w-7.5 h-7.5 grid place-items-center border border-[#e6e8ec] rounded-md bg-[#16283f] text-white text-[10px] border-[#16283f] hover:bg-[#1e3a5f]">{{ num }}</button>
                   {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                    <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="page-btn">{{ num }}</a>
+                    <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="w-7.5 h-7.5 grid place-items-center border border-[#e6e8ec] rounded-md bg-white text-slate-500 text-[10px] hover:bg-[var(--bg)]">{{ num }}</a>
                   {% endif %}
                 {% endfor %}
 
                 {% if page_obj.has_next %}
-                  <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="page-btn">
+                  <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="w-7.5 h-7.5 grid place-items-center border border-[#e6e8ec] rounded-md bg-white text-slate-500 text-[10px] hover:bg-[var(--bg)]">
                     <i class="ti ti-chevron-right"></i>
                   </a>
                 {% endif %}
