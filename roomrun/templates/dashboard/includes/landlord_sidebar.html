@@ -57,9 +57,9 @@
     </div>
     <div class="nav-section">
       <div class="nav-title">{% translate "Communication" %}</div>
-      <span class="nav-item nav-item--disabled" aria-disabled="true" title="{% translate 'Coming soon' %}">
+      <a href="{% url 'communications:conversation-list' %}" class="nav-item{% if request.resolver_match.namespace == 'communications' %} active{% endif %}">
         <i class="ti ti-message"></i><span>{% translate "Messages" %}</span>
-      </span>
+      </a>
       <span class="nav-item nav-item--disabled" aria-disabled="true" title="{% translate 'Coming soon' %}">
         <i class="ti ti-bell"></i><span>{% translate "Notifications" %}</span>
       </span>

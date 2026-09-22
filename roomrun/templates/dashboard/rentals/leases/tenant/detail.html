@@ -138,10 +138,15 @@
               <i class="ti ti-file-description"></i>
               {% translate "View contract" %}
             </a>
-            {% if contract.status == 'SIGNING' or contract.status == 'SIGNED' %}
+            {% if contract.status == 'SIGNING' %}
               <a href="{% url 'rentals:tenant-rental-contract-sign' contract.pk %}" class="btn btn-primary">
                 <i class="ti ti-signature"></i>
                 {% translate "Sign contract" %}
+              </a>
+            {% elif contract.status == 'SIGNED' %}
+              <a href="#" class="btn btn-primary">
+                <i class="ti ti-arrow-right"></i>
+                {% translate "Review & Pay" %}
               </a>
             {% endif %}
           </div>

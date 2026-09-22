@@ -44,6 +44,8 @@ dependencies = [
   "django-smart-selects>=1.7.2",
   "weasyprint>=70.0",
   "pypdf>=6.19.0",
+  "channels[daphne]>=4.3.2",
+  "channels-redis>=4.3.0",
 ]
 
 [dependency-groups]

@@ -55,8 +55,8 @@
         </div>
       </header>
 
-      <div class="max-w-[1400px] mx-auto p-7">
-        {% include "common/includes/messages.html" %}
+      <div class="uto p-7">
+        {% include "commax-w-350 mx-amon/includes/messages.html" %}
 
         <!-- PAGE HEADER -->
         <div class="flex items-end justify-between gap-5 mb-6">
@@ -65,7 +65,7 @@
             <p class="text-slate-500 text-xs">{% translate "Manage your guards and maintenance agents." %}</p>
           </div>
           <div class="flex items-center gap-2">
-            <button type="button" class="h-[38px] px-3.5 inline-flex items-center justify-center gap-1.75 rounded-md border border-transparent text-[11px] font-medium bg-[var(--secondary)] text-white hover:bg-[var(--secondary-hover)]" id="inviteButton">
+            <button type="button" class="h-9.5 px-3.5 inline-flex items-center justify-center gap-1.75 rounded-md border border-transparent text-[11px] font-medium bg-(--secondary) text-white hover:bg-(--secondary-hover)" id="inviteButton">
               <i class="ti ti-user-plus"></i>
               {% translate "Invite user" %}
             </button>
@@ -74,26 +74,26 @@
 
         <!-- OVERVIEW -->
         <section class="grid grid-cols-4 gap-px mb-5 bg-white border border-[#e6e8ec] rounded-xl overflow-hidden">
-          <div class="min-h-[92px] p-[18px_20px] border-r border-[#e6e8ec] last:border-r-0">
+          <div class="min-h-23 p-[18px_20px] border-r border-[#e6e8ec] last:border-r-0">
             <div class="text-slate-500 text-[10px] font-medium mb-2">{% translate "Total employees" %}</div>
             <div class="text-[21px] font-semibold tracking-tight">{{ page_obj.paginator.count }}</div>
             <div class="text-slate-500 text-[10px] mt-1">{% translate "Across your workspace" %}</div>
           </div>
-          <div class="min-h-[92px] p-[18px_20px] border-r border-[#e6e8ec] last:border-r-0">
+          <div class="min-h-23 p-[18px_20px] border-r border-[#e6e8ec] last:border-r-0">
             <div class="text-slate-500 text-[10px] font-medium mb-2">{% translate "Active employees" %}</div>
             <div class="text-[21px] font-semibold tracking-tight">
               {{ employees|dictsortreversed:"status"|length }}
             </div>
             <div class="text-slate-500 text-[10px] mt-1">{% translate "Currently active" %}</div>
           </div>
-          <div class="min-h-[92px] p-[18px_20px] border-r border-[#e6e8ec] last:border-r-0">
+          <div class="min-h-23 p-[18px_20px] border-r border-[#e6e8ec] last:border-r-0">
             <div class="text-slate-500 text-[10px] font-medium mb-2">{% translate "Guards" %}</div>
             <div class="text-[21px] font-semibold tracking-tight">
               {{ employees|length }}
             </div>
             <div class="text-slate-500 text-[10px] mt-1">{% translate "Access & visitor management" %}</div>
           </div>
-          <div class="min-h-[92px] p-[18px_20px] border-r border-[#e6e8ec] last:border-r-0">
+          <div class="min-h-23 p-[18px_20px] border-r border-[#e6e8ec] last:border-r-0">
             <div class="text-slate-500 text-[10px] font-medium mb-2">{% translate "Maintenance agents" %}</div>
             <div class="text-[21px] font-semibold tracking-tight">
               {{ employees|length }}
@@ -105,9 +105,9 @@
         <!-- EMPLOYEE LIST -->
         <section class="bg-white border border-[#e6e8ec] rounded-xl overflow-hidden">
           <!-- TOOLBAR -->
-          <form method="get" class="min-h-[68px] p-[14px_16px] flex items-center justify-between gap-3.75 border-b border-[#e6e8ec]">
+          <form method="get" class="min-h-17 p-[14px_16px] flex items-center justify-between gap-3.75 border-b border-[#e6e8ec]">
             <div class="flex items-center gap-2 flex-1">
-              <div class="w-[280px] h-[36px] flex items-center gap-2 px-2.5 border border-[#e6e8ec] rounded-md text-slate-500">
+              <div class="w-70 h-9 flex items-center gap-2 px-2.5 border border-[#e6e8ec] rounded-md text-slate-500">
                 <i class="ti ti-search text-base"></i>
                 <input
                   type="search"
@@ -119,7 +119,7 @@
                 />
               </div>
 
-              <select class="h-[36px] min-w-[130px] px-2.25 border border-[#e6e8ec] rounded-md bg-white text-slate-800 text-[11px] outline-none focus:border-[#16283f]" name="type" id="roleFilter">
+              <select class="h-9 min-w-32.5 px-2.25 border border-[#e6e8ec] rounded-md bg-white text-slate-800 text-[11px] outline-none focus:border-[#16283f]" name="type" id="roleFilter">
                 <option value="">{% translate "All roles" %}</option>
                 <option value="guard" {% if request.GET.type == 'guard' %}selected{% endif %}>{% translate "Guard" %}</option>
                 <option value="maintenance" {% if request.GET.type == 'maintenance' %}selected{% endif %}>{% translate "Maintenance Agent" %}</option>

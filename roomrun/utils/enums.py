@@ -230,6 +230,12 @@ class AnnouncementTarget(models.TextChoices):
     BUILDING = "BUILDING", _("Building")
     UNIT = "UNIT", _("Unit")
 
+class ConversationType(models.TextChoices):
+    """The context in which a conversation takes place."""
+    LANDLORD_TENANT = "LANDLORD_TENANT", _("Landlord ↔ Tenant")
+    LANDLORD_STAFF = "LANDLORD_STAFF", _("Landlord ↔ Staff")
+    MAINTENANCE = "MAINTENANCE", _("Maintenance")
+    SUPPORT = "SUPPORT", _("Support")
 
 class NotificationType(models.TextChoices):
     """

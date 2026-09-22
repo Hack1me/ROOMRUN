@@ -25,7 +25,7 @@
         <i class="ti ti-file-description"></i>
         <span>{% translate "My lease" %}</span>
       </a>
-      <a href="#" class="nav-item">
+      <a href="{% url 'communications:conversation-list' %}" class="nav-item{% if request.resolver_match.namespace == 'communications' %} active{% endif %}">
         <i class="ti ti-credit-card"></i>
         <span>{% translate "Payments" %}</span>
       </a>

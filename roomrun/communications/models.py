@@ -14,6 +14,7 @@ from users.models import Landlord
 from users.models import User
 from utils.enums import AnnouncementStatus
 from utils.enums import AnnouncementTarget
+from utils.enums import ConversationType
 from utils.enums import NotificationType
 
 
@@ -327,10 +328,129 @@ class Notification(ReadableModelMixin, BaseModel):
         )
 
 
-class Message(ReadableModelMixin, BaseModel):
+class Conversation(BaseModel):
     """
-    Represents a direct message between two users in ROOMRUN.
-    Messages track their read status and support threading if needed.
+    A chat thread between two or more users.
+
+    Optional FK links to business objects (contract, maintenance request)
+    give the UI a rich header and allow access control.
+    """
+
+    conversation_type = models.CharField(
+        max_length=30,
+        choices=ConversationType.choices,
+        db_index=True,
+        verbose_name=_("Type"),
+    )
+
+    title = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name=_("Title"),
+    )
+
+    participants = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        through="ConversationParticipant",
+        through_fields=("conversation", "user"),
+        related_name="conversations",
+        verbose_name=_("Participants"),
+    )
+
+    # --- Context FKs (all optional) ---
+
+    rental_contract = models.ForeignKey(
+        "rentals.RentalContract",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="conversations",
+        verbose_name=_("Rental contract"),
+    )
+
+    maintenance_request = models.ForeignKey(
+        "maintenance.MaintenanceRequest",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="conversations",
+        verbose_name=_("Maintenance request"),
+    )
+
+    last_message_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Last message at"),
+    )
+
+    class Meta:
+        db_table = "communications_conversations"
+        ordering = ["-last_message_at", "-created_at"]
+        verbose_name = _("Conversation")
+        verbose_name_plural = _("Conversations")
+
+        indexes = [
+            models.Index(fields=["last_message_at"], name="conv_last_msg_idx"),
+        ]
+
+    def __str__(self) -> str:
+        return self.title or f"Conversation #{self.pk}"
+
+
+class ConversationParticipant(BaseModel):
+    """
+    Through model for Conversation ↔ User.
+
+    Stores per-user state: when they last read messages in the conversation.
+    """
+
+    conversation = models.ForeignKey(
+        Conversation,
+        on_delete=models.CASCADE,
+        related_name="participant_links",
+    )
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="conversation_links",
+    )
+
+    last_read_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text=_("Timestamp of the last message read by this user."),
+    )
+
+    class Meta:
+        db_table = "communications_participants"
+        verbose_name = _("Conversation participant")
+        verbose_name_plural = _("Conversation participants")
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=["conversation", "user"],
+                name="unique_conversation_participant",
+            ),
+        ]
+
+        indexes = [
+            models.Index(
+                fields=["user", "conversation"],
+                name="participant_user_conv_idx",
+            ),
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.user} in conversation #{self.conversation_id}"
+
+
+class Message(BaseModel):
+    """
+    A single message posted inside a Conversation.
+
+    Note: read state is tracked per-user at the conversation level
+    (see ConversationParticipant.last_read_at).
     """
 
     reference_field = "message_number"
@@ -346,7 +466,13 @@ class Message(ReadableModelMixin, BaseModel):
         editable=False,
         blank=True,
         verbose_name=_("Message number"),
-        help_text=_("Auto-generated unique identifier for the message."),
+    )
+
+    conversation = models.ForeignKey(
+        "communications.Conversation",
+        on_delete=models.CASCADE,
+        related_name="messages",
+        verbose_name=_("Conversation"),
     )
 
     sender = models.ForeignKey(
@@ -354,20 +480,10 @@ class Message(ReadableModelMixin, BaseModel):
         on_delete=models.PROTECT,
         related_name="sent_messages",
         verbose_name=_("Sender"),
-        help_text=_("The user who sent the message."),
-    )
-
-    recipient = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
-        related_name="received_messages",
-        verbose_name=_("Recipient"),
-        help_text=_("The user who received the message."),
     )
 
     content = models.TextField(
         verbose_name=_("Content"),
-        help_text=_("The actual content of the message."),
     )
 
     parent_message = models.ForeignKey(
@@ -384,43 +500,19 @@ class Message(ReadableModelMixin, BaseModel):
     # -------------------------------------------------------------------------
 
     class Meta:
-        db_table = "messages"
-        ordering = ["-created_at"]
+        db_table = "communications_messages"
+        ordering = ["created_at"]
         verbose_name = _("Message")
         verbose_name_plural = _("Messages")
 
         indexes = [
-            models.Index(fields=["sender"], name="message_sender_idx"),
-            models.Index(fields=["recipient"], name="message_recipient_idx"),
-            models.Index(fields=["is_read"], name="message_read_idx"),
-            models.Index(fields=["created_at"], name="message_created_at_idx"),
-            # Composite index for filtering unread messages for a specific recipient
             models.Index(
-                fields=["recipient", "is_read"],
-                name="message_recipient_read_idx",
+                fields=["conversation", "-created_at"],
+                name="msg_conv_created_idx",
             ),
+            models.Index(fields=["sender"], name="msg_sender_idx"),
         ]
 
-    # -------------------------------------------------------------------------
-    # Methods
-    # -------------------------------------------------------------------------
-
     def __str__(self) -> str:
-        """Return a human-readable representation of the message."""
-        return f"{self.sender} → {self.recipient}"
-
-    def get_absolute_url(self) -> str:
-        return safe_reverse("communications:message-detail", kwargs={"pk": self.id})
-
-    def clean(self):
-        """
-        Business-rule validations:
-        1. Prevent users from sending messages to themselves.
-        2. If is_read is True, read_at must be set.
-        3. If is_read is False, read_at must be null.
-        4. read_at cannot be in the future.
-        """
-        super().clean()
-        # Prevent self-messaging
-        if self.sender and self.recipient and self.sender == self.recipient:
-            raise ValidationError(_("You cannot send a message to yourself."))
+        preview = (self.content or "")[:40]
+        return f"[conv #{self.conversation_id}] {self.sender}: {preview}"
