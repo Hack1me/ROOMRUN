@@ -1,12 +1,476 @@
 {% extends "dashboard/layout.html" %}
-{% load i18n %}
+{% load i18n static %}
+
+{% block header %}{% endblock header %}
+{% block footer %}{% endblock footer %}
+
+{% block app_class %}tenant-app{% endblock app_class %}
+
+{% block title %}{% translate "Sign rental contract" %} — ROOMRUN{% endblock title %}
+
+{% block sidebar %}
+  {% include "dashboard/includes/tenant_sidebar.html" %}
+{% endblock sidebar %}
+
+{% block topbar %}
+  <header class="topbar">
+    <div class="topbar-left">
+      <button type="button"
+              class="icon-button mobile-menu"
+              id="mobile-menu"
+              aria-label="{% translate 'Open menu' %}">
+        <i class="ti ti-menu-2"></i>
+      </button>
+      <div class="page-heading">
+        <h1>{% translate "Sign contract" %}</h1>
+        <p>{% translate "Verify the contract information then add your signature." %}</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button type="button" class="icon-button" aria-label="{% translate 'Notifications' %}">
+        <i class="ti ti-bell"></i>
+      </button>
+      <a href="{% url 'users:profile' %}" class="icon-button profile-button" aria-label="{% translate 'Profile' %}">
+        {% if user.profile_picture %}
+          <img class="h-full w-full object-cover" src="{{ user.profile_picture.url }}" alt="" />
+        {% else %}
+          <i class="ti ti-user"></i>
+        {% endif %}
+      </a>
+    </div>
+  </header>
+{% endblock topbar %}
+
 {% block content %}
-  <h1>{% translate "Sign rental contract" %}</h1>
-  <p>{% blocktranslate with number=contract.contract_number %}Contract {{ number }} is ready for your signature.{% endblocktranslate %}</p>
-  <form method="post" enctype="multipart/form-data" novalidate>
+  <div class="page">
+    <div class="content">
+      {% include "common/includes/messages.html" %}
+
+      <!-- BREADCRUMB -->
+      <div class="breadcrumb">
+        <span>{% translate "Management" %}</span>
+        <i class="ti ti-chevron-right"></i>
+        <a href="{% url 'rentals:tenant-lease-detail' %}" class="text-ink hover:underline">{% translate "My lease" %}</a>
+        <i class="ti ti-chevron-right"></i>
+        <strong>{% translate "Signature" %}</strong>
+      </div>
+
+      <!-- PAGE HEADER -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">{% translate "Sign contract" %}</h1>
+          <p class="page-description">{% translate "Verify the contract information then add your signature." %}</p>
+        </div>
+        <div>
+          <span class="text-muted text-xs">{% translate "Contract" %} <span class="font-semibold text-ink">{{ contract.contract_number }}</span></span>
+        </div>
+      </div>
+
+      <!-- WORKSPACE -->
+      <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-6">
+        <div class="space-y-6">
+
+          <!-- CONTRACT OVERVIEW -->
+          <section class="lease-card">
+            <div class="lease-main">
+              <div class="lease-header">
+                <div>
+                  <div class="lease-eyebrow">{% translate "Rental contract" %} · {{ contract.contract_number }}</div>
+                  <h2 class="lease-number">{{ contract.unit.building.property_ref.name }}</h2>
+                  <div class="lease-property">
+                    {% blocktranslate with unit_number=contract.unit.unit_number building=contract.unit.building.name %}Unit {{ unit_number }} · {{ building }}{% endblocktranslate %}
+                    {% if contract.unit.floor %} · {{ contract.unit.floor }}{% endif %}
+                  </div>
+                </div>
+                <span class="status status-{{ contract.status|lower|default:'inactive' }}">
+                  {% if contract.status == 'ACTIVE' or contract.status == 'SIGNED' %}
+                    <span class="status-dot" style="background: currentColor;"></span>
+                  {% else %}
+                    <span class="status-dot"></span>
+                  {% endif %}
+                  {{ contract.get_status_display }}
+                </span>
+              </div>
+
+              <div class="lease-dates">
+                <div>
+                  <div class="date-label">{% translate "Start date" %}</div>
+                  <div class="date-value">
+                    {% if contract.start_date %}
+                      {{ contract.start_date|date:"d F Y" }}
+                    {% else %}
+                      —
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="date-arrow">
+                  <i class="ti ti-arrow-right"></i>
+                </div>
+                <div>
+                  <div class="date-label">{% translate "End date" %}</div>
+                  <div class="date-value">
+                    {% if contract.end_date %}
+                      {{ contract.end_date|date:"d F Y" }}
+                    {% else %}
+                      {% translate "Open-ended" %}
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="rent-highlight">
+                  <div class="rent-label">{% translate "Monthly rent" %}</div>
+                  <div class="rent-value">{{ contract.monthly_rent.amount|floatformat:0 }} {{ contract.monthly_rent.currency }}</div>
+                  <div class="rent-period">{% translate "per month" %}</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- SIGNATURE -->
+          <section class="lease-card">
+            <div class="lease-main">
+              <div class="lease-header" style="align-items: flex-start;">
+                <div>
+                  <h2 class="lease-number" style="font-size: 18px;">{% translate "Your signature" %}</h2>
+                  <p class="lease-property">{% translate "Sign in the designated area below." %}</p>
+                </div>
+                <span class="text-xs text-muted">{% translate "Electronic signature" %}</span>
+              </div>
+
+              <div class="signature-wrapper" style="margin-top: 18px;">
+                <canvas id="signatureCanvas"></canvas>
+                <div id="signaturePlaceholder" class="signature-placeholder">
+                  <i class="ti ti-signature text-3xl mb-2 block"></i>
+                  <p class="text-xs">{% translate "Draw your signature here" %}</p>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between mt-3">
+                <p class="text-xs text-muted">{% translate "Use your mouse or finger on mobile." %}</p>
+                <button type="button" id="clearSignature" class="text-xs text-muted hover:text-danger flex items-center gap-1.5">
+                  <i class="ti ti-eraser text-sm"></i>
+                  {% translate "Clear" %}
+                </button>
+              </div>
+
+              <div class="mt-5 p-4 rounded-lg bg-bg border border-border">
+                <div class="flex gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-accent-bg flex items-center justify-center shrink-0 text-primary">
+                    <i class="ti ti-info-circle"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs font-medium text-ink mb-1">{% translate "Before signing" %}</p>
+                    <p class="text-xs leading-5 text-muted">{% translate "By signing, you confirm that you have reviewed the information in this contract." %}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ACTIONS -->
+          <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
+            <a href="{% url 'rentals:tenant-lease-detail' %}" class="btn btn-secondary">
+              <i class="ti ti-arrow-left"></i>
+              {% translate "Back" %}
+            </a>
+            <button type="button" id="signButton" class="btn btn-primary" disabled>
+              <i class="ti ti-signature"></i>
+              {% translate "Sign contract" %}
+            </button>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDEBAR -->
+        <aside class="space-y-5">
+          <!-- TENANT -->
+          <section class="card">
+            <div class="card-header">
+              <div class="card-title">{% translate "Tenant" %}</div>
+            </div>
+            <div class="card-body">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-xs font-semibold">
+                  {{ user.first_name|first }}{{ user.last_name|first }}
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-ink">{{ user.full_name }}</p>
+                  <p class="text-xs text-muted">{{ user.email }}</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- LEASE SUMMARY -->
+          <section class="card">
+            <div class="card-header">
+              <div class="card-title">{% translate "Contract summary" %}</div>
+            </div>
+            <div class="card-body space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-muted">{% translate "Monthly rent" %}</span>
+                <span class="text-sm font-medium text-ink">{{ contract.monthly_rent.amount|floatformat:0 }} {{ contract.monthly_rent.currency }}</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-muted">{% translate "Security deposit" %}</span>
+                <span class="text-sm font-medium text-ink">
+                  {% if contract.deposit %}
+                    {{ contract.deposit.amount|floatformat:0 }} {{ contract.deposit.currency }}
+                  {% else %}
+                    —
+                  {% endif %}
+                </span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-muted">{% translate "Advance rent" %}</span>
+                <span class="text-sm font-medium text-ink">
+                  {% if contract.advance_rent_months %}
+                    {% blocktranslate count months=contract.advance_rent_months %}{{ months }} month{% plural %}{{ months }} months{% endblocktranslate %}
+                  {% else %}
+                    —
+                  {% endif %}
+                </span>
+              </div>
+              <div class="pt-4 border-t border-border">
+                <div class="flex items-start gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-warning-soft flex items-center justify-center shrink-0 text-warning">
+                    <i class="ti ti-credit-card"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs font-medium text-ink">{% translate "Payment after signature" %}</p>
+                    <p class="text-xs leading-5 text-muted mt-1">{% translate "After signing, you will be able to complete the initial payment." %}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- NEXT STEP -->
+          <section class="card">
+            <div class="card-header">
+              <div class="card-title">{% translate "Next step" %}</div>
+            </div>
+            <div class="card-body">
+              <div class="flex gap-3">
+                <div class="flex flex-col items-center">
+                  <div class="w-7 h-7 rounded-full bg-success-soft text-success flex items-center justify-center">
+                    <i class="ti ti-check text-sm"></i>
+                  </div>
+                  <div class="w-px h-8 bg-border"></div>
+                  <div class="w-7 h-7 rounded-full bg-warning-soft text-warning flex items-center justify-center">
+                    <i class="ti ti-signature text-sm"></i>
+                  </div>
+                  <div class="w-px h-8 bg-border"></div>
+                  <div class="w-7 h-7 rounded-full bg-bg text-muted flex items-center justify-center">
+                    <i class="ti ti-credit-card text-sm"></i>
+                  </div>
+                </div>
+                <div class="space-y-5 pt-0.5">
+                  <div>
+                    <p class="text-xs font-medium text-ink">{% translate "Contract created" %}</p>
+                    <p class="text-xs text-muted mt-0.5">{% translate "Completed" %}</p>
+                  </div>
+                  <div>
+                    <p class="text-xs font-medium text-warning">{% translate "Signature" %}</p>
+                    <p class="text-xs text-muted mt-0.5">{% translate "Action required" %}</p>
+                  </div>
+                  <div>
+                    <p class="text-xs font-medium text-muted">{% translate "Payment" %}</p>
+                    <p class="text-xs text-muted mt-0.5">{% translate "After signature" %}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- SECURITY -->
+          <div class="p-4 rounded-xl bg-primary text-white">
+            <div class="flex gap-3">
+              <i class="ti ti-shield-check text-xl text-slate-300"></i>
+              <div>
+                <p class="text-xs font-medium">{% translate "Secure validation" %}</p>
+                <p class="text-xs leading-5 text-slate-300 mt-1">{% translate "Your signature will be saved with your contract and used to validate this step." %}</p>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIGNATURE FORM -->
+  <form method="post"
+        enctype="multipart/form-data"
+        novalidate
+        id="signatureForm"
+        class="hidden">
     {% csrf_token %}
     {{ form.non_field_errors }}
-    <p>{{ form.tenant_signature.label_tag }}{{ form.tenant_signature }}{{ form.tenant_signature.errors }}</p>
-    <button type="submit">{% translate "Sign contract" %}</button>
+    <input type="hidden" name="tenant_signature" id="signatureInput" value="" />
+    {{ form.tenant_signature.errors }}
   </form>
 {% endblock content %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
+  <style>
+    .page {
+      padding: 0;
+    }
+
+    .page > .content {
+      padding: 0;
+    }
+
+    .signature-wrapper {
+      position: relative;
+      background: #fff;
+      border: 1px solid #e6e8ec;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    #signatureCanvas {
+      display: block;
+      width: 100%;
+      height: 260px;
+      cursor: crosshair;
+      touch-action: none;
+      background:
+        linear-gradient(
+          to bottom,
+          transparent 0,
+          transparent 94%,
+          #e6e8ec 94%,
+          #e6e8ec 94.5%,
+          transparent 94.5%
+        );
+    }
+
+    .signature-placeholder {
+      position: absolute;
+      left: 50%;
+      top: 45%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      text-align: center;
+      color: #94a3b8;
+      transition: opacity .15s ease;
+    }
+
+    .signature-placeholder.hidden {
+      opacity: 0;
+    }
+  </style>
+{% endblock extra_css %}
+
+{% block inline_javascript %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const canvas = document.getElementById('signatureCanvas');
+      const ctx = canvas.getContext('2d');
+      const placeholder = document.getElementById('signaturePlaceholder');
+      const clearButton = document.getElementById('clearSignature');
+      const signButton = document.getElementById('signButton');
+      const signatureInput = document.getElementById('signatureInput');
+
+      let isDrawing = false;
+      let hasSignature = false;
+
+      function resizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        const ratio = window.devicePixelRatio || 1;
+        const previousImage = hasSignature ? canvas.toDataURL('image/png') : null;
+
+        canvas.width = rect.width * ratio;
+        canvas.height = rect.height * ratio;
+        ctx.scale(ratio, ratio);
+
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = '#16283f';
+
+        if (previousImage) {
+          const image = new Image();
+          image.onload = function () {
+            ctx.drawImage(image, 0, 0, rect.width, rect.height);
+          };
+          image.src = previousImage;
+        }
+      }
+
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      function getPosition(event) {
+        const rect = canvas.getBoundingClientRect();
+        if (event.touches && event.touches.length) {
+          return {
+            x: event.touches[0].clientX - rect.left,
+            y: event.touches[0].clientY - rect.top
+          };
+        }
+        return {
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top
+        };
+      }
+
+      function startDrawing(event) {
+        event.preventDefault();
+        isDrawing = true;
+        hasSignature = true;
+        placeholder.classList.add('hidden');
+        const position = getPosition(event);
+        ctx.beginPath();
+        ctx.moveTo(position.x, position.y);
+      }
+
+      function draw(event) {
+        if (!isDrawing) {
+          return;
+        }
+        event.preventDefault();
+        const position = getPosition(event);
+        ctx.lineTo(position.x, position.y);
+        ctx.stroke();
+        signButton.disabled = false;
+      }
+
+      function stopDrawing() {
+        if (!isDrawing) {
+          return;
+        }
+        isDrawing = false;
+        ctx.closePath();
+        signButton.disabled = !hasSignature;
+      }
+
+      canvas.addEventListener('mousedown', startDrawing);
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('mouseup', stopDrawing);
+      canvas.addEventListener('mouseleave', stopDrawing);
+      canvas.addEventListener('touchstart', startDrawing, { passive: false });
+      canvas.addEventListener('touchmove', draw, { passive: false });
+      canvas.addEventListener('touchend', stopDrawing);
+
+      clearButton.addEventListener('click', function () {
+        const rect = canvas.getBoundingClientRect();
+        ctx.clearRect(0, 0, rect.width, rect.height);
+        hasSignature = false;
+        placeholder.classList.remove('hidden');
+        signButton.disabled = true;
+        signatureInput.value = '';
+      });
+
+      signButton.addEventListener('click', function () {
+        if (!hasSignature) {
+          return;
+        }
+        const signatureData = canvas.toDataURL('image/png');
+        signatureInput.value = signatureData;
+        document.getElementById('signatureForm').submit();
+      });
+    });
+  </script>
+{% endblock inline_javascript %}

@@ -6,6 +6,15 @@
 {% block extra_css %}
   <link rel="stylesheet"
         href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
+  <style>
+    .dashboard-main {
+      margin-left: 232px;
+    }
+
+    .dashboard-main .main {
+      margin-left: 0;
+    }
+  </style>
 {% endblock extra_css %}
 {% block header %}
   {% if not skip_dashboard_header %}

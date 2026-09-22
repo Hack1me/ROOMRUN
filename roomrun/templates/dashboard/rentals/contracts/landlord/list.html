@@ -4,15 +4,17 @@
 {% block header %}{% endblock header %}
 {% block footer %}{% endblock footer %}
 
+{% block app_class %}landlord-app{% endblock app_class %}
+
 {% block sidebar %}
   {% include "dashboard/includes/landlord_sidebar.html" %}
 {% endblock sidebar %}
 
 {% block topbar %}
-  <header class="flex items-center justify-between gap-4 border-b border-[#e6e8ec] bg-white px-4 py-3">
+  <header class="flex items-center justify-between gap-4 border-b border-border bg-white px-7 py-3">
     <div class="flex items-center gap-3">
       <button type="button"
-              class="h-9 w-9 grid place-items-center rounded-md border border-transparent text-slate-500 hover:bg-slate-100 hover:border-[#e6e8ec]"
+              class="h-9 w-9 grid place-items-center rounded-md border border-transparent text-slate-500 hover:bg-slate-100 hover:border-border"
               id="mobileMenu"
               aria-label="{% translate 'Open menu' %}">
         <i class="ti ti-menu-2 text-[18px]"></i>
@@ -23,19 +25,19 @@
       </div>
     </div>
     <div class="flex items-center gap-3">
-      <label class="hidden md:flex items-center gap-2 h-9 px-3 border border-[#e6e8ec] rounded-md text-slate-500 w-64">
+      <label class="hidden md:flex items-center gap-2 h-9 px-3 border border-border rounded-md text-slate-500 w-64">
         <i class="ti ti-search text-[16px]"></i>
         <input type="search"
                placeholder="{% translate 'Search a property, a tenant…' %}"
                class="w-full border-0 bg-transparent text-[11px] outline-none" />
       </label>
       <button type="button"
-              class="h-9 w-9 grid place-items-center rounded-md border border-transparent text-slate-500 hover:bg-slate-100 hover:border-[#e6e8ec]"
+              class="h-9 w-9 grid place-items-center rounded-md border border-transparent text-slate-500 hover:bg-slate-100 hover:border-border"
               aria-label="{% translate 'Notifications' %}">
         <i class="ti ti-bell text-[18px]"></i>
       </button>
       <a href="{% url 'users:profile' %}"
-         class="h-9 w-9 grid place-items-center rounded-md border border-transparent text-slate-500 hover:bg-slate-100 hover:border-[#e6e8ec] overflow-hidden"
+         class="h-9 w-9 grid place-items-center rounded-md border border-transparent text-slate-500 hover:bg-slate-100 hover:border-border overflow-hidden"
          aria-label="{% translate 'Profile' %}">
         {% if user.profile_picture %}
           <img class="h-full w-full object-cover" src="{{ user.profile_picture.url }}" alt="" />
@@ -49,7 +51,7 @@
 
 {% block content %}
   <div class="page">
-    <div class="content max-w-[1400px] mx-auto p-7">
+      <div class="content max-w-[1400px] p-7">
       {% include "common/includes/messages.html" %}
 
       <!-- BREADCRUMB -->

@@ -744,6 +744,9 @@
   .w-full {
     width: 100%;
   }
+  .w-px {
+    width: 1px;
+  }
   .max-w-2xl {
     max-width: var(--container-2xl);
   }
@@ -851,6 +854,9 @@
   .flex-col {
     flex-direction: column;
   }
+  .flex-col-reverse {
+    flex-direction: column-reverse;
+  }
   .flex-wrap {
     flex-wrap: wrap;
   }
@@ -904,6 +910,9 @@
   }
   .gap-5 {
     gap: calc(var(--spacing) * 5);
+  }
+  .gap-6 {
+    gap: calc(var(--spacing) * 6);
   }
   .gap-7 {
     gap: calc(var(--spacing) * 7);
@@ -1391,6 +1400,9 @@
   }
   .pt-0 {
     padding-top: 0px;
+  }
+  .pt-0\.5 {
+    padding-top: calc(var(--spacing) * 0.5);
   }
   .pt-1 {
     padding-top: var(--spacing);
@@ -1911,6 +1923,9 @@
     .hover\:border-\[\#e6e8ec\]:hover {
       border-color: #e6e8ec;
     }
+    .hover\:border-border:hover {
+      border-color: var(--color-border);
+    }
     .hover\:border-line-strong:hover {
       border-color: var(--color-line-strong);
     }
@@ -1963,6 +1978,9 @@
     .hover\:text-current:hover {
       color: currentcolor;
     }
+    .hover\:text-danger:hover {
+      color: var(--color-danger);
+    }
     .hover\:text-primary:hover {
       color: var(--color-primary);
     }
@@ -1974,6 +1992,9 @@
     }
     .hover\:text-slate-800:hover {
       color: var(--color-slate-800);
+    }
+    .hover\:underline:hover {
+      text-decoration-line: underline;
     }
   }
   .focus\:border-\[\#16283f\]:focus {
@@ -2101,6 +2122,15 @@
     .sm\:grid-cols-4 {
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
+    .sm\:flex-row {
+      flex-direction: row;
+    }
+    .sm\:items-center {
+      align-items: center;
+    }
+    .sm\:justify-between {
+      justify-content: space-between;
+    }
     .sm\:p-12 {
       padding: calc(var(--spacing) * 12);
     }
@@ -2185,6 +2215,11 @@
     .lg\:text-6xl {
       font-size: var(--text-6xl);
       line-height: var(--tw-leading, var(--text-6xl--line-height));
+    }
+  }
+  @media (width >= 80rem) {
+    .xl\:grid-cols-\[minmax\(0\,1fr\)_340px\] {
+      grid-template-columns: minmax(0,1fr) 340px;
     }
   }
 }

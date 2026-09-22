@@ -1,0 +1,82 @@
+{% load i18n %}
+<aside class="sidebar tenant-sidebar overflow-y-auto" id="sidebar">
+  <div class="brand">
+    <div class="brand-mark"></div>
+    <div>
+      <div class="brand-name">ROOMRUN</div>
+      <div class="brand-subtitle">{% translate "Property Management" %}</div>
+    </div>
+  </div>
+  <div class="sidebar-content">
+    <div class="nav-section">
+      <div class="nav-title">{% translate "Overview" %}</div>
+      <a href="{% url 'dashboard:tenant' %}" class="nav-item{% if request.resolver_match.url_name == 'tenant' %} active{% endif %}">
+        <i class="ti ti-layout-dashboard"></i>
+        <span>{% translate "Dashboard" %}</span>
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-title">{% translate "Management" %}</div>
+      <a href="{% url 'dashboard:tenant' %}" class="nav-item">
+        <i class="ti ti-home"></i>
+        <span>{% translate "My home" %}</span>
+      </a>
+      <a href="{% url 'rentals:tenant-lease-detail' %}" class="nav-item{% if request.resolver_match.url_name == 'tenant-lease-detail' %} active{% endif %}">
+        <i class="ti ti-file-description"></i>
+        <span>{% translate "My lease" %}</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="ti ti-credit-card"></i>
+        <span>{% translate "Payments" %}</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="ti ti-tool"></i>
+        <span>{% translate "Maintenance" %}</span>
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-title">{% translate "Rental" %}</div>
+      <a href="{% url 'rentals:rental-application-list' %}" class="nav-item{% if request.resolver_match.url_name == 'rental-application-list' %} active{% endif %}">
+        <i class="ti ti-file-search"></i>
+        <span>{% translate "Applications" %}</span>
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-title">{% translate "Communication" %}</div>
+      <a href="#" class="nav-item">
+        <i class="ti ti-message"></i>
+        <span>{% translate "Messages" %}</span>
+        <span class="nav-badge">2</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="ti ti-speakerphone"></i>
+        <span>{% translate "Announcements" %}</span>
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-title">{% translate "System" %}</div>
+      <a href="#" class="nav-item">
+        <i class="ti ti-bell"></i>
+        <span>{% translate "Notifications" %}</span>
+        <span class="nav-badge">3</span>
+      </a>
+      <a href="{% url 'users:profile' %}" class="nav-item{% if request.resolver_match.url_name == 'profile' %} active{% endif %}">
+        <i class="ti ti-settings"></i>
+        <span>{% translate "Settings" %}</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="ti ti-help-circle"></i>
+        <span>{% translate "Help" %}</span>
+      </a>
+    </div>
+  </div>
+  <div class="sidebar-user">
+    <div class="user-avatar">
+      {{ user.first_name|first }}{{ user.last_name|first }}
+    </div>
+    <div>
+      <div class="user-name">{{ user.full_name }}</div>
+      <div class="user-role">{% translate "Tenant" %}</div>
+    </div>
+  </div>
+</aside>
