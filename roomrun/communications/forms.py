@@ -9,6 +9,15 @@ class StartConversationForm(forms.Form):
         queryset=None,
         empty_label=_("Choose a contact"),
         label=_("Contact"),
+        widget=forms.Select(
+            attrs={
+                "class": (
+                    "h-11 w-full rounded-input border border-line bg-white px-3 "
+                    "text-sm text-ink outline-none transition "
+                    "focus:border-primary focus:ring-3 focus:ring-primary/15"
+                ),
+            }
+        ),
     )
 
     def __init__(self, *args, contacts, **kwargs):

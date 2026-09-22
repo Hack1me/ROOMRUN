@@ -187,6 +187,9 @@ class ConversationConsumer(AsyncWebsocketConsumer):
             "sender": {
                 "id": str(user.id),
                 "full_name": user.full_name,
+                "profile_picture_url": (
+                    user.profile_picture.url if user.profile_picture else ""
+                ),
             },
             "content": message.content,
             "created_at": message.created_at.isoformat(),

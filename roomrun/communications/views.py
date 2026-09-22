@@ -75,6 +75,11 @@ def set_display_names(conversations, user):
             if other_participant
             else conversation.title or _("Conversation")
         )
+        conversation.display_avatar_url = (
+            other_participant.profile_picture.url
+            if other_participant and other_participant.profile_picture
+            else ""
+        )
 
 
 def tenant_chat_context(user):
