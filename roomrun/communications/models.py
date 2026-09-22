@@ -349,6 +349,16 @@ class Conversation(BaseModel):
         verbose_name=_("Title"),
     )
 
+    direct_key = models.CharField(
+        max_length=73,
+        unique=True,
+        null=True,
+        blank=True,
+        editable=False,
+        verbose_name=_("Direct conversation key"),
+        help_text=_("Unique key for a two-person conversation."),
+    )
+
     participants = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         through="ConversationParticipant",

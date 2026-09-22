@@ -10,6 +10,13 @@
   dialog?.addEventListener("click", (event) => {
     if (event.target === dialog) dialog.close();
   });
+  document.querySelectorAll("[data-delete-conversation]").forEach((form) => {
+    form.addEventListener("submit", (event) => {
+      if (!window.confirm("Delete this conversation and all of its messages?")) {
+        event.preventDefault();
+      }
+    });
+  });
 
   if (!chat) return;
 

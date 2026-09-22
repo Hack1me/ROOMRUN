@@ -5,7 +5,9 @@ from communications.models import ConversationParticipant
 from communications.models import ConversationType
 from communications.models import Message
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.db import transaction
+from django.db.models import Count
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -23,13 +25,14 @@ class ConversationService:
 
     @staticmethod
     @transaction.atomic
-    def create_conversation(
+    def create_conversation(  # noqa: PLR0913
         *,
         participants,
         conversation_type: str,
         title: str = "",
         rental_contract=None,
         maintenance_request=None,
+        direct_key: str | None = None,
     ) -> Conversation:
         """
         Create a new conversation with the given participants.
@@ -63,6 +66,7 @@ class ConversationService:
             title=title,
             rental_contract=rental_contract,
             maintenance_request=maintenance_request,
+            direct_key=direct_key,
         )
 
         ConversationParticipant.objects.bulk_create([
@@ -71,6 +75,54 @@ class ConversationService:
         ])
 
         return conversation
+
+    @staticmethod
+    def get_or_create_direct_conversation(
+        *, user, recipient
+    ) -> tuple[Conversation, bool]:
+        """Return the single direct thread for two users, creating it safely."""
+        direct_key = ":".join(sorted((str(user.pk), str(recipient.pk))))
+        conversation = Conversation.objects.filter(direct_key=direct_key).first()
+        if conversation:
+            return conversation, False
+
+        # Reuse a direct conversation created before ``direct_key`` existed.
+        conversation = (
+            Conversation.objects.filter(participants=user)
+            .filter(participants=recipient)
+            .annotate(participant_count=Count("participants", distinct=True))
+            .filter(participant_count=2)
+            .order_by("-last_message_at", "-created_at")
+            .first()
+        )
+        if conversation:
+            try:
+                conversation.direct_key = direct_key
+                conversation.save(update_fields=["direct_key", "updated_at"])
+            except IntegrityError:
+                conversation = Conversation.objects.get(direct_key=direct_key)
+            return conversation, False
+
+        conversation_type = (
+            ConversationType.LANDLORD_TENANT
+            if hasattr(recipient, "tenant_profile")
+            else ConversationType.LANDLORD_STAFF
+            if hasattr(recipient, "employee_profile")
+            else ConversationType.SUPPORT
+        )
+        try:
+            with transaction.atomic():
+                conversation = ConversationService.create_conversation(
+                    participants=[user, recipient],
+                    conversation_type=conversation_type,
+                    title=recipient.full_name or recipient.email,
+                    direct_key=direct_key,
+                )
+        except IntegrityError:
+            conversation = Conversation.objects.get(direct_key=direct_key)
+            return conversation, False
+
+        return conversation, True
 
     # -------------------------------------------------------------------------
     # Retrieve

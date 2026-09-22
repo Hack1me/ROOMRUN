@@ -19,4 +19,9 @@ urlpatterns = [
         views.StartConversationView.as_view(),
         name="conversation-start",
     ),
+    path(
+        "conversations/<uuid:pk>/delete/",
+        views.ConversationDeleteView.as_view(),
+        name="conversation-delete",
+    ),
 ]

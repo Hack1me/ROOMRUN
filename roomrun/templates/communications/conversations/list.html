@@ -67,7 +67,9 @@
               <header class="chat-header">
                 <span class="conversation-avatar conversation-avatar--large">{{ selected_conversation.display_name|first|upper }}</span>
                 <div><h2>{{ selected_conversation.display_name }}</h2><p data-chat-status data-connected-text="{% translate 'Connected' %}" data-disconnected-text="{% translate 'Connection unavailable' %}" data-typing-text="{% translate 'Someone is typing…' %}">{% translate "Connecting…" %}</p></div>
-                <a class="conversation-icon-button" href="{% url 'communications:conversation-detail' pk=selected_conversation.pk %}" aria-label="{% translate 'Open conversation' %}"><i class="ti ti-external-link"></i></a>
+                <form method="post" action="{% url 'communications:conversation-delete' pk=selected_conversation.pk %}" data-delete-conversation>
+                  {% csrf_token %}<button class="conversation-icon-button conversation-delete-button" type="submit" aria-label="{% translate 'Delete conversation' %}" title="{% translate 'Delete conversation' %}"><i class="ti ti-trash"></i></button>
+                </form>
               </header>
               <div class="chat-feed" data-message-feed aria-live="polite">
                 {% for message in chat_messages %}

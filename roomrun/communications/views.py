@@ -15,7 +15,6 @@ from django.views.generic import DetailView
 from django.views.generic import ListView
 from rentals.models import RentalContract
 from users.models import User
-from utils.enums import ConversationType
 
 
 def contacts_for_user(user):
@@ -53,14 +52,6 @@ def contacts_for_user(user):
         .distinct()
         .order_by("first_name", "last_name", "email")
     )
-
-
-def conversation_type_for(recipient):
-    if hasattr(recipient, "tenant_profile"):
-        return ConversationType.LANDLORD_TENANT
-    if hasattr(recipient, "employee_profile"):
-        return ConversationType.LANDLORD_STAFF
-    return ConversationType.SUPPORT
 
 
 def is_tenant_user(user):
@@ -267,21 +258,24 @@ class StartConversationView(LoginRequiredMixin, View):
             return HttpResponseRedirect(reverse("communications:conversation-list"))
 
         recipient = form.cleaned_data["recipient"]
-        conversation = (
-            Conversation.objects.filter(participants=request.user)
-            .filter(participants=recipient)
-            .annotate(participant_count=Count("participants", distinct=True))
-            .filter(participant_count=2)
-            .order_by("-last_message_at", "-created_at")
-            .first()
+        conversation, _created = ConversationService.get_or_create_direct_conversation(
+            user=request.user,
+            recipient=recipient,
         )
-        if conversation is None:
-            conversation = ConversationService.create_conversation(
-                participants=[request.user, recipient],
-                conversation_type=conversation_type_for(recipient),
-                title=recipient.full_name or recipient.email,
-            )
 
         return HttpResponseRedirect(
             f"{reverse('communications:conversation-list')}?conversation={conversation.pk}"
         )
+
+
+class ConversationDeleteView(LoginRequiredMixin, View):
+    """Permanently remove a conversation and its messages for all participants."""
+
+    def post(self, request, *args, **kwargs):
+        conversation = get_object_or_404(
+            Conversation.objects.filter(participants=request.user),
+            pk=kwargs["pk"],
+        )
+        conversation.delete()
+        messages.success(request, _("The conversation was deleted."))
+        return HttpResponseRedirect(reverse("communications:conversation-list"))
