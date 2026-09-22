@@ -63,6 +63,29 @@ def conversation_type_for(recipient):
     return ConversationType.SUPPORT
 
 
+def is_tenant_user(user):
+    """Use the profile relation as the canonical role check."""
+    return hasattr(user, "tenant_profile") and not hasattr(user, "landlord_profile")
+
+
+def set_display_names(conversations, user):
+    """Expose the other participant as the conversation name for this viewer."""
+    for conversation in conversations:
+        other_participant = next(
+            (
+                participant
+                for participant in conversation.participants.all()
+                if participant.pk != user.pk
+            ),
+            None,
+        )
+        conversation.display_name = (
+            other_participant.full_name or other_participant.email
+            if other_participant
+            else conversation.title or _("Conversation")
+        )
+
+
 def tenant_chat_context(user):
     """Provide the tenant's current home and landlord for the chat sidebar."""
     if not hasattr(user, "tenant_profile"):
@@ -95,6 +118,11 @@ class ConversationListView(LoginRequiredMixin, ListView):
     template_name = "communications/conversations/list.html"
     context_object_name = "conversations"
     paginate_by = 20
+
+    def get_template_names(self):
+        if is_tenant_user(self.request.user):
+            return ["communications/conversations/tenant_list.html"]
+        return ["communications/conversations/list.html"]
 
     def get_queryset(self):
         user = self.request.user
@@ -130,6 +158,7 @@ class ConversationListView(LoginRequiredMixin, ListView):
                 conversation=conv,
                 user=self.request.user,
             )
+        set_display_names(conversations, self.request.user)
 
         selected_id = self.request.GET.get("conversation")
         selected_conversation = None
@@ -165,8 +194,12 @@ class ConversationDetailView(LoginRequiredMixin, DetailView):
     """
     Display a single conversation with its messages.
     """
-    template_name = "communications/conversations/list.html"
     context_object_name = "conversation"
+
+    def get_template_names(self):
+        if is_tenant_user(self.request.user):
+            return ["communications/conversations/tenant_list.html"]
+        return ["communications/conversations/list.html"]
 
     def get_object(self, queryset=None):
         # Ensure the user is a participant.
@@ -201,6 +234,8 @@ class ConversationDetailView(LoginRequiredMixin, DetailView):
                 conversation=item,
                 user=self.request.user,
             )
+        set_display_names(conversations, self.request.user)
+        set_display_names([conversation], self.request.user)
 
         context["conversations"] = conversations
         context["selected_conversation"] = conversation
@@ -235,7 +270,7 @@ class StartConversationView(LoginRequiredMixin, View):
         conversation = (
             Conversation.objects.filter(participants=request.user)
             .filter(participants=recipient)
-            .annotate(participant_count=Count("participants"))
+            .annotate(participant_count=Count("participants", distinct=True))
             .filter(participant_count=2)
             .order_by("-last_message_at", "-created_at")
             .first()

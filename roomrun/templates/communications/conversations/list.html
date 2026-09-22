@@ -14,11 +14,7 @@
 
 {% block body %}
   <div class="conversation-page">
-    {% if is_tenant_chat %}
-      {% include "dashboard/includes/tenant_sidebar.html" %}
-    {% else %}
-      {% include "dashboard/includes/landlord_sidebar.html" %}
-    {% endif %}
+    {% include "dashboard/includes/landlord_sidebar.html" %}
 
     <main class="conversation-main">
       <header class="conversation-topbar">
@@ -26,7 +22,7 @@
           <i class="ti ti-menu-2"></i>
         </button>
         <nav aria-label="{% translate 'Breadcrumb' %}">
-          {% if is_tenant_chat %}<span><i class="ti ti-home-2"></i> {% translate "My home" %}</span>{% else %}<span>{% translate "Communication" %}</span>{% endif %}<i class="ti ti-chevron-right"></i><strong>{% translate "Messages" %}</strong>
+          <span>{% translate "Communication" %}</span><i class="ti ti-chevron-right"></i><strong>{% translate "Messages" %}</strong>
         </nav>
         <a href="{% url 'users:profile' %}" class="conversation-profile" aria-label="{% translate 'Profile' %}">
           {% if user.profile_picture %}<img src="{{ user.profile_picture.url }}" alt="">{% else %}{{ user.first_name|first }}{{ user.last_name|first }}{% endif %}
@@ -35,7 +31,7 @@
 
       <section class="conversation-content">
         <header class="conversation-heading">
-          <div><h1>{% translate "Messages" %}</h1><p>{% if is_tenant_chat %}{% translate "Chat with your landlord and employees, and follow your requests." %}{% else %}{% translate "Manage your conversations with tenants and employees." %}{% endif %}</p></div>
+          <div><h1>{% translate "Messages" %}</h1><p>{% translate "Manage your conversations with tenants and employees." %}</p></div>
           <div class="conversation-heading__actions">
             <form method="get" class="conversation-search">
               {% if selected_conversation %}<input type="hidden" name="conversation" value="{{ selected_conversation.pk }}">{% endif %}
@@ -49,15 +45,12 @@
         <div class="conversation-workspace">
           <aside class="conversation-list" aria-label="{% translate 'Conversations' %}">
             <header><i class="ti ti-message"></i><strong>{% translate "Conversations" %}</strong></header>
-            {% if is_tenant_chat %}
-              <div class="tenant-chat-filters"><span class="tenant-chat-filters__active">{% translate "All" %}</span><span>{% translate "Landlord" %}</span><span>{% translate "Employees" %}</span></div>
-            {% endif %}
             <div class="conversation-list__items">
               {% for conversation in conversations %}
                   <a href="?conversation={{ conversation.pk }}{% if request.GET.q %}&amp;q={{ request.GET.q|urlencode }}{% endif %}" class="conversation-row{% if selected_conversation.pk == conversation.pk %} conversation-row--active{% endif %}">
-                    <span class="conversation-avatar">{{ conversation.title|default:"C"|first|upper }}</span>
+                    <span class="conversation-avatar">{{ conversation.display_name|first|upper }}</span>
                     <span class="conversation-row__body">
-                      <strong>{{ conversation.title|default:"Conversation" }}</strong>
+                      <strong>{{ conversation.display_name }}</strong>
                       <small>{{ conversation.get_conversation_type_display }}</small>
                       <em>{% if conversation.last_msg %}{{ conversation.last_msg|date:"H:i" }}{% else %}{% translate "New" %}{% endif %}</em>
                     </span>
@@ -72,8 +65,8 @@
           {% if selected_conversation %}
             <section class="conversation-chat" data-chat data-conversation-id="{{ selected_conversation.pk }}" data-user-id="{{ user.pk }}">
               <header class="chat-header">
-                <span class="conversation-avatar conversation-avatar--large">{{ selected_conversation.title|default:"C"|first|upper }}</span>
-                <div><h2>{{ selected_conversation.title|default:"Conversation" }}</h2><p data-chat-status data-connected-text="{% translate 'Connected' %}" data-disconnected-text="{% translate 'Connection unavailable' %}" data-typing-text="{% translate 'Someone is typing…' %}">{% translate "Connecting…" %}</p></div>
+                <span class="conversation-avatar conversation-avatar--large">{{ selected_conversation.display_name|first|upper }}</span>
+                <div><h2>{{ selected_conversation.display_name }}</h2><p data-chat-status data-connected-text="{% translate 'Connected' %}" data-disconnected-text="{% translate 'Connection unavailable' %}" data-typing-text="{% translate 'Someone is typing…' %}">{% translate "Connecting…" %}</p></div>
                 <a class="conversation-icon-button" href="{% url 'communications:conversation-detail' pk=selected_conversation.pk %}" aria-label="{% translate 'Open conversation' %}"><i class="ti ti-external-link"></i></a>
               </header>
               <div class="chat-feed" data-message-feed aria-live="polite">
@@ -94,14 +87,9 @@
             </section>
 
             <aside class="conversation-details">
-              {% if is_tenant_chat and tenant_contract %}
-                <section><h2>{% translate "Conversation information" %}</h2><div class="tenant-home-summary"><i class="ti ti-building"></i><div><strong>{{ tenant_contract.unit.unit_number|default:tenant_contract.unit }}</strong><small>{{ tenant_contract.unit.building.property_ref.name }}</small><span>{% translate "Occupied" %}</span></div></div></section>
-                {% if tenant_landlord %}<section><h3>{% translate "Your landlord" %}</h3><div class="conversation-details__identity"><span class="conversation-avatar conversation-avatar--large">{{ tenant_landlord.user.first_name|first }}{{ tenant_landlord.user.last_name|first }}</span><div><strong>{{ tenant_landlord.user.full_name|default:tenant_landlord.user.email }}</strong><small>{% translate "Landlord" %}</small></div></div><a class="tenant-contact-link" href="mailto:{{ tenant_landlord.user.email }}"><i class="ti ti-mail"></i>{{ tenant_landlord.user.email }}</a></section>{% endif %}
-              {% else %}
-                <section><h2>{% translate "Conversation information" %}</h2><div class="conversation-details__identity"><span class="conversation-avatar conversation-avatar--large">{{ selected_conversation.title|default:"C"|first|upper }}</span><div><strong>{{ selected_conversation.title|default:"Conversation" }}</strong><small>{{ selected_conversation.get_conversation_type_display }}</small></div></div></section>
-              {% endif %}
+              <section><h2>{% translate "Conversation information" %}</h2><div class="conversation-details__identity"><span class="conversation-avatar conversation-avatar--large">{{ selected_conversation.display_name|first|upper }}</span><div><strong>{{ selected_conversation.display_name }}</strong><small>{{ selected_conversation.get_conversation_type_display }}</small></div></div></section>
               <section><h3>{% translate "Participants" %}</h3><ul>{% for participant in other_participants %}<li><span class="participant-avatar">{{ participant.first_name|first }}{{ participant.last_name|first }}</span><span>{{ participant.full_name|default:participant.email }}</span></li>{% empty %}<li>{% translate "Only you are in this conversation." %}</li>{% endfor %}</ul></section>
-              <section><h3>{% translate "Quick actions" %}</h3>{% if is_tenant_chat and tenant_contract %}<a href="{% url 'rentals:tenant-lease-detail' %}"><i class="ti ti-file-description"></i>{% translate "View my lease" %}</a><a href="#"><i class="ti ti-tool"></i>{% translate "Report a problem" %}</a>{% else %}<a href="{% url 'communications:conversation-detail' pk=selected_conversation.pk %}"><i class="ti ti-dots"></i>{% translate "View conversation" %}</a>{% endif %}</section>
+              <section><h3>{% translate "Quick actions" %}</h3><a href="{% url 'communications:conversation-detail' pk=selected_conversation.pk %}"><i class="ti ti-dots"></i>{% translate "View conversation" %}</a></section>
             </aside>
           {% else %}
             <section class="conversation-no-selection"><i class="ti ti-messages"></i><h2>{% translate "Choose a conversation" %}</h2><p>{% translate "Select a conversation to read and send messages." %}</p></section>
