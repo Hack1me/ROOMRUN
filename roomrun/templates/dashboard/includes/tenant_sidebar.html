@@ -43,10 +43,9 @@
     </div>
     <div class="nav-section">
       <div class="nav-title">{% translate "Communication" %}</div>
-      <a href="#" class="nav-item">
+      <a href="{% url 'communications:conversation-list' %}" class="nav-item{% if request.resolver_match.namespace == 'communications' %} active{% endif %}">
         <i class="ti ti-message"></i>
         <span>{% translate "Messages" %}</span>
-        <span class="nav-badge">2</span>
       </a>
       <a href="#" class="nav-item">
         <i class="ti ti-speakerphone"></i>

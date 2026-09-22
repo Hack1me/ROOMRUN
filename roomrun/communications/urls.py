@@ -14,4 +14,9 @@ urlpatterns = [
         views.ConversationDetailView.as_view(),
         name="conversation-detail",
     ),
+    path(
+        "conversations/start/",
+        views.StartConversationView.as_view(),
+        name="conversation-start",
+    ),
 ]

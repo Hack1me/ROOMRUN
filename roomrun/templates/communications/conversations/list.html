@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% load i18n static %}
+
+{% block title %}{% translate "Messages" %} — ROOMRUN{% endblock title %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/conversations.css' %}">
+{% endblock extra_css %}
+
+{% block header %}{% endblock header %}
+{% block footer %}{% endblock footer %}
+
+{% block body %}
+  <div class="conversation-page">
+    {% if is_tenant_chat %}
+      {% include "dashboard/includes/tenant_sidebar.html" %}
+    {% else %}
+      {% include "dashboard/includes/landlord_sidebar.html" %}
+    {% endif %}
+
+    <main class="conversation-main">
+      <header class="conversation-topbar">
+        <button type="button" class="conversation-icon-button" id="mobile-menu" aria-label="{% translate 'Open menu' %}">
+          <i class="ti ti-menu-2"></i>
+        </button>
+        <nav aria-label="{% translate 'Breadcrumb' %}">
+          {% if is_tenant_chat %}<span><i class="ti ti-home-2"></i> {% translate "My home" %}</span>{% else %}<span>{% translate "Communication" %}</span>{% endif %}<i class="ti ti-chevron-right"></i><strong>{% translate "Messages" %}</strong>
+        </nav>
+        <a href="{% url 'users:profile' %}" class="conversation-profile" aria-label="{% translate 'Profile' %}">
+          {% if user.profile_picture %}<img src="{{ user.profile_picture.url }}" alt="">{% else %}{{ user.first_name|first }}{{ user.last_name|first }}{% endif %}
+        </a>
+      </header>
+
+      <section class="conversation-content">
+        <header class="conversation-heading">
+          <div><h1>{% translate "Messages" %}</h1><p>{% if is_tenant_chat %}{% translate "Chat with your landlord and employees, and follow your requests." %}{% else %}{% translate "Manage your conversations with tenants and employees." %}{% endif %}</p></div>
+          <div class="conversation-heading__actions">
+            <form method="get" class="conversation-search">
+              {% if selected_conversation %}<input type="hidden" name="conversation" value="{{ selected_conversation.pk }}">{% endif %}
+              <i class="ti ti-search"></i>
+              <input name="q" value="{{ request.GET.q|default:'' }}" placeholder="{% translate 'Search a conversation...' %}" aria-label="{% translate 'Search conversations' %}">
+            </form>
+            <button class="conversation-new-button" type="button" data-open-start-conversation><i class="ti ti-edit"></i>{% translate "New conversation" %}</button>
+          </div>
+        </header>
+
+        <div class="conversation-workspace">
+          <aside class="conversation-list" aria-label="{% translate 'Conversations' %}">
+            <header><i class="ti ti-message"></i><strong>{% translate "Conversations" %}</strong></header>
+            {% if is_tenant_chat %}
+              <div class="tenant-chat-filters"><span class="tenant-chat-filters__active">{% translate "All" %}</span><span>{% translate "Landlord" %}</span><span>{% translate "Employees" %}</span></div>
+            {% endif %}
+            <div class="conversation-list__items">
+              {% for conversation in conversations %}
+                  <a href="?conversation={{ conversation.pk }}{% if request.GET.q %}&amp;q={{ request.GET.q|urlencode }}{% endif %}" class="conversation-row{% if selected_conversation.pk == conversation.pk %} conversation-row--active{% endif %}">
+                    <span class="conversation-avatar">{{ conversation.title|default:"C"|first|upper }}</span>
+                    <span class="conversation-row__body">
+                      <strong>{{ conversation.title|default:"Conversation" }}</strong>
+                      <small>{{ conversation.get_conversation_type_display }}</small>
+                      <em>{% if conversation.last_msg %}{{ conversation.last_msg|date:"H:i" }}{% else %}{% translate "New" %}{% endif %}</em>
+                    </span>
+                    {% if conversation.unread_count %}<b class="conversation-unread">{{ conversation.unread_count }}</b>{% endif %}
+                  </a>
+              {% empty %}
+                <div class="conversation-empty"><i class="ti ti-message-off"></i><p>{% translate "No conversations yet." %}</p></div>
+              {% endfor %}
+            </div>
+          </aside>
+
+          {% if selected_conversation %}
+            <section class="conversation-chat" data-chat data-conversation-id="{{ selected_conversation.pk }}" data-user-id="{{ user.pk }}">
+              <header class="chat-header">
+                <span class="conversation-avatar conversation-avatar--large">{{ selected_conversation.title|default:"C"|first|upper }}</span>
+                <div><h2>{{ selected_conversation.title|default:"Conversation" }}</h2><p data-chat-status data-connected-text="{% translate 'Connected' %}" data-disconnected-text="{% translate 'Connection unavailable' %}" data-typing-text="{% translate 'Someone is typing…' %}">{% translate "Connecting…" %}</p></div>
+                <a class="conversation-icon-button" href="{% url 'communications:conversation-detail' pk=selected_conversation.pk %}" aria-label="{% translate 'Open conversation' %}"><i class="ti ti-external-link"></i></a>
+              </header>
+              <div class="chat-feed" data-message-feed aria-live="polite">
+                {% for message in chat_messages %}
+                  <article class="chat-bubble{% if message.sender_id == user.pk %} chat-bubble--mine{% endif %}">
+                    {% if message.sender_id != user.pk %}<span class="chat-bubble__name">{{ message.sender.full_name|default:message.sender.email }}</span>{% endif %}
+                    <p>{{ message.content|linebreaksbr }}</p><time>{{ message.created_at|date:"H:i" }}</time>
+                  </article>
+                {% empty %}
+                  <div class="chat-empty"><i class="ti ti-messages"></i><p>{% translate "Start the conversation." %}</p></div>
+                {% endfor %}
+              </div>
+              <form class="chat-composer" data-message-form>
+                <label class="sr-only" for="chat-message">{% translate "Message" %}</label>
+                <input id="chat-message" data-message-input autocomplete="off" maxlength="5000" placeholder="{% translate 'Write a message…' %}">
+                <button type="submit" aria-label="{% translate 'Send message' %}"><i class="ti ti-send"></i></button>
+              </form>
+            </section>
+
+            <aside class="conversation-details">
+              {% if is_tenant_chat and tenant_contract %}
+                <section><h2>{% translate "Conversation information" %}</h2><div class="tenant-home-summary"><i class="ti ti-building"></i><div><strong>{{ tenant_contract.unit.unit_number|default:tenant_contract.unit }}</strong><small>{{ tenant_contract.unit.building.property_ref.name }}</small><span>{% translate "Occupied" %}</span></div></div></section>
+                {% if tenant_landlord %}<section><h3>{% translate "Your landlord" %}</h3><div class="conversation-details__identity"><span class="conversation-avatar conversation-avatar--large">{{ tenant_landlord.user.first_name|first }}{{ tenant_landlord.user.last_name|first }}</span><div><strong>{{ tenant_landlord.user.full_name|default:tenant_landlord.user.email }}</strong><small>{% translate "Landlord" %}</small></div></div><a class="tenant-contact-link" href="mailto:{{ tenant_landlord.user.email }}"><i class="ti ti-mail"></i>{{ tenant_landlord.user.email }}</a></section>{% endif %}
+              {% else %}
+                <section><h2>{% translate "Conversation information" %}</h2><div class="conversation-details__identity"><span class="conversation-avatar conversation-avatar--large">{{ selected_conversation.title|default:"C"|first|upper }}</span><div><strong>{{ selected_conversation.title|default:"Conversation" }}</strong><small>{{ selected_conversation.get_conversation_type_display }}</small></div></div></section>
+              {% endif %}
+              <section><h3>{% translate "Participants" %}</h3><ul>{% for participant in other_participants %}<li><span class="participant-avatar">{{ participant.first_name|first }}{{ participant.last_name|first }}</span><span>{{ participant.full_name|default:participant.email }}</span></li>{% empty %}<li>{% translate "Only you are in this conversation." %}</li>{% endfor %}</ul></section>
+              <section><h3>{% translate "Quick actions" %}</h3>{% if is_tenant_chat and tenant_contract %}<a href="{% url 'rentals:tenant-lease-detail' %}"><i class="ti ti-file-description"></i>{% translate "View my lease" %}</a><a href="#"><i class="ti ti-tool"></i>{% translate "Report a problem" %}</a>{% else %}<a href="{% url 'communications:conversation-detail' pk=selected_conversation.pk %}"><i class="ti ti-dots"></i>{% translate "View conversation" %}</a>{% endif %}</section>
+            </aside>
+          {% else %}
+            <section class="conversation-no-selection"><i class="ti ti-messages"></i><h2>{% translate "Choose a conversation" %}</h2><p>{% translate "Select a conversation to read and send messages." %}</p></section>
+          {% endif %}
+        </div>
+      </section>
+    </main>
+
+    <dialog class="start-conversation-dialog" data-start-conversation-dialog>
+      <form method="post" action="{% url 'communications:conversation-start' %}">
+        {% csrf_token %}
+        <header><div><h2>{% translate "Start a conversation" %}</h2><p>{% translate "Choose a tenant or employee from your workspace." %}</p></div><button type="button" data-close-start-conversation aria-label="{% translate 'Close' %}"><i class="ti ti-x"></i></button></header>
+        <label for="{{ start_conversation_form.recipient.id_for_label }}">{% translate "Contact" %}</label>
+        {{ start_conversation_form.recipient }}
+        {% if start_conversation_form.recipient.errors %}<p class="start-conversation-error">{{ start_conversation_form.recipient.errors|striptags }}</p>{% endif %}
+        <footer><button type="button" class="start-conversation-cancel" data-close-start-conversation>{% translate "Cancel" %}</button><button type="submit" class="conversation-new-button">{% translate "Start chat" %}</button></footer>
+      </form>
+    </dialog>
+  </div>
+{% endblock body %}
+
+{% block inline_javascript %}
+  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
+  <script defer src="{% static 'js/conversations.js' %}"></script>
+{% endblock inline_javascript %}

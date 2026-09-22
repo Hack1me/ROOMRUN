@@ -2,8 +2,10 @@ import json
 
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
+from communications.models import Conversation
 from communications.models import ConversationParticipant
 from communications.services.chat_ser import ConversationService
+from django.core.exceptions import ValidationError
 
 
 class ConversationConsumer(AsyncWebsocketConsumer):
@@ -18,7 +20,7 @@ class ConversationConsumer(AsyncWebsocketConsumer):
         {"type": "read"}
 
     Outgoing events (JSON):
-        {"type": "message", "id": ..., "sender": {...}, "content": ..., "created_at": ...}
+        {"type": "message", "id": ..., "sender": {...}, "content": ..., ...}
         {"type": "typing", "user_id": ..., "is_typing": ...}
         {"type": "read", "user_id": ..., "at": ...}
         {"type": "error", "detail": "..."}
@@ -97,9 +99,13 @@ class ConversationConsumer(AsyncWebsocketConsumer):
             await self._send_error("Message content is required.")
             return
 
-        message_data = await self._create_message(
-            self.conversation_id, self.user, content
-        )
+        try:
+            message_data = await self._create_message(
+                self.conversation_id, self.user, content
+            )
+        except ValidationError as error:
+            await self._send_error(error.messages[0])
+            return
 
         await self.channel_layer.group_send(
             self.group_name,
@@ -112,7 +118,7 @@ class ConversationConsumer(AsyncWebsocketConsumer):
             self.group_name,
             {
                 "type": "chat.typing",
-                "user_id": self.user.id,
+                "user_id": str(self.user.id),
                 "is_typing": is_typing,
             },
         )
@@ -123,7 +129,7 @@ class ConversationConsumer(AsyncWebsocketConsumer):
             self.group_name,
             {
                 "type": "chat.read",
-                "user_id": self.user.id,
+                "user_id": str(self.user.id),
             },
         )
 
@@ -140,7 +146,7 @@ class ConversationConsumer(AsyncWebsocketConsumer):
 
     async def chat_typing(self, event):
         """Broadcast a typing indicator (skip echoing back to sender)."""
-        if event["user_id"] == self.user.id:
+        if event["user_id"] == str(self.user.id):
             return
         await self.send(text_data=json.dumps({
             "type": "typing",
@@ -168,8 +174,6 @@ class ConversationConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def _create_message(self, conversation_id, user, content) -> dict:
-        from communications.models import Conversation
-
         conversation = Conversation.objects.get(pk=conversation_id)
         message = ConversationService.post_message(
             conversation=conversation,
@@ -178,10 +182,10 @@ class ConversationConsumer(AsyncWebsocketConsumer):
         )
 
         return {
-            "id": message.id,
+            "id": str(message.id),
             "message_number": message.message_number,
             "sender": {
-                "id": user.id,
+                "id": str(user.id),
                 "full_name": user.full_name,
             },
             "content": message.content,
@@ -190,8 +194,6 @@ class ConversationConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def _mark_as_read(self, conversation_id, user):
-        from communications.models import Conversation
-
         conversation = Conversation.objects.get(pk=conversation_id)
         ConversationService.mark_as_read(conversation=conversation, user=user)
 
