@@ -39,11 +39,8 @@ class LandlordRentalApplicationListView(LandlordRequiredMixin, ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        landlord = self.get_landlord()
-
         return (
-            RentalApplication.objects
-            .filter(unit__building__property_ref__landlord=landlord)
+            RentalApplication.landlord_objects.for_landlord(self.get_landlord())
             .select_related(
                 "tenant",
                 "tenant__user",
@@ -76,17 +73,13 @@ class LandlordRentalApplicationDetailView(LandlordRequiredMixin, DetailView):
     context_object_name = "application"
 
     def get_queryset(self):
-        landlord = self.get_landlord()
-
-        return (
-            RentalApplication.objects
-            .filter(unit__building__property_ref__landlord=landlord)
-            .select_related(
-                "tenant",
-                "unit",
-                "unit__building",
-                "unit__building__property_ref",
-            )
+        return RentalApplication.landlord_objects.for_landlord(
+            self.get_landlord()
+        ).select_related(
+            "tenant",
+            "unit",
+            "unit__building",
+            "unit__building__property_ref",
         )
 
 
@@ -97,17 +90,15 @@ class BaseRentalApplicationReviewView(LandlordRequiredMixin, View):
     success_message = None
 
     def post(self, request, pk):
-        landlord = self.get_landlord()
-
         application = get_object_or_404(
-            RentalApplication.objects.select_related(
+            RentalApplication.landlord_objects.for_landlord(self.get_landlord())
+            .select_related(
                 "tenant",
                 "unit",
                 "unit__building",
                 "unit__building__property_ref",
             ),
             pk=pk,
-            unit__building__property_ref__landlord=landlord,
         )
 
         try:
@@ -144,7 +135,8 @@ class RentalApplicationApproveView(LandlordRequiredMixin, FormView):
 
     def dispatch(self, request, *args, **kwargs):
         self.application = get_object_or_404(
-            RentalApplication.objects.select_related(
+            RentalApplication.landlord_objects.for_landlord(self.get_landlord())
+            .select_related(
                 "tenant",
                 "tenant__user",
                 "unit",
@@ -152,7 +144,6 @@ class RentalApplicationApproveView(LandlordRequiredMixin, FormView):
                 "unit__building__property_ref",
             ),
             pk=kwargs["pk"],
-            unit__building__property_ref__landlord=self.get_landlord(),
         )
 
         has_contract = RentalContract.objects.filter(
@@ -355,9 +346,7 @@ class LandlordRentalContractListView(LandlordRequiredMixin, ListView):
 
     def get_queryset(self):
         return (
-            RentalContract.objects.filter(
-                unit__building__property_ref__landlord=self.get_landlord()
-            )
+            RentalContract.landlord_objects.for_landlord(self.get_landlord())
             .select_related("tenant__user", "unit", "unit__building")
             .order_by("-created_at")
         )
@@ -370,9 +359,11 @@ class LandlordRentalContractDetailView(LandlordRequiredMixin, DetailView):
     context_object_name = "contract"
 
     def get_queryset(self):
-        return RentalContract.objects.filter(
-            unit__building__property_ref__landlord=self.get_landlord()
-        ).select_related("tenant__user", "unit", "unit__building", "application")
+        return RentalContract.landlord_objects.for_landlord(
+            self.get_landlord()
+        ).select_related(
+            "tenant__user", "unit", "unit__building", "application"
+        )
 
 
 @method_decorator(

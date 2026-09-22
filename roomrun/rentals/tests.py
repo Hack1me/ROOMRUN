@@ -1,8 +1,10 @@
 import uuid
 from datetime import date, timedelta
+from io import BytesIO
 from unittest import mock
 
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from djmoney.money import Money
@@ -88,6 +90,19 @@ class RentalTestCase(TestCase):
             desired_move_in_date=desired_move_in_date,
             desired_duration=12,
             occupants_count=1,
+        )
+
+    @staticmethod
+    def _create_signature():
+        return SimpleUploadedFile(
+            name="signature.png",
+            content=(
+                b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01"
+                b"\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89"
+                b"\x00\x00\x00\x0dIDATx\x9cc\xf8\xcf\xc0\xf0\x1f\x00\x05"
+                b"\x00\x01\xff\x89\x99=\x1d\x00\x00\x00\x00IEND\xaeB`\x82"
+            ),
+            content_type="image/png",
         )
 
 
@@ -428,6 +443,7 @@ class RentalContractServiceTests(RentalTestCase):
                 "deposit": Money(10000, "XAF"),
                 "advance_rent_months": 1,
             },
+            landlord_signature=self._create_signature(),
         )
 
         self.assertEqual(contract.tenant, tenant)
@@ -457,6 +473,7 @@ class RentalContractServiceTests(RentalTestCase):
                 "deposit": Money(10000, "XAF"),
                 "advance_rent_months": 1,
             },
+            landlord_signature=self._create_signature(),
         )
 
         self.assertEqual(contract.application, application)
@@ -481,10 +498,11 @@ class RentalContractServiceTests(RentalTestCase):
                     "deposit": Money(10000, "XAF"),
                     "advance_rent_months": 1,
                 },
+                landlord_signature=self._create_signature(),
             )
 
-    def test_create_raises_for_non_pending_application(self):
-        """create should raise ValidationError when application is not PENDING."""
+    def test_create_raises_for_non_approved_application(self):
+        """create should raise ValidationError when application is not APPROVED."""
         landlord = self._create_landlord()
         property_obj = self._create_property(landlord)
         building = self._create_building(property_obj)
@@ -492,7 +510,7 @@ class RentalContractServiceTests(RentalTestCase):
         tenant = self._create_tenant()
 
         application = self._create_rental_application(
-            tenant=tenant, unit=unit, status=ApplicationStatus.APPROVED
+            tenant=tenant, unit=unit, status=ApplicationStatus.PENDING
         )
 
         with self.assertRaises(ValidationError):
@@ -506,6 +524,7 @@ class RentalContractServiceTests(RentalTestCase):
                     "deposit": Money(10000, "XAF"),
                     "advance_rent_months": 1,
                 },
+                landlord_signature=self._create_signature(),
             )
 
     def test_create_raises_when_application_tenant_mismatch(self):
@@ -532,6 +551,7 @@ class RentalContractServiceTests(RentalTestCase):
                     "deposit": Money(10000, "XAF"),
                     "advance_rent_months": 1,
                 },
+                landlord_signature=self._create_signature(),
             )
 
     def test_create_raises_when_application_unit_mismatch(self):
@@ -560,6 +580,7 @@ class RentalContractServiceTests(RentalTestCase):
                     "deposit": Money(10000, "XAF"),
                     "advance_rent_months": 1,
                 },
+                landlord_signature=self._create_signature(),
             )
 
     def test_create_raises_when_contract_already_exists_for_application(self):
@@ -584,6 +605,7 @@ class RentalContractServiceTests(RentalTestCase):
                 "deposit": Money(10000, "XAF"),
                 "advance_rent_months": 1,
             },
+            landlord_signature=self._create_signature(),
         )
 
         with self.assertRaises(ValidationError):
@@ -597,6 +619,7 @@ class RentalContractServiceTests(RentalTestCase):
                     "deposit": Money(10000, "XAF"),
                     "advance_rent_months": 1,
                 },
+                landlord_signature=self._create_signature(),
             )
 
 

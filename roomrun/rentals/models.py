@@ -7,6 +7,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from properties.models import Unit
+from rentals.managers import LandlordRentalManager
 from users.models import Tenant
 from utils.enums import ApplicationStatus
 from utils.enums import ContractStatus
@@ -107,6 +108,8 @@ class RentalApplication(BaseModel):
         related_name="reviewed_rental_applications",
         verbose_name=_("Reviewed by"),
     )
+
+    landlord_objects = LandlordRentalManager()
 
     # -------------------------------------------------------------------------
     # Meta Options
@@ -303,6 +306,7 @@ class RentalContract(BaseModel):
         ),
     )
 
+    landlord_objects = LandlordRentalManager()
 
     # -------------------------------------------------------------------------
     # Meta Options
@@ -373,18 +377,3 @@ class RentalContract(BaseModel):
             ).exclude(pk=self.pk)
             if existing.exists():
                 raise ValidationError(_("This unit already has an active contract."))
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        if self.status == ContractStatus.ACTIVE:
-            Unit.objects.filter(pk=self.unit_id).update(status=UnitStatus.OCCUPIED)
-        elif (
-            not RentalContract.objects.filter(
-                unit_id=self.unit_id, status=ContractStatus.ACTIVE
-            )
-            .exclude(pk=self.pk)
-            .exists()
-        ):
-            Unit.objects.filter(pk=self.unit_id, status=UnitStatus.OCCUPIED).update(
-                status=UnitStatus.AVAILABLE
-            )
