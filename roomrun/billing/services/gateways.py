@@ -1,12 +1,9 @@
-# billing/services/gateways.py
-
 import logging
 from dataclasses import dataclass
 from decimal import Decimal
 from typing import Any
 
 from campay.sdk import Client as CamPayClient
-from campay.sdk.exceptions import CampayError
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
@@ -59,8 +56,9 @@ class CamPayGateway:
     """
     Adapter responsible for communicating with the CamPay API.
 
-    This class contains no RoomRun business logic.
-    It only translates RoomRun requests into CamPay API calls.
+    The CamPay SDK never raises exceptions — it returns a dict with
+    `status` = "FAILED" and a `message` on error. This adapter
+    converts those error dicts into `CamPayGatewayError`.
     """
 
     def __init__(self) -> None:
@@ -87,17 +85,8 @@ class CamPayGateway:
         """
         Initiate a payment collection through CamPay.
 
-        Args:
-            amount: Amount in XAF.
-            phone_number: Customer phone (e.g., "2376XXXXXXXX").
-            description: Short description shown to the customer.
-            external_reference: Our internal unique reference.
-
-        Returns:
-            CamPayCollectResult with the provider's reference and status.
-
         Raises:
-            CamPayGatewayError: If the API call fails.
+            CamPayGatewayError: If the API returns an error.
         """
         payload = {
             "amount": str(amount),
@@ -107,27 +96,38 @@ class CamPayGateway:
             "external_reference": external_reference,
         }
 
-        try:
-            logger.info(
-                "CamPay collect | ref=%s | phone=%s | amount=%s",
-                external_reference, phone_number, amount,
-            )
-            response = self.client.initCollect(payload)
-            logger.info("CamPay collect OK | ref=%s", external_reference)
+        logger.info(
+            "CamPay collect | ref=%s | phone=%s | amount=%s",
+            external_reference, phone_number, amount,
+        )
 
-            return CamPayCollectResult(
-                reference=response.get("reference", ""),
-                status=response.get("status", "PENDING"),
-                raw=response,
-            )
+        response = self.client.initCollect(payload)
 
-        except CampayError as exc:
-            logger.exception("CamPay collect failed | ref=%s", external_reference)
-            raise CamPayGatewayError(str(exc)) from exc
-        except Exception as exc:
-            logger.exception("CamPay collect unexpected error | ref=%s", external_reference)  # noqa: E501
-            msg = "Unexpected error during collect."
-            raise CamPayGatewayError(msg) from exc
+        # CamPay returns {"status": "FAILED", "message": "..."} on error.
+        if response.get("status") == "FAILED" or ("message" in response and "reference" not in response):
+            message = response.get("message", "Unknown CamPay error.")
+            logger.error(
+                "CamPay collect failed | ref=%s | message=%s",
+                external_reference, message,
+            )
+            raise CamPayGatewayError(message)
+
+        reference = response.get("reference")
+        if not reference:
+            logger.error(
+                "CamPay collect: no reference in response | ref=%s | response=%s",
+                external_reference, response,
+            )
+            msg = "CamPay did not return a reference."
+            raise CamPayGatewayError(msg)
+
+        logger.info("CamPay collect OK | ref=%s | tx=%s", external_reference, reference)
+
+        return CamPayCollectResult(
+            reference=reference,
+            status=response.get("status", "PENDING"),
+            raw=response,
+        )
 
     # -------------------------------------------------------------------------
     # Check transaction status
@@ -137,46 +137,40 @@ class CamPayGateway:
         """
         Retrieve the current status of a CamPay transaction.
 
-        Args:
-            reference: The reference returned by CamPay on collect.
-
-        Returns:
-            CamPayStatusResult with status and amount.
-
         Raises:
-            CamPayGatewayError: If the API call fails.
+            CamPayGatewayError: If the API returns an error.
         """
-        try:
-            response = self.client.get_transaction_status({"reference": reference})
+        response = self.client.get_transaction_status({"reference": reference})
 
-            amount_raw = response.get("amount")
-            amount = Decimal(str(amount_raw)) if amount_raw else None
-
-            return CamPayStatusResult(
-                reference=response.get("reference", reference),
-                status=response.get("status", "UNKNOWN"),
-                amount=amount,
-                raw=response,
+        # CamPay returns {"status": "", "message": "..."} on error.
+        if response.get("status") == "" or (response.get("message") and not response.get("status")):
+            message = response.get("message", "Unknown CamPay error.")
+            logger.error(
+                "CamPay status failed | ref=%s | message=%s",
+                reference, message,
             )
+            raise CamPayGatewayError(message)
 
-        except CampayError as exc:
-            logger.exception("CamPay status failed | ref=%s", reference)
-            raise CamPayGatewayError(str(exc)) from exc
-        except Exception as exc:
-            logger.exception("CamPay status unexpected error | ref=%s", reference)
-            msg = "Unexpected error during status check."
-            raise CamPayGatewayError(msg) from exc
+        amount_raw = response.get("amount")
+        amount = Decimal(str(amount_raw)) if amount_raw else None
+
+        logger.info(
+            "CamPay status OK | ref=%s | status=%s",
+            reference, response.get("status"),
+        )
+
+        return CamPayStatusResult(
+            reference=response.get("reference", reference),
+            status=response.get("status", "UNKNOWN"),
+            amount=amount,
+            raw=response,
+        )
 
     # -------------------------------------------------------------------------
     # Webhook signature validation
     # -------------------------------------------------------------------------
 
     def verify_webhook_signature(self, payload: bytes, signature: str) -> bool:
-        """
-        Validate the authenticity of an incoming CamPay webhook.
-
-        If CamPay does not provide HMAC signatures, this method should
-        return True and rely on IP allowlisting instead.
-        """
+        """Validate the authenticity of an incoming CamPay webhook."""
         # TODO: implement once you know CamPay's webhook signing method.
         return True

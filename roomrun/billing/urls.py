@@ -12,6 +12,6 @@ urlpatterns = [
 
     # Autres routes (à ajouter plus tard) :
     # path("payments/", PaymentListView.as_view(), name="payment-list"),  # noqa: ERA001
-    # path("payments/<uuid:pk>/", PaymentDetailView.as_view(), name="payment-detail"),  # noqa: ERA001
-    # path("payments/<uuid:pk>/initiate/", PaymentInitiateView.as_view(), name="payment-initiate"),  # noqa: ERA001
+    # path("payments/<uuid:pk>/", PaymentDetailView.as_view(), name="payment-detail"),  # noqa: E501, ERA001
+    # path("payments/<uuid:pk>/initiate/", PaymentInitiateView.as_view(), name="payment-initiate"),  # noqa: E501, ERA001
 ]
