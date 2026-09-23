@@ -6,6 +6,16 @@ app_name = "maintenance"
 urlpatterns = [
     path("requests/", views.TenantRequestListView.as_view(), name="request-list"),
     path(
+        "landlord/requests/",
+        views.LandlordRequestListView.as_view(),
+        name="landlord-request-list",
+    ),
+    path(
+        "landlord/requests/<uuid:pk>/",
+        views.LandlordRequestDetailView.as_view(),
+        name="landlord-request-detail",
+    ),
+    path(
         "requests/new/",
         views.TenantRequestCreateView.as_view(),
         name="request-create",

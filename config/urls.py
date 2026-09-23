@@ -55,6 +55,10 @@ urlpatterns += i18n_patterns(
         include("maintenance.urls", namespace="maintenance"),
     ),
     path(
+        "operations/",
+        include("operations.urls", namespace="operations"),
+    ),
+    path(
         "chaining/",
         include("smart_selects.urls"),
     ),

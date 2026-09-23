@@ -18,6 +18,7 @@ from maintenance.models import MaintenanceRequest
 from maintenance.models import MaintenanceRequestAttachment
 from maintenance.models import Task
 from maintenance.services import MaintenanceWorkflowService
+from properties.mixins import LandlordRequiredMixin
 from rentals.mixins import TenantRequiredMixin
 from utils.enums import RequestStatus
 
@@ -92,6 +93,37 @@ class TenantRequestCancelView(TenantRequiredMixin, View):
         except ValidationError as exc:
             messages.error(request, "; ".join(exc.messages))
         return redirect("maintenance:request-detail", pk=pk)
+
+
+class LandlordRequestListView(LandlordRequiredMixin, ListView):
+    """List only requests that concern the current landlord's properties."""
+
+    template_name = "dashboard/maintenance/landlord/request_list.html"
+    context_object_name = "maintenance_requests"
+    paginate_by = 20
+
+    def get_queryset(self):
+        return (
+            MaintenanceRequest.objects.filter(
+                unit__building__property_ref__landlord=self.get_landlord()
+            )
+            .select_related("tenant__user", "unit__building__property_ref")
+            .prefetch_related("tasks__maintenance_agent__employee__user")
+        )
+
+
+class LandlordRequestDetailView(LandlordRequiredMixin, DetailView):
+    template_name = "dashboard/maintenance/landlord/request_detail.html"
+    context_object_name = "maintenance_request"
+
+    def get_queryset(self):
+        return (
+            MaintenanceRequest.objects.filter(
+                unit__building__property_ref__landlord=self.get_landlord()
+            )
+            .select_related("tenant__user", "unit__building__property_ref")
+            .prefetch_related("attachments", "tasks__maintenance_agent__employee__user")
+        )
 
 
 class AgentQueueView(MaintenanceAgentRequiredMixin, ListView):
@@ -191,7 +223,11 @@ class AttachmentDownloadView(LoginRequiredMixin, View):
         is_assigned_agent = maintenance_request.tasks.filter(
             maintenance_agent__employee__user=request.user
         ).exists()
-        if not (is_tenant or is_assigned_agent):
+        is_landlord = MaintenanceRequest.objects.filter(
+            pk=maintenance_request.pk,
+            unit__building__property_ref__landlord__user=request.user,
+        ).exists()
+        if not (is_tenant or is_assigned_agent or is_landlord):
             raise PermissionDenied
         return FileResponse(
             attachment.file.open("rb"),

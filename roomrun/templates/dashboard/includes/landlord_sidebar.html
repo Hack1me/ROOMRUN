@@ -51,9 +51,9 @@
       <span class="nav-item nav-item--disabled" aria-disabled="true" title="{% translate 'Coming soon' %}">
         <i class="ti ti-credit-card"></i><span>{% translate "Payments" %}</span>
       </span>
-      <span class="nav-item nav-item--disabled" aria-disabled="true" title="{% translate 'Coming soon' %}">
+      <a href="{% url 'maintenance:landlord-request-list' %}" class="nav-item{% if request.resolver_match.namespace == 'maintenance' %} active{% endif %}">
         <i class="ti ti-tool"></i><span>{% translate "Maintenance" %}</span>
-      </span>
+      </a>
     </div>
     <div class="nav-section">
       <div class="nav-title">{% translate "Communication" %}</div>
@@ -66,9 +66,9 @@
     </div>
     <div class="nav-section">
       <div class="nav-title">{% translate "Operations" %}</div>
-      <span class="nav-item nav-item--disabled" aria-disabled="true" title="{% translate 'Coming soon' %}">
-        <i class="ti ti-calendar"></i><span>{% translate "Calendar" %}</span>
-      </span>
+      <a href="{% url 'operations:cleaning-list' %}" class="nav-item{% if request.resolver_match.namespace == 'operations' %} active{% endif %}">
+        <i class="ti ti-calendar"></i><span>{% translate "Cleaning schedule" %}</span>
+      </a>
       <span class="nav-item nav-item--disabled" aria-disabled="true" title="{% translate 'Coming soon' %}">
         <i class="ti ti-door-enter"></i><span>{% translate "Visitors" %}</span>
       </span>

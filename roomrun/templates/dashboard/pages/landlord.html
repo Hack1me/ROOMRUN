@@ -249,7 +249,7 @@
         <section class="section-card maintenance-section">
           <div class="section-header">
             <h2 class="section-title">{% translate "Maintenance requests" %}</h2>
-            <a href="#" class="view-link">{% translate "See all" %} →</a>
+            <a href="{% url 'maintenance:landlord-request-list' %}" class="view-link">{% translate "See all" %} →</a>
           </div>
           <div class="maintenance-list">
             {% for request in recent_maintenance_requests %}

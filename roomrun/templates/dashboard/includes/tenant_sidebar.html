@@ -33,6 +33,10 @@
         <i class="ti ti-tool"></i>
         <span>{% translate "Maintenance" %}</span>
       </a>
+      <a href="{% url 'operations:tenant-cleaning-list' %}" class="nav-item{% if request.resolver_match.namespace == 'operations' %} active{% endif %}">
+        <i class="ti ti-spray"></i>
+        <span>{% translate "Cleaning schedule" %}</span>
+      </a>
     </div>
     <div class="nav-section">
       <div class="nav-title">{% translate "Rental" %}</div>

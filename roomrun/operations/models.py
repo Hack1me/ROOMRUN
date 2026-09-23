@@ -126,9 +126,7 @@ class CleaningSchedule(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the cleaning schedule detail view."""
-        return safe_reverse(
-            "operations:cleaning-schedule-detail", kwargs={"pk": self.id}
-        )
+        return safe_reverse("operations:cleaning-detail", kwargs={"pk": self.id})
 
     def clean(self):
         """
@@ -143,9 +141,12 @@ class CleaningSchedule(BaseModel):
                 raise ValidationError(_("End time must be after start time."))
 
         # Validate scheduled date is not in the past
-        if self.scheduled_date and self.scheduled_date < timezone.now().date():
+        if (
+            self.status == CleaningStatus.SCHEDULED
+            and self.scheduled_date
+            and self.scheduled_date < timezone.now().date()
+        ):
             raise ValidationError(_("Scheduled date cannot be in the past."))
-
 
 
 class UserInvitation(BaseModel):
@@ -274,10 +275,7 @@ class UserInvitation(BaseModel):
     @property
     def can_accept(self) -> bool:
         """Return whether the invitation can still be accepted."""
-        return (
-            self.status == InvitationStatus.PENDING
-            and not self.is_expired
-        )
+        return self.status == InvitationStatus.PENDING and not self.is_expired
 
     @property
     def is_accepted(self) -> bool:

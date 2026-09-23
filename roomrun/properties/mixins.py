@@ -38,25 +38,18 @@ class LandlordRequiredMixin(LoginRequiredMixin):
             raise PermissionDenied from exc
 
     def dispatch(self, request, *args, **kwargs):
-        """
-        Enforce landlord access before the view runs.
-        """
-        # Ensure the user is authenticated first (LoginRequiredMixin)
-        response = super().dispatch(request, *args, **kwargs)
-        if response:
-            return response
-
+        """Check authentication and landlord ownership before dispatching a view."""
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
         if not hasattr(request.user, "landlord_profile"):
             if self.LANDLORD_DENIED_BEHAVIOR == "redirect":
                 messages.error(
-                    request,
-                    _("You do not have access to the landlord area."),
+                    request, _("You do not have access to the landlord area.")
                 )
                 return redirect(self.LANDLORD_DENIED_REDIRECT_URL)
-
             raise PermissionDenied
-
         return super().dispatch(request, *args, **kwargs)
+
 
 class LandlordPropertyMixin(LandlordRequiredMixin):
     """
@@ -70,6 +63,7 @@ class LandlordPropertyMixin(LandlordRequiredMixin):
             pk=pk,
             landlord=self.get_landlord(),
         )
+
 
 # Property Image Mixin
 class PropertyImageAccessMixin(LoginRequiredMixin):
@@ -137,6 +131,7 @@ class PropertyImageAccessMixin(LoginRequiredMixin):
             property__landlord=self.get_landlord(),
         )
 
+
 class LandlordBuildingAccessMixin(LandlordRequiredMixin):
     """
     Provides helpers to fetch properties and buildings scoped to the
@@ -186,7 +181,9 @@ class ServiceFormMixin:
         """Render the view's template with the given form and context."""
         base_context = {"form": form}
         base_context.update(context)
-        return render(request=self.request, template_name=self.template_name, context=base_context)
+        return render(
+            request=self.request, template_name=self.template_name, context=base_context
+        )
 
     def service_success(self, message, url_name, **kwargs):
         """Flash a success message and redirect to the given named URL."""
