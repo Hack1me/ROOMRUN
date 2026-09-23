@@ -23,12 +23,12 @@
             <i class="ti ti-layout-dashboard"></i>
             <span>{% translate "Dashboard" %}</span>
           </a>
-          <a href="#" class="nav-item">
+          <a href="{% url 'maintenance:task-list' %}" class="nav-item">
             <i class="ti ti-tool"></i>
             <span>{% translate "My tasks" %}</span>
             <span class="nav-badge">{{ pending_tasks }}</span>
           </a>
-          <a href="#" class="nav-item">
+          <a href="{% url 'maintenance:agent-queue' %}" class="nav-item">
             <i class="ti ti-clipboard-list"></i>
             <span>{% translate "Requests" %}</span>
           </a>
@@ -172,22 +172,22 @@
             <h2 class="section-title">{% translate "Quick actions" %}</h2>
           </div>
           <div class="actions-grid">
-            <button class="action">
+            <a href="{% url 'maintenance:task-list' %}" class="action">
               <div class="action-icon icon-blue"><i class="ti ti-tool"></i></div>
               <div class="action-content">
                 <div class="action-title">{% translate "My tasks" %}</div>
                 <div class="action-description">{% translate "View assigned interventions" %}</div>
               </div>
               <i class="ti ti-chevron-right action-arrow"></i>
-            </button>
-            <button class="action">
+            </a>
+            <a href="{% url 'maintenance:agent-queue' %}" class="action">
               <div class="action-icon icon-orange"><i class="ti ti-clipboard-list"></i></div>
               <div class="action-content">
                 <div class="action-title">{% translate "New requests" %}</div>
                 <div class="action-description">{% translate "Review maintenance requests" %}</div>
               </div>
               <i class="ti ti-chevron-right action-arrow"></i>
-            </button>
+            </a>
             <button class="action">
               <div class="action-icon icon-purple"><i class="ti ti-calendar"></i></div>
               <div class="action-content">
@@ -207,11 +207,11 @@
                 <i class="ti ti-tool"></i>
                 {% translate "My tasks" %}
               </div>
-              <a href="#" class="section-link">{% translate "See all" %}</a>
+              <a href="{% url 'maintenance:task-list' %}" class="section-link">{% translate "See all" %}</a>
             </div>
             <div class="maintenance-list">
               {% for task in recent_tasks %}
-                <div class="maintenance-item">
+                <a href="{% url 'maintenance:task-detail' task.pk %}" class="maintenance-item">
                   <div class="item-icon icon-orange"><i class="ti ti-tools"></i></div>
                   <div class="item-content">
                     <div class="item-title">{{ task.title }}</div>
@@ -220,7 +220,7 @@
                   <span class="item-status status-{% if task.status == 'PENDING' or task.status == 'ASSIGNED' %}warning{% elif task.status == 'IN_PROGRESS' %}blue{% elif task.status == 'COMPLETED' %}success{% endif %}">
                     {{ task.get_status_display }}
                   </span>
-                </div>
+                </a>
               {% empty %}
                 <p class="p-5 text-sm text-muted">{% translate "No intervention assigned yet." %}</p>
               {% endfor %}
@@ -233,7 +233,7 @@
                   <i class="ti ti-clipboard-list"></i>
                   {% translate "Recent requests" %}
                 </div>
-                <a href="#" class="section-link">{% translate "See all" %}</a>
+                <a href="{% url 'maintenance:agent-queue' %}" class="section-link">{% translate "See all" %}</a>
               </div>
               <div class="request-list">
                 {% for request in recent_requests %}

@@ -257,6 +257,12 @@ class Task(BaseModel):
         help_text=_("Date and time when the task was completed."),
     )
 
+    work_notes = models.TextField(
+        blank=True,
+        verbose_name=_("Work notes"),
+        help_text=_("Work carried out and useful handover information."),
+    )
+
     # -------------------------------------------------------------------------
     # Meta Options
     # -------------------------------------------------------------------------

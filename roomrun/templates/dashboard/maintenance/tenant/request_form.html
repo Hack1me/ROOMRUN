@@ -1,0 +1,16 @@
+{% extends "dashboard/pages/tenant.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Report a problem" %} — ROOMRUN{% endblock %}
+{% block tenant_content %}
+<div class="rr-maintenance"><div class="rr-page-head"><div><h1>{% translate "Report a maintenance issue" %}</h1><p>{% translate "Your request is linked automatically to your active rental." %}</p></div></div>
+<form method="post" enctype="multipart/form-data" class="rr-card rr-form" novalidate>{% csrf_token %}
+  {% if form.non_field_errors %}<div class="rr-errors">{{ form.non_field_errors }}</div>{% endif %}
+  <div class="rr-field"><label for="{{ form.title.id_for_label }}">{{ form.title.label }} *</label>{{ form.title }}{% for error in form.title.errors %}<small class="rr-error">{{ error }}</small>{% endfor %}</div>
+  <div class="rr-field"><label for="{{ form.description.id_for_label }}">{{ form.description.label }} *</label>{{ form.description }}<small>{% translate "Include the location of the issue and any relevant details." %}</small>{% for error in form.description.errors %}<small class="rr-error">{{ error }}</small>{% endfor %}</div>
+  <div class="rr-field"><label for="{{ form.priority.id_for_label }}">{{ form.priority.label }} *</label>{{ form.priority }}<small>{% translate "For immediate danger, contact local emergency services first." %}</small></div>
+  <div class="rr-field"><label for="{{ form.photos.id_for_label }}">{{ form.photos.label }}</label>{{ form.photos }}<small>{{ form.photos.help_text }}</small>{% for error in form.photos.errors %}<small class="rr-error">{{ error }}</small>{% endfor %}</div>
+  <div class="rr-actions"><a class="rr-btn rr-btn-secondary" href="{% url 'maintenance:request-list' %}">{% translate "Cancel" %}</a><button class="rr-btn rr-btn-primary" type="submit"><i class="ti ti-send"></i>{% translate "Submit request" %}</button></div>
+</form></div>
+{% endblock tenant_content %}
+{% block extra_css %}{{ block.super }}{% include "dashboard/maintenance/includes/styles.html" %}{% endblock %}

@@ -29,7 +29,7 @@
         <i class="ti ti-credit-card"></i>
         <span>{% translate "Payments" %}</span>
       </a>
-      <a href="#" class="nav-item">
+      <a href="{% url 'maintenance:request-list' %}" class="nav-item{% if request.resolver_match.namespace == 'maintenance' %} active{% endif %}">
         <i class="ti ti-tool"></i>
         <span>{% translate "Maintenance" %}</span>
       </a>

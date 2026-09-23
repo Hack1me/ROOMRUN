@@ -1,0 +1,11 @@
+{% extends "dashboard/pages/tenant.html" %}
+{% load i18n %}
+
+{% block title %}{{ maintenance_request.request_number }} — ROOMRUN{% endblock %}
+{% block tenant_content %}
+<div class="rr-maintenance"><div class="rr-page-head"><div><a class="rr-back" href="{% url 'maintenance:request-list' %}">← {% translate "Maintenance requests" %}</a><h1>{{ maintenance_request.title }}</h1><p>{{ maintenance_request.request_number }} · {{ maintenance_request.created_at|date:"d M Y, H:i" }}</p></div><span class="rr-badge rr-{{ maintenance_request.status|lower }}">{{ maintenance_request.get_status_display }}</span></div>
+<section class="rr-card rr-detail"><dl><div><dt>{% translate "Home" %}</dt><dd>{{ maintenance_request.unit.building.property_ref.name }} — {{ maintenance_request.unit.unit_number }}</dd></div><div><dt>{% translate "Priority" %}</dt><dd>{{ maintenance_request.get_priority_display }}</dd></div><div><dt>{% translate "Description" %}</dt><dd class="rr-preline">{{ maintenance_request.description }}</dd></div>{% if maintenance_request.resolved_at %}<div><dt>{% translate "Resolved on" %}</dt><dd>{{ maintenance_request.resolved_at|date:"d M Y, H:i" }}</dd></div>{% endif %}</dl>
+{% if maintenance_request.attachments.all %}<h2>{% translate "Photos" %}</h2><div class="rr-files">{% for attachment in maintenance_request.attachments.all %}<a href="{% url 'maintenance:attachment-download' attachment.pk %}"><i class="ti ti-photo"></i> {% translate "Download photo" %} {{ forloop.counter }}</a>{% endfor %}</div>{% endif %}
+{% if maintenance_request.status == 'PENDING' %}<form method="post" action="{% url 'maintenance:request-cancel' maintenance_request.pk %}" class="rr-actions">{% csrf_token %}<button class="rr-btn rr-btn-danger" type="submit">{% translate "Cancel this request" %}</button></form>{% endif %}</section></div>
+{% endblock tenant_content %}
+{% block extra_css %}{{ block.super }}{% include "dashboard/maintenance/includes/styles.html" %}{% endblock %}

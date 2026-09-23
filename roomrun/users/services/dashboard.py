@@ -363,14 +363,14 @@ class MaintenanceDashboardService:
     def _build_context(agent) -> dict:
         tasks = agent.tasks.all()
         total_tasks = tasks.count()
-        pending_tasks = tasks.filter(status="PENDING").count()
+        pending_tasks = tasks.filter(status__in=["PENDING", "ASSIGNED"]).count()
         in_progress_tasks = tasks.filter(status="IN_PROGRESS").count()
         completed_tasks = tasks.filter(status="COMPLETED").count()
 
         urgent_requests = MaintenanceRequest.objects.filter(
             tasks__maintenance_agent=agent,
             priority="URGENT",
-            status="PENDING",
+            status="IN_PROGRESS",
         ).distinct().count()
 
         recent_tasks = tasks.order_by("-created_at")[:MaintenanceDashboardService.RECENT_LIMIT]
@@ -406,7 +406,10 @@ class MaintenanceDashboardService:
             return []
 
         agent = employee.maintenance_agent_profile
-        return agent.tasks.filter(status="PENDING").order_by("-created_at")
+        return (
+            agent.tasks.filter(status__in=["PENDING", "ASSIGNED"])
+            .order_by("-created_at")
+        )
 
 
 class GuardDashboardService:

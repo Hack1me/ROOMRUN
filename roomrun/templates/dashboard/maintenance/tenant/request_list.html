@@ -1,0 +1,13 @@
+{% extends "dashboard/pages/tenant.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Maintenance" %} — ROOMRUN{% endblock %}
+{% block tenant_content %}
+<div class="rr-maintenance">
+  <div class="rr-page-head"><div><h1>{% translate "Maintenance requests" %}</h1><p>{% translate "Report a problem and follow its resolution." %}</p></div><a class="rr-btn rr-btn-primary" href="{% url 'maintenance:request-create' %}"><i class="ti ti-plus"></i>{% translate "Report a problem" %}</a></div>
+  {% if maintenance_requests %}<div class="rr-list">
+    {% for item in maintenance_requests %}<a class="rr-card rr-request" href="{% url 'maintenance:request-detail' item.pk %}"><div><div class="rr-card-title">{{ item.title }}</div><div class="rr-muted">{{ item.request_number }} · {{ item.unit.building.property_ref.name }} · {{ item.created_at|date:"d M Y, H:i" }}</div></div><div class="rr-align-right"><span class="rr-badge rr-{{ item.status|lower }}">{{ item.get_status_display }}</span><div class="rr-priority">{{ item.get_priority_display }}</div></div></a>{% endfor %}
+  </div>{% else %}<section class="rr-empty"><i class="ti ti-tool"></i><h2>{% translate "No maintenance request" %}</h2><p>{% translate "If something needs attention in your home, let the maintenance team know." %}</p><a class="rr-btn rr-btn-primary" href="{% url 'maintenance:request-create' %}">{% translate "Report a problem" %}</a></section>{% endif %}
+</div>
+{% endblock tenant_content %}
+{% block extra_css %}{{ block.super }}{% include "dashboard/maintenance/includes/styles.html" %}{% endblock %}
