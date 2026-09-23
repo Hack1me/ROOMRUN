@@ -640,6 +640,9 @@
   .min-h-5 {
     min-height: calc(var(--spacing) * 5);
   }
+  .min-h-14\.5 {
+    min-height: calc(var(--spacing) * 14.5);
+  }
   .min-h-17 {
     min-height: calc(var(--spacing) * 17);
   }
@@ -730,6 +733,9 @@
   .max-w-3xl {
     max-width: var(--container-3xl);
   }
+  .max-w-45 {
+    max-width: calc(var(--spacing) * 45);
+  }
   .max-w-\[180px\] {
     max-width: 180px;
   }
@@ -753,6 +759,12 @@
   }
   .min-w-32\.5 {
     min-width: calc(var(--spacing) * 32.5);
+  }
+  .min-w-47\.5 {
+    min-width: calc(var(--spacing) * 47.5);
+  }
+  .min-w-237\.5 {
+    min-width: calc(var(--spacing) * 237.5);
   }
   .min-w-\[125px\] {
     min-width: 125px;
@@ -1089,6 +1101,9 @@
   .border-t-white {
     border-top-color: var(--color-white);
   }
+  .bg-\(--bg\) {
+    background-color: var(--bg);
+  }
   .bg-\(--secondary\) {
     background-color: var(--secondary);
   }
@@ -1124,6 +1139,9 @@
   }
   .bg-danger {
     background-color: var(--color-danger);
+  }
+  .bg-danger-soft {
+    background-color: var(--color-danger-soft);
   }
   .bg-danger\/5 {
     background-color: color-mix(in srgb, #d64545 5%, transparent);
@@ -1818,9 +1836,17 @@
     content: var(--tw-content);
     left: calc(var(--spacing) * 1.25);
   }
+  .before\:h-1\.25::before {
+    content: var(--tw-content);
+    height: calc(var(--spacing) * 1.25);
+  }
   .before\:h-\[5px\]::before {
     content: var(--tw-content);
     height: 5px;
+  }
+  .before\:w-1\.25::before {
+    content: var(--tw-content);
+    width: calc(var(--spacing) * 1.25);
   }
   .before\:w-\[5px\]::before {
     content: var(--tw-content);
@@ -1874,6 +1900,9 @@
     .hover\:border-secondary:hover {
       border-color: var(--color-secondary);
     }
+    .hover\:bg-\(--bg\):hover {
+      background-color: var(--bg);
+    }
     .hover\:bg-\(--secondary-hover\):hover {
       background-color: var(--secondary-hover);
     }
@@ -1896,6 +1925,9 @@
       .hover\:bg-black\/4:hover {
         background-color: color-mix(in oklab, var(--color-black) 4%, transparent);
       }
+    }
+    .hover\:bg-primary-hover:hover {
+      background-color: var(--color-primary-hover);
     }
     .hover\:bg-secondary-hover:hover {
       background-color: var(--color-secondary-hover);

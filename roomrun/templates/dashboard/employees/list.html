@@ -119,13 +119,13 @@
                 />
               </div>
 
-              <select class="h-9 min-w-32.5 px-2.25 border border-[#e6e8ec] rounded-md bg-white text-slate-800 text-[11px] outline-none focus:border-[#16283f]" name="type" id="roleFilter">
+              <select class="h-9 min-w-32.5 px-2.25 border border-[#e6e8ec] rounded-md bg-white text-slate-800 text-[11px] outline-none focus:border-primary" name="type" id="roleFilter">
                 <option value="">{% translate "All roles" %}</option>
                 <option value="guard" {% if request.GET.type == 'guard' %}selected{% endif %}>{% translate "Guard" %}</option>
                 <option value="maintenance" {% if request.GET.type == 'maintenance' %}selected{% endif %}>{% translate "Maintenance Agent" %}</option>
               </select>
 
-              <select class="h-[36px] min-w-[130px] px-2.25 border border-[#e6e8ec] rounded-md bg-white text-slate-800 text-[11px] outline-none focus:border-[#16283f]" name="status" id="statusFilter">
+              <select class="h-9 min-w-32.5 px-2.25 border border-[#e6e8ec] rounded-md bg-white text-slate-800 text-[11px] outline-none focus:border-primary" name="status" id="statusFilter">
                 <option value="">{% translate "All statuses" %}</option>
                 <option value="ACTIVE" {% if request.GET.status == 'ACTIVE' %}selected{% endif %}>{% translate "Active" %}</option>
                 <option value="INACTIVE" {% if request.GET.status == 'INACTIVE' %}selected{% endif %}>{% translate "Inactive" %}</option>
@@ -133,7 +133,7 @@
               </select>
             </div>
             <div class="flex items-center gap-2">
-              <button type="button" class="h-[38px] px-3.5 inline-flex items-center justify-center gap-1.75 rounded-md border border-[#e6e8ec] bg-white text-slate-800 text-[11px] font-medium hover:bg-[var(--bg)]" id="resetFilters">
+              <button type="button" class="h-9.5 px-3.5 inline-flex items-center justify-center gap-1.75 rounded-md border border-[#e6e8ec] bg-white text-slate-800 text-[11px] font-medium hover:bg-(--bg)" id="resetFilters">
                 <i class="ti ti-refresh"></i>
                 {% translate "Reset" %}
               </button>
@@ -142,7 +142,7 @@
 
           <!-- TABLE -->
           <div class="w-full overflow-x-auto">
-            <table class="w-full border-collapse min-w-[950px]">
+            <table class="w-full border-collapse min-w-237.5">
               <thead class="bg-[#fafbfc]">
                 <tr>
                   <th class="p-2.75 text-left text-slate-500 text-[10px] font-semibold whitespace-nowrap border-b border-[#e6e8ec]">{% translate "Employee" %}</th>
@@ -162,8 +162,8 @@
                     class="transition-colors duration-75 ease-out hover:bg-[#fafafa]"
                   >
                     <td class="p-3.25 border-b border-[#e6e8ec] align-middle text-[11px]">
-                      <div class="flex items-center gap-2.5 min-w-[190px]">
-                        <div class="w-9 h-9 flex-shrink-0 grid place-items-center rounded-full bg-[#f5e4da] text-[#16283f] text-[10px] font-semibold">
+                      <div class="flex items-center gap-2.5 min-w-47.5">
+                        <div class="w-9 h-9 shrink-0 grid place-items-center rounded-full bg-primary-soft text-primary text-[10px] font-semibold">
                           {{ employee.user.first_name|first }}{{ employee.user.last_name|first }}
                         </div>
                         <div>
@@ -178,7 +178,7 @@
                     <td class="p-3.25 border-b border-[#e6e8ec] align-middle text-[11px]">
                       {% if employee.guard_profile %}
                         <div class="inline-flex items-center gap-1.5 font-medium">
-                          <div class="w-6 h-6 grid place-items-center rounded-md bg-[var(--bg)] text-slate-500">
+                          <div class="w-6 h-6 grid place-items-center rounded-md bg-(--bg) text-slate-500">
                             <i class="ti ti-shield text-[13px]"></i>
                           </div>
                           <div>
@@ -188,7 +188,7 @@
                         </div>
                       {% elif employee.maintenance_agent_profile %}
                         <div class="inline-flex items-center gap-1.5 font-medium">
-                          <div class="w-6 h-6 grid place-items-center rounded-md bg-[var(--bg)] text-slate-500">
+                          <div class="w-6 h-6 grid place-items-center rounded-md bg-(--bg) text-slate-500">
                             <i class="ti ti-tool text-[13px]"></i>
                           </div>
                           <div>
@@ -203,21 +203,21 @@
                     <td class="p-3.25 border-b border-[#e6e8ec] align-middle text-[11px]">
                       {% if employee.guard_profile %}
                         <div class="font-medium">{% translate "1 property" %}</div>
-                        <div class="text-slate-500 text-[9px] mt-0.75 max-w-[180px] whitespace-nowrap overflow-hidden text-ellipsis">{% translate "Assigned to landlord" %}</div>
+                        <div class="text-slate-500 text-[9px] mt-0.75 max-w-45 whitespace-nowrap overflow-hidden text-ellipsis">{% translate "Assigned to landlord" %}</div>
                       {% elif employee.maintenance_agent_profile %}
                         <div class="font-medium">{% translate "Multiple properties" %}</div>
-                        <div class="text-slate-500 text-[9px] mt-0.75 max-w-[180px] whitespace-nowrap overflow-hidden text-ellipsis">{% translate "See details" %}</div>
+                        <div class="text-slate-500 text-[9px] mt-0.75 max-w-45 whitespace-nowrap overflow-hidden text-ellipsis">{% translate "See details" %}</div>
                       {% else %}
                         <div class="text-slate-500 text-[9px]">—</div>
                       {% endif %}
                     </td>
                     <td class="p-3.25 border-b border-[#e6e8ec] align-middle text-[11px]">
-                      <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-semibold relative pl-3.5 before:content-[''] before:absolute before:left-1.25 before:top-1/2 before:-translate-y-1/2 before:w-[5px] before:h-[5px] before:rounded-full before:bg-current {% if employee.status == 'ACTIVE' %}bg-[#eaf7ef] text-[#2e9e5b]{% elif employee.status == 'SUSPENDED' %}bg-[#fcebec] text-[#d64545]{% else %}bg-[var(--bg)] text-slate-500{% endif %}">
+                      <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-semibold relative pl-3.5 before:content-[''] before:absolute before:left-1.25 before:top-1/2 before:-translate-y-1/2 before:w-1.25 before:h-1.25 before:rounded-full before:bg-current {% if employee.status == 'ACTIVE' %}bg-success-soft text-success{% elif employee.status == 'SUSPENDED' %}bg-danger-soft text-danger{% else %}bg-(--bg) text-slate-500{% endif %}">
                         {{ employee.get_status_display }}
                       </span>
                     </td>
                     <td class="p-3.25 border-b border-[#e6e8ec] align-middle text-[11px]">
-                      <button type="button" class="w-8 h-8 grid place-items-center border-0 rounded-md bg-transparent text-slate-500 hover:bg-[var(--bg)] hover:text-slate-800" aria-label="{% translate 'More options' %}">
+                      <button type="button" class="w-8 h-8 grid place-items-center border-0 rounded-md bg-transparent text-slate-500 hover:bg-(--bg) hover:text-slate-800" aria-label="{% translate 'More options' %}">
                         <i class="ti ti-dots text-[17px]"></i>
                       </button>
                     </td>
@@ -226,7 +226,7 @@
                   <tr id="emptyRow">
                     <td colspan="6">
                       <div class="hidden p-[60px_20px] text-center" id="emptyRowState" style="display:block;">
-                        <div class="w-11 h-11 mx-auto mb-3 grid place-items-center rounded-[10px] bg-[var(--bg)] text-slate-500">
+                        <div class="w-11 h-11 mx-auto mb-3 grid place-items-center rounded-[10px] bg-(--bg) text-slate-500">
                           <i class="ti ti-users text-[21px]"></i>
                         </div>
                         <div class="text-sm font-semibold mb-1.25">{% translate "No employees found" %}</div>
@@ -240,7 +240,7 @@
 
             {% if not employees %}
               <div class="hidden p-[60px_20px] text-center" id="emptyState">
-                <div class="w-11 h-11 mx-auto mb-3 grid place-items-center rounded-[10px] bg-[var(--bg)] text-slate-500">
+                <div class="w-11 h-11 mx-auto mb-3 grid place-items-center rounded-[10px] bg-(--bg) text-slate-500">
                   <i class="ti ti-users text-[21px]"></i>
                 </div>
                 <div class="text-sm font-semibold mb-1.25">{% translate "No employees found" %}</div>
@@ -251,7 +251,7 @@
 
           <!-- PAGINATION -->
           {% if page_obj.has_other_pages %}
-            <div class="min-h-[58px] px-4 flex items-center justify-between border-t border-[#e6e8ec]">
+            <div class="min-h-14.5 px-4 flex items-center justify-between border-t border-[#e6e8ec]">
               <div class="text-slate-500 text-[10px]">
                 {% blocktranslate with start=page_obj.start_index end=page_obj.end_index total=page_obj.paginator.count %}
                   Showing {{ start }}–{{ end }} of {{ total }} employees
@@ -259,21 +259,21 @@
               </div>
               <div class="flex items-center gap-1">
                 {% if page_obj.has_previous %}
-                  <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="w-7.5 h-7.5 grid place-items-center border border-[#e6e8ec] rounded-md bg-white text-slate-500 text-[10px] hover:bg-[var(--bg)]">
+                  <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="w-7.5 h-7.5 grid place-items-center border border-[#e6e8ec] rounded-md bg-white text-slate-500 text-[10px] hover:bg-(--bg)">
                     <i class="ti ti-chevron-left"></i>
                   </a>
                 {% endif %}
 
                 {% for num in page_obj.paginator.page_range %}
                   {% if page_obj.number == num %}
-                    <button type="button" class="w-7.5 h-7.5 grid place-items-center border border-[#e6e8ec] rounded-md bg-[#16283f] text-white text-[10px] border-[#16283f] hover:bg-[#1e3a5f]">{{ num }}</button>
+                    <button type="button" class="w-7.5 h-7.5 grid place-items-center border border-[#e6e8ec] rounded-md bg-primary text-white text-[10px] hover:bg-primary-hover">{{ num }}</button>
                   {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                    <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="w-7.5 h-7.5 grid place-items-center border border-[#e6e8ec] rounded-md bg-white text-slate-500 text-[10px] hover:bg-[var(--bg)]">{{ num }}</a>
+                    <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="w-7.5 h-7.5 grid place-items-center border border-[#e6e8ec] rounded-md bg-white text-slate-500 text-[10px] hover:bg-(--bg)">{{ num }}</a>
                   {% endif %}
                 {% endfor %}
 
                 {% if page_obj.has_next %}
-                  <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="w-7.5 h-7.5 grid place-items-center border border-[#e6e8ec] rounded-md bg-white text-slate-500 text-[10px] hover:bg-[var(--bg)]">
+                  <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="w-7.5 h-7.5 grid place-items-center border border-[#e6e8ec] rounded-md bg-white text-slate-500 text-[10px] hover:bg-(--bg)">
                     <i class="ti ti-chevron-right"></i>
                   </a>
                 {% endif %}
