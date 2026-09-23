@@ -1,255 +1,428 @@
 {% extends "base.html" %}
+{% load static i18n %}
 
-{% load i18n %}
+{% block title %}ROOMRUN — {% translate "Le registre de votre cité" %}{% endblock title %}
+{% block bodyclass %}rr-landing-page{% endblock bodyclass %}
+{% block header %}{% endblock header %}
+{% block css %}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="{% static 'css/landing.css' %}" rel="stylesheet" />
+{% endblock css %}
+{% block body %}
 
-{% block title %}ROOMRUN — {% translate "Property management made simple" %}{% endblock title %}
-{% block main %}
-  <main>
-    <section class="relative overflow-hidden border-b border-line">
-      <div class="absolute inset-0 -z-10 bg-[linear-gradient(rgba(22,40,63,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(22,40,63,0.055)_1px,transparent_1px)] bg-size-[68px_68px]">
+
+<div class="rr-scroll-progress" aria-hidden="true"></div>
+
+<!-- ============================== NAV ============================== -->
+<header class="nav" id="nav">
+  <a href="#apercu" class="nav__word">
+    <span class="nav__dot"></span>ROOMRUN
+  </a>
+
+  <nav class="nav__links" aria-label="Navigation principale">
+    <a href="#ecosysteme">Écosystème</a>
+    <a href="#fonctionnalites">Fonctionnalités</a>
+    <a href="#resultats">Résultats</a>
+    <a href="#tarifs">Tarifs</a>
+  </nav>
+
+  <div class="nav__actions">
+    <a href="{% url 'users:signin' %}" class="nav__login">Se connecter</a>
+    <a href="{% url 'users:signup' %}" class="nav__cta rr-magnetic">Créer un compte</a>
+  </div>
+
+  <button class="nav__burger" id="nav-burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobile-menu">
+    <span></span><span></span>
+  </button>
+</header>
+
+<div class="mobile-menu" id="mobile-menu" hidden>
+  <a href="#ecosysteme">Écosystème</a>
+  <a href="#fonctionnalites">Fonctionnalités</a>
+  <a href="#resultats">Résultats</a>
+  <a href="#tarifs">Tarifs</a>
+  <hr>
+  <a href="{% url 'users:signin' %}">Se connecter</a>
+  <a href="{% url 'users:signup' %}" class="mobile-menu__cta">Créer un compte</a>
+</div>
+
+<!-- ============================== INDEX RAIL ============================== -->
+<nav class="rail" aria-label="Sections de la page">
+  <a href="#apercu" class="rail__item is-active" data-target="apercu">00 — Aperçu</a>
+  <a href="#ecosysteme" class="rail__item" data-target="ecosysteme">01 — Écosystème</a>
+  <a href="#fonctionnalites" class="rail__item" data-target="fonctionnalites">02 — Fonctionnalités</a>
+  <a href="#resultats" class="rail__item" data-target="resultats">03 — Résultats</a>
+  <a href="#tarifs" class="rail__item" data-target="tarifs">04 — Tarifs</a>
+</nav>
+
+<main>
+
+  <!-- ============================== 00 — APERÇU ============================== -->
+  <section class="hero" id="apercu">
+    <h1 class="hero__headline rr-reveal">La gestion d'une cité,<br>enfin écrite <em>au propre.</em></h1>
+
+    <p class="hero__subhead rr-reveal">Réservations, baux, paiements, maintenance et visiteurs — réunis dans un seul registre, partagé par bailleurs, locataires, agents et gardiens.</p>
+
+    <div class="hero__actions rr-reveal">
+      <a href="{% url 'users:signup' %}" class="btn rr-magnetic">Créer un compte <span class="btn__arrow">→</span></a>
+      <a href="#fonctionnalites" class="link-quiet">Voir la plateforme</a>
+    </div>
+
+    <div class="annotation rr-reveal">
+      <p><span class="annotation__dot"></span>EN DIRECT — 27 cités actives · 340+ logements suivis · synchronisé il y a 4&nbsp;min</p>
+    </div>
+
+    <div class="parcours rr-reveal">
+      <p class="parcours__label">LE PARCOURS</p>
+      <p class="parcours__line">Créez votre compte <span>→</span> Publiez vos logements <span>→</span> Gérez tout depuis votre tableau de bord</p>
+    </div>
+  </section>
+
+  <!-- ============================== 01 — ÉCOSYSTÈME ============================== -->
+  <section class="chapter" id="ecosysteme">
+    <span class="chapter__number" aria-hidden="true">01</span>
+
+    <div class="chapter__intro rr-reveal">
+      <p class="chapter__eyebrow">L'ÉCOSYSTÈME</p>
+      <h2>Cinq rôles, un seul registre.</h2>
+      <p class="chapter__lede">La plupart des outils choisissent un camp. ROOMRUN documente la relation elle-même : un paiement, une charge, une requête sont un seul événement, consulté depuis cinq points de vue différents.</p>
+    </div>
+
+    <dl class="roles">
+      <div class="roles__row rr-reveal">
+        <dt>Bailleur</dt>
+        <dd>Gère ses cités, ses logements et ses revenus depuis un seul tableau de bord.</dd>
       </div>
-      <div class="rr-container grid gap-14 py-18 lg:grid-cols-2 lg:items-center lg:py-26">
-        <div>
-          <p class="mb-6 inline-flex items-center gap-2 rounded-full bg-primary-soft px-4 py-2 text-sm text-primary">
-            <span class="text-secondary">✦</span>{% translate "Already supporting residential communities across Central Africa" %}
-          </p>
-          <h1 class="rr-display max-w-xl text-4xl leading-[1.08] sm:text-5xl lg:text-6xl">
-            {% translate "Property management," %}
-            <br />
-            <em class="font-normal text-secondary">{% translate "made finally simple." %}</em>
-          </h1>
-          <p class="mt-6 max-w-xl text-base leading-8 text-muted sm:text-lg">
-            {% translate "ROOMRUN brings landlords, tenants, maintenance teams and guards together in one calm workspace for homes, leases, payments, charges and maintenance." %}
-          </p>
-          <div class="mt-9 flex flex-wrap gap-3">
-            <a href="{% url 'users:signup' %}" class="rr-btn-primary">
-              {% translate "Create an account" %} <span aria-hidden="true">→</span>
-            </a>
-            <a href="#fonctionnalites" class="rr-btn-outline">{% translate "Explore the platform" %}</a>
-          </div>
-        </div>
-        <div class="relative mx-auto w-full max-w-xl">
-          <div class="rr-card overflow-hidden shadow-[0_30px_60px_-30px_rgba(22,40,63,0.3)]">
-            <div class="flex items-center gap-1.5 border-b border-line bg-stone-50 px-4 py-3">
-              <span class="size-2 rounded-full bg-line-strong"></span>
-              <span class="size-2 rounded-full bg-line-strong"></span>
-              <span class="size-2 rounded-full bg-line-strong"></span>
-              <span class="ml-3 font-mono text-[10px] tracking-[0.08em] text-muted">ROOMRUN / {% translate "OVERVIEW" %}</span>
-            </div>
-            <div class="p-5">
-              <div class="grid grid-cols-3 gap-3">
-                <div class="rounded-lg border border-line bg-stone-50 p-3">
-                  <p class="text-xs text-muted">{% translate "Occupancy" %}</p>
-                  <p class="mt-1 font-display text-xl text-primary">96<span class="font-sans text-xs text-muted">%</span></p>
-                </div>
-                <div class="rounded-lg border border-line bg-stone-50 p-3">
-                  <p class="text-xs text-muted">{% translate "Rent received" %}</p>
-                  <p class="mt-1 font-display text-xl text-primary">2.4M<span class="font-sans text-xs text-muted"> XAF</span></p>
-                </div>
-                <div class="rounded-lg border border-line bg-stone-50 p-3">
-                  <p class="text-xs text-muted">{% translate "Open requests" %}</p>
-                  <p class="mt-1 font-display text-xl text-primary">06</p>
-                </div>
-              </div>
-              <div class="mt-4 rounded-lg border border-line p-4">
-                <div class="mb-4 flex justify-between text-sm">
-                  <span class="font-medium">{% translate "Monthly rent collection" %}</span>
-                  <span class="font-mono text-xs text-muted">{% translate "LAST 6 MONTHS" %}</span>
-                </div>
-                <div class="flex h-20 items-end gap-1.5">
-                  <i class="h-[42%] flex-1 rounded-t bg-line-strong"></i>
-                  <i class="h-[58%] flex-1 rounded-t bg-line-strong"></i>
-                  <i class="h-[48%] flex-1 rounded-t bg-line-strong"></i>
-                  <i class="h-[76%] flex-1 rounded-t bg-secondary"></i>
-                  <i class="h-[68%] flex-1 rounded-t bg-secondary"></i>
-                  <i class="h-[92%] flex-1 rounded-t bg-secondary"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="absolute -right-4 -top-5 hidden w-48 rounded-xl border border-line bg-card p-3 shadow-lg sm:block">
-            <p class="text-xs font-medium text-primary">{% translate "Request #2841 assigned" %}</p>
-            <p class="mt-1 text-xs text-muted">{% translate "Agent confirmed Thursday, 14:00" %}</p>
-            <div class="mt-3 h-1 overflow-hidden rounded bg-line">
-              <i class="block h-full w-4/5 bg-secondary"></i>
-            </div>
-          </div>
-        </div>
+      <div class="roles__row rr-reveal">
+        <dt>Locataire</dt>
+        <dd>Trouve un logement, paie son loyer et suit ses demandes en quelques clics.</dd>
       </div>
-      <div class="border-y border-line bg-card">
-        <div class="rr-container grid grid-cols-2 sm:grid-cols-4">
-          {% for value, label, desc in stats %}{% empty %}
-            <div class="border-r border-line p-6 last:border-r-0">
-              <p class="font-display text-3xl text-primary">27<span class="text-secondary">+</span></p>
-              <p class="mt-1 text-sm font-medium">{% translate "Active communities" %}</p>
-              <p class="mt-1 text-xs leading-5 text-muted">{% translate "From one home to a multi-community portfolio." %}</p>
-            </div>
-            <div class="border-r border-line p-6 last:border-r-0">
-              <p class="font-display text-3xl text-primary">96<span class="text-secondary">%</span></p>
-              <p class="mt-1 text-sm font-medium">{% translate "Rent on time" %}</p>
-              <p class="mt-1 text-xs leading-5 text-muted">{% translate "Automatic reminders and simple payments." %}</p>
-            </div>
-            <div class="border-r border-line p-6 last:border-r-0">
-              <p class="font-display text-3xl text-primary">340<span class="text-secondary">+</span></p>
-              <p class="mt-1 text-sm font-medium">{% translate "Homes managed" %}</p>
-              <p class="mt-1 text-xs leading-5 text-muted">{% translate "Clear, consolidated information." %}</p>
-            </div>
-            <div class="p-6">
-              <p class="font-display text-3xl text-primary">1.8<span class="text-secondary"> {% translate "days" %}</span></p>
-              <p class="mt-1 text-sm font-medium">{% translate "Average resolution" %}</p>
-              <p class="mt-1 text-xs leading-5 text-muted">{% translate "From report to confirmed repair." %}</p>
-            </div>
-          {% endfor %}
-        </div>
+      <div class="roles__row rr-reveal">
+        <dt>Agent de maintenance</dt>
+        <dd>Reçoit et résout les requêtes, sur une ou plusieurs cités à la fois.</dd>
       </div>
-    </section>
-    <section id="ecosysteme" class="rr-container rr-section">
-      <div class="grid gap-8 lg:grid-cols-2 lg:items-end">
-        <div>
-          <p class="rr-eyebrow">01 · {% translate "ECOSYSTEM" %}</p>
-          <h2 class="rr-display mt-4 text-3xl sm:text-4xl">{% translate "Three perspectives. One shared truth." %}</h2>
-        </div>
-        <p class="leading-7 text-muted">{% translate "ROOMRUN models the relationship itself: a payment, charge or maintenance request is the same event, viewed by the people who need it." %}</p>
+      <div class="roles__row rr-reveal">
+        <dt>Gardien</dt>
+        <dd>Enregistre chaque visiteur en quelques secondes, sans registre papier.</dd>
       </div>
-      <div class="mt-10 grid gap-5 lg:grid-cols-3">
-        <article class="rr-card p-7">
-          <p class="rr-eyebrow">{% translate "LANDLORDS" %}</p>
-          <h3 class="rr-display mt-5 text-xl">{% translate "See the whole community breathe" %}</h3>
-          <p class="mt-3 leading-7 text-muted">{% translate "Occupancy, revenue, delays and renewals, consolidated and always current." %}</p>
-          <ul class="mt-6 space-y-2 border-t border-line pt-5 text-sm text-muted">
-            <li>• {% translate "Reports by community" %}</li>
-            <li>• {% translate "Rent and arrears tracking" %}</li>
-            <li>• {% translate "Document vault" %}</li>
-          </ul>
-        </article>
-        <article class="rr-card p-7">
-          <p class="rr-eyebrow">{% translate "OPERATIONS" %}</p>
-          <h3 class="rr-display mt-5 text-xl">{% translate "Operations without reminders" %}</h3>
-          <p class="mt-3 leading-7 text-muted">{% translate "Leases, charges, inspections and maintenance in one visible, prioritised queue." %}</p>
-          <ul class="mt-6 space-y-2 border-t border-line pt-5 text-sm text-muted">
-            <li>• {% translate "Unified operations queue" %}</li>
-            <li>• {% translate "Fair charge allocation" %}</li>
-            <li>• {% translate "Complete request history" %}</li>
-          </ul>
-        </article>
-        <div class="min-h-70 rounded-card bg-primary p-7 text-white">
-          <p class="rr-eyebrow text-orange-200">{% translate "TENANTS" %}</p>
-          <h3 class="mt-5 font-display text-2xl">{% translate "A clear home, not another maze." %}</h3>
-          <p class="mt-3 leading-7 text-slate-300">{% translate "Payments, messages and requests are simple to find and easy to act on." %}</p>
-        </div>
+      <div class="roles__row rr-reveal">
+        <dt>Admin</dt>
+        <dd>Supervise l'ensemble de la plateforme et valide les nouveaux bailleurs.</dd>
       </div>
-    </section>
-    <section id="fonctionnalites" class="rr-container rr-section pt-0">
-      <div class="rr-section-heading">
-        <p class="rr-eyebrow">02 · {% translate "FEATURES" %}</p>
-        <h2>{% translate "The repetitive work, handled with care." %}</h2>
-        <p>{% translate "Every obligation becomes planned, visible and followed through to completion." %}</p>
+    </dl>
+  </section>
+
+  <!-- ============================== NOUVELLE SECTION VISUELLE ============================== -->
+  <section class="rr-signature" id="residence-signature">
+    <div class="rr-signature__intro rr-reveal">
+      <div>
+        <p class="chapter__eyebrow">UNE CITÉ. UNE VISION.</p>
+        <h2>Le patrimoine résidentiel,<br><em>mis en scène avec précision.</em></h2>
       </div>
-      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <article class="rr-card p-6 md:col-span-2">
-          <span class="text-2xl text-secondary">⌁</span>
-          <h3 class="rr-display mt-8 text-xl">{% translate "Leases that renew without friction" %}</h3>
-          <p class="mt-3 leading-7 text-muted">{% translate "Deadlines, notices and renewals are tracked automatically before they become urgent." %}</p>
-          <div class="mt-7 flex gap-10 border-t border-line pt-4">
-            <div>
-              <p class="font-display text-2xl text-primary">3h</p>
-              <p class="text-xs text-muted">{% translate "Average signature" %}</p>
-            </div>
-            <div>
-              <p class="font-display text-2xl text-primary">0</p>
-              <p class="text-xs text-muted">{% translate "Missed renewals" %}</p>
-            </div>
-          </div>
-        </article>
-        <article class="rr-card p-6">
-          <span class="text-2xl text-secondary">◫</span>
-          <h3 class="rr-display mt-8 text-xl">{% translate "Fair charges" %}</h3>
-          <p class="mt-3 leading-7 text-muted">{% translate "Water, electricity and shared charges allocated according to your rules." %}</p>
-        </article>
-        <article class="rr-card p-6">
-          <span class="text-2xl text-secondary">⌕</span>
-          <h3 class="rr-display mt-8 text-xl">{% translate "Maintenance with memory" %}</h3>
-          <p class="mt-3 leading-7 text-muted">{% translate "Every request keeps its photos, agent and cost history." %}</p>
-        </article>
-        <article class="rounded-card border border-line bg-[repeating-linear-gradient(135deg,#f1ede7,#f1ede7_8px,#eae5dd_8px,#eae5dd_16px)] p-6"></article>
-        <article class="rr-card p-6">
-          <h3 class="rr-display text-xl">{% translate "Announcements" %}</h3>
-          <p class="mt-3 leading-7 text-muted">{% translate "Reach a community or a building with read receipts." %}</p>
-        </article>
-        <article class="rr-card p-6">
-          <span class="text-2xl text-secondary">◈</span>
-          <h3 class="rr-display mt-8 text-xl">{% translate "Payments that feel instant" %}</h3>
-          <p class="mt-3 leading-7 text-muted">{% translate "Mobile money, bank transfer or cash — all reconciled automatically." %}</p>
-        </article>
-      </div>
-    </section>
-    <section class="bg-primary-soft">
-      <div class="rr-container rr-section">
-        <div class="mx-auto max-w-2xl text-center">
-          <p class="rr-eyebrow">03 · {% translate "THE JOURNEY" %}</p>
-          <h2 class="rr-display mt-4 text-3xl sm:text-4xl">{% translate "Three steps to publish your first home." %}</h2>
-        </div>
-        <ol class="mt-12 grid gap-8 md:grid-cols-3">
-          {% for title, copy in steps %}{% empty %}
-            <li>
-              <span class="inline-flex size-9 items-center justify-center rounded-full bg-primary font-display text-white">1</span>
-              <h3 class="rr-display mt-4 text-lg">{% translate "Create your account" %}</h3>
-              <p class="mt-2 leading-7 text-[#6b4a34]">{% translate "Start as a landlord and add your first community." %}</p>
-            </li>
-            <li>
-              <span class="inline-flex size-9 items-center justify-center rounded-full bg-primary font-display text-white">2</span>
-              <h3 class="rr-display mt-4 text-lg">{% translate "Publish your homes" %}</h3>
-              <p class="mt-2 leading-7 text-[#6b4a34]">{% translate "Add your units, equipment and rent details." %}</p>
-            </li>
-            <li>
-              <span class="inline-flex size-9 items-center justify-center rounded-full bg-primary font-display text-white">3</span>
-              <h3 class="rr-display mt-4 text-lg">{% translate "Manage from one dashboard" %}</h3>
-              <p class="mt-2 leading-7 text-[#6b4a34]">{% translate "Follow requests, tenants and payments in one place." %}</p>
-            </li>
-          {% endfor %}
-        </ol>
-      </div>
-    </section>
-    <section id="tarifs" class="rr-container rr-section">
-      <div class="mx-auto max-w-2xl text-center">
-        <h2 class="rr-display text-3xl sm:text-4xl">{% translate "Free to start, Pro when you need more." %}</h2>
-        <p class="mt-4 text-muted">{% translate "Change plans at any time, without commitment." %}</p>
-      </div>
-      <div class="mx-auto mt-10 grid max-w-2xl gap-5 md:grid-cols-2">
-        <article class="rr-card p-7">
-          <p class="text-sm text-muted">{% translate "Free" %}</p>
-          <p class="rr-display mt-1 text-3xl">0 XAF<span class="font-sans text-sm font-normal text-muted">/{% translate "month" %}</span></p>
-          <ul class="my-7 space-y-3 text-sm text-ink">
-            <li>◉ {% translate "Up to 2 communities" %}</li>
-            <li>◉ {% translate "Up to 10 homes" %}</li>
-            <li>◉ {% translate "Basic statistics" %}</li>
-          </ul>
-          <a href="{% url 'users:signup' %}" class="rr-btn-outline w-full">{% translate "Start for free" %}</a>
-        </article>
-        <article class="relative rounded-card border-2 border-secondary bg-card p-7">
-          <span class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-white">{% translate "Recommended" %}</span>
-          <p class="text-sm text-secondary">{% translate "Pro" %}</p>
-          <p class="rr-display mt-1 text-3xl">15 000 XAF<span class="font-sans text-sm font-normal text-muted">/{% translate "month" %}</span></p>
-          <ul class="my-7 space-y-3 text-sm text-ink">
-            <li>◉ {% translate "Unlimited communities and homes" %}</li>
-            <li>◉ {% translate "Advanced reports" %}</li>
-            <li>◉ {% translate "Reduced commission" %}</li>
-          </ul>
-          <a href="{% url 'users:signup' %}" class="rr-btn-primary w-full">{% translate "Choose Pro" %}</a>
-        </article>
-      </div>
-    </section>
-    <section class="bg-primary">
-      <div class="rr-container py-20 text-center">
-        <h2 class="font-display text-3xl font-semibold text-white sm:text-4xl">
-          {% translate "Give your community" %}<br />
-          <em class="font-normal text-secondary">{% translate "calm management at last." %}</em>
-        </h2>
-        <p class="mx-auto mt-5 max-w-xl leading-7 text-slate-300">
-          {% translate "Create your account in minutes. Add homes, tenants and leases — we will guide you through the rest." %}
+      <p class="rr-signature__lede">
+        ROOMRUN ne se limite pas à administrer des logements. La plateforme rend chaque cité plus lisible, plus cohérente et plus simple à piloter.
+      </p>
+    </div>
+
+    <div class="rr-signature__grid">
+      <div class="rr-signature__copy rr-reveal">
+        <span class="rr-signature__index">01 / SIGNATURE</span>
+        <h3>Résidence<br><em>Les Palmiers</em></h3>
+        <p>
+          Une adresse présentée comme un actif vivant : occupation, paiements, demandes,
+          documents et expérience résidentielle se rejoignent dans le même espace.
         </p>
-        <a href="{% url 'users:signup' %}" class="rr-btn-primary mt-8">{% translate "Create an account" %} →</a>
+
+        <div class="rr-signature__stats">
+          <div>
+            <strong data-count="48">0</strong>
+            <span>logements</span>
+          </div>
+          <div>
+            <strong data-count="96">0</strong>
+            <span>% occupés</span>
+          </div>
+          <div>
+            <strong data-count="12">0</strong>
+            <span>demandes actives</span>
+          </div>
+        </div>
+
+        <a href="#fonctionnalites" class="rr-signature__link">
+          Voir comment ROOMRUN orchestre la gestion <span>↗</span>
+        </a>
       </div>
-    </section>
-  </main>
-{% endblock main %}
+
+      <!-- Photo découpée en formes distinctes -->
+      <div class="rr-cut-photo rr-reveal" aria-label="Vue éditoriale de la résidence Les Palmiers">
+        <div class="rr-cut-photo__piece rr-cut-photo__piece--main">
+          <img
+            src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1800&q=88"
+            alt="Intérieur contemporain de la résidence Les Palmiers"
+            class="rr-parallax"
+          >
+        </div>
+
+        <div class="rr-cut-photo__piece rr-cut-photo__piece--top">
+          <img
+            src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1800&q=88"
+            alt=""
+            aria-hidden="true"
+          >
+        </div>
+
+        <div class="rr-cut-photo__piece rr-cut-photo__piece--side">
+          <img
+            src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1800&q=88"
+            alt=""
+            aria-hidden="true"
+          >
+        </div>
+
+        <div class="rr-cut-photo__piece rr-cut-photo__piece--bottom">
+          <img
+            src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1800&q=88"
+            alt=""
+            aria-hidden="true"
+          >
+        </div>
+
+        <div class="rr-cut-photo__accent rr-cut-photo__accent--terracotta"></div>
+        <div class="rr-cut-photo__accent rr-cut-photo__accent--outline"></div>
+
+        <div class="rr-cut-photo__meta rr-cut-photo__meta--top">LES PALMIERS / 2026</div>
+        <div class="rr-cut-photo__meta rr-cut-photo__meta--bottom">DOUALA · 48 UNITÉS</div>
+      </div>
+    </div>
+
+    <div class="rr-signature__caption rr-reveal">
+      <span>Image provisoire — remplaçable par vos visuels de résidences.</span>
+      <span>ROOMRUN / RESIDENTIAL OPERATING SYSTEM</span>
+    </div>
+  </section>
+
+  <!-- ============================== 02 — FONCTIONNALITÉS ============================== -->
+  <section class="chapter chapter--alt" id="fonctionnalites">
+    <span class="chapter__number" aria-hidden="true">02</span>
+
+    <div class="chapter__intro rr-reveal">
+      <p class="chapter__eyebrow">FONCTIONNALITÉS</p>
+      <h2>Six obligations, traitées une à une.</h2>
+      <p class="chapter__lede">Chaque module répond à un besoin concret d'une cité, sans complexité superflue.</p>
+    </div>
+
+    <ol class="index-list">
+      <li class="rr-reveal">
+        <span class="index-list__num">01</span>
+        <span class="index-list__name">Paiement en ligne</span>
+        <span class="index-list__desc">Loyers, cautions et charges réglés par Mobile Money ou carte ; commission prélevée automatiquement avant reversement.</span>
+      </li>
+      <li class="rr-reveal">
+        <span class="index-list__num">02</span>
+        <span class="index-list__name">Messagerie intégrée</span>
+        <span class="index-list__desc">Échanges entre locataires d'une même cité et avec le bailleur, sans quitter la plateforme.</span>
+      </li>
+      <li class="rr-reveal">
+        <span class="index-list__num">03</span>
+        <span class="index-list__name">Maintenance suivie</span>
+        <span class="index-list__desc">Priorisée, assignée à un agent et suivie jusqu'à sa résolution.</span>
+      </li>
+      <li class="rr-reveal">
+        <span class="index-list__num">04</span>
+        <span class="index-list__name">Visiteurs enregistrés</span>
+        <span class="index-list__desc">Le gardien note chaque entrée et sortie, librement, sans pré-autorisation requise.</span>
+      </li>
+      <li class="rr-reveal">
+        <span class="index-list__num">05</span>
+        <span class="index-list__name">Documents centralisés</span>
+        <span class="index-list__desc">Pièces d'identité, justificatifs et baux signés, vérifiés et conservés au même endroit.</span>
+      </li>
+      <li class="rr-reveal">
+        <span class="index-list__num">06</span>
+        <span class="index-list__name">Avis vérifiés</span>
+        <span class="index-list__desc">Locataires et bailleurs se notent mutuellement, à la fin de chaque bail.</span>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ============================== 03 — RÉSULTATS ============================== -->
+  <section class="chapter chapter--dark" id="resultats">
+    <span class="chapter__number" aria-hidden="true">03</span>
+
+    <div class="chapter__intro rr-reveal">
+      <p class="chapter__eyebrow">RÉSULTATS</p>
+      <h2>Ce que nos bailleurs mesurent.</h2>
+    </div>
+
+    <div class="ledger">
+      <div class="ledger__col">
+        <div class="ledger__row rr-reveal"><span>Logements gérés</span><strong>340+</strong></div>
+        <div class="ledger__row rr-reveal"><span>Loyers encaissés à temps</span><strong>96,4 %</strong></div>
+        <div class="ledger__row rr-reveal"><span>Temps administratif réduit</span><strong>38 %</strong></div>
+        <div class="ledger__row rr-reveal"><span>Résolution moyenne</span><strong>1,6 jour</strong></div>
+      </div>
+
+      <blockquote class="marginalia rr-reveal">
+        <p>« Nous gérons quatre cités et plus de soixante logements. ROOMRUN est le premier endroit où nos locataires, nos agents et nous-mêmes voyons enfin la même réalité. »</p>
+        <footer>Marc Owona<span>Bailleur, Cité Les Palmiers</span></footer>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- ============================== 04 — TARIFS ============================== -->
+  <section class="chapter" id="tarifs">
+    <span class="chapter__number" aria-hidden="true">04</span>
+
+    <div class="chapter__intro rr-reveal">
+      <p class="chapter__eyebrow">TARIFS</p>
+      <h2>Deux formules, aucun engagement.</h2>
+    </div>
+
+    <div class="pricing-table">
+      <div class="pricing-table__row pricing-table__row--head">
+        <span></span>
+        <span>Gratuit</span>
+        <span class="is-pro">Pro</span>
+      </div>
+      <div class="pricing-table__row">
+        <span>Cités</span>
+        <span>2 max</span>
+        <span class="is-pro">Illimité</span>
+      </div>
+      <div class="pricing-table__row">
+        <span>Logements</span>
+        <span>10 max</span>
+        <span class="is-pro">Illimité</span>
+      </div>
+      <div class="pricing-table__row">
+        <span>Statistiques</span>
+        <span>Basiques</span>
+        <span class="is-pro">Avancées</span>
+      </div>
+      <div class="pricing-table__row">
+        <span>Visibilité des logements</span>
+        <span>Standard</span>
+        <span class="is-pro">Mise en avant</span>
+      </div>
+      <div class="pricing-table__row">
+        <span>Commission par transaction</span>
+        <span>Standard</span>
+        <span class="is-pro">Réduite</span>
+      </div>
+      <div class="pricing-table__row pricing-table__row--price">
+        <span>Prix</span>
+        <span>0 XAF/mois</span>
+        <span class="is-pro">15 000 XAF/mois</span>
+      </div>
+      <div class="pricing-table__row pricing-table__row--actions">
+        <span></span>
+        <span><a href="{% url 'users:signup' %}" class="btn btn--outline btn--small rr-magnetic">Commencer gratuitement</a></span>
+        <span class="is-pro"><a href="{% url 'users:signup' %}" class="btn btn--small rr-magnetic">Passer à Pro</a></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== FAQ ============================== -->
+  <section class="faq" id="faq">
+    <p class="chapter__eyebrow chapter__eyebrow--center">QUESTIONS</p>
+
+    <div class="faq__list">
+      <div class="faq-item">
+        <button class="faq-item__q" aria-expanded="false">
+          <span>Comment fonctionne le paiement en ligne ?</span>
+          <span class="faq-item__plus">+</span>
+        </button>
+        <div class="faq-item__a"><p>Les locataires paient leur loyer, caution et charges directement depuis l'application, par Mobile Money ou carte bancaire. La plateforme retient une commission avant de reverser le solde au bailleur.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-item__q" aria-expanded="false">
+          <span>Qui peut créer un compte agent de maintenance ou gardien ?</span>
+          <span class="faq-item__plus">+</span>
+        </button>
+        <div class="faq-item__a"><p>Seul un bailleur peut créer ces comptes. Si la personne a déjà un compte sur ROOMRUN, il suffit de la lier à votre cité plutôt que de créer un doublon.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-item__q" aria-expanded="false">
+          <span>Comment mon compte bailleur est-il validé ?</span>
+          <span class="faq-item__plus">+</span>
+        </button>
+        <div class="faq-item__a"><p>Après votre inscription, notre équipe vérifie votre pièce d'identité avant d'activer votre compte. Cela prend généralement moins de 24 heures.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-item__q" aria-expanded="false">
+          <span>Puis-je gérer plusieurs cités ?</span>
+          <span class="faq-item__plus">+</span>
+        </button>
+        <div class="faq-item__a"><p>Oui. Le plan gratuit permet jusqu'à 2 cités ; le plan Pro retire cette limite et donne accès à des statistiques consolidées sur l'ensemble de votre portefeuille.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-item__q" aria-expanded="false">
+          <span>La plateforme est-elle disponible en français ?</span>
+          <span class="faq-item__plus">+</span>
+        </button>
+        <div class="faq-item__a"><p>ROOMRUN est disponible en anglais et en français, avec d'autres langues prévues. Vous pouvez changer de langue à tout moment dans les paramètres de votre compte.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== CTA FINAL ============================== -->
+  <section class="closing rr-reveal">
+    <h2>Prêt à tenir votre registre à jour ?</h2>
+    <p>L'inscription prend quelques minutes. Nous vous accompagnons à chaque étape.</p>
+    <div class="hero__actions">
+      <a href="{% url 'users:signup' %}" class="btn rr-magnetic">Créer un compte <span class="btn__arrow">→</span></a>
+      <a href="{% url 'users:signup' %}" class="link-quiet">ou nous contacter</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================== FOOTER ============================== -->
+<footer class="footer">
+  <div class="footer__top">
+    <div class="footer__brand">
+      <p class="nav__word nav__word--light"><span class="nav__dot"></span>ROOMRUN</p>
+      <p>Un registre calme pour la gestion résidentielle en Afrique centrale.</p>
+    </div>
+
+    <div class="footer__col">
+      <h4>Plateforme</h4>
+      <a href="{% url 'users:signup' %}">Réservations</a>
+      <a href="{% url 'users:signup' %}">Baux</a>
+      <a href="{% url 'users:signup' %}">Paiements</a>
+      <a href="{% url 'users:signup' %}">Maintenance</a>
+    </div>
+
+    <div class="footer__col">
+      <h4>Profils</h4>
+      <a href="{% url 'users:signup' %}">Bailleurs</a>
+      <a href="{% url 'users:signup' %}">Locataires</a>
+      <a href="{% url 'users:signup' %}">Agents &amp; gardiens</a>
+    </div>
+
+    <div class="footer__col">
+      <h4>Entreprise</h4>
+      <a href="{% url 'users:signup' %}">À propos</a>
+      <a href="{% url 'users:signup' %}">Sécurité</a>
+      <a href="{% url 'users:signup' %}">Contact</a>
+    </div>
+  </div>
+
+  <div class="footer__bottom">
+    <p>© 2026 ROOMRUN</p>
+    <p class="footer__cities">DOUALA · YAOUNDÉ · LIBREVILLE</p>
+  </div>
+</footer>
+
+
+
+{% endblock body %}
+{% block inline_javascript %}
+  <script defer src="{% static 'js/landing.js' %}"></script>
+{% endblock inline_javascript %}
