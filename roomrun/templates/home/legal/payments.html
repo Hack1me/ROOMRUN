@@ -1,17 +1,100 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% translate "Payments" %} · ROOMRUN{% endblock title %}
+{% block header %}
+  <header class="sticky top-0 z-50 border-b border-line bg-paper/95">
+    <div class="rr-container flex h-18 items-center justify-between">
+      <a href="{% url 'home' %}" class="flex items-center gap-2 font-display text-lg font-semibold text-primary">
+        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white shadow-md shadow-primary/20">
+          <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </span>
+        RoomRun
+      </a>
+      <a href="{% url 'home' %}" class="flex items-center gap-2 text-sm font-medium text-muted transition-colors hover:text-primary">
+        <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5"/>
+          <path d="M12 19l-7-7 7-7"/>
+        </svg>
+        <span class="hidden sm:inline">{% translate "Back to RoomRun" %}</span>
+      </a>
+    </div>
+  </header>
+{% endblock header %}
+
+{% block bodyclass %}rr-landing-page{% endblock bodyclass %}
 
 {% block content %}
-  <section class="mx-auto max-w-3xl py-10 sm:py-18">
-    <p class="rr-eyebrow">{% translate "LEGAL" %}</p>
-    <h1 class="rr-display mt-5 text-4xl leading-tight sm:text-5xl">{% translate "Payments" %}</h1>
-    <div class="mt-8 space-y-5 text-base leading-8 text-muted">
-      <p>{% translate "ROOMRUN processes payments securely through trusted payment providers." %}</p>
-      <p>{% translate "All transactions are encrypted and handled in compliance with applicable financial regulations." %}</p>
-      <p>{% translate "Refunds, cancellations, and billing disputes are subject to the payment terms outlined in your rental agreement and our general terms of service." %}</p>
-      <p>{% translate "For billing inquiries, please contact our support team." %}</p>
-    </div>
-  </section>
+  <div class="mx-auto max-w-3xl">
+    <section class="border-b border-line bg-paper">
+      <div class="rr-container py-16 sm:py-24">
+        <div class="flex items-center gap-3">
+          <span class="inline-flex items-center gap-2 rounded-full bg-accent-bg px-3 py-1.5 text-xs font-semibold text-primary">
+            <span class="inline-block size-1.5 rounded-full bg-secondary"></span>
+            {% translate "Legal" %}
+          </span>
+        </div>
+        <h1 class="mt-6 font-display text-4xl font-semibold tracking-tight text-primary sm:text-5xl">
+          {% translate "Payments" %}
+        </h1>
+        <p class="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
+          {% translate "ROOMRUN processes payments securely through trusted payment providers." %}
+        </p>
+        <p class="mt-4 text-sm text-muted">
+          {% translate "Last updated" %} <strong class="font-semibold text-primary">23 septembre 2026</strong>
+        </p>
+      </div>
+    </section>
+
+    <main class="py-12 sm:py-18">
+      <div class="rr-container">
+        <div class="space-y-10">
+          <section id="paiements" class="scroll-mt-24">
+            <span class="text-xs font-semibold uppercase tracking-widest text-secondary">01</span>
+            <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "Payment processing" %}</h2>
+            <p class="mt-4 text-base leading-relaxed text-muted">
+              {% translate "All transactions are encrypted and handled in compliance with applicable financial regulations." %}
+            </p>
+          </section>
+
+          <hr class="border-line">
+
+          <section id="remboursements" class="scroll-mt-24">
+            <span class="text-xs font-semibold uppercase tracking-widest text-secondary">02</span>
+            <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "Refunds and disputes" %}</h2>
+            <p class="mt-4 text-base leading-relaxed text-muted">
+              {% translate "Refunds, cancellations, and billing disputes are subject to the payment terms outlined in your rental agreement and our general terms of service." %}
+            </p>
+          </section>
+
+          <hr class="border-line">
+
+          <section id="contact" class="scroll-mt-24">
+            <div class="rounded-2xl bg-primary p-8 text-white sm:p-10">
+              <span class="text-xs font-semibold uppercase tracking-widest text-secondary">03</span>
+              <h2 class="mt-2 text-2xl font-semibold">{% translate "Contact us" %}</h2>
+              <p class="mt-4 max-w-2xl text-sm leading-relaxed text-slate-300">
+                {% translate "For billing inquiries, please contact our support team." %}
+              </p>
+              <a href="mailto:billing@roomrun.example" class="mt-6 inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-slate-100">
+                billing@roomrun.example
+                <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14"/>
+                  <path d="M13 6l6 6-6 6"/>
+                </svg>
+              </a>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
 {% endblock content %}
+
+{% block extra_css %}
+  <style>
+    .scroll-mt-24 { scroll-margin-top: 6rem; }
+  </style>
+{% endblock extra_css %}

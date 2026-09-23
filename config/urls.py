@@ -31,11 +31,30 @@ urlpatterns += i18n_patterns(
         name="about",
     ),
     path(
-        "politique-confidentialite/",
+        "Privacy-policy/",
         TemplateView.as_view(template_name="home/legal/privacy.html"),
         name="privacy",
     ),
-    
+    path(
+        "Legal-Notice/",
+        TemplateView.as_view(template_name="home/legal/terms.html"),
+        name="terms",
+    ),
+    path(
+        "license/",
+        TemplateView.as_view(template_name="home/legal/license.html"),
+        name="license",
+    ),
+    path(
+        "payments/",
+        TemplateView.as_view(template_name="home/legal/payments.html"),
+        name="payments",
+    ),
+    path(
+        "cookies/",
+        TemplateView.as_view(template_name="home/legal/cookies.html"),
+        name="cookies",
+    ),
     path(
         "dashboard/",
         include("users.urls.dashboard_urls", namespace="dashboard"),
