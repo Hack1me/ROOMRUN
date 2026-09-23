@@ -1,4 +1,5 @@
-:root {
+@scope (body.rr-landing-page) {
+  :scope {
   --navy-deep:#16283F;
   --navy:#1E3A5F;
   --terracotta:#C1622D;
@@ -521,4 +522,80 @@ em{color:var(--terracotta);font-style:italic}
     transition:none!important;
     transform:none!important;
   }
+}
+.hero {
+  isolation: isolate;
+  min-height: 46rem;
+  overflow: clip;
+}
+.hero > :not(.hero__visual) {
+  position: relative;
+  z-index: 1;
+}
+.hero__visual {
+  position: absolute;
+  z-index: 0;
+  top: 1.25rem;
+  right: max(-8rem, calc((1180px - 100vw) / 2));
+  width: min(74vw, 61rem);
+  height: calc(100% - 2.5rem);
+  overflow: hidden;
+  background: #dbeafe;
+  clip-path: polygon(18% 5%, 44% 5%, 53% 0, 69% 6%, 78% 13%, 100% 15%, 100% 68%, 88% 72%, 82% 91%, 65% 100%, 47% 94%, 31% 96%, 16% 85%, 23% 68%, 13% 52%, 19% 35%, 5% 21%);
+}
+.hero__visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--paper) 0%, color-mix(in srgb, var(--paper) 88%, transparent) 18%, color-mix(in srgb, var(--paper) 28%, transparent) 44%, transparent 68%);
+  pointer-events: none;
+}
+.hero__visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.hero__visual-ring {
+  position: absolute;
+  top: 19%;
+  right: 22%;
+  width: 13rem;
+  aspect-ratio: 1;
+  border: 1px solid rgb(255 255 255 / .82);
+  border-radius: 50%;
+}
+.hero__visual-blob {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  background: linear-gradient(135deg, #2563eb, #7fb2ff);
+}
+.hero__visual-blob--top {
+  top: 3%;
+  right: -3%;
+  width: 18rem;
+  height: 12rem;
+  clip-path: polygon(22% 2%, 100% 8%, 100% 100%, 0 80%, 4% 28%);
+}
+.hero__visual-blob--bottom {
+  right: 2%;
+  bottom: 10%;
+  width: 10rem;
+  height: 7rem;
+  clip-path: ellipse(34% 48% at 55% 50%);
+  transform: rotate(-38deg);
+}
+@media (max-width: 900px) {
+  .hero { min-height: 42rem; }
+  .hero__visual {
+    right: -12rem;
+    width: min(105vw, 53rem);
+    opacity: .58;
+  }
+}
+@media (max-width: 640px) {
+  .hero { min-height: auto; }
+  .hero__visual { display: none; }
+}
 }

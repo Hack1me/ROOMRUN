@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Payments" %} · ROOMRUN{% endblock title %}
+
+{% block content %}
+  <section class="mx-auto max-w-3xl py-10 sm:py-18">
+    <p class="rr-eyebrow">{% translate "LEGAL" %}</p>
+    <h1 class="rr-display mt-5 text-4xl leading-tight sm:text-5xl">{% translate "Payments" %}</h1>
+    <div class="mt-8 space-y-5 text-base leading-8 text-muted">
+      <p>{% translate "ROOMRUN processes payments securely through trusted payment providers." %}</p>
+      <p>{% translate "All transactions are encrypted and handled in compliance with applicable financial regulations." %}</p>
+      <p>{% translate "Refunds, cancellations, and billing disputes are subject to the payment terms outlined in your rental agreement and our general terms of service." %}</p>
+      <p>{% translate "For billing inquiries, please contact our support team." %}</p>
+    </div>
+  </section>
+{% endblock content %}

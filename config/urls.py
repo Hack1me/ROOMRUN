@@ -31,6 +31,12 @@ urlpatterns += i18n_patterns(
         name="about",
     ),
     path(
+        "politique-confidentialite/",
+        TemplateView.as_view(template_name="home/legal/privacy.html"),
+        name="privacy",
+    ),
+    
+    path(
         "dashboard/",
         include("users.urls.dashboard_urls", namespace="dashboard"),
     ),

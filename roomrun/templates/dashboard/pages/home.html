@@ -4,12 +4,6 @@
 {% block title %}ROOMRUN — {% translate "Le registre de votre cité" %}{% endblock title %}
 {% block bodyclass %}rr-landing-page{% endblock bodyclass %}
 {% block header %}{% endblock header %}
-{% block css %}
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link href="{% static 'css/landing.css' %}" rel="stylesheet" />
-{% endblock css %}
 {% block body %}
 
 
@@ -29,8 +23,12 @@
   </nav>
 
   <div class="nav__actions">
-    <a href="{% url 'users:signin' %}" class="nav__login">Se connecter</a>
-    <a href="{% url 'users:signup' %}" class="nav__cta rr-magnetic">Créer un compte</a>
+    {% if request.user.is_authenticated %}
+      <a href="{% url 'dashboard:dashboard' %}" class="nav__cta rr-magnetic">Dashboard</a>
+    {% else %}
+      <a href="{% url 'users:signin' %}" class="nav__login">Se connecter</a>
+      <a href="{% url 'users:signup' %}" class="nav__cta rr-magnetic">Créer un compte</a>
+    {% endif %}
   </div>
 
   <button class="nav__burger" id="nav-burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobile-menu">
@@ -44,8 +42,12 @@
   <a href="#resultats">Résultats</a>
   <a href="#tarifs">Tarifs</a>
   <hr>
-  <a href="{% url 'users:signin' %}">Se connecter</a>
-  <a href="{% url 'users:signup' %}" class="mobile-menu__cta">Créer un compte</a>
+  {% if request.user.is_authenticated %}
+    <a href="{% url 'dashboard:dashboard' %}" class="mobile-menu__cta">Dashboard</a>
+  {% else %}
+    <a href="{% url 'users:signin' %}">Se connecter</a>
+    <a href="{% url 'users:signup' %}" class="mobile-menu__cta">Créer un compte</a>
+  {% endif %}
 </div>
 
 <!-- ============================== INDEX RAIL ============================== -->
@@ -61,6 +63,13 @@
 
   <!-- ============================== 00 — APERÇU ============================== -->
   <section class="hero" id="apercu">
+    <div class="hero__visual" aria-hidden="true">
+      <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=88" alt="" fetchpriority="high">
+      <span class="hero__visual-ring"></span>
+      <span class="hero__visual-blob hero__visual-blob--top"></span>
+      <span class="hero__visual-blob hero__visual-blob--bottom"></span>
+    </div>
+
     <h1 class="hero__headline rr-reveal">La gestion d'une cité,<br>enfin écrite <em>au propre.</em></h1>
 
     <p class="hero__subhead rr-reveal">Réservations, baux, paiements, maintenance et visiteurs — réunis dans un seul registre, partagé par bailleurs, locataires, agents et gardiens.</p>

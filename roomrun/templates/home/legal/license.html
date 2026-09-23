@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "License" %} · ROOMRUN{% endblock title %}
+
+{% block content %}
+  <section class="mx-auto max-w-3xl py-10 sm:py-18">
+    <p class="rr-eyebrow">{% translate "LEGAL" %}</p>
+    <h1 class="rr-display mt-5 text-4xl leading-tight sm:text-5xl">{% translate "License" %}</h1>
+    <div class="mt-8 space-y-5 text-base leading-8 text-muted">
+      <p>{% translate "ROOMRUN is licensed to users for use under the terms and conditions set forth in this agreement." %}</p>
+      <p>{% translate "All content, features, and functionality of the platform are owned by ROOMRUN and are protected by international copyright, trademark, and other intellectual property laws." %}</p>
+      <p>{% translate "Unauthorized use of this platform may violate these laws and result in legal consequences." %}</p>
+    </div>
+  </section>
+{% endblock content %}
