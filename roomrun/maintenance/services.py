@@ -49,6 +49,52 @@ class MaintenanceWorkflowService:
 
     @staticmethod
     @transaction.atomic
+    def create_landlord_request(*, landlord, data, photos, user):
+        unit = data["unit"]
+        contract = (
+            RentalContract.objects.select_for_update()
+            .filter(tenant__isnull=False, unit=unit, status=ContractStatus.ACTIVE)
+            .select_related("tenant")
+            .first()
+        )
+        if not contract:
+            raise ValidationError(_("Select a unit with an active lease."))
+        agent = data["maintenance_agent"]
+        if not agent.landlords.filter(pk=landlord.pk).exists():
+            raise ValidationError(
+                _("Select a maintenance agent linked to your account.")
+            )
+        request = MaintenanceRequest(
+            tenant=contract.tenant,
+            unit=unit,
+            title=data["title"],
+            description=data["description"],
+            priority=data["priority"],
+            status=RequestStatus.IN_PROGRESS,
+            created_by=user,
+            updated_by=user,
+        )
+        request.save()
+        for photo in photos:
+            MaintenanceRequestAttachment.objects.create(
+                maintenance_request=request,
+                file=photo,
+                created_by=user,
+                updated_by=user,
+            )
+        Task.objects.create(
+            maintenance_request=request,
+            maintenance_agent=agent,
+            title=request.title,
+            description=request.description,
+            status=TaskStatus.ASSIGNED,
+            created_by=user,
+            updated_by=user,
+        )
+        return request
+
+    @staticmethod
+    @transaction.atomic
     def claim_request(*, request_id, agent, user):
         request = MaintenanceRequest.objects.select_for_update().get(pk=request_id)
         if request.status != RequestStatus.PENDING:

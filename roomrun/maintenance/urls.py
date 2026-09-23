@@ -11,6 +11,11 @@ urlpatterns = [
         name="landlord-request-list",
     ),
     path(
+        "landlord/requests/new/",
+        views.LandlordRequestCreateView.as_view(),
+        name="landlord-request-create",
+    ),
+    path(
         "landlord/requests/<uuid:pk>/",
         views.LandlordRequestDetailView.as_view(),
         name="landlord-request-detail",

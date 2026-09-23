@@ -2,6 +2,9 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from maintenance.models import MaintenanceRequest
+from properties.models import Unit
+from users.models import MaintenanceAgent
+from utils.enums import EmployeeStatus
 from utils.enums import Priority
 
 
@@ -62,6 +65,32 @@ class MaintenanceRequestForm(forms.ModelForm):
             # This explicit copy is intentionally retained as a safety reminder.
             return priority
         return priority
+
+
+class LandlordMaintenanceRequestForm(MaintenanceRequestForm):
+    unit = forms.ModelChoiceField(queryset=Unit.objects.none(), label=_("Unit"))
+    maintenance_agent = forms.ModelChoiceField(
+        queryset=MaintenanceAgent.objects.none(), label=_("Maintenance agent")
+    )
+
+    class Meta(MaintenanceRequestForm.Meta):
+        fields = ("unit", "title", "description", "priority")
+
+    def __init__(self, *args, landlord, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["unit"].queryset = (
+            Unit.objects.filter(
+                building__property_ref__landlord=landlord,
+                rental_contracts__status="ACTIVE",
+            )
+            .distinct()
+            .select_related("building", "building__property_ref")
+        )
+        self.fields["maintenance_agent"].queryset = MaintenanceAgent.objects.filter(
+            landlords=landlord, employee__status=EmployeeStatus.ACTIVE
+        ).select_related("employee__user")
+        self.fields["unit"].widget.attrs["class"] = "form-select"
+        self.fields["maintenance_agent"].widget.attrs["class"] = "form-select"
 
 
 class TaskProgressForm(forms.Form):

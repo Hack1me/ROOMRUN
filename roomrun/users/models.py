@@ -538,6 +538,14 @@ class MaintenanceAgent(BaseModel):
         help_text=_("Technical speciality of the maintenance agent."),
     )
 
+    landlords = models.ManyToManyField(
+        "Landlord",
+        blank=True,
+        related_name="maintenance_agents",
+        verbose_name=_("Landlords"),
+        help_text=_("Landlords who can assign this maintenance agent."),
+    )
+
     class Meta:
         db_table = "maintenance_agents"
         ordering = ["-created_at"]

@@ -12,6 +12,7 @@ from django.views.generic import CreateView
 from django.views.generic import DetailView
 from django.views.generic import FormView
 from django.views.generic import ListView
+from maintenance.forms import LandlordMaintenanceRequestForm
 from maintenance.forms import MaintenanceRequestForm
 from maintenance.forms import TaskProgressForm
 from maintenance.models import MaintenanceRequest
@@ -93,6 +94,32 @@ class TenantRequestCancelView(TenantRequiredMixin, View):
         except ValidationError as exc:
             messages.error(request, "; ".join(exc.messages))
         return redirect("maintenance:request-detail", pk=pk)
+
+
+class LandlordRequestCreateView(LandlordRequiredMixin, CreateView):
+    form_class = LandlordMaintenanceRequestForm
+    template_name = "dashboard/maintenance/landlord/request_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["landlord"] = self.get_landlord()
+        return kwargs
+
+    def form_valid(self, form):
+        try:
+            maintenance_request = MaintenanceWorkflowService.create_landlord_request(
+                landlord=self.get_landlord(),
+                data=form.cleaned_data,
+                photos=form.cleaned_data.get("photos", []),
+                user=self.request.user,
+            )
+        except ValidationError as exc:
+            form.add_error(None, exc)
+            return self.form_invalid(form)
+        messages.success(self.request, _("Maintenance request created and assigned."))
+        return redirect(
+            "maintenance:landlord-request-detail", pk=maintenance_request.pk
+        )
 
 
 class LandlordRequestListView(LandlordRequiredMixin, ListView):
