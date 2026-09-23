@@ -156,6 +156,8 @@ class PaymentStatus(models.TextChoices):
     REFUNDED = "REFUNDED", _("Refunded")
     CANCELLED = "CANCELLED", _("Cancelled")
 
+class PaymentProvider(models.TextChoices):
+    CAMPAY = "CAMPAY", _("CamPay")
 
 class Priority(models.TextChoices):
     """

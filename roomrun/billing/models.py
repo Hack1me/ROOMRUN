@@ -10,6 +10,7 @@ from rentals.models import RentalContract
 from utils.enums import ChargeStatus
 from utils.enums import ChargeType
 from utils.enums import PaymentMethod
+from utils.enums import PaymentProvider
 from utils.enums import PaymentStatus
 
 
@@ -124,17 +125,20 @@ class Charge(BaseModel):
     def balance_due(self) -> Money:
         return max(self.amount - self.total_paid, Money(0, self.amount.currency))
 
+
     @property
     def is_overdue(self) -> bool:
         return (
-            self.balance_due > Money(0, self.amount.currency)
+            self.balance_due.amount > 0
             and self.due_date < timezone.localdate()
         )
 
     def refresh_status(self) -> None:
-        if self.balance_due == Money(0, self.amount.currency):
+        zero = Money(0, self.amount.currency)
+
+        if self.balance_due.amount == zero:
             status = ChargeStatus.PAID
-        elif self.total_paid > Money(0, self.amount.currency):
+        elif self.total_paid.amount > zero:
             status = ChargeStatus.PARTIAL
         elif self.is_overdue:
             status = ChargeStatus.OVERDUE
@@ -144,7 +148,6 @@ class Charge(BaseModel):
         if self.status != status:
             self.status = status
             self.save(update_fields=["status", "updated_at"])
-
 
 # PAYEMENT
 class Payment(BaseModel):
@@ -186,6 +189,23 @@ class Payment(BaseModel):
         help_text=_("Payment amount in the local currency."),
     )
 
+    provider = models.CharField(
+        max_length=30,
+        blank=True,
+        choices=PaymentProvider.choices,
+        verbose_name=_("Payment provider"),
+        help_text=_(
+            "External payment provider used to process the payment."
+        ),
+    )
+
+    operator = models.CharField(
+        max_length=30,
+        blank=True,
+        verbose_name=_("Operator"),
+        help_text=_("Mobile money operator used for the payment."),
+    )
+
     payment_method = models.CharField(
         max_length=30,
         choices=PaymentMethod.choices,
@@ -201,13 +221,25 @@ class Payment(BaseModel):
         help_text=_("Current payment status."),
     )
 
-    transaction_reference = models.CharField(
+    provider_reference = models.CharField(
         max_length=100,
         unique=True,
-        null=True,  # Required for gateways that don't provide a reference
+        null=True,
         blank=True,
         verbose_name=_("Transaction reference"),
-        help_text=_("External reference from the payment gateway."),
+        help_text=_(
+            "External transaction reference returned by the payment gateway."
+        ),
+    )
+
+    external_reference = models.CharField(
+        max_length=100,
+        unique=True,
+        editable=False,
+        verbose_name=_("External reference"),
+        help_text=_(
+            "Unique reference used to identify this payment externally."
+        ),
     )
 
     paid_at = models.DateTimeField(

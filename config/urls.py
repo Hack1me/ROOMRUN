@@ -47,6 +47,10 @@ urlpatterns += i18n_patterns(
         include("rentals.urls", namespace="rentals"),
     ),
     path(
+        "billing/",
+        include("billing.urls", namespace="billing"),
+    ),
+    path(
         "communications/",
         include("communications.urls", namespace="communications"),
     ),
