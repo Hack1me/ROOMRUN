@@ -1,3 +1,5 @@
+import hashlib
+import hmac
 import logging
 from dataclasses import dataclass
 from decimal import Decimal
@@ -15,6 +17,7 @@ CURRENCY = "XAF"
 # Base exception
 # =============================================================================
 
+
 class PaymentGatewayError(Exception):
     """Base exception for all payment gateway errors."""
 
@@ -23,9 +26,11 @@ class PaymentGatewayError(Exception):
 # Dataclasses
 # =============================================================================
 
+
 @dataclass
 class CamPayCollectResult:
     """Structured result for a collect call."""
+
     reference: str
     status: str
     raw: dict[str, Any]
@@ -34,6 +39,7 @@ class CamPayCollectResult:
 @dataclass
 class CamPayStatusResult:
     """Structured result for a status call."""
+
     reference: str
     status: str
     amount: Decimal | None
@@ -44,6 +50,7 @@ class CamPayStatusResult:
 # CamPay exception
 # =============================================================================
 
+
 class CamPayGatewayError(PaymentGatewayError):
     """Raised when CamPay API returns an error."""
 
@@ -51,6 +58,7 @@ class CamPayGatewayError(PaymentGatewayError):
 # =============================================================================
 # CamPay gateway
 # =============================================================================
+
 
 class CamPayGateway:
     """
@@ -98,17 +106,22 @@ class CamPayGateway:
 
         logger.info(
             "CamPay collect | ref=%s | phone=%s | amount=%s",
-            external_reference, phone_number, amount,
+            external_reference,
+            phone_number,
+            amount,
         )
 
         response = self.client.initCollect(payload)
 
         # CamPay returns {"status": "FAILED", "message": "..."} on error.
-        if response.get("status") == "FAILED" or ("message" in response and "reference" not in response):
+        if response.get("status") == "FAILED" or (
+            "message" in response and "reference" not in response
+        ):
             message = response.get("message", "Unknown CamPay error.")
             logger.error(
                 "CamPay collect failed | ref=%s | message=%s",
-                external_reference, message,
+                external_reference,
+                message,
             )
             raise CamPayGatewayError(message)
 
@@ -116,7 +129,8 @@ class CamPayGateway:
         if not reference:
             logger.error(
                 "CamPay collect: no reference in response | ref=%s | response=%s",
-                external_reference, response,
+                external_reference,
+                response,
             )
             msg = "CamPay did not return a reference."
             raise CamPayGatewayError(msg)
@@ -143,11 +157,14 @@ class CamPayGateway:
         response = self.client.get_transaction_status({"reference": reference})
 
         # CamPay returns {"status": "", "message": "..."} on error.
-        if response.get("status") == "" or (response.get("message") and not response.get("status")):
+        if response.get("status") == "" or (
+            response.get("message") and not response.get("status")
+        ):
             message = response.get("message", "Unknown CamPay error.")
             logger.error(
                 "CamPay status failed | ref=%s | message=%s",
-                reference, message,
+                reference,
+                message,
             )
             raise CamPayGatewayError(message)
 
@@ -156,7 +173,8 @@ class CamPayGateway:
 
         logger.info(
             "CamPay status OK | ref=%s | status=%s",
-            reference, response.get("status"),
+            reference,
+            response.get("status"),
         )
 
         return CamPayStatusResult(
@@ -172,5 +190,8 @@ class CamPayGateway:
 
     def verify_webhook_signature(self, payload: bytes, signature: str) -> bool:
         """Validate the authenticity of an incoming CamPay webhook."""
-        # TODO: implement once you know CamPay's webhook signing method.
-        return True
+        secret = getattr(settings, "CAMPAY_WEBHOOK_SECRET", "")
+        if not secret or not signature:
+            return False
+        expected = hmac.new(secret.encode(), payload, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(expected, signature)

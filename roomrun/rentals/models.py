@@ -11,7 +11,6 @@ from rentals.managers import LandlordRentalManager
 from users.models import Tenant
 from utils.enums import ApplicationStatus
 from utils.enums import ContractStatus
-from utils.enums import UnitStatus
 
 
 # RENTAL APPLICATION
@@ -61,10 +60,10 @@ class RentalApplication(BaseModel):
     )
 
     desired_duration = models.PositiveIntegerField(
-    null=True,
-    blank=True,
-    verbose_name=_("Desired duration"),
-    help_text=_("Desired rental duration in months."),
+        null=True,
+        blank=True,
+        verbose_name=_("Desired duration"),
+        help_text=_("Desired rental duration in months."),
     )
 
     occupants_count = models.PositiveIntegerField(
@@ -235,9 +234,9 @@ class RentalContract(BaseModel):
     )
 
     advance_rent_months = models.PositiveIntegerField(
-    default=1,
-    verbose_name=_("Advance rent (months)"),
-    help_text=_("Number of months paid in advance."),
+        default=1,
+        verbose_name=_("Advance rent (months)"),
+        help_text=_("Number of months paid in advance."),
     )
 
     monthly_rent = MoneyField(
@@ -288,22 +287,18 @@ class RentalContract(BaseModel):
         ],
         null=True,
         blank=True,
-        help_text=_(
-            "Digital signature of the landlord (SVG, base64 PNG, or hash)."
-        ),
+        help_text=_("Digital signature of the landlord (SVG, base64 PNG, or hash)."),
     )
 
     tenant_signature = models.ImageField(
         _("Tenant signature"),
         upload_to="contracts/signatures/",
         validators=[
-        validate_signature,
+            validate_signature,
         ],
         null=True,
         blank=True,
-        help_text=_(
-            "Digital signature of the tenant (SVG, base64 PNG, or hash)."
-        ),
+        help_text=_("Digital signature of the tenant (SVG, base64 PNG, or hash)."),
     )
 
     landlord_objects = LandlordRentalManager()
@@ -329,8 +324,8 @@ class RentalContract(BaseModel):
             # A unit can have only one active contract at a time.
             models.UniqueConstraint(
                 fields=["unit"],
-                condition=models.Q(status="ACTIVE"),
-                name="unique_active_contract_per_unit",
+                condition=models.Q(status__in=["SIGNING", "SIGNED", "ACTIVE"]),
+                name="unique_open_contract_per_unit",
             ),
         ]
 
@@ -344,9 +339,7 @@ class RentalContract(BaseModel):
 
     @property
     def initial_payment(self):
-        return self.deposit + (
-            self.monthly_rent * self.advance_rent_months
-        )
+        return self.deposit + (self.monthly_rent * self.advance_rent_months)
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the contract detail view."""

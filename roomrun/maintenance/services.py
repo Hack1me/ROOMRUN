@@ -28,6 +28,9 @@ class MaintenanceWorkflowService:
                 _("You need an active lease to report a maintenance issue.")
             )
 
+        if not contract.unit.building.property_ref.maintenance_management_enabled:
+            raise ValidationError(_("Maintenance is not enabled for this property."))
+
         request = MaintenanceRequest(
             tenant=tenant,
             unit=contract.unit,
@@ -51,6 +54,8 @@ class MaintenanceWorkflowService:
     @transaction.atomic
     def create_landlord_request(*, landlord, data, photos, user):
         unit = data["unit"]
+        if not unit.building.property_ref.maintenance_management_enabled:
+            raise ValidationError(_("Maintenance is not enabled for this property."))
         contract = (
             RentalContract.objects.select_for_update()
             .filter(tenant__isnull=False, unit=unit, status=ContractStatus.ACTIVE)

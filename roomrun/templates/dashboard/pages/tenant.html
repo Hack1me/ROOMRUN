@@ -124,14 +124,14 @@
             <h2 class="section-title">{% translate "Quick actions" %}</h2>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <button class="action-btn">
+            <a href="{% url 'billing:tenant-charge-list' %}" class="action-btn">
               <div class="action-icon green"><i class="ti ti-credit-card"></i></div>
               <div>
                 <div class="action-name">{% translate "Pay my rent" %}</div>
                 <div class="action-description">{% translate "Make a payment" %}</div>
               </div>
               <i class="ti ti-chevron-right"></i>
-            </button>
+            </a>
             <a href="{% url 'maintenance:request-create' %}" class="action-btn">
               <div class="action-icon orange"><i class="ti ti-tool"></i></div>
               <div>

@@ -44,7 +44,7 @@ class SignatureImageField(forms.ImageField):
                     content=base64.b64decode(encoded_image, validate=True),
                     content_type=content_type,
                 )
-            except (KeyError, ValueError, binascii.Error):
+            except KeyError, ValueError, binascii.Error:
                 raise forms.ValidationError(
                     _("Submit a valid PNG or JPEG signature."),
                     code="invalid_signature",
@@ -103,10 +103,12 @@ class RentalApplicationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.tenant = tenant
 
-        self.fields["unit"].queryset = (
-            Unit.objects
-            .select_related("building", "building__property_ref__landlord")
-            .filter(status=UnitStatus.AVAILABLE)
+        self.fields["unit"].queryset = Unit.objects.select_related(
+            "building", "building__property_ref__landlord"
+        ).filter(
+            status=UnitStatus.AVAILABLE,
+            building__property_ref__status="ACTIVE",
+            building__property_ref__tenant_management_enabled=True,
         )
 
         # These fields are required for a new application.
@@ -131,18 +133,14 @@ class RentalApplicationForm(forms.ModelForm):
         """Ensure the duration is at least 1 month."""
         duration = self.cleaned_data["desired_duration"]
         if duration is not None and duration < 1:
-            raise forms.ValidationError(
-                _("Rental duration must be at least 1 month.")
-            )
+            raise forms.ValidationError(_("Rental duration must be at least 1 month."))
         return duration
 
     def clean_occupants_count(self):
         """Ensure there is at least one occupant."""
         occupants = self.cleaned_data["occupants_count"]
         if occupants is not None and occupants < 1:
-            raise forms.ValidationError(
-                _("There must be at least one occupant.")
-            )
+            raise forms.ValidationError(_("There must be at least one occupant."))
         return occupants
 
     # -------------------------------------------------------------------------
@@ -214,9 +212,13 @@ class RentalContractForm(forms.ModelForm):
         )
 
         widgets = {
-            "start_date": forms.DateInput(attrs={"type": "date", "class": "form-input"}),
+            "start_date": forms.DateInput(
+                attrs={"type": "date", "class": "form-input"}
+            ),
             "end_date": forms.DateInput(attrs={"type": "date", "class": "form-input"}),
-            "advance_rent_months": forms.NumberInput(attrs={"min": 1, "class": "form-input"}),  # noqa: E501
+            "advance_rent_months": forms.NumberInput(
+                attrs={"min": 1, "class": "form-input"}
+            ),
         }
 
         labels = {
@@ -276,6 +278,7 @@ class RentalContractForm(forms.ModelForm):
 
         return cleaned_data
 
+
 class DirectRentalContractForm(RentalContractForm):
     """
     Form used by a landlord to create a rental contract directly.
@@ -325,8 +328,7 @@ class DirectRentalContractForm(RentalContractForm):
 
         # Units: only available units belonging to this landlord.
         self.fields["unit"].queryset = (
-            Unit.objects
-            .select_related("building", "building__property_ref")
+            Unit.objects.select_related("building", "building__property_ref")
             .filter(
                 building__property_ref__landlord=landlord,
                 status=UnitStatus.AVAILABLE,
@@ -347,10 +349,8 @@ class DirectRentalContractForm(RentalContractForm):
             return None
 
         try:
-            tenant = (
-                Tenant.objects
-                .select_related("user")
-                .get(pk=tenant_id, user__is_active=True)
+            tenant = Tenant.objects.select_related("user").get(
+                pk=tenant_id, user__is_active=True
             )
         except Tenant.DoesNotExist:
             raise forms.ValidationError(
@@ -381,10 +381,7 @@ class DirectRentalContractForm(RentalContractForm):
 
         if "@" not in value:
             raise forms.ValidationError(
-                _(
-                    "No tenant found. To invite someone, enter their full "
-                    "email address."
-                )
+                _("No tenant found. To invite someone, enter their full email address.")
             )
 
         # Validate email format.
@@ -469,10 +466,13 @@ class DirectRentalContractForm(RentalContractForm):
             )
 
         # ---- Only check tenant active contracts if an existing tenant was chosen. ----
-        if tenant and RentalContract.objects.filter(
-            tenant=tenant,
-            status=ContractStatus.ACTIVE,
-        ).exists():
+        if (
+            tenant
+            and RentalContract.objects.filter(
+                tenant=tenant,
+                status=ContractStatus.ACTIVE,
+            ).exists()
+        ):
             self.add_error(
                 "tenant_search",
                 _("This tenant already has an active rental contract."),
@@ -508,7 +508,9 @@ class TenantContractSignatureForm(forms.ModelForm):
     tenant_signature = SignatureImageField(
         required=True,
         label=_("Tenant signature"),
-        help_text=_("Sign the contract using your handwritten signature (PNG or JPEG)."),
+        help_text=_(
+            "Sign the contract using your handwritten signature (PNG or JPEG)."
+        ),
     )
 
     class Meta:

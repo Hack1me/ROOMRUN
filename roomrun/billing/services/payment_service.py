@@ -59,14 +59,10 @@ class PaymentService:
         """
         # --- 1. Validate state ---
         if payment.status != PaymentStatus.PENDING:
-            raise ValidationError(
-                _("Only pending payments can be initiated.")
-            )
+            raise ValidationError(_("Only pending payments can be initiated."))
 
         if not payment.external_reference:
-            raise ValidationError(
-                _("Payment external reference is required.")
-            )
+            raise ValidationError(_("Payment external reference is required."))
 
         # --- 2. Call the gateway ---
         try:
@@ -88,16 +84,18 @@ class PaymentService:
 
         # --- 3. Update the payment record ---
         payment.provider = PaymentProvider.CAMPAY
-        payment.transaction_reference = result.reference
+        payment.provider_reference = result.reference
         payment.operator = result.raw.get("operator", "")
 
         try:
-            payment.save(update_fields=[
-                "provider",
-                "transaction_reference",
-                "operator",
-                "updated_at",
-            ])
+            payment.save(
+                update_fields=[
+                    "provider",
+                    "provider_reference",
+                    "operator",
+                    "updated_at",
+                ]
+            )
         except IntegrityError as exc:
             logger.exception(
                 "Duplicate transaction_reference | ref=%s",
@@ -134,16 +132,12 @@ class PaymentService:
         if payment.provider != PaymentProvider.CAMPAY:
             raise ValidationError(_("This payment does not use CamPay."))
 
-        if not payment.transaction_reference:
-            raise ValidationError(
-                _("Payment has no provider transaction reference.")
-            )
+        if not payment.provider_reference:
+            raise ValidationError(_("Payment has no provider transaction reference."))
 
         # --- 2. Query the gateway ---
         try:
-            result = self.gateway.get_transaction_status(
-                payment.transaction_reference
-            )
+            result = self.gateway.get_transaction_status(payment.provider_reference)
         except PaymentGatewayError as exc:
             logger.exception(
                 "CamPay status check failed | payment=%s",
@@ -158,6 +152,8 @@ class PaymentService:
 
         # --- 3. Map provider status to our status ---
         if provider_status == "SUCCESSFUL":
+            if result.amount is not None and result.amount != payment.amount.amount:
+                raise PaymentServiceError(_("Provider payment amount does not match."))
             payment.status = PaymentStatus.COMPLETED
             if not payment.paid_at:
                 payment.paid_at = timezone.now()
@@ -185,6 +181,12 @@ class PaymentService:
         # --- 4. Persist only if something changed ---
         if update_fields:
             payment.save(update_fields=update_fields)
+            if payment.status == PaymentStatus.COMPLETED:
+                from rentals.services import RentalContractService  # noqa: PLC0415
+                from utils.enums import ChargeType  # noqa: PLC0415
+
+                if payment.charge.charge_type == ChargeType.INITIAL_PAYMENT:
+                    RentalContractService.activate(contract=payment.charge.contract)
 
         logger.info(
             "Payment synchronized | payment=%s | status=%s",
@@ -192,6 +194,7 @@ class PaymentService:
             payment.status,
         )
         return payment
+
     # -------------------------------------------------------------------------
     # Cancellation (optional, for failed/abandoned payments)
     # -------------------------------------------------------------------------
@@ -202,27 +205,23 @@ class PaymentService:
         Mark a pending payment as failed (abandoned by the user).
         """
         if payment.status != PaymentStatus.PENDING:
-            raise ValidationError(
-                _("Only pending payments can be cancelled.")
-            )
+            raise ValidationError(_("Only pending payments can be cancelled."))
 
         payment.status = PaymentStatus.FAILED
         payment.save(update_fields=["status", "updated_at"])
 
-        logger.info(
-            "Payment cancelled | payment=%s", payment.payment_number
-        )
+        logger.info("Payment cancelled | payment=%s", payment.payment_number)
         return payment
 
     # ----------------------------------------------
     # WEBHOOK
-    #-----------------------------------------------
+    # -----------------------------------------------
 
     @transaction.atomic
     def handle_provider_notification(
         self,
         *,
-        transaction_reference: str,
+        provider_reference: str,
     ) -> Payment | None:
         """
         Handle a payment notification received from CamPay.
@@ -234,25 +233,21 @@ class PaymentService:
             PaymentServiceError: If the status check fails.
         """
         try:
-            payment = (
-                Payment.objects
-                .select_for_update()
-                .get(
-                    transaction_reference=transaction_reference,
-                    provider=PaymentProvider.CAMPAY,
-                )
+            payment = Payment.objects.select_for_update().get(
+                provider_reference=provider_reference,
+                provider=PaymentProvider.CAMPAY,
             )
         except Payment.DoesNotExist:
             logger.warning(
                 "Webhook received for unknown transaction | ref=%s",
-                transaction_reference,
+                provider_reference,
             )
             return None
 
         logger.info(
             "Webhook processing | payment=%s | ref=%s",
             payment.payment_number,
-            transaction_reference,
+            provider_reference,
         )
 
         return self.synchronize(payment=payment)

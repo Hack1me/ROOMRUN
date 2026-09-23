@@ -37,6 +37,19 @@ class RentalApplicationService:
         for forbidden in ("tenant", "status", "reviewed_by", "reviewed_at"):
             data.pop(forbidden, None)
 
+        unit = Unit.objects.select_related("building__property_ref").get(
+            pk=data["unit"].pk
+        )
+        if unit.status != UnitStatus.AVAILABLE:
+            raise ValidationError(_("This unit is no longer available."))
+        if (
+            unit.building.property_ref.status != "ACTIVE"
+            or not unit.building.property_ref.tenant_management_enabled
+        ):
+            raise ValidationError(
+                _("Rental applications are not enabled for this property.")
+            )
+        data["unit"] = unit
         application = RentalApplication(
             tenant=tenant,
             status=ApplicationStatus.PENDING,
@@ -64,16 +77,12 @@ class RentalApplicationService:
         and transition it to the target status.
         """
         # Re-fetch with a row lock to prevent concurrent reviews.
-        application = (
-            RentalApplication.objects
-            .select_for_update()
-            .get(pk=application.pk)
+        application = RentalApplication.objects.select_for_update().get(
+            pk=application.pk
         )
 
         if application.status != ApplicationStatus.PENDING:
-            raise ValidationError(
-                _("This application has already been reviewed.")
-            )
+            raise ValidationError(_("This application has already been reviewed."))
 
         application.status = new_status
         application.reviewed_at = timezone.now()
@@ -118,22 +127,17 @@ class RentalApplicationService:
     @transaction.atomic
     def cancel(*, application: RentalApplication) -> RentalApplication:
         """Cancel a pending rental application (typically by the tenant)."""
-        application = (
-            RentalApplication.objects
-            .select_for_update()
-            .get(pk=application.pk)
+        application = RentalApplication.objects.select_for_update().get(
+            pk=application.pk
         )
 
         if application.status != ApplicationStatus.PENDING:
-            raise ValidationError(
-                _("Only pending applications can be cancelled.")
-            )
+            raise ValidationError(_("Only pending applications can be cancelled."))
 
         application.status = ApplicationStatus.CANCELLED
         application.save(update_fields=["status", "updated_at"])
 
         return application
-
 
 
 class RentalContractService:
@@ -166,9 +170,14 @@ class RentalContractService:
         # 2. Sanitize incoming data
         data = dict(data)
         for forbidden in (
-            "tenant", "unit", "application", "status",
-            "landlord_signature", "landlord_signed_at",
-            "tenant_signature", "tenant_signed_at",
+            "tenant",
+            "unit",
+            "application",
+            "status",
+            "landlord_signature",
+            "landlord_signed_at",
+            "tenant_signature",
+            "tenant_signed_at",
         ):
             data.pop(forbidden, None)
 
@@ -179,18 +188,18 @@ class RentalContractService:
 
         if RentalContract.objects.filter(
             unit=unit,
-            status__in=(ContractStatus.ACTIVE, ContractStatus.SIGNING),
+            status__in=(
+                ContractStatus.ACTIVE,
+                ContractStatus.SIGNING,
+                ContractStatus.SIGNED,
+            ),
         ).exists():
-            raise ValidationError(
-                _("This unit already has a contract in progress.")
-            )
+            raise ValidationError(_("This unit already has a contract in progress."))
 
         # 4. Lock and validate the application
         if application:
-            application = (
-                RentalApplication.objects
-                .select_for_update()
-                .get(pk=application.pk)
+            application = RentalApplication.objects.select_for_update().get(
+                pk=application.pk
             )
 
             if application.status != ApplicationStatus.APPROVED:
@@ -240,15 +249,9 @@ class RentalContractService:
         has been successfully validated.
         """
         if not tenant_signature:
-            raise ValidationError(
-                _("The tenant's signature is required.")
-            )
+            raise ValidationError(_("The tenant's signature is required."))
 
-        contract = (
-            RentalContract.objects
-            .select_for_update()
-            .get(pk=contract.pk)
-        )
+        contract = RentalContract.objects.select_for_update().get(pk=contract.pk)
 
         if contract.status != ContractStatus.SIGNING:
             raise ValidationError(
@@ -286,11 +289,7 @@ class RentalContractService:
 
         The unit is freed (stays AVAILABLE) and the contract is cancelled.
         """
-        contract = (
-            RentalContract.objects
-            .select_for_update()
-            .get(pk=contract.pk)
-        )
+        contract = RentalContract.objects.select_for_update().get(pk=contract.pk)
 
         if contract.status != ContractStatus.SIGNING:
             raise ValidationError(
@@ -301,7 +300,6 @@ class RentalContractService:
         contract.save(update_fields=["status", "updated_at"])
 
         return contract
-
 
     # -------------------------------------------------------------------------
     # Activate a signed contract after payment
@@ -324,16 +322,13 @@ class RentalContractService:
         """
         # --- 1. Lock and validate the contract ---
         contract = (
-            RentalContract.objects
-            .select_for_update()
+            RentalContract.objects.select_for_update()
             .select_related("unit")
             .get(pk=contract.pk)
         )
 
         if contract.status != ContractStatus.SIGNED:
-            raise ValidationError(
-                _("Only a signed contract can be activated.")
-            )
+            raise ValidationError(_("Only a signed contract can be activated."))
 
         if not contract.landlord_signature:
             raise ValidationError(_("The landlord's signature is missing."))
@@ -341,29 +336,29 @@ class RentalContractService:
         if not contract.tenant_signature:
             raise ValidationError(_("The tenant's signature is missing."))
 
-        # --- 2. Ensure the contract has been paid ---
-        # (assuming a related Payment model with FK to contract)
-        if not hasattr(contract, "payment") or contract.payment is None:
+        # --- 2. Ensure the initial charge has been paid in full ---
+        initial_charge = (
+            contract.charges.filter(charge_type=ChargeType.INITIAL_PAYMENT)
+            .prefetch_related("payments")
+            .first()
+        )
+        if not initial_charge or initial_charge.status != "PAID":
             raise ValidationError(
-                _("This contract cannot be activated until payment is completed.")
-            )
-
-        if contract.payment.status != PaymentStatus.COMPLETED:
-            raise ValidationError(
-                _("The payment for this contract is not yet completed.")
+                _(
+                    "This contract cannot be activated until the initial payment "
+                    "is completed."
+                )
             )
 
         # --- 3. Lock and validate the unit ---
-        unit = (
-            Unit.objects
-            .select_for_update()
-            .get(pk=contract.unit_id)
-        )
+        unit = Unit.objects.select_for_update().get(pk=contract.unit_id)
 
         if unit.status != UnitStatus.AVAILABLE:
             raise ValidationError(
-                _("This unit is not available for activation "
-                  "(current status: %(status)s).")
+                _(
+                    "This unit is not available for activation "
+                    "(current status: %(status)s)."
+                )
                 % {"status": unit.get_status_display()}
             )
 
@@ -396,9 +391,7 @@ class RentalContractService:
                 _("Deposit and monthly rent must use the same currency.")
             )
 
-        return contract.deposit + (
-            contract.monthly_rent * contract.advance_rent_months
-        )
+        return contract.deposit + (contract.monthly_rent * contract.advance_rent_months)
 
     # -------------------------------------------------------------------------
     # Initial payment creation
@@ -424,11 +417,7 @@ class RentalContractService:
             raise ValidationError(_("Invalid payment method."))
 
         # --- 2. Lock the contract ---
-        contract = (
-            RentalContract.objects
-            .select_for_update()
-            .get(pk=contract.pk)
-        )
+        contract = RentalContract.objects.select_for_update().get(pk=contract.pk)
 
         if contract.status != ContractStatus.SIGNED:
             raise ValidationError(
@@ -436,11 +425,9 @@ class RentalContractService:
             )
 
         # --- 3. Idempotency: reuse existing initial charge ---
-        existing_charge = (
-            Charge.objects
-            .filter(contract=contract, charge_type=ChargeType.INITIAL_PAYMENT)
-            .first()
-        )
+        existing_charge = Charge.objects.filter(
+            contract=contract, charge_type=ChargeType.INITIAL_PAYMENT
+        ).first()
         if existing_charge:
             existing_payment = existing_charge.payments.exclude(
                 status=PaymentStatus.FAILED
@@ -462,9 +449,8 @@ class RentalContractService:
             charge_type=ChargeType.INITIAL_PAYMENT,
             amount=amount,
             due_date=contract.start_date,
-            description=_(
-                "Initial payment for rental contract %(contract)s."
-            ) % {"contract": contract.contract_number},
+            description=_("Initial payment for rental contract %(contract)s.")
+            % {"contract": contract.contract_number},
         )
         charge.full_clean()
         charge.save()

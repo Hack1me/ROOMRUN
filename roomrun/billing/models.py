@@ -1,3 +1,5 @@
+import uuid
+
 from core.models import BaseModel
 from core.utils import safe_reverse
 from django.core.exceptions import ValidationError
@@ -125,13 +127,9 @@ class Charge(BaseModel):
     def balance_due(self) -> Money:
         return max(self.amount - self.total_paid, Money(0, self.amount.currency))
 
-
     @property
     def is_overdue(self) -> bool:
-        return (
-            self.balance_due.amount > 0
-            and self.due_date < timezone.localdate()
-        )
+        return self.balance_due.amount > 0 and self.due_date < timezone.localdate()
 
     def refresh_status(self) -> None:
         zero = Money(0, self.amount.currency)
@@ -148,6 +146,7 @@ class Charge(BaseModel):
         if self.status != status:
             self.status = status
             self.save(update_fields=["status", "updated_at"])
+
 
 # PAYEMENT
 class Payment(BaseModel):
@@ -194,9 +193,7 @@ class Payment(BaseModel):
         blank=True,
         choices=PaymentProvider.choices,
         verbose_name=_("Payment provider"),
-        help_text=_(
-            "External payment provider used to process the payment."
-        ),
+        help_text=_("External payment provider used to process the payment."),
     )
 
     operator = models.CharField(
@@ -227,19 +224,16 @@ class Payment(BaseModel):
         null=True,
         blank=True,
         verbose_name=_("Transaction reference"),
-        help_text=_(
-            "External transaction reference returned by the payment gateway."
-        ),
+        help_text=_("External transaction reference returned by the payment gateway."),
     )
 
     external_reference = models.CharField(
         max_length=100,
         unique=True,
         editable=False,
+        default=uuid.uuid4,
         verbose_name=_("External reference"),
-        help_text=_(
-            "Unique reference used to identify this payment externally."
-        ),
+        help_text=_("Unique reference used to identify this payment externally."),
     )
 
     paid_at = models.DateTimeField(
