@@ -1,0 +1,8 @@
+{% load i18n %}
+<!doctype html><html><body style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5">
+<h1 style="color:#16283f">{% translate "You are invited to ROOMRUN" %}</h1>
+<p>{% blocktranslate with landlord=landlord %}{{ landlord }} invited you to join their ROOMRUN workspace.{% endblocktranslate %}</p>
+<p>{% translate "Role" %}: {{ invitation.get_role_display }}</p>
+<p><a href="{{ accept_url }}" style="display:inline-block;padding:12px 18px;background:#c1622d;color:white;text-decoration:none;border-radius:6px">{% translate "Accept invitation" %}</a></p>
+<p>{% translate "This invitation expires on" %} {{ invitation.expires_at|date:"d/m/Y H:i" }}.</p>
+</body></html>

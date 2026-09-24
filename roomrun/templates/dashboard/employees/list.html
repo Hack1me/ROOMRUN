@@ -65,10 +65,10 @@
             <p class="text-slate-500 text-xs">{% translate "Manage your guards and maintenance agents." %}</p>
           </div>
           <div class="flex items-center gap-2">
-            <button type="button" class="h-9.5 px-3.5 inline-flex items-center justify-center gap-1.75 rounded-md border border-transparent text-[11px] font-medium bg-(--secondary) text-white hover:bg-(--secondary-hover)" id="inviteButton">
+            <a href="{% url 'dashboard:invitation-list' %}" class="h-9.5 px-3.5 inline-flex items-center justify-center gap-1.75 rounded-md border border-transparent text-[11px] font-medium bg-(--secondary) text-white hover:bg-(--secondary-hover)">
               <i class="ti ti-user-plus"></i>
               {% translate "Invite user" %}
-            </button>
+            </a>
           </div>
         </div>
 

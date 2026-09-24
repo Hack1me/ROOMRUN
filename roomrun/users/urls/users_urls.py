@@ -7,6 +7,7 @@ from users.views.login_views import UserRedirectView
 from users.views.otp_views import ResendOtpView
 from users.views.otp_views import VerifyOtpView
 from users.views.profile_views import ProfileView
+from users.views.invitation_views import InvitationAcceptView
 from users.views.register_views import SignupView
 
 app_name = "users"
@@ -37,4 +38,5 @@ urlpatterns = [
         name="reset_password",
     ),
     path("~redirect/", UserRedirectView.as_view(), name="redirect"),
+    path("invitations/<str:token>/accept/", InvitationAcceptView.as_view(), name="invitation-accept"),
 ]

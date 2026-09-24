@@ -208,6 +208,7 @@ class PasswordResetConfirmForm(PasswordConfirmMixin, forms.Form):
         label=_("Password confirmation"), strip=False, widget=forms.PasswordInput
     )
 
+
 # User Profile form
 class ProfileForm(forms.ModelForm):
     """
@@ -218,10 +219,12 @@ class ProfileForm(forms.ModelForm):
     phone = PhoneNumberField(
         validators=[validate_phone_number_for_country],
         required=False,
-        widget=forms.TextInput(attrs={
-            "autocomplete": "tel",
-            "placeholder": _("+33123456789"),
-        }),
+        widget=forms.TextInput(
+            attrs={
+                "autocomplete": "tel",
+                "placeholder": _("+33123456789"),
+            }
+        ),
     )
 
     class Meta:
@@ -258,28 +261,53 @@ class ProfileForm(forms.ModelForm):
         }
 
 
+class LandlordInvitationForm(forms.Form):
+    email = forms.EmailField(
+        label=_("Email address"),
+        widget=forms.EmailInput(attrs={"class": "rr-input", "autocomplete": "email"}),
+    )
+    role = forms.ChoiceField(
+        label=_("Role"),
+        choices=(
+            ("tenant", _("Tenant")),
+            ("guard", _("Guard")),
+            ("maintenance", _("Maintenance agent")),
+        ),
+        widget=forms.Select(attrs={"class": "rr-input"}),
+    )
+
+    def clean_email(self):
+        email = self.cleaned_data["email"].strip().lower()
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError(_("An account already exists with this email."))
+        return email
 
 class TenantInvitationAcceptForm(forms.Form):
-    """
-    Form used by an invited user to set up their account
+    """Form used by an invited user to set up their account
     (name + password) after clicking an invitation link.
     """
 
     first_name = forms.CharField(
         max_length=150,
         label=_("First name"),
-        widget=forms.TextInput(attrs={"class": "form-input", "autocomplete": "given-name"}),
+        widget=forms.TextInput(
+            attrs={"class": "form-input", "autocomplete": "given-name"}
+        ),
     )
 
     last_name = forms.CharField(
         max_length=150,
         label=_("Last name"),
-        widget=forms.TextInput(attrs={"class": "form-input", "autocomplete": "family-name"}),
+        widget=forms.TextInput(
+            attrs={"class": "form-input", "autocomplete": "family-name"}
+        ),
     )
 
     password = forms.CharField(
         label=_("Password"),
-        widget=forms.PasswordInput(attrs={"class": "form-input", "autocomplete": "new-password"}),
+        widget=forms.PasswordInput(
+            attrs={"class": "form-input", "autocomplete": "new-password"}
+        ),
         help_text=_(
             "At least 8 characters, not entirely numeric, and not a common password."
         ),
@@ -287,7 +315,9 @@ class TenantInvitationAcceptForm(forms.Form):
 
     password_confirm = forms.CharField(
         label=_("Confirm password"),
-        widget=forms.PasswordInput(attrs={"class": "form-input", "autocomplete": "new-password"}),
+        widget=forms.PasswordInput(
+            attrs={"class": "form-input", "autocomplete": "new-password"}
+        ),
     )
 
     # -------------------------------------------------------------------------
