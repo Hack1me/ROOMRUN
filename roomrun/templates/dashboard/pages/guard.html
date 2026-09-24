@@ -23,7 +23,7 @@
             <i class="ti ti-layout-dashboard"></i>
             <span>{% translate "Dashboard" %}</span>
           </a>
-          <a href="#" class="nav-item">
+          <a href="{% url 'operations:guard-visitors' %}" class="nav-item">
             <i class="ti ti-users"></i>
             <span>{% translate "Visitors" %}</span>
           </a>
@@ -210,7 +210,7 @@
                 <i class="ti ti-users"></i>
                 {% translate "Today's visitors" %}
               </div>
-              <a href="#" class="section-link">{% translate "See all" %}</a>
+              <a href="{% url 'operations:guard-visitors' %}" class="section-link">{% translate "See all" %}</a>
             </div>
             <div class="visitor-list">
               {% for visitor in recent_visitors %}
@@ -241,7 +241,7 @@
                 <i class="ti ti-calendar-event"></i>
                 {% translate "Expected visitors" %}
               </div>
-              <a href="#" class="section-link">{% translate "See all" %}</a>
+              <a href="{% url 'operations:guard-visitors' %}" class="section-link">{% translate "See all" %}</a>
             </div>
             <div class="expected-list">
               {% for visit in expected_visits %}

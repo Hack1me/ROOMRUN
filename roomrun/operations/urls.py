@@ -34,4 +34,22 @@ urlpatterns = [
         views.TenantCleaningScheduleListView.as_view(),
         name="tenant-cleaning-list",
     ),
+    path(
+        "visitors/invitations/",
+        views.VisitorInvitationView.as_view(),
+        name="visitor-invitations",
+    ),
+    path(
+        "visitors/invitations/<uuid:pk>/cancel/",
+        views.VisitorInvitationCancelView.as_view(),
+        name="visitor-invitation-cancel",
+    ),
+    path(
+        "guard/visitors/", views.GuardVisitorListView.as_view(), name="guard-visitors"
+    ),
+    path(
+        "guard/visitors/<uuid:pk>/status/",
+        views.GuardVisitorStatusView.as_view(),
+        name="guard-visitor-status",
+    ),
 ]

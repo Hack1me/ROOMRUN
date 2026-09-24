@@ -1,110 +1,227 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block header %}
-  <header class="sticky top-0 z-50 border-b border-line bg-paper/95">
-    <div class="rr-container flex h-18 items-center justify-between">
-      <a href="{% url 'home' %}" class="flex items-center gap-2 font-display text-lg font-semibold text-primary">
-        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white shadow-md shadow-primary/20">
-          <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
-          </svg>
-        </span>
-        RoomRun
-      </a>
-      <a href="{% url 'home' %}" class="flex items-center gap-2 text-sm font-medium text-muted transition-colors hover:text-primary">
-        <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M19 12H5"/>
-          <path d="M12 19l-7-7 7-7"/>
-        </svg>
-        <span class="hidden sm:inline">{% translate "Back to RoomRun" %}</span>
-      </a>
-    </div>
-  </header>
-{% endblock header %}
-
+{% block title %}{% translate "Cookies Policy" %} — ROOMRUN{% endblock title %}
 {% block bodyclass %}rr-landing-page{% endblock bodyclass %}
 
-{% block content %}
-  <div class="mx-auto max-w-3xl">
-    <section class="border-b border-line bg-paper">
-      <div class="rr-container py-16 sm:py-24">
-        <div class="flex items-center gap-3">
-          <span class="inline-flex items-center gap-2 rounded-full bg-accent-bg px-3 py-1.5 text-xs font-semibold text-primary">
-            <span class="inline-block size-1.5 rounded-full bg-secondary"></span>
-            {% translate "Legal" %}
-          </span>
-        </div>
-        <h1 class="mt-6 font-display text-4xl font-semibold tracking-tight text-primary sm:text-5xl">
-          {% translate "Cookies Policy" %}
-        </h1>
-        <p class="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
-          {% translate "ROOMRUN uses cookies to improve your experience, analyze site traffic, and personalize content." %}
-        </p>
-        <p class="mt-4 text-sm text-muted">
-          {% translate "Last updated" %} <strong class="font-semibold text-primary">23 septembre 2026</strong>
-        </p>
+{% block header %}
+  {% include "home/includes/legal_header.html" %}
+{% endblock header %}
+
+{% block body %}
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        {% translate "Legal" %}
       </div>
-    </section>
+      <h1>{% translate "Cookies Policy" %}</h1>
+      <p class="hero-description">{% translate "ROOMRUN uses cookies to improve your experience, analyze site traffic, and personalize content." %}</p>
+      <p class="updated">{% translate "Last updated" %} <strong>23 septembre 2026</strong></p>
+    </div>
+  </section>
 
-    <main class="py-12 sm:py-18">
-      <div class="rr-container">
-        <div class="space-y-10">
-          <section id="cookies" class="scroll-mt-24">
-            <span class="text-xs font-semibold uppercase tracking-widest text-secondary">01</span>
-            <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "What are cookies" %}</h2>
-            <p class="mt-4 text-base leading-relaxed text-muted">
-              {% translate "Cookies are small text files stored on your device that help us provide, protect, and improve our services." %}
-            </p>
-          </section>
-
-          <hr class="border-line">
-
-          <section id="utilisation" class="scroll-mt-24">
-            <span class="text-xs font-semibold uppercase tracking-widest text-secondary">02</span>
-            <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "How we use them" %}</h2>
-            <p class="mt-4 text-base leading-relaxed text-muted">
-              {% translate "We use cookies to maintain your session, secure your account, remember certain preferences, and improve platform performance." %}
-            </p>
-          </section>
-
-          <hr class="border-line">
-
-          <section id="gestion" class="scroll-mt-24">
-            <span class="text-xs font-semibold uppercase tracking-widest text-secondary">03</span>
-            <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "Managing cookies" %}</h2>
-            <p class="mt-4 text-base leading-relaxed text-muted">
-              {% translate "You can manage your cookie preferences through your browser settings. Disabling certain cookies may affect the functionality of the platform." %}
-            </p>
-          </section>
-
-          <hr class="border-line">
-
-          <section id="contact" class="scroll-mt-24">
-            <div class="rounded-2xl bg-primary p-8 text-white sm:p-10">
-              <span class="text-xs font-semibold uppercase tracking-widest text-secondary">04</span>
-              <h2 class="mt-2 text-2xl font-semibold">{% translate "Contact us" %}</h2>
-              <p class="mt-4 max-w-2xl text-sm leading-relaxed text-slate-300">
-                {% translate "For questions about cookies or your data, contact the RoomRun team." %}
-              </p>
-              <a href="mailto:privacy@roomrun.example" class="mt-6 inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-slate-100">
-                privacy@roomrun.example
-                <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M5 12h14"/>
-                  <path d="M13 6l6 6-6 6"/>
-                </svg>
-              </a>
-            </div>
-          </section>
-        </div>
+  <main class="main">
+    <div class="mobile-toc" id="mobileToc">
+      <button class="mobile-toc-header" id="mobileTocButton" type="button">
+        <span>{% translate "On this page" %}</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m6 9 6 6 6-6"/>
+        </svg>
+      </button>
+      <div class="mobile-toc-content">
+        <a href="#cookies">01 — {% translate "What are cookies" %}</a>
+        <a href="#utilisation">02 — {% translate "How we use them" %}</a>
+        <a href="#gestion">03 — {% translate "Managing cookies" %}</a>
+        <a href="#contact">04 — {% translate "Contact" %}</a>
       </div>
-    </main>
-  </div>
-{% endblock content %}
+    </div>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-card">
+          <div class="sidebar-title">{% translate "On this page" %}</div>
+          <nav class="toc">
+            <a href="#cookies" class="toc-link active"><span class="toc-number">01</span><span>{% translate "What are cookies" %}</span></a>
+            <a href="#utilisation" class="toc-link"><span class="toc-number">02</span><span>{% translate "How we use them" %}</span></a>
+            <a href="#gestion" class="toc-link"><span class="toc-number">03</span><span>{% translate "Managing cookies" %}</span></a>
+            <a href="#contact" class="toc-link"><span class="toc-number">04</span><span>{% translate "Contact" %}</span></a>
+          </nav>
+        </div>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="cookies">
+          <span class="section-number">01</span>
+          <h2>{% translate "What are cookies" %}</h2>
+          <p>{% translate "Cookies are small text files stored on your device that help us provide, protect, and improve our services." %}</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="utilisation">
+          <span class="section-number">02</span>
+          <h2>{% translate "How we use them" %}</h2>
+          <p>{% translate "We use cookies to maintain your session, secure your account, remember certain preferences, and improve platform performance." %}</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="gestion">
+          <span class="section-number">03</span>
+          <h2>{% translate "Managing cookies" %}</h2>
+          <p>{% translate "You can manage your cookie preferences through your browser settings. Disabling certain cookies may affect the functionality of the platform." %}</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="contact">
+          <span class="section-number">04</span>
+          <h2>{% translate "Contact us" %}</h2>
+          <p>{% translate "For questions about cookies or your data, contact the RoomRun team." %}</p>
+          <div class="contact-box">
+            <h3>RoomRun</h3>
+            <p>{% translate "For questions about cookies or your data." %}</p>
+            <a href="mailto:privacy@roomrun.example" class="contact-button">privacy@roomrun.example</a>
+          </div>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  {% include "home/includes/home_footer.html" %}
+{% endblock body %}
 
 {% block extra_css %}
   <style>
+    :root {
+      --primary: #16283f;
+      --primary-hover: #1e3a5f;
+      --primary-soft: #f5e4da;
+      --accent-bg: #eaf2fb;
+      --secondary: #c1622d;
+      --secondary-hover: #a34f22;
+      --secondary-soft: #fef3e2;
+      --bg: #f5f6f8;
+      --surface: #fcfcfb;
+      --card: #ffffff;
+      --success: #2e9e5b;
+      --danger: #d64545;
+      --text: #1e293b;
+      --muted: #5b6675;
+      --border: #e2e8f0;
+      --radius: 16px;
+      --shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    .topbar { position: sticky; top: 0; z-index: 100; height: 72px; background: rgba(255,255,255,0.94); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
+    .topbar-inner { max-width: var(--container); height: 100%; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; font-weight: 800; font-size: 18px; color: var(--primary); }
+    .brand-mark { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: var(--primary); color: #fff; font-weight: 800; font-size: 16px; }
+    .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; font-weight: 600; transition: color .2s ease; }
+    .back-link:hover { color: var(--primary); }
+    .back-link svg { width: 17px; height: 17px; }
+    .hero { padding: 76px 24px 62px; background: radial-gradient(circle at top right, rgba(234,242,251,.9), transparent 35%), var(--surface); border-bottom: 1px solid var(--border); }
+    .hero-inner { max-width: var(--container); margin: 0 auto; }
+    .badge { display: inline-flex; align-items: center; gap: 9px; padding: 7px 12px; background: var(--accent-bg); color: var(--primary); border-radius: 999px; font-size: 13px; font-weight: 650; }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--secondary); }
+    .hero h1 { max-width: 760px; color: var(--primary); font-size: clamp(38px, 6vw, 64px); line-height: 1.08; letter-spacing: -0.04em; margin-bottom: 20px; }
+    .hero-description { max-width: 720px; color: var(--muted); font-size: 17px; line-height: 1.8; }
+    .updated { margin-top: 24px; color: var(--muted); font-size: 13px; }
+    .updated strong { color: var(--text); }
+    .main { width: min(1200px, calc(100% - 40px)); margin: auto; padding: 56px 0 90px; }
+    .layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 42px; align-items: start; }
+    .sidebar { position: sticky; top: 96px; }
+    .sidebar-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+    .sidebar-title { margin-bottom: 14px; color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .toc { display: flex; flex-direction: column; gap: 3px; }
+    .toc-link { position: relative; padding: 9px 12px; border-radius: 9px; color: var(--muted); font-size: 13px; line-height: 1.4; transition: .2s ease; }
+    .toc-link:hover { background: var(--bg); color: var(--primary); }
+    .toc-link.active { background: var(--accent-bg); color: var(--primary); font-weight: 700; }
+    .toc-number { width: 24px; flex-shrink: 0; color: #94a3b8; font-size: 10px; font-weight: 800; }
+    .toc-link.active .toc-number { color: var(--secondary); }
+    .mobile-toc { display: none; margin-bottom: 24px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .mobile-toc-header { width: 100%; padding: 15px 17px; display: flex; align-items: center; justify-content: space-between; border: 0; background: transparent; color: var(--primary); cursor: pointer; font-size: 14px; font-weight: 700; }
+    .mobile-toc-header svg { width: 17px; height: 17px; transition: transform .2s ease; }
+    .mobile-toc.open .mobile-toc-header svg { transform: rotate(180deg); }
+    .mobile-toc-content { display: none; padding: 0 10px 12px; border-top: 1px solid var(--border); }
+    .mobile-toc.open .mobile-toc-content { display: block; }
+    .mobile-toc-content a { display: block; padding: 9px 8px; color: var(--muted); border-radius: 7px; font-size: 13px; }
+    .mobile-toc-content a:hover { background: var(--bg); color: var(--primary); }
+    .content { min-width: 0; padding: 46px 48px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow); }
+    .section { scroll-margin-top: 100px; padding: 0 0 44px; margin-bottom: 44px; border-bottom: 1px solid var(--border); }
+    .section:last-child { padding-bottom: 0; margin-bottom: 0; border-bottom: 0; }
+    .section-number { display: block; margin-bottom: 5px; color: var(--secondary); font-size: 12px; font-weight: 800; letter-spacing: 1px; }
+    .section h2 { color: var(--primary); font-size: 23px; line-height: 1.35; letter-spacing: -.02em; }
+    .section p { margin-bottom: 15px; color: var(--muted); font-size: 15px; }
+    .section p:last-child { margin-bottom: 0; }
+    .divider { height: 1px; margin: 48px 0; background: var(--border); }
+    .contact-box { margin-top: 22px; padding: 30px; background: var(--primary); border-radius: 17px; }
+    .contact-box h3 { color: white; margin-bottom: 6px; font-size: 17px; }
+    .contact-box p { max-width: 650px; margin-top: 10px; color: #cbd5e1; font-size: 14px; }
+    .contact-button { display: inline-flex; align-items: center; gap: 9px; margin-top: 18px; padding: 12px 17px; background: white; color: var(--primary); border-radius: 9px; font-size: 13px; font-weight: 680; }
+    .contact-button:hover { background: #f1f5f9; }
+    footer { background: var(--primary); color: #cbd5e1; }
+    .footer-inner { max-width: var(--container); margin: 0 auto; padding: 28px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .footer-logo { color: white; font-weight: 700; }
+    .footer-copy { font-size: 12px; }
+    @media (max-width: 900px) { .layout { grid-template-columns: 1fr; gap: 0; } .sidebar { display: none; } .mobile-toc { display: block; } .content { padding: 38px 30px; } }
+    @media (max-width: 640px) { .topbar { height: 64px; } .topbar-inner { padding: 0 18px; } .back-link span { display: none; } .hero { padding: 52px 20px 44px; } .hero h1 { font-size: 40px; letter-spacing: -1.5px; } .hero-description { font-size: 15px; } .main { padding: 30px 0 60px; } .content { padding: 28px 20px; border-radius: 15px; } .section { padding-bottom: 34px; margin-bottom: 34px; } .section h2 { font-size: 20px; } .section p { font-size: 14px; } .footer-inner { flex-direction: column; align-items: flex-start; } }
     .scroll-mt-24 { scroll-margin-top: 6rem; }
   </style>
 {% endblock extra_css %}
+
+{% block inline_javascript %}
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const mobileToc = document.getElementById("mobileToc");
+      const mobileButton = document.getElementById("mobileTocButton");
+      if (mobileToc && mobileButton) {
+        mobileButton.addEventListener("click", () => {
+          mobileToc.classList.toggle("open");
+        });
+        document.querySelectorAll(".mobile-toc-content a").forEach(link => {
+          link.addEventListener("click", () => {
+            mobileToc.classList.remove("open");
+          });
+        });
+      }
+
+      const sections = document.querySelectorAll(".section");
+      const tocLinks = document.querySelectorAll(".toc-link");
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const id = entry.target.id;
+          tocLinks.forEach(link => {
+            link.classList.remove("active");
+            if (link.getAttribute("href") === "#" + id) {
+              link.classList.add("active");
+            }
+          });
+        });
+      }, { rootMargin: "-20% 0px -65% 0px", threshold: 0 });
+      sections.forEach(section => observer.observe(section));
+
+      document.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener("click", function (event) {
+          const targetId = this.getAttribute("href");
+          if (!targetId || targetId === "#") return;
+          const target = document.querySelector(targetId);
+          if (!target) return;
+          event.preventDefault();
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+          history.replaceState(null, "", targetId);
+        });
+      });
+
+      if (tocLinks.length > 0) {
+        tocLinks[0].classList.add("active");
+      }
+    });
+  </script>
+{% endblock inline_javascript %}

@@ -602,6 +602,11 @@ class Guard(BaseModel):
         help_text=_("The guard's assigned work shift."),
     )
 
+    landlords = models.ManyToManyField(
+        "Landlord", blank=True, related_name="guards",
+        verbose_name=_("Landlords"),
+        help_text=_("Landlords whose residences this guard can secure."),
+    )
     class Meta:
         db_table = "guards"
         ordering = ["-created_at"]

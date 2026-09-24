@@ -8,9 +8,11 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from properties.models import Building
 from users.models import Tenant
+from users.models import Guard
 from utils.enums import CleaningStatus
 from utils.enums import InvitationStatus
 from utils.enums import UserRole
+from utils.enums import VisitorStatus
 
 
 class CleaningSchedule(BaseModel):
@@ -149,9 +151,109 @@ class CleaningSchedule(BaseModel):
             raise ValidationError(_("Scheduled date cannot be in the past."))
 
 
+class VisitorVisit(BaseModel):
+    """A pre-authorised or walk-in visitor visit for a residence."""
+
+    reference_field = "visit_number"
+    reference_prefix = "VST"
+
+    visit_number = models.CharField(
+        max_length=50,
+        unique=True,
+        editable=False,
+        blank=True,
+        verbose_name=_("Visit number"),
+    )
+    building = models.ForeignKey(
+        Building,
+        on_delete=models.PROTECT,
+        related_name="visitor_visits",
+        verbose_name=_("Building"),
+    )
+    host = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="hosted_visitor_visits",
+        verbose_name=_("Host"),
+    )
+    visitor_name = models.CharField(max_length=150, verbose_name=_("Visitor name"))
+    visitor_phone = models.CharField(
+        max_length=32, blank=True, verbose_name=_("Visitor phone")
+    )
+    purpose = models.CharField(max_length=255, blank=True, verbose_name=_("Purpose"))
+    expected_arrival = models.DateTimeField(verbose_name=_("Expected arrival"))
+    expected_departure = models.DateTimeField(
+        null=True, blank=True, verbose_name=_("Expected departure")
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=VisitorStatus.choices,
+        default=VisitorStatus.EXPECTED,
+        db_index=True,
+        verbose_name=_("Status"),
+    )
+    checked_in_at = models.DateTimeField(
+        null=True, blank=True, verbose_name=_("Checked in at")
+    )
+    checked_out_at = models.DateTimeField(
+        null=True, blank=True, verbose_name=_("Checked out at")
+    )
+    checked_in_by = models.ForeignKey(
+        Guard,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="checked_in_visits",
+        verbose_name=_("Checked in by"),
+    )
+    checked_out_by = models.ForeignKey(
+        Guard,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="checked_out_visits",
+        verbose_name=_("Checked out by"),
+    )
+    check_in_note = models.CharField(
+        max_length=255, blank=True, verbose_name=_("Check-in note")
+    )
+
+    class Meta:
+        db_table = "visitor_visits"
+        ordering = ["-expected_arrival"]
+        verbose_name = _("Visitor visit")
+        verbose_name_plural = _("Visitor visits")
+        indexes = [
+            models.Index(
+                fields=["building", "status"], name="visit_building_status_idx"
+            ),
+            models.Index(
+                fields=["expected_arrival"], name="visit_expected_arrival_idx"
+            ),
+            models.Index(
+                fields=["host", "expected_arrival"], name="visit_host_arrival_idx"
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.visit_number} — {self.visitor_name}"
+
+    def clean(self):
+        super().clean()
+        if self.expected_departure and self.expected_departure <= self.expected_arrival:
+            raise ValidationError(_("Expected departure must be after arrival."))
+        if self.status == VisitorStatus.CHECKED_IN and not self.checked_in_at:
+            raise ValidationError(_("Check-in time is required for an active visit."))
+        if self.status == VisitorStatus.CHECKED_OUT and not self.checked_out_at:
+            raise ValidationError(
+                _("Check-out time is required for a completed visit.")
+            )
+
+
 class UserInvitation(BaseModel):
-    """
-    Represents an invitation sent by a user (e.g., a landlord) to invite
+    """Represents an invitation sent by a user (e.g., a landlord) to invite
     someone to join the platform with a specific role.
 
     The invitation is validated via a hashed token, which is never stored

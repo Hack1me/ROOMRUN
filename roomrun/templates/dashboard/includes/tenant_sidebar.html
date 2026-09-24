@@ -37,6 +37,10 @@
         <i class="ti ti-spray"></i>
         <span>{% translate "Cleaning schedule" %}</span>
       </a>
+      <a href="{% url 'operations:visitor-invitations' %}" class="nav-item{% if request.resolver_match.url_name == 'visitor-invitations' %} active{% endif %}">
+        <i class="ti ti-door-enter"></i>
+        <span>{% translate "Visitors" %}</span>
+      </a>
     </div>
     <div class="nav-section">
       <div class="nav-title">{% translate "Rental" %}</div>

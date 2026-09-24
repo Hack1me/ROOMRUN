@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from billing.models import Payment
 from django.db.models import Count
+from operations.models import VisitorVisit
 from django.db.models import Q
 from django.db.models import Sum
 from django.utils import timezone
@@ -14,6 +15,7 @@ from rentals.models import RentalContract
 from users.models import User
 from utils.enums import UserRole
 
+from utils.enums import VisitorStatus
 
 @dataclass(frozen=True)
 class DashboardData:
@@ -436,20 +438,17 @@ class GuardDashboardService:
         total_logs = logs.count() if logs is not None else 0
         today_logs = logs.filter(created_at__date=today).count() if logs is not None else 0
 
-        active_visitors = []
-        if hasattr(guard, "visitors"):
-            active_visitors = guard.visitors.filter(
-                status="ACTIVE"
-            ).count()
-
-        recent_logs = logs.order_by("-created_at")[:GuardDashboardService.RECENT_LIMIT] if logs is not None else []
-
-        expected_visitors = 0
-        if hasattr(guard, "scheduled_visits"):
-            expected_visitors = guard.scheduled_visits.filter(
-                visit_date=today,
-                status="SCHEDULED"
-            ).count()
+        visits = VisitorVisit.objects.filter(
+            building__property_ref__landlord__in=guard.landlords.all()
+        ).select_related("host", "building")
+        active_visitors = visits.filter(status=VisitorStatus.CHECKED_IN).count()
+        expected_visitors = visits.filter(
+            expected_arrival__date=today, status=VisitorStatus.EXPECTED
+        ).count()
+        today_logs = visits.filter(checked_in_at__date=today).count()
+        recent_visitors = visits.filter(checked_in_at__date=today).order_by("-checked_in_at")[:GuardDashboardService.RECENT_LIMIT]
+        expected_visits = visits.filter(status=VisitorStatus.EXPECTED, expected_arrival__date=today).order_by("expected_arrival")[:GuardDashboardService.RECENT_LIMIT]
+        recent_logs = []
 
         shift_info = {
             "shift": guard.shift,
@@ -465,6 +464,8 @@ class GuardDashboardService:
             "expected_visitors": expected_visitors,
             "recent_logs": recent_logs,
             "shift_info": shift_info,
+            "recent_visitors": recent_visitors,
+            "expected_visits": expected_visits,
             "current_time": now,
             "today": today,
         }

@@ -1,130 +1,410 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block header %}
-  <header class="sticky top-0 z-50 border-b border-line bg-paper/95">
-    <div class="rr-container flex h-18 items-center justify-between">
-      <a href="{% url 'home' %}" class="flex items-center gap-2 font-display text-lg font-semibold text-primary">
-        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white shadow-md shadow-primary/20">
-          <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
-          </svg>
-        </span>
-        RoomRun
-      </a>
-      <a href="{% url 'home' %}" class="flex items-center gap-2 text-sm font-medium text-muted transition-colors hover:text-primary">
-        <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M19 12H5"/>
-          <path d="M12 19l-7-7 7-7"/>
-        </svg>
-        <span class="hidden sm:inline">{% translate "Back to RoomRun" %}</span>
-      </a>
-    </div>
-  </header>
-{% endblock header %}
-
+{% block title %}{% translate "Terms and Conditions" %} — ROOMRUN{% endblock title %}
 {% block bodyclass %}rr-landing-page{% endblock bodyclass %}
 
-{% block content %}
-  <div class="mx-auto max-w-3xl">
-    <section class="border-b border-line bg-paper">
-      <div class="rr-container py-16 sm:py-24">
-        <div class="flex items-center gap-3">
-          <span class="inline-flex items-center gap-2 rounded-full bg-accent-bg px-3 py-1.5 text-xs font-semibold text-primary">
-            <span class="inline-block size-1.5 rounded-full bg-secondary"></span>
-            {% translate "Legal" %}
-          </span>
-        </div>
-        <h1 class="mt-6 font-display text-4xl font-semibold tracking-tight text-primary sm:text-5xl">
-          {% translate "Terms and Conditions" %}
-        </h1>
-        <p class="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
-          {% translate "By accessing or using ROOMRUN, you agree to be bound by these terms and conditions." %}
-        </p>
-        <p class="mt-4 text-sm text-muted">
-          {% translate "Last updated" %} <strong class="font-semibold text-primary">23 septembre 2026</strong>
-        </p>
+{% block header %}
+  {% include "home/includes/legal_header.html" %}
+{% endblock header %}
+
+{% block body %}
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        {% translate "Legal" %}
       </div>
-    </section>
+      <h1>{% translate "Terms and Conditions" %}</h1>
+      <p class="hero-description">{% translate "By accessing or using ROOMRUN, you agree to be bound by these terms and conditions." %}</p>
+      <p class="updated">{% translate "Last updated" %} <strong>23 septembre 2026</strong></p>
+    </div>
+  </section>
 
-    <main class="py-12 sm:py-18">
-      <div class="rr-container">
-        <div class="space-y-10">
-          <section id="acceptation" class="scroll-mt-24">
-            <span class="text-xs font-semibold uppercase tracking-widest text-secondary">01</span>
-            <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "Acceptance of terms" %}</h2>
-            <p class="mt-4 text-base leading-relaxed text-muted">
-              {% translate "These terms govern your use of the platform and outline the rights and responsibilities of all users, including landlords, tenants, and maintenance teams." %}
-            </p>
-          </section>
+  <main class="main">
+    <div class="mobile-toc" id="mobileToc">
+      <button class="mobile-toc-header" id="mobileTocButton" type="button">
+        <span>{% translate "On this page" %}</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m6 9 6 6 6-6"/>
+        </svg>
+      </button>
+      <div class="mobile-toc-content">
+        <a href="#objet">01 — {% translate "License purpose" %}</a>
+        <a href="#attribution">02 — {% translate "Attribution" %}</a>
+        <a href="#droits">03 — {% translate "Granted rights" %}</a>
+        <a href="#restrictions">04 — {% translate "Restrictions" %}</a>
+        <a href="#propriete">05 — {% translate "Intellectual property" %}</a>
+        <a href="#contenus">06 — {% translate "Data and content" %}</a>
+        <a href="#tiers">07 — {% translate "Third-party services" %}</a>
+        <a href="#disponibilite">08 — {% translate "Availability" %}</a>
+        <a href="#securite">09 — {% translate "Account security" %}</a>
+        <a href="#suspension">10 — {% translate "Suspension and termination" %}</a>
+        <a href="#responsabilite">11 — {% translate "Liability" %}</a>
+        <a href="#modifications">12 — {% translate "Modifications" %}</a>
+        <a href="#duree">13 — {% translate "Duration" %}</a>
+        <a href="#droit-applicable">14 — {% translate "Applicable law" %}</a>
+        <a href="#contact">15 — {% translate "Contact" %}</a>
+      </div>
+    </div>
 
-          <hr class="border-line">
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-card">
+          <div class="sidebar-title">{% translate "On this page" %}</div>
+          <nav class="toc">
+            <a href="#objet" class="toc-link active"><span class="toc-number">01</span><span>{% translate "License purpose" %}</span></a>
+            <a href="#attribution" class="toc-link"><span class="toc-number">02</span><span>{% translate "Attribution" %}</span></a>
+            <a href="#droits" class="toc-link"><span class="toc-number">03</span><span>{% translate "Granted rights" %}</span></a>
+            <a href="#restrictions" class="toc-link"><span class="toc-number">04</span><span>{% translate "Restrictions" %}</span></a>
+            <a href="#propriete" class="toc-link"><span class="toc-number">05</span><span>{% translate "Intellectual property" %}</span></a>
+            <a href="#contenus" class="toc-link"><span class="toc-number">06</span><span>{% translate "Data and content" %}</span></a>
+            <a href="#tiers" class="toc-link"><span class="toc-number">07</span><span>{% translate "Third-party services" %}</span></a>
+            <a href="#disponibilite" class="toc-link"><span class="toc-number">08</span><span>{% translate "Availability" %}</span></a>
+            <a href="#securite" class="toc-link"><span class="toc-number">09</span><span>{% translate "Account security" %}</span></a>
+            <a href="#suspension" class="toc-link"><span class="toc-number">10</span><span>{% translate "Suspension and termination" %}</span></a>
+            <a href="#responsabilite" class="toc-link"><span class="toc-number">11</span><span>{% translate "Liability" %}</span></a>
+            <a href="#modifications" class="toc-link"><span class="toc-number">12</span><span>{% translate "Modifications" %}</span></a>
+            <a href="#duree" class="toc-link"><span class="toc-number">13</span><span>{% translate "Duration" %}</span></a>
+            <a href="#droit-applicable" class="toc-link"><span class="toc-number">14</span><span>{% translate "Applicable law" %}</span></a>
+            <a href="#contact" class="toc-link"><span class="toc-number">15</span><span>{% translate "Contact" %}</span></a>
+          </nav>
+        </div>
+      </aside>
 
-          <section id="utilisation" class="scroll-mt-24">
-            <span class="text-xs font-semibold uppercase tracking-widest text-secondary">02</span>
-            <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "Use of the platform" %}</h2>
-            <p class="mt-4 text-base leading-relaxed text-muted">
-              {% translate "You agree to use ROOMRUN only for lawful purposes and in accordance with these terms." %}
-            </p>
-          </section>
+      <article class="content">
+        <div class="intro-note">
+          <strong>{% translate "Important:" %}</strong>
+          {% translate "This document presents the general terms of use of the RoomRun platform. It is a functional model to be adapted to the legal information of the entity that actually operates the service and to the law applicable to it." %}
+        </div>
 
-          <hr class="border-line">
+        <section class="section" id="objet">
+          <span class="section-number">01</span>
+          <h2>{% translate "License purpose" %}</h2>
+          <p>{% translate "RoomRun is a digital platform designed to facilitate the management of real estate, housing, rentals, contracts, payments, maintenance requests, and communications between the different users of the service." %}</p>
+          <p>{% translate "This contract defines the conditions under which RoomRun grants the user a right of access and use of the platform." %}</p>
+        </section>
 
-          <section id="comptes" class="scroll-mt-24">
-            <span class="text-xs font-semibold uppercase tracking-widest text-secondary">03</span>
-            <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "Accounts" %}</h2>
-            <p class="mt-4 text-base leading-relaxed text-muted">
-              {% translate "You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account." %}
-            </p>
-          </section>
+        <div class="divider"></div>
 
-          <hr class="border-line">
+        <section class="section" id="attribution">
+          <span class="section-number">02</span>
+          <h2>{% translate "License attribution" %}</h2>
+          <p>{% translate "Subject to compliance with this contract, RoomRun grants the user a limited, non-exclusive, non-transferable and revocable license to use the platform." %}</p>
+          <p>{% translate "This license only allows the use of RoomRun in accordance with the features made available and the role assigned to the user account." %}</p>
+          <div class="highlight">{% translate "The license to use does not constitute a sale of the software, its source code or its intellectual property elements." %}</div>
+        </section>
 
-          <section id="responsabilite" class="scroll-mt-24">
-            <span class="text-xs font-semibold uppercase tracking-widest text-secondary">04</span>
-            <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "Liability" %}</h2>
-            <p class="mt-4 text-base leading-relaxed text-muted">
-              {% translate "ROOMRUN is provided as-is. We are not liable for any indirect, incidental, or consequential damages arising from your use of the platform." %}
-            </p>
-          </section>
+        <div class="divider"></div>
 
-          <hr class="border-line">
+        <section class="section" id="droits">
+          <span class="section-number">03</span>
+          <h2>{% translate "Rights granted to the user" %}</h2>
+          <p>{% translate "Depending on their role and available features, the user may in particular:" %}</p>
+          <ul>
+            <li>{% translate "access their personal space;" %}</li>
+            <li>{% translate "use the features associated with their role;" %}</li>
+            <li>{% translate "create and manage information authorized by the platform;" %}</li>
+            <li>{% translate "consult their contracts and available documents;" %}</li>
+            <li>{% translate "perform or track operations offered by RoomRun;" %}</li>
+            <li>{% translate "exchange with other users when this feature is available." %}</li>
+          </ul>
+        </section>
 
-          <section id="modifications" class="scroll-mt-24">
-            <span class="text-xs font-semibold uppercase tracking-widest text-secondary">05</span>
-            <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "Changes" %}</h2>
-            <p class="mt-4 text-base leading-relaxed text-muted">
-              {% translate "We reserve the right to update these terms at any time. Continued use of the platform after changes constitutes acceptance of the updated terms." %}
-            </p>
-          </section>
+        <div class="divider"></div>
 
-          <hr class="border-line">
+        <section class="section" id="restrictions">
+          <span class="section-number">04</span>
+          <h2>{% translate "Usage restrictions" %}</h2>
+          <p>{% translate "The user agrees to use RoomRun in accordance with applicable laws and these terms." %}</p>
+          <p>{% translate "Unless expressly authorized, it is in particular prohibited to:" %}</p>
+          <ul>
+            <li>{% translate "copy, reproduce or redistribute the software;" %}</li>
+            <li>{% translate "resell or sublicense access to RoomRun;" %}</li>
+            <li>{% translate "attempt to obtain the source code of the platform;" %}</li>
+            <li>{% translate "circumvent security mechanisms;" %}</li>
+            <li>{% translate "use automated means likely to disrupt the service;" %}</li>
+            <li>{% translate "introduce malware intentionally;" %}</li>
+            <li>{% translate "use the platform for fraudulent or illegal purposes." %}</li>
+          </ul>
+        </section>
 
-          <section id="contact" class="scroll-mt-24">
-            <div class="rounded-2xl bg-primary p-8 text-white sm:p-10">
-              <span class="text-xs font-semibold uppercase tracking-widest text-secondary">06</span>
-              <h2 class="mt-2 text-2xl font-semibold">{% translate "Contact us" %}</h2>
-              <p class="mt-4 max-w-2xl text-sm leading-relaxed text-slate-300">
-                {% translate "For any questions about these terms, contact the RoomRun team." %}
-              </p>
-              <a href="mailto:legal@roomrun.example" class="mt-6 inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-slate-100">
-                legal@roomrun.example
-                <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M5 12h14"/>
-                  <path d="M13 6l6 6-6 6"/>
-                </svg>
-              </a>
+        <div class="divider"></div>
+
+        <section class="section" id="propriete">
+          <span class="section-number">05</span>
+          <h2>{% translate "Intellectual property" %}</h2>
+          <p>{% translate "Unless otherwise indicated, RoomRun and its licensors retain their rights over the software, code, architecture, interface, graphic elements, trademarks, logos, texts and features that make up the platform." %}</p>
+          <p>{% translate "The use of RoomRun does not transfer to the user any ownership rights over these elements." %}</p>
+          <div class="definition">
+            <div class="definition-item">
+              <strong>{% translate "Software" %}</strong>
+              <span>{% translate "The code and technical components necessary for the operation of RoomRun." %}</span>
             </div>
-          </section>
-        </div>
-      </div>
-    </main>
-  </div>
-{% endblock content %}
+            <div class="definition-item">
+              <strong>{% translate "Interface" %}</strong>
+              <span>{% translate "The screens, visual components and interaction elements offered by the platform." %}</span>
+            </div>
+          </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="contenus">
+          <span class="section-number">06</span>
+          <h2>{% translate "User data and content" %}</h2>
+          <p>{% translate "The user retains the rights they legally hold over the information and content they transmit to RoomRun." %}</p>
+          <p>{% translate "However, the user authorizes RoomRun to process this information to the extent necessary for the operation, security and improvement of the service, in accordance with applicable data protection documents." %}</p>
+          <p>{% translate "The user remains responsible for the accuracy, legality and relevance of the information they provide." %}</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="tiers">
+          <span class="section-number">07</span>
+          <h2>{% translate "Third-party services" %}</h2>
+          <p>{% translate "Some RoomRun features may rely on services provided by third-party providers, particularly for payments, sending emails, hosting, authentication or other technical features." %}</p>
+          <p>{% translate "These services may be subject to their own terms of use and privacy policies." %}</p>
+          <div class="highlight">{% translate "RoomRun does not necessarily become a party to contracts concluded directly between the user and a third-party provider." %}</div>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="disponibilite">
+          <span class="section-number">08</span>
+          <h2>{% translate "Service availability" %}</h2>
+          <p>{% translate "RoomRun is designed to be continuously accessible, but absolute availability cannot be guaranteed in all circumstances." %}</p>
+          <p>{% translate "Interruptions may in particular occur for:" %}</p>
+          <ul>
+            <li>{% translate "maintenance operations;" %}</li>
+            <li>{% translate "technical updates;" %}</li>
+            <li>{% translate "infrastructure incidents;" %}</li>
+            <li>{% translate "events affecting third-party providers;" %}</li>
+            <li>{% translate "measures necessary for service security." %}</li>
+          </ul>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="securite">
+          <span class="section-number">09</span>
+          <h2>{% translate "Account security" %}</h2>
+          <p>{% translate "The user is responsible for the confidentiality of their credentials and information allowing access to their account." %}</p>
+          <p>{% translate "They must take reasonable measures to protect their account and inform RoomRun as soon as possible if they suspect unauthorized use." %}</p>
+          <ul>
+            <li>{% translate "do not share your password;" %}</li>
+            <li>{% translate "use a sufficiently strong password;" %}</li>
+            <li>{% translate "log out on shared devices;" %}</li>
+            <li>{% translate "report any unusual activity." %}</li>
+          </ul>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="suspension">
+          <span class="section-number">10</span>
+          <h2>{% translate "Suspension and termination" %}</h2>
+          <p>{% translate "Access to RoomRun may be suspended or terminated when necessary, particularly in case of violation of these terms, fraudulent use, security risk or when required by law." %}</p>
+          <p>{% translate "Where appropriate and possible, the user may be informed of the measure taken and its reason." %}</p>
+          <p>{% translate "The end of access to the platform may result in the inability to use certain features or access certain information." %}</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="responsabilite">
+          <span class="section-number">11</span>
+          <h2>{% translate "Liability" %}</h2>
+          <p>{% translate "The user is responsible for the use they make of their account and the operations they carry out from it." %}</p>
+          <p>{% translate "RoomRun is a tool designed to facilitate property management. The user remains responsible for the decisions made and the obligations that apply to them in the context of their relationships with other parties." %}</p>
+          <p>{% translate "Applicable liability limitations must be interpreted in accordance with the mandatory rules of applicable law." %}</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="modifications">
+          <span class="section-number">12</span>
+          <h2>{% translate "Service and contract modifications" %}</h2>
+          <p>{% translate "RoomRun may evolve its features, interface, architecture or certain services offered to improve the platform, correct problems or respond to technical and regulatory constraints." %}</p>
+          <p>{% translate "Significant changes to these terms will be brought to the attention of users by appropriate means." %}</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="duree">
+          <span class="section-number">13</span>
+          <h2>{% translate "License duration" %}</h2>
+          <p>{% translate "The license to use begins upon account activation or authorization to access RoomRun." %}</p>
+          <p>{% translate "It remains applicable for the entire period during which the user is authorized to access the service." %}</p>
+          <p>{% translate "It ends when the user's access is permanently deleted or when the applicable contractual relationship ends." %}</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="droit-applicable">
+          <span class="section-number">14</span>
+          <h2>{% translate "Applicable law" %}</h2>
+          <p>{% translate "This contract must be adapted to the law applicable to the legal entity that operates RoomRun as well as its place of establishment." %}</p>
+          <p>{% translate "Mandatory provisions applicable to users cannot be set aside by this contract when the law does not permit it." %}</p>
+          <div class="highlight">{% translate "This section must be finalized with the company's actual legal information before the service goes into production." %}</div>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="contact">
+          <span class="section-number">15</span>
+          <h2>{% translate "Contact" %}</h2>
+          <p>{% translate "For any questions regarding this contract, the license to use or the conditions of access to RoomRun, the user can contact the team responsible for the service." %}</p>
+          <div class="contact-box">
+            <h3>{% translate "RoomRun Legal Team" %}</h3>
+            <p>{% translate "For requests related to terms of use and license." %}</p>
+            <a href="mailto:legal@roomrun.example" class="contact-button">legal@roomrun.example</a>
+          </div>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  {% include "home/includes/home_footer.html" %}
+{% endblock body %}
 
 {% block extra_css %}
   <style>
+    :root {
+      --primary: #16283f;
+      --primary-hover: #1e3a5f;
+      --primary-soft: #f5e4da;
+      --accent-bg: #eaf2fb;
+      --secondary: #c1622d;
+      --secondary-hover: #a34f22;
+      --secondary-soft: #fef3e2;
+      --bg: #f5f6f8;
+      --surface: #fcfcfb;
+      --card: #ffffff;
+      --success: #2e9e5b;
+      --danger: #d64545;
+      --text: #1e293b;
+      --muted: #5b6675;
+      --border: #e2e8f0;
+      --radius: 16px;
+      --shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    .topbar { position: sticky; top: 0; z-index: 100; height: 72px; background: rgba(255,255,255,0.94); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
+    .topbar-inner { max-width: var(--container); height: 100%; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; font-weight: 800; font-size: 18px; color: var(--primary); }
+    .brand-mark { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: var(--primary); color: #fff; font-weight: 800; font-size: 16px; }
+    .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; font-weight: 600; transition: color .2s ease; }
+    .back-link:hover { color: var(--primary); }
+    .back-link svg { width: 17px; height: 17px; }
+    .hero { padding: 76px 24px 62px; background: radial-gradient(circle at top right, rgba(234,242,251,.9), transparent 35%), var(--surface); border-bottom: 1px solid var(--border); }
+    .hero-inner { max-width: var(--container); margin: 0 auto; }
+    .badge { display: inline-flex; align-items: center; gap: 9px; padding: 7px 12px; background: var(--accent-bg); color: var(--primary); border-radius: 999px; font-size: 13px; font-weight: 650; }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--secondary); }
+    .hero h1 { max-width: 760px; color: var(--primary); font-size: clamp(38px, 6vw, 64px); line-height: 1.08; letter-spacing: -0.04em; margin-bottom: 20px; }
+    .hero-description { max-width: 720px; color: var(--muted); font-size: 17px; line-height: 1.8; }
+    .updated { margin-top: 24px; color: var(--muted); font-size: 13px; }
+    .updated strong { color: var(--text); }
+    .main { width: min(1200px, calc(100% - 40px)); margin: auto; padding: 56px 0 90px; }
+    .layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 42px; align-items: start; }
+    .sidebar { position: sticky; top: 96px; }
+    .sidebar-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+    .sidebar-title { margin-bottom: 14px; color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .toc { display: flex; flex-direction: column; gap: 3px; }
+    .toc-link { position: relative; padding: 9px 12px; border-radius: 9px; color: var(--muted); font-size: 13px; line-height: 1.4; transition: .2s ease; }
+    .toc-link:hover { background: var(--bg); color: var(--primary); }
+    .toc-link.active { background: var(--accent-bg); color: var(--primary); font-weight: 700; }
+    .toc-number { width: 24px; flex-shrink: 0; color: #94a3b8; font-size: 10px; font-weight: 800; }
+    .toc-link.active .toc-number { color: var(--secondary); }
+    .mobile-toc { display: none; margin-bottom: 24px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .mobile-toc-header { width: 100%; padding: 15px 17px; display: flex; align-items: center; justify-content: space-between; border: 0; background: transparent; color: var(--primary); cursor: pointer; font-size: 14px; font-weight: 700; }
+    .mobile-toc-header svg { width: 17px; height: 17px; transition: transform .2s ease; }
+    .mobile-toc.open .mobile-toc-header svg { transform: rotate(180deg); }
+    .mobile-toc-content { display: none; padding: 0 10px 12px; border-top: 1px solid var(--border); }
+    .mobile-toc.open .mobile-toc-content { display: block; }
+    .mobile-toc-content a { display: block; padding: 9px 8px; color: var(--muted); border-radius: 7px; font-size: 13px; }
+    .mobile-toc-content a:hover { background: var(--bg); color: var(--primary); }
+    .content { min-width: 0; padding: 46px 48px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow); }
+    .intro-note { margin-bottom: 42px; padding: 18px 20px; background: var(--accent-bg); border-left: 4px solid var(--primary); border-radius: 10px; color: var(--muted); font-size: 14px; }
+    .section { scroll-margin-top: 100px; padding: 0 0 44px; margin-bottom: 44px; border-bottom: 1px solid var(--border); }
+    .section:last-child { padding-bottom: 0; margin-bottom: 0; border-bottom: 0; }
+    .section-number { display: block; margin-bottom: 5px; color: var(--secondary); font-size: 12px; font-weight: 800; letter-spacing: 1px; }
+    .section h2 { color: var(--primary); font-size: 23px; line-height: 1.35; letter-spacing: -.02em; }
+    .section p { margin-bottom: 15px; color: var(--muted); font-size: 15px; }
+    .section p:last-child { margin-bottom: 0; }
+    .section ul { margin: 15px 0 0 19px; padding: 0; }
+    .section li { margin-bottom: 9px; padding-left: 4px; color: var(--muted); font-size: 15px; }
+    .section li::marker { color: var(--secondary); }
+    .highlight { margin: 20px 0; padding: 17px 19px; background: var(--secondary-soft); border-radius: 10px; color: #6f431d; font-size: 14px; }
+    .definition { margin-top: 18px; display: grid; gap: 10px; }
+    .definition-item { padding: 15px 17px; background: var(--bg); border-radius: 10px; }
+    .definition-item strong { display: block; margin-bottom: 4px; color: var(--primary); font-size: 14px; }
+    .definition-item span { color: var(--muted); font-size: 14px; }
+    .contact-box { margin-top: 22px; padding: 30px; background: var(--primary); border-radius: 17px; }
+    .contact-box h3 { color: white; margin-bottom: 6px; font-size: 17px; }
+    .contact-box p { max-width: 650px; margin-top: 10px; color: #cbd5e1; font-size: 14px; }
+    .contact-button { display: inline-flex; align-items: center; gap: 9px; margin-top: 18px; padding: 12px 17px; background: white; color: var(--primary); border-radius: 9px; font-size: 13px; font-weight: 680; }
+    .contact-button:hover { background: #f1f5f9; }
+    footer { background: var(--primary); color: #cbd5e1; }
+    .footer-inner { max-width: var(--container); margin: 0 auto; padding: 28px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .footer-logo { color: white; font-weight: 700; }
+    .footer-copy { font-size: 12px; }
+    @media (max-width: 900px) { .layout { grid-template-columns: 1fr; gap: 0; } .sidebar { display: none; } .mobile-toc { display: block; } .content { padding: 38px 30px; } }
+    @media (max-width: 640px) { .topbar { height: 64px; } .topbar-inner { padding: 0 18px; } .back-link span { display: none; } .hero { padding: 52px 20px 44px; } .hero h1 { font-size: 40px; letter-spacing: -1.5px; } .hero-description { font-size: 15px; } .main { padding: 30px 0 60px; } .content { padding: 28px 20px; border-radius: 15px; } .section { padding-bottom: 34px; margin-bottom: 34px; } .section h2 { font-size: 20px; } .section p, .section li { font-size: 14px; } .footer-inner { flex-direction: column; align-items: flex-start; } }
     .scroll-mt-24 { scroll-margin-top: 6rem; }
   </style>
 {% endblock extra_css %}
+
+{% block inline_javascript %}
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const mobileToc = document.getElementById("mobileToc");
+      const mobileButton = document.getElementById("mobileTocButton");
+      if (mobileToc && mobileButton) {
+        mobileButton.addEventListener("click", () => {
+          mobileToc.classList.toggle("open");
+        });
+        document.querySelectorAll(".mobile-toc-content a").forEach(link => {
+          link.addEventListener("click", () => {
+            mobileToc.classList.remove("open");
+          });
+        });
+      }
+
+      const sections = document.querySelectorAll(".section");
+      const tocLinks = document.querySelectorAll(".toc-link");
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const id = entry.target.id;
+          tocLinks.forEach(link => {
+            link.classList.remove("active");
+            if (link.getAttribute("href") === "#" + id) {
+              link.classList.add("active");
+            }
+          });
+        });
+      }, { rootMargin: "-20% 0px -65% 0px", threshold: 0 });
+      sections.forEach(section => observer.observe(section));
+
+      document.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener("click", function (event) {
+          const targetId = this.getAttribute("href");
+          if (!targetId || targetId === "#") return;
+          const target = document.querySelector(targetId);
+          if (!target) return;
+          event.preventDefault();
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+          history.replaceState(null, "", targetId);
+        });
+      });
+
+      if (tocLinks.length > 0) {
+        tocLinks[0].classList.add("active");
+      }
+    });
+  </script>
+{% endblock inline_javascript %}

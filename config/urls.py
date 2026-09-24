@@ -7,6 +7,7 @@ from django.urls import include
 from django.urls import path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
+from roomrun.core.views import LegalView
 from django.views.i18n import JavaScriptCatalog
 from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
@@ -32,27 +33,27 @@ urlpatterns += i18n_patterns(
     ),
     path(
         "privacy/",
-        TemplateView.as_view(template_name="home/legal/privacy.html"),
+        LegalView.as_view(template_name="home/legal/privacy.html"),
         name="privacy",
     ),
     path(
         "terms/",
-        TemplateView.as_view(template_name="home/legal/terms.html"),
+        LegalView.as_view(template_name="home/legal/terms.html"),
         name="terms",
     ),
     path(
         "license/",
-        TemplateView.as_view(template_name="home/legal/license.html"),
+        LegalView.as_view(template_name="home/legal/license.html"),
         name="license",
     ),
     path(
         "payments/",
-        TemplateView.as_view(template_name="home/legal/payments.html"),
+        LegalView.as_view(template_name="home/legal/payments.html"),
         name="payments",
     ),
     path(
         "cookies/",
-        TemplateView.as_view(template_name="home/legal/cookies.html"),
+        LegalView.as_view(template_name="home/legal/cookies.html"),
         name="cookies",
     ),
     path(

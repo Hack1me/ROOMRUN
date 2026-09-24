@@ -1,0 +1,51 @@
+{% extends "dashboard/layout.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Visitor invitations" %} — ROOMRUN{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-6xl space-y-8">
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="rr-eyebrow">{% translate "Access management" %}</p>
+      <h1 class="mt-3 font-display text-3xl text-primary">{% translate "Invite a visitor" %}</h1>
+      <p class="mt-2 text-sm text-muted">{% translate "The guard will see this invitation and can register the arrival." %}</p>
+    </div>
+  </div>
+
+  <section class="rr-card p-6">
+    <form method="post" class="grid gap-4 md:grid-cols-2">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="{% if field.name == 'purpose' %}md:col-span-2{% endif %}">
+          <label class="rr-form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% for error in field.errors %}<p class="mt-1 text-xs text-danger">{{ error }}</p>{% endfor %}
+        </div>
+      {% endfor %}
+      <div class="md:col-span-2">
+        <button class="rr-btn-primary" type="submit">{% translate "Create invitation" %}</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="rr-card overflow-hidden">
+    <div class="border-b border-line px-6 py-4">
+      <h2 class="font-display text-xl text-primary">{% translate "My visitor invitations" %}</h2>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full min-w-180 text-left text-sm">
+        <thead class="bg-bg text-xs uppercase tracking-wide text-muted">
+          <tr><th class="px-6 py-3">{% translate "Visitor" %}</th><th class="px-6 py-3">{% translate "Residence" %}</th><th class="px-6 py-3">{% translate "Expected" %}</th><th class="px-6 py-3">{% translate "Status" %}</th><th class="px-6 py-3"></th></tr>
+        </thead>
+        <tbody class="divide-y divide-line">
+          {% for visit in visits %}
+            <tr><td class="px-6 py-4 font-medium text-primary">{{ visit.visitor_name }}<span class="mt-1 block text-xs text-muted">{{ visit.visit_number }}</span></td><td class="px-6 py-4">{{ visit.building }}</td><td class="px-6 py-4">{{ visit.expected_arrival|date:"d/m/Y H:i" }}</td><td class="px-6 py-4">{{ visit.get_status_display }}</td><td class="px-6 py-4">{% if visit.status == "EXPECTED" %}<form method="post" action="{% url 'operations:visitor-invitation-cancel' visit.pk %}">{% csrf_token %}<button class="text-sm text-danger hover:underline">{% translate "Cancel" %}</button></form>{% endif %}</td></tr>
+          {% empty %}
+            <tr><td class="px-6 py-8 text-center text-muted" colspan="5">{% translate "No visitor invitation yet." %}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+{% endblock content %}

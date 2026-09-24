@@ -4,6 +4,15 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
+class VisitorStatus(models.TextChoices):
+    EXPECTED = "EXPECTED", _("Expected")
+    CHECKED_IN = "CHECKED_IN", _("Checked in")
+    CHECKED_OUT = "CHECKED_OUT", _("Checked out")
+    CANCELLED = "CANCELLED", _("Cancelled")
+    DENIED = "DENIED", _("Denied")
+
+
+
 class EmployeeStatus(models.TextChoices):
     """
     Defines the possible employment statuses for an employee.
