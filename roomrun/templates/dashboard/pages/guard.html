@@ -23,13 +23,17 @@
             <i class="ti ti-layout-dashboard"></i>
             <span>{% translate "Dashboard" %}</span>
           </a>
-          <a href="{% url 'operations:guard-visitors' %}" class="nav-item">
+          <a href="{% url 'operations:guard-visitor-check-in' %}" class="nav-item">
             <i class="ti ti-users"></i>
-            <span>{% translate "Visitors" %}</span>
+            <span>{% translate "Check in" %}</span>
           </a>
           <a href="{% url 'operations:guard-visitors' %}" class="nav-item">
             <i class="ti ti-arrows-left-right"></i>
             <span>{% translate "Entries / Exits" %}</span>
+          </a>
+          <a href="{% url 'operations:guard-visitor-history' %}" class="nav-item">
+            <i class="ti ti-history"></i>
+            <span>{% translate "Visit history" %}</span>
           </a>
           <a href="#" class="nav-item">
             <i class="ti ti-alert-triangle"></i>
@@ -175,7 +179,7 @@
             <h2 class="section-title">{% translate "Quick actions" %}</h2>
           </div>
           <div class="actions-grid">
-            <a href="{% url 'operations:guard-visitors' %}" class="action">
+            <a href="{% url 'operations:guard-visitor-check-in' %}" class="action">
               <div class="action-icon icon-blue"><i class="ti ti-user-plus"></i></div>
               <div class="action-content">
                 <div class="action-title">{% translate "Register visitor" %}</div>

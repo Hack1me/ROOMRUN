@@ -48,6 +48,16 @@ urlpatterns = [
         "guard/visitors/", views.GuardVisitorListView.as_view(), name="guard-visitors"
     ),
     path(
+        "guard/visitors/check-in/",
+        views.GuardCheckInView.as_view(),
+        name="guard-visitor-check-in",
+    ),
+    path(
+        "guard/visitors/history/",
+        views.GuardVisitorHistoryView.as_view(),
+        name="guard-visitor-history",
+    ),
+    path(
         "guard/visitors/<uuid:pk>/status/",
         views.GuardVisitorStatusView.as_view(),
         name="guard-visitor-status",

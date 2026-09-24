@@ -8,7 +8,9 @@
     <div class="nav-section">
       <div class="nav-title">{% translate "Main" %}</div>
       <a href="{% url 'dashboard:guard' %}" class="nav-item"><i class="ti ti-layout-dashboard"></i><span>{% translate "Dashboard" %}</span></a>
-      <a href="{% url 'operations:guard-visitors' %}" class="nav-item"><i class="ti ti-users"></i><span>{% translate "Visitors" %}</span></a>
+      <a href="{% url 'operations:guard-visitor-check-in' %}" class="nav-item"><i class="ti ti-user-plus"></i><span>{% translate "Check in" %}</span></a>
+      <a href="{% url 'operations:guard-visitors' %}" class="nav-item"><i class="ti ti-users"></i><span>{% translate "Active visits" %}</span></a>
+      <a href="{% url 'operations:guard-visitor-history' %}" class="nav-item"><i class="ti ti-history"></i><span>{% translate "History" %}</span></a>
       <a href="{% url 'communications:conversation-list' %}" class="nav-item active"><i class="ti ti-message"></i><span>{% translate "Messages" %}</span></a>
     </div>
     <div class="nav-section">

@@ -22,7 +22,6 @@ from operations.models import VisitorVisit
 from utils.enums import CleaningStatus
 from utils.enums import ContractStatus
 from utils.enums import EmployeeStatus
-from utils.enums import EmployeeStatus
 
 from utils.enums import VisitorStatus
 
@@ -237,11 +236,7 @@ class VisitorInvitationView(VisitorHostMixin, CreateView):
         if form.cleaned_data["expected_arrival"] < timezone.now():
             form.add_error("expected_arrival", _("Arrival must be in the future."))
             return self.form_invalid(form)
-        if guard.employee.status != EmployeeStatus.ACTIVE:
-            raise PermissionDenied
         form.instance.host = self.request.user
-        if guard.employee.status != EmployeeStatus.ACTIVE:
-            raise PermissionDenied
         form.instance.created_by = self.request.user
         form.instance.updated_by = self.request.user
         messages.success(self.request, _("Visitor invitation created."))
@@ -269,9 +264,12 @@ class VisitorInvitationCancelView(VisitorHostMixin, View):
 class GuardVisitorMixin(LoginRequiredMixin):
     def get_guard(self):
         try:
-            return self.request.user.employee_profile.guard_profile
+            guard = self.request.user.employee_profile.guard_profile
         except AttributeError as exc:
             raise PermissionDenied from exc
+        if guard.employee.status != EmployeeStatus.ACTIVE:
+            raise PermissionDenied
+        return guard
 
     def get_guard_visits(self):
         return VisitorVisit.objects.filter(
@@ -298,6 +296,71 @@ class GuardVisitorListView(GuardVisitorMixin, ListView):
         )
 
 
+class GuardCheckInForm(forms.ModelForm):
+    """Register a walk-in visitor for a residence assigned to the guard."""
+
+    class Meta:
+        model = VisitorVisit
+        fields = ("building", "visitor_name", "visitor_phone", "purpose", "check_in_note")
+        widgets = {
+            "purpose": forms.Textarea(attrs={"rows": 3}),
+            "check_in_note": forms.Textarea(attrs={"rows": 3}),
+        }
+
+    def __init__(self, *args, guard, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["building"].queryset = Building.objects.filter(
+            property_ref__landlord__in=guard.landlords.all()
+        ).select_related("property_ref")
+        for field in self.fields.values():
+            field.widget.attrs.setdefault("class", "rr-input")
+        self.fields["visitor_phone"].widget.attrs["autocomplete"] = "tel"
+        self.fields["visitor_name"].widget.attrs["autocomplete"] = "name"
+
+
+class GuardCheckInView(GuardVisitorMixin, CreateView):
+    """Securely check in a walk-in visitor at the security desk."""
+
+    form_class = GuardCheckInForm
+    template_name = "dashboard/operations/guard/checkin_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["guard"] = self.get_guard()
+        return kwargs
+
+    @transaction.atomic
+    def form_valid(self, form):
+        guard = self.get_guard()
+        now = timezone.now()
+        form.instance.expected_arrival = now
+        form.instance.status = VisitorStatus.CHECKED_IN
+        form.instance.checked_in_at = now
+        form.instance.checked_in_by = guard
+        form.instance.created_by = self.request.user
+        form.instance.updated_by = self.request.user
+        messages.success(self.request, _("Visitor checked in successfully."))
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("operations:guard-visitors")
+
+
+class GuardVisitorHistoryView(GuardVisitorMixin, ListView):
+    template_name = "dashboard/operations/guard/visitor_history.html"
+    context_object_name = "visits"
+    paginate_by = 30
+
+    def get_queryset(self):
+        return self.get_guard_visits().filter(
+            status__in=[
+                VisitorStatus.CHECKED_OUT,
+                VisitorStatus.DENIED,
+                VisitorStatus.CANCELLED,
+            ]
+        ).order_by("-updated_at")
+
+
 class GuardVisitorStatusView(GuardVisitorMixin, View):
     @transaction.atomic
     def post(self, request, pk):
@@ -322,3 +385,4 @@ class GuardVisitorStatusView(GuardVisitorMixin, View):
         visit.save()
         messages.success(request, _("Visitor status updated."))
         return redirect("operations:guard-visitors")
+

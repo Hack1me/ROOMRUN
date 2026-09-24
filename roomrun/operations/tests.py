@@ -70,3 +70,60 @@ class GuardVisitorAccessTests(TestCase):
         self.assertEqual(response.status_code, 404)
         self.visit.refresh_from_db()
         self.assertEqual(self.visit.status, VisitorStatus.EXPECTED)
+
+    def test_guard_can_register_and_check_out_walk_in_visitor(self):
+        self.client.force_login(self.guard_user)
+
+        response = self.client.post(
+            reverse("operations:guard-visitor-check-in"),
+            {
+                "building": self.building.pk,
+                "visitor_name": "Alex Walk-in",
+                "visitor_phone": "+237600000000",
+                "purpose": "Delivery",
+                "check_in_note": "ID verified",
+            },
+        )
+
+        self.assertRedirects(response, reverse("operations:guard-visitors"))
+        walk_in = VisitorVisit.objects.get(visitor_name="Alex Walk-in")
+        self.assertEqual(walk_in.status, VisitorStatus.CHECKED_IN)
+        self.assertEqual(walk_in.checked_in_by, self.guard)
+        self.assertIsNotNone(walk_in.checked_in_at)
+        self.assertEqual(walk_in.created_by, self.guard_user)
+
+        response = self.client.post(
+            reverse("operations:guard-visitor-status", args=[walk_in.pk]),
+            {"action": "check-out"},
+        )
+
+        self.assertRedirects(response, reverse("operations:guard-visitors"))
+        walk_in.refresh_from_db()
+        self.assertEqual(walk_in.status, VisitorStatus.CHECKED_OUT)
+        self.assertEqual(walk_in.checked_out_by, self.guard)
+        self.assertIsNotNone(walk_in.checked_out_at)
+
+    def test_walk_in_form_rejects_building_outside_guard_scope(self):
+        other_owner = User.objects.create_user(
+            email="other-owner.com", password="safe-password"
+        )
+        other_landlord = Landlord.objects.create(user=other_owner)
+        other_property = Property.objects.create(
+            landlord=other_landlord, name="Residence Two", address="2 Main Street"
+        )
+        other_building = Building.objects.create(
+            property_ref=other_property, name="Building B"
+        )
+        self.client.force_login(self.guard_user)
+
+        response = self.client.post(
+            reverse("operations:guard-visitor-check-in"),
+            {"building": other_building.pk, "visitor_name": "Unauthorised Visitor"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Select a valid choice")
+        self.assertFalse(
+            VisitorVisit.objects.filter(visitor_name="Unauthorised Visitor").exists()
+        )
+
