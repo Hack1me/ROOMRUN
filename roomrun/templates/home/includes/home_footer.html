@@ -1,0 +1,38 @@
+{% load i18n %}
+
+<!-- ============================== FOOTER ============================== -->
+<footer class="footer">
+  <div class="footer__top">
+    <div class="footer__brand">
+      <p class="nav__word nav__word--light"><span class="nav__dot"></span>ROOMRUN</p>
+      <p>Un registre calme pour la gestion résidentielle en Afrique centrale.</p>
+    </div>
+
+    <div class="footer__col">
+      <h4>Plateforme</h4>
+      <a href="{% url 'users:signup' %}">Réservations</a>
+      <a href="{% url 'users:signup' %}">Baux</a>
+      <a href="{% url 'users:signup' %}">Paiements</a>
+      <a href="{% url 'users:signup' %}">Maintenance</a>
+    </div>
+
+    <div class="footer__col">
+      <h4>Profils</h4>
+      <a href="{% url 'users:signup' %}">Bailleurs</a>
+      <a href="{% url 'users:signup' %}">Locataires</a>
+      <a href="{% url 'users:signup' %}">Agents &amp; gardiens</a>
+    </div>
+
+    <div class="footer__col">
+      <h4>Entreprise</h4>
+      <a href="{% url 'users:signup' %}">À propos</a>
+      <a href="{% url 'users:signup' %}">Sécurité</a>
+      <a href="{% url 'users:signup' %}">Contact</a>
+    </div>
+  </div>
+
+  <div class="footer__bottom">
+    <p>© 2026 ROOMRUN</p>
+    <p class="footer__cities">DOUALA · YAOUNDÉ · LIBREVILLE</p>
+  </div>
+</footer>

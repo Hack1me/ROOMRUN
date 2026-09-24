@@ -31,12 +31,12 @@ urlpatterns += i18n_patterns(
         name="about",
     ),
     path(
-        "Privacy-policy/",
+        "privacy/",
         TemplateView.as_view(template_name="home/legal/privacy.html"),
         name="privacy",
     ),
     path(
-        "Legal-Notice/",
+        "terms/",
         TemplateView.as_view(template_name="home/legal/terms.html"),
         name="terms",
     ),
