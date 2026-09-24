@@ -175,22 +175,22 @@
             <h2 class="section-title">{% translate "Quick actions" %}</h2>
           </div>
           <div class="actions-grid">
-            <button class="action">
+            <a href="{% url 'operations:guard-visitors' %}" class="action">
               <div class="action-icon icon-blue"><i class="ti ti-user-plus"></i></div>
               <div class="action-content">
                 <div class="action-title">{% translate "Register visitor" %}</div>
                 <div class="action-description">{% translate "Add a new visitor" %}</div>
               </div>
               <i class="ti ti-chevron-right action-arrow"></i>
-            </button>
-            <button class="action">
+            </a>
+            <a href="{% url 'operations:guard-visitors' %}" class="action">
               <div class="action-icon icon-green"><i class="ti ti-login"></i></div>
               <div class="action-content">
                 <div class="action-title">{% translate "Record entry" %}</div>
                 <div class="action-description">{% translate "Check in a visitor" %}</div>
               </div>
               <i class="ti ti-chevron-right action-arrow"></i>
-            </button>
+            </a>
             <button class="action">
               <div class="action-icon icon-orange"><i class="ti ti-alert-triangle"></i></div>
               <div class="action-content">
@@ -222,11 +222,11 @@
                     <div>
                       <div class="visitor-name">{{ visitor.visitor_name }}</div>
                       <div class="visitor-info">
-                        {% translate "Tenant" %} {{ visitor.tenant_name }} · {{ visitor.action }} {{ visitor.time|time:"H:i" }}
+                        {{ visitor.host|default:"—" }} · {% translate "Checked in" %} {{ visitor.checked_in_at|time:"H:i" }}
                       </div>
                     </div>
                   </div>
-                  <span class="badge badge-{% if visitor.status == 'ACTIVE' %}success{% else %}warning{% endif %}">
+                  <span class="badge badge-{% if visitor.status == 'CHECKED_IN' %}success{% else %}warning{% endif %}">
                     {{ visitor.get_status_display }}
                   </span>
                 </div>
@@ -248,9 +248,9 @@
                 <div class="expected">
                   <div>
                     <div class="expected-name">{{ visit.visitor_name }}</div>
-                    <div class="expected-host">{{ visit.tenant_name }}</div>
+                    <div class="expected-host">{{ visit.host|default:"—" }}</div>
                   </div>
-                  <div class="expected-time">{{ visit.expected_time|time:"H:i" }}</div>
+                  <div class="expected-time">{{ visit.expected_arrival|time:"H:i" }}</div>
                 </div>
               {% empty %}
                 <p class="p-5 text-sm text-muted">{% translate "No expected visitor for now." %}</p>

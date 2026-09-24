@@ -148,7 +148,9 @@ class InvitationAcceptanceService:
             from users.models import Employee
             from users.models import Guard
             employee = Employee.objects.create(user=user)
-            Guard.objects.create(employee=employee)
+            guard = Guard.objects.create(employee=employee)
+            if hasattr(invitation.invited_by, "landlord_profile"):
+                guard.landlords.add(invitation.invited_by.landlord_profile)
 
         elif role == UserRole.MAINTENANCE:
             from users.models import Employee

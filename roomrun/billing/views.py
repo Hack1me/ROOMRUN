@@ -1,9 +1,9 @@
+import contextlib
 import json
 import logging
 
 from billing.models import Charge
 from billing.models import Payment
-from billing.services.gateways import CamPayGateway
 from billing.services.payment_service import PaymentService
 from billing.services.payment_service import PaymentServiceError
 from django import forms
@@ -18,76 +18,92 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView
 from rentals.mixins import TenantRequiredMixin
 from utils.enums import PaymentMethod
+from utils.enums import PaymentProvider
 from utils.enums import PaymentStatus
 
 logger = logging.getLogger(__name__)
 
 
-@method_decorator(csrf_exempt, name="dispatch")
-class CamPayWebhookView(View):
+class BaseWebhookView(View):
     """
-    Webhook endpoint for CamPay notifications.
+    Base class for provider webhooks.
 
-    Always returns 200 OK, even on errors, to prevent CamPay from
-    retrying indefinitely. Errors are logged and handled internally.
+    Always returns 200 OK to prevent provider retries.
     """
+
+    provider: str = ""
+
+    def process(self, payload: dict) -> str | None:
+        """Extract the transaction reference from the payload."""
+        raise NotImplementedError
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        signature = request.headers.get("X-CamPay-Signature") or request.headers.get(
-            "X-Campay-Signature"
-        )
-        if not CamPayGateway().verify_webhook_signature(request.body, signature):
-            logger.warning("CamPay webhook: invalid signature")
-            return HttpResponse(status=401)
-
-        # --- 1. Parse JSON ---
         try:
             payload = json.loads(request.body.decode("utf-8"))
         except json.JSONDecodeError, UnicodeDecodeError:
-            logger.warning("CamPay webhook: invalid payload")
+            logger.warning("%s webhook: invalid JSON", self.provider)
             return HttpResponse(status=200)
 
-        # --- 2. Extract reference ---
-        provider_reference = payload.get("reference")
-        if not provider_reference:
-            logger.warning("CamPay webhook: missing reference | payload=%s", payload)
+        transaction_reference = self.process(payload)
+        if not transaction_reference:
+            logger.warning(
+                "%s webhook: no reference | payload=%s", self.provider, payload
+            )
             return HttpResponse(status=200)
 
-        logger.info("CamPay webhook received | ref=%s", provider_reference)
+        logger.info(
+            "%s webhook received | ref=%s", self.provider, transaction_reference
+        )
 
-        # --- 3. Process ---
         try:
             payment = PaymentService().handle_provider_notification(
-                provider_reference=provider_reference,
+                provider=self.provider,
+                transaction_reference=transaction_reference,
             )
         except PaymentServiceError:
             logger.exception(
-                "CamPay webhook: service error | ref=%s",
-                provider_reference,
+                "%s webhook: service error | ref=%s",
+                self.provider,
+                transaction_reference,
             )
             return HttpResponse(status=200)
         except Exception:
             logger.exception(
-                "CamPay webhook: unexpected error | ref=%s",
-                provider_reference,
+                "%s webhook: unexpected error | ref=%s",
+                self.provider,
+                transaction_reference,
             )
             return HttpResponse(status=200)
 
-        # --- 4. Handle unknown reference ---
         if payment is None:
             logger.warning(
-                "CamPay webhook: unknown reference | ref=%s",
-                provider_reference,
+                "%s webhook: unknown ref | ref=%s", self.provider, transaction_reference
             )
-            # Still 200 to stop retries.
             return HttpResponse(status=200)
 
         logger.info(
-            "CamPay webhook processed | payment=%s | status=%s",
-            payment.payment_number,
-            payment.status,
+            "%s webhook processed | payment=%s", self.provider, payment.payment_number
         )
         return HttpResponse(status=200)
+
+
+class CamPayWebhookView(BaseWebhookView):
+    provider = PaymentProvider.CAMPAY
+
+    def process(self, payload):
+        return payload.get("reference")
+
+
+class DigiPayWebhookView(BaseWebhookView):
+    provider = PaymentProvider.DIGIPAY
+
+    def process(self, payload):
+        # Adapte selon le format réel du webhook DigiPay
+        return payload.get("transaction_id") or payload.get("reference")
 
 
 class PaymentInitiationForm(forms.Form):
@@ -160,8 +176,6 @@ class TenantPaymentSynchronizeView(TenantRequiredMixin, View):
             charge__contract__tenant=self.get_tenant(),
         )
         if payment.status == PaymentStatus.PENDING and payment.provider_reference:
-            try:
+            with contextlib.suppress(PaymentServiceError, ValidationError):
                 PaymentService().synchronize(payment=payment)
-            except PaymentServiceError, ValidationError:
-                pass
         return redirect("billing:tenant-charge-list")

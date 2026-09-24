@@ -43,6 +43,9 @@ class EmployeeService:
 
         # ---------------------------------------------------------
         # Search
+        queryset = queryset.filter(
+            Q(guard_profile__landlords=landlord) | Q(maintenance_agent_profile__landlords=landlord)
+        )
         # ---------------------------------------------------------
         search = search.strip()
         if search:

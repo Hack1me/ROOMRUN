@@ -167,6 +167,7 @@ class PaymentStatus(models.TextChoices):
 
 class PaymentProvider(models.TextChoices):
     CAMPAY = "CAMPAY", _("CamPay")
+    DIGIPAY = "DIGIPAY", _("DigiPay")
 
 class Priority(models.TextChoices):
     """

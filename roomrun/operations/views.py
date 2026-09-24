@@ -21,6 +21,8 @@ from rentals.models import RentalContract
 from operations.models import VisitorVisit
 from utils.enums import CleaningStatus
 from utils.enums import ContractStatus
+from utils.enums import EmployeeStatus
+from utils.enums import EmployeeStatus
 
 from utils.enums import VisitorStatus
 
@@ -235,7 +237,11 @@ class VisitorInvitationView(VisitorHostMixin, CreateView):
         if form.cleaned_data["expected_arrival"] < timezone.now():
             form.add_error("expected_arrival", _("Arrival must be in the future."))
             return self.form_invalid(form)
+        if guard.employee.status != EmployeeStatus.ACTIVE:
+            raise PermissionDenied
         form.instance.host = self.request.user
+        if guard.employee.status != EmployeeStatus.ACTIVE:
+            raise PermissionDenied
         form.instance.created_by = self.request.user
         form.instance.updated_by = self.request.user
         messages.success(self.request, _("Visitor invitation created."))
