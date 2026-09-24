@@ -64,11 +64,6 @@ class PDFConfigurationError(PDFError):
 
 
 
-
-
-
-
-
 @dataclass(slots=True)
 class PDFOptions:
     """

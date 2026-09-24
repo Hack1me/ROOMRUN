@@ -2,23 +2,18 @@
 {% load i18n %}
 
 {% block header %}
-  <header class="sticky top-0 z-50 border-b border-line bg-paper/95">
-    <div class="rr-container flex h-18 items-center justify-between">
-      <a href="{% url 'home' %}" class="flex items-center gap-2 font-display text-lg font-semibold text-primary">
-        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white shadow-md shadow-primary/20">
-          <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
-          </svg>
-        </span>
-        RoomRun
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="#" class="logo">
+        <span class="logo-mark">R</span>
+        <span>RoomRun</span>
       </a>
-      <a href="{% url 'home' %}" class="flex items-center gap-2 text-sm font-medium text-muted transition-colors hover:text-primary">
-        <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <a href="{% url 'home' %}" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 12H5"/>
           <path d="M12 19l-7-7 7-7"/>
         </svg>
-        <span class="hidden sm:inline">{% translate "Back to RoomRun" %}</span>
+        <span>{% translate "Back to RoomRun" %}</span>
       </a>
     </div>
   </header>
@@ -27,275 +22,405 @@
 {% block bodyclass %}rr-landing-page{% endblock bodyclass %}
 
 {% block content %}
-  <div class="mx-auto max-w-3xl">
-    <!-- Hero -->
-    <section class="border-b border-line bg-paper">
-      <div class="rr-container py-16 sm:py-24">
-        <div class="flex items-center gap-3">
-          <span class="inline-flex items-center gap-2 rounded-full bg-accent-bg px-3 py-1.5 text-xs font-semibold text-primary">
-            <span class="inline-block size-1.5 rounded-full bg-secondary"></span>
-            {% translate "Legal" %}
-          </span>
-        </div>
-        <h1 class="mt-6 font-display text-4xl font-semibold tracking-tight text-primary sm:text-5xl">
-          {% translate "Privacy Policy" %}
-        </h1>
-        <p class="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
-          {% translate "This privacy policy describes how ROOMRUN collects, uses, and protects your personal information when you use our platform." %}
-        </p>
-        <p class="mt-4 text-sm text-muted">
-          {% translate "Last updated" %} <strong class="font-semibold text-primary">23 septembre 2026</strong>
-        </p>
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        {% translate "Privacy" %}
       </div>
-    </section>
+      <h1>{% translate "Privacy Policy" %}</h1>
+      <p class="hero-description">{% translate "We explain here how RoomRun collects, uses, protects, and retains your personal data." %}</p>
+      <p class="updated">{% translate "Last updated" %} <strong>23 September 2026</strong></p>
+    </div>
+  </section>
 
-    <!-- Main -->
-    <main class="py-12 sm:py-18">
-      <div class="rr-container">
-        <div class="grid grid-cols-1 gap-10 lg:grid-cols-[16rem_1fr]">
-          <!-- Sidebar TOC -->
-          <aside class="hidden lg:block">
-            <nav class="sticky top-24">
-              <p class="text-xs font-semibold uppercase tracking-widest text-muted">{% translate "On this page" %}</p>
-              <ul class="mt-4 space-y-1">
-                <li><a href="#introduction" class="block rounded-lg px-3 py-2 text-sm font-medium text-primary bg-accent-bg">{% translate "Introduction" %}</a></li>
-                <li><a href="#donnees" class="block rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-bg hover:text-primary">{% translate "Data collected" %}</a></li>
-                <li><a href="#utilisation" class="block rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-bg hover:text-primary">{% translate "Use of data" %}</a></li>
-                <li><a href="#partage" class="block rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-bg hover:text-primary">{% translate "Data sharing" %}</a></li>
-                <li><a href="#securite" class="block rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-bg hover:text-primary">{% translate "Security" %}</a></li>
-                <li><a href="#conservation" class="block rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-bg hover:text-primary">{% translate "Retention" %}</a></li>
-                <li><a href="#droits" class="block rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-bg hover:text-primary">{% translate "Your rights" %}</a></li>
-                <li><a href="#cookies" class="block rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-bg hover:text-primary">{% translate "Cookies" %}</a></li>
-                <li><a href="#services" class="block rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-bg hover:text-primary">{% translate "Third-party services" %}</a></li>
-                <li><a href="#modifications" class="block rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-bg hover:text-primary">{% translate "Changes" %}</a></li>
-                <li><a href="#contact" class="block rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-bg hover:text-primary">{% translate "Contact us" %}</a></li>
-              </ul>
-            </nav>
-          </aside>
-
-          <!-- Content -->
-          <article class="min-w-0 space-y-10">
-            <section id="introduction" class="scroll-mt-24">
-              <span class="text-xs font-semibold uppercase tracking-widest text-secondary">01</span>
-              <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "About RoomRun" %}</h2>
-              <p class="mt-4 text-base leading-relaxed text-muted">
-                {% translate "RoomRun is a rental management platform that allows property owners, tenants, and other authorized users to manage their homes, rental contracts, payments, maintenance requests, and communications." %}
-              </p>
-            </section>
-
-            <hr class="border-line">
-
-            <section id="donnees" class="scroll-mt-24">
-              <span class="text-xs font-semibold uppercase tracking-widest text-secondary">02</span>
-              <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "Data we collect" %}</h2>
-              <p class="mt-4 text-base leading-relaxed text-muted">
-                {% translate "Depending on how you use RoomRun, we may collect different categories of data." %}
-              </p>
-
-              <div class="mt-6 space-y-4">
-                <div class="rounded-xl border border-line bg-bg p-5">
-                  <h3 class="font-semibold text-primary">{% translate "Identification information" %}</h3>
-                  <ul class="mt-3 list-disc space-y-1 pl-5 text-sm text-muted">
-                    <li>{% translate "First and last name" %}</li>
-                    <li>{% translate "Email address" %}</li>
-                    <li>{% translate "Phone number" %}</li>
-                    <li>{% translate "Country of residence" %}</li>
-                    <li>{% translate "Information necessary to identify the tenant" %}</li>
-                  </ul>
-                </div>
-
-                <div class="rounded-xl border border-line bg-bg p-5">
-                  <h3 class="font-semibold text-primary">{% translate "Rental-related information" %}</h3>
-                  <ul class="mt-3 list-disc space-y-1 pl-5 text-sm text-muted">
-                    <li>{% translate "Rental applications" %}</li>
-                    <li>{% translate "Property information" %}</li>
-                    <li>{% translate "Rental contracts" %}</li>
-                    <li>{% translate "Start and end dates of tenancy" %}</li>
-                    <li>{% translate "Rent and deposit amounts" %}</li>
-                    <li>{% translate "Charges and payments related to the contract" %}</li>
-                  </ul>
-                </div>
-
-                <div class="rounded-xl border border-line bg-bg p-5">
-                  <h3 class="font-semibold text-primary">{% translate "Technical information" %}</h3>
-                  <ul class="mt-3 list-disc space-y-1 pl-5 text-sm text-muted">
-                    <li>{% translate "IP address" %}</li>
-                    <li>{% translate "Device type" %}</li>
-                    <li>{% translate "Operating system" %}</li>
-                    <li>{% translate "Browser" %}</li>
-                    <li>{% translate "Date and time of connection" %}</li>
-                  </ul>
-                </div>
-              </div>
-            </section>
-
-            <hr class="border-line">
-
-            <section id="utilisation" class="scroll-mt-24">
-              <span class="text-xs font-semibold uppercase tracking-widest text-secondary">03</span>
-              <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "Use of your data" %}</h2>
-              <p class="mt-4 text-base leading-relaxed text-muted">
-                {% translate "We use your data to provide, secure, and improve RoomRun services." %}
-              </p>
-
-              <div class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <div class="rounded-xl border border-line bg-bg px-4 py-3 text-sm text-muted">{% translate "Manage your account" %}</div>
-                <div class="rounded-xl border border-line bg-bg px-4 py-3 text-sm text-muted">{% translate "Manage rental applications" %}</div>
-                <div class="rounded-xl border border-line bg-bg px-4 py-3 text-sm text-muted">{% translate "Prepare and manage contracts" %}</div>
-                <div class="rounded-xl border border-line bg-bg px-4 py-3 text-sm text-muted">{% translate "Process payments" %}</div>
-                <div class="rounded-xl border border-line bg-bg px-4 py-3 text-sm text-muted">{% translate "Send important notifications" %}</div>
-                <div class="rounded-xl border border-line bg-bg px-4 py-3 text-sm text-muted">{% translate "Improve platform security" %}</div>
-              </div>
-            </section>
-
-            <hr class="border-line">
-
-            <section id="partage" class="scroll-mt-24">
-              <span class="text-xs font-semibold uppercase tracking-widest text-secondary">04</span>
-              <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "Data sharing" %}</h2>
-              <p class="mt-4 text-base leading-relaxed text-muted">
-                {% translate "Your data may only be accessible to people or services that need it to operate RoomRun." %}
-              </p>
-
-              <div class="mt-6 space-y-3">
-                <div class="flex gap-4 rounded-xl border border-line bg-bg p-5">
-                  <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-bg text-sm font-bold text-primary">01</span>
-                  <div>
-                    <h3 class="font-semibold text-primary">{% translate "Concerned users" %}</h3>
-                    <p class="mt-1 text-sm text-muted">{% translate "Property owners, tenants, and authorized users within the scope of their rental relationship." %}</p>
-                  </div>
-                </div>
-                <div class="flex gap-4 rounded-xl border border-line bg-bg p-5">
-                  <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-bg text-sm font-bold text-primary">02</span>
-                  <div>
-                    <h3 class="font-semibold text-primary">{% translate "Technical providers" %}</h3>
-                    <p class="mt-1 text-sm text-muted">{% translate "Services required for hosting, email, payments, and technical operation of the platform." %}</p>
-                  </div>
-                </div>
-                <div class="flex gap-4 rounded-xl border border-line bg-bg p-5">
-                  <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-bg text-sm font-bold text-primary">03</span>
-                  <div>
-                    <h3 class="font-semibold text-primary">{% translate "Competent authorities" %}</h3>
-                    <p class="mt-1 text-sm text-muted">{% translate "When data disclosure is required by applicable law." %}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="mt-6 rounded-xl border border-secondary-soft bg-secondary-soft p-5 text-sm text-secondary">
-                <strong>{% translate "Important:" %}</strong> {% translate "RoomRun does not sell your personal data for commercial purposes." %}
-              </div>
-            </section>
-
-            <hr class="border-line">
-
-            <section id="securite" class="scroll-mt-24">
-              <span class="text-xs font-semibold uppercase tracking-widest text-secondary">05</span>
-              <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "Security" %}</h2>
-              <p class="mt-4 text-base leading-relaxed text-muted">
-                {% translate "RoomRun implements technical and organizational measures to protect personal data against unauthorized access, modification, loss, or fraudulent use." %}
-              </p>
-
-              <div class="mt-6 flex gap-4 rounded-xl border border-line bg-accent-bg p-5">
-                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-primary">✓</span>
-                <p class="text-sm text-primary">
-                  {% translate "Access to sensitive information is restricted to individuals and services that need it for their functions." %}
-                </p>
-              </div>
-
-              <p class="mt-4 text-base leading-relaxed text-muted">
-                {% translate "No computer system or online service can guarantee absolute security." %}
-              </p>
-            </section>
-
-            <hr class="border-line">
-
-            <section id="conservation" class="scroll-mt-24">
-              <span class="text-xs font-semibold uppercase tracking-widest text-secondary">06</span>
-              <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "Data retention" %}</h2>
-              <p class="mt-4 text-base leading-relaxed text-muted">
-                {% translate "We retain personal data for as long as necessary to fulfill the purposes for which it was collected." %}
-              </p>
-              <p class="mt-4 text-base leading-relaxed text-muted">
-                {% translate "Certain data may be retained longer when necessary to comply with a legal obligation, manage a dispute, establish or defend our rights, or ensure transaction traceability." %}
-              </p>
-            </section>
-
-            <hr class="border-line">
-
-            <section id="droits" class="scroll-mt-24">
-              <span class="text-xs font-semibold uppercase tracking-widest text-secondary">07</span>
-              <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "Your rights" %}</h2>
-              <p class="mt-4 text-base leading-relaxed text-muted">
-                {% translate "Depending on applicable law, you may have the following rights:" %}
-              </p>
-
-              <div class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <div class="rounded-xl border border-line bg-bg px-4 py-3 text-sm font-semibold text-primary">{% translate "Right to access your data" %}</div>
-                <div class="rounded-xl border border-line bg-bg px-4 py-3 text-sm font-semibold text-primary">{% translate "Right to rectification" %}</div>
-                <div class="rounded-xl border border-line bg-bg px-4 py-3 text-sm font-semibold text-primary">{% translate "Right to request deletion" %}</div>
-                <div class="rounded-xl border border-line bg-bg px-4 py-3 text-sm font-semibold text-primary">{% translate "Right to restrict processing" %}</div>
-                <div class="rounded-xl border border-line bg-bg px-4 py-3 text-sm font-semibold text-primary">{% translate "Right to object" %}</div>
-                <div class="rounded-xl border border-line bg-bg px-4 py-3 text-sm font-semibold text-primary">{% translate "Right to withdraw consent" %}</div>
-              </div>
-            </section>
-
-            <hr class="border-line">
-
-            <section id="cookies" class="scroll-mt-24">
-              <span class="text-xs font-semibold uppercase tracking-widest text-secondary">08</span>
-              <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "Cookies" %}</h2>
-              <p class="mt-4 text-base leading-relaxed text-muted">
-                {% translate "RoomRun may use cookies or similar technologies to maintain your session, secure your account, remember preferences, and improve platform performance." %}
-              </p>
-            </section>
-
-            <hr class="border-line">
-
-            <section id="services" class="scroll-mt-24">
-              <span class="text-xs font-semibold uppercase tracking-widest text-secondary">09</span>
-              <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "Third-party services" %}</h2>
-              <p class="mt-4 text-base leading-relaxed text-muted">
-                {% translate "Some RoomRun features may rely on external services for payments, email, hosting, or other technical operations." %}
-              </p>
-            </section>
-
-            <hr class="border-line">
-
-            <section id="modifications" class="scroll-mt-24">
-              <span class="text-xs font-semibold uppercase tracking-widest text-secondary">10</span>
-              <h2 class="mt-2 text-2xl font-semibold text-primary">{% translate "Policy updates" %}</h2>
-              <p class="mt-4 text-base leading-relaxed text-muted">
-                {% translate "This policy may be updated to reflect changes to RoomRun, its features, or applicable legal requirements." %}
-              </p>
-            </section>
-
-            <hr class="border-line">
-
-            <section id="contact" class="scroll-mt-24">
-              <div class="rounded-2xl bg-primary p-8 text-white sm:p-10">
-                <span class="text-xs font-semibold uppercase tracking-widest text-secondary">11</span>
-                <h2 class="mt-2 text-2xl font-semibold">{% translate "Contact us" %}</h2>
-                <p class="mt-4 max-w-2xl text-sm leading-relaxed text-slate-300">
-                  {% translate "For any questions about this privacy policy or the use of your personal data, contact the RoomRun team." %}
-                </p>
-                <a href="mailto:privacy@roomrun.example" class="mt-6 inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-slate-100">
-                  privacy@roomrun.example
-                  <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14"/>
-                    <path d="M13 6l6 6-6 6"/>
-                  </svg>
-                </a>
-              </div>
-            </section>
-          </article>
-        </div>
+  <main class="main">
+    <div class="mobile-toc" id="mobileToc">
+      <button class="mobile-toc-header" id="mobileTocButton" type="button">
+        <span>{% translate "On this page" %}</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+      </button>
+      <div class="mobile-toc-content">
+        <a href="#introduction">{% translate "Introduction" %}</a>
+        <a href="#data-collected">{% translate "Data collected" %}</a>
+        <a href="#use-of-data">{% translate "Use of data" %}</a>
+        <a href="#data-sharing">{% translate "Data sharing" %}</a>
+        <a href="#security">{% translate "Security" %}</a>
+        <a href="#retention">{% translate "Retention" %}</a>
+        <a href="#your-rights">{% translate "Your rights" %}</a>
+        <a href="#cookies">{% translate "Cookies" %}</a>
+        <a href="#third-party-services">{% translate "Third-party services" %}</a>
+        <a href="#changes">{% translate "Changes" %}</a>
+        <a href="#contact">{% translate "Contact us" %}</a>
       </div>
-    </main>
-  </div>
+    </div>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-card">
+          <div class="sidebar-title">{% translate "On this page" %}</div>
+          <nav class="toc">
+            <a href="#introduction" class="toc-link active">{% translate "Introduction" %}</a>
+            <a href="#data-collected" class="toc-link">{% translate "Data collected" %}</a>
+            <a href="#use-of-data" class="toc-link">{% translate "Use of data" %}</a>
+            <a href="#data-sharing" class="toc-link">{% translate "Data sharing" %}</a>
+            <a href="#security" class="toc-link">{% translate "Security" %}</a>
+            <a href="#retention" class="toc-link">{% translate "Retention" %}</a>
+            <a href="#your-rights" class="toc-link">{% translate "Your rights" %}</a>
+            <a href="#cookies" class="toc-link">{% translate "Cookies" %}</a>
+            <a href="#third-party-services" class="toc-link">{% translate "Third-party services" %}</a>
+            <a href="#changes" class="toc-link">{% translate "Changes" %}</a>
+            <a href="#contact" class="toc-link">{% translate "Contact us" %}</a>
+          </nav>
+        </div>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="introduction">
+          <span class="section-number">01</span>
+          <h2>{% translate "About RoomRun" %}</h2>
+          <p>{% translate "RoomRun is a rental management platform that allows property owners, tenants, and other authorized users to manage their homes, rental contracts, payments, maintenance requests, and communications." %}</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="data-collected">
+          <span class="section-number">02</span>
+          <h2>{% translate "Data we collect" %}</h2>
+          <p>{% translate "Depending on how you use RoomRun, we may collect different categories of data." %}</p>
+
+          <div class="data-card">
+            <h3>{% translate "Identification information" %}</h3>
+            <ul class="data-list">
+              <li>{% translate "First and last name" %}</li>
+              <li>{% translate "Email address" %}</li>
+              <li>{% translate "Phone number" %}</li>
+              <li>{% translate "Country of residence" %}</li>
+              <li>{% translate "Information necessary to identify the tenant" %}</li>
+            </ul>
+          </div>
+
+          <div class="data-card">
+            <h3>{% translate "Rental-related information" %}</h3>
+            <ul class="data-list">
+              <li>{% translate "Rental applications" %}</li>
+              <li>{% translate "Property information" %}</li>
+              <li>{% translate "Rental contracts" %}</li>
+              <li>{% translate "Start and end dates of tenancy" %}</li>
+              <li>{% translate "Rent and deposit amounts" %}</li>
+              <li>{% translate "Charges and payments related to the contract" %}</li>
+            </ul>
+          </div>
+
+          <div class="data-card">
+            <h3>{% translate "Technical information" %}</h3>
+            <ul class="data-list">
+              <li>{% translate "IP address" %}</li>
+              <li>{% translate "Device type" %}</li>
+              <li>{% translate "Operating system" %}</li>
+              <li>{% translate "Browser" %}</li>
+              <li>{% translate "Date and time of connection" %}</li>
+            </ul>
+          </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="use-of-data">
+          <span class="section-number">03</span>
+          <h2>{% translate "Use of your data" %}</h2>
+          <p>{% translate "We use your data to provide, secure, and improve RoomRun services." %}</p>
+
+          <div class="feature-grid">
+            <div class="feature">{% translate "Manage your account" %}</div>
+            <div class="feature">{% translate "Manage rental applications" %}</div>
+            <div class="feature">{% translate "Prepare and manage contracts" %}</div>
+            <div class="feature">{% translate "Process payments" %}</div>
+            <div class="feature">{% translate "Send important notifications" %}</div>
+            <div class="feature">{% translate "Improve platform security" %}</div>
+          </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="data-sharing">
+          <span class="section-number">04</span>
+          <h2>{% translate "Data sharing" %}</h2>
+          <p>{% translate "Your data may only be accessible to people or services that need it to operate RoomRun." %}</p>
+
+          <div class="sharing-list">
+            <div class="sharing-item">
+              <div class="sharing-number">01</div>
+              <div>
+                <h3>{% translate "Concerned users" %}</h3>
+                <p>{% translate "Property owners, tenants, and authorized users within the scope of their rental relationship." %}</p>
+              </div>
+            </div>
+            <div class="sharing-item">
+              <div class="sharing-number">02</div>
+              <div>
+                <h3>{% translate "Technical providers" %}</h3>
+                <p>{% translate "Services required for hosting, email, payments, and technical operation of the platform." %}</p>
+              </div>
+            </div>
+            <div class="sharing-item">
+              <div class="sharing-number">03</div>
+              <div>
+                <h3>{% translate "Competent authorities" %}</h3>
+                <p>{% translate "When data disclosure is required by applicable law." %}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="notice">
+            <strong>{% translate "Important:" %}</strong> {% translate "RoomRun does not sell your personal data for commercial purposes." %}
+          </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="security">
+          <span class="section-number">05</span>
+          <h2>{% translate "Security" %}</h2>
+          <p>{% translate "RoomRun implements technical and organizational measures to protect personal data against unauthorized access, modification, loss, or fraudulent use." %}</p>
+
+          <div class="security-box">
+            <div class="security-icon">✓</div>
+            <p>{% translate "Access to sensitive information is restricted to individuals and services that need it for their functions." %}</p>
+          </div>
+
+          <p>{% translate "No computer system or online service can guarantee absolute security." %}</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="retention">
+          <span class="section-number">06</span>
+          <h2>{% translate "Data retention" %}</h2>
+          <p>{% translate "We retain personal data for as long as necessary to fulfill the purposes for which it was collected." %}</p>
+          <p>{% translate "Certain data may be retained longer when necessary to comply with a legal obligation, manage a dispute, establish or defend our rights, or ensure transaction traceability." %}</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="your-rights">
+          <span class="section-number">07</span>
+          <h2>{% translate "Your rights" %}</h2>
+          <p>{% translate "Depending on applicable law, you may have the following rights:" %}</p>
+
+          <div class="rights-grid">
+            <div class="right-card">{% translate "Right to access your data" %}</div>
+            <div class="right-card">{% translate "Right to rectification" %}</div>
+            <div class="right-card">{% translate "Right to request deletion" %}</div>
+            <div class="right-card">{% translate "Right to restrict processing" %}</div>
+            <div class="right-card">{% translate "Right to object" %}</div>
+            <div class="right-card">{% translate "Right to withdraw consent" %}</div>
+          </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="cookies">
+          <span class="section-number">08</span>
+          <h2>{% translate "Cookies" %}</h2>
+          <p>{% translate "RoomRun may use cookies or similar technologies to maintain your session, secure your account, remember preferences, and improve platform performance." %}</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="third-party-services">
+          <span class="section-number">09</span>
+          <h2>{% translate "Third-party services" %}</h2>
+          <p>{% translate "Some RoomRun features may rely on external services for payments, email, hosting, or other technical operations." %}</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="changes">
+          <span class="section-number">10</span>
+          <h2>{% translate "Policy updates" %}</h2>
+          <p>{% translate "This policy may be updated to reflect changes to RoomRun, its features, or applicable legal requirements." %}</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="contact">
+          <div class="contact-box">
+            <span class="section-number">11</span>
+            <h2>{% translate "Contact us" %}</h2>
+            <p>{% translate "For any questions about this privacy policy or the use of your personal data, contact the RoomRun team." %}</p>
+            <a href="mailto:privacy@roomrun.example" class="contact-button">
+              privacy@roomrun.example
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14"/>
+                <path d="M13 6l6 6-6 6"/>
+              </svg>
+            </a>
+          </div>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">RoomRun</div>
+      <div class="footer-copy">{% translate "All rights reserved." %} © 2026 RoomRun</div>
+    </div>
+  </footer>
 {% endblock content %}
 
 {% block extra_css %}
   <style>
+    :root {
+      --primary: #16283f;
+      --primary-hover: #1e3a5f;
+      --primary-soft: #f5e4da;
+      --accent-bg: #eaf2fb;
+      --secondary: #c1622d;
+      --secondary-hover: #a34f22;
+      --secondary-soft: #fef3e2;
+      --bg: #f5f6f8;
+      --surface: #fcfcfb;
+      --card: #ffffff;
+      --success: #2e9e5b;
+      --danger: #d64545;
+      --text: #1e293b;
+      --muted: #5b6675;
+      --border: #e2e8f0;
+      --radius: 16px;
+      --shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    .topbar { height: 72px; background: var(--card); border-bottom: 1px solid var(--border); display: flex; align-items: center; position: sticky; top: 0; z-index: 100; }
+    .topbar-inner { width: min(1200px, calc(100% - 40px)); margin: auto; display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 10px; font-size: 21px; font-weight: 750; color: var(--primary); letter-spacing: -0.5px; }
+    .logo-mark { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; background: var(--primary); color: white; font-size: 15px; font-weight: 700; }
+    .back-link { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; font-weight: 500; transition: 0.2s ease; }
+    .back-link:hover { color: var(--primary); }
+    .back-link svg { width: 17px; height: 17px; }
+    .hero { background: var(--card); border-bottom: 1px solid var(--border); }
+    .hero-inner { width: min(1200px, calc(100% - 40px)); margin: auto; padding: 72px 0 64px; }
+    .badge { display: inline-flex; align-items: center; gap: 9px; padding: 7px 12px; background: var(--accent-bg); color: var(--primary); border-radius: 999px; font-size: 13px; font-weight: 650; }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--secondary); }
+    .hero h1 { max-width: 760px; margin-top: 20px; color: var(--primary); font-size: clamp(36px, 5vw, 58px); line-height: 1.05; letter-spacing: -2px; font-weight: 750; }
+    .hero-description { max-width: 690px; margin-top: 24px; color: var(--muted); font-size: 18px; line-height: 1.8; }
+    .updated { margin-top: 24px; color: var(--muted); font-size: 13px; }
+    .updated strong { color: var(--text); }
+    .main { width: min(1200px, calc(100% - 40px)); margin: auto; padding: 56px 0 90px; }
+    .layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 48px; align-items: start; }
+    .sidebar { position: sticky; top: 100px; }
+    .sidebar-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+    .sidebar-title { margin-bottom: 14px; color: var(--muted); font-size: 11px; font-weight: 750; letter-spacing: 1px; text-transform: uppercase; }
+    .toc { display: flex; flex-direction: column; gap: 3px; }
+    .toc-link { position: relative; padding: 9px 11px; border-radius: 8px; color: var(--muted); font-size: 13px; font-weight: 500; transition: 0.2s ease; }
+    .toc-link:hover { background: var(--bg); color: var(--primary); }
+    .toc-link.active { background: var(--accent-bg); color: var(--primary); font-weight: 650; }
+    .toc-link.active::before { content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 16px; background: var(--secondary); border-radius: 0 4px 4px 0; }
+    .content { min-width: 0; background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 52px; box-shadow: var(--shadow); }
+    .section { scroll-margin-top: 100px; }
+    .section-number { display: block; margin-bottom: 5px; color: var(--secondary); font-size: 12px; font-weight: 750; letter-spacing: 1px; }
+    .section h2 { color: var(--primary); font-size: 25px; line-height: 1.3; font-weight: 720; letter-spacing: -0.5px; }
+    .section p { color: var(--muted); font-size: 15px; line-height: 1.85; }
+    .section > p { margin-top: 22px; }
+    .divider { height: 1px; margin: 48px 0; background: var(--border); }
+    .data-card { margin-top: 22px; padding: 23px; background: var(--bg); border-radius: 13px; }
+    .data-card h3 { color: var(--primary); font-size: 15px; font-weight: 680; }
+    .data-list { list-style: none; margin-top: 14px; display: grid; gap: 9px; }
+    .data-list li { position: relative; padding-left: 18px; color: var(--muted); font-size: 14px; }
+    .data-list li::before { content: ""; position: absolute; left: 0; top: 9px; width: 6px; height: 6px; background: var(--secondary); border-radius: 50%; }
+    .feature-grid { margin-top: 24px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .feature { min-height: 70px; padding: 18px; border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; color: var(--muted); font-size: 14px; transition: 0.2s ease; }
+    .feature:hover { border-color: #cbd5e1; transform: translateY(-1px); }
+    .sharing-list { margin-top: 24px; display: grid; gap: 12px; }
+    .sharing-item { display: flex; align-items: flex-start; gap: 15px; padding: 20px; border: 1px solid var(--border); border-radius: 13px; }
+    .sharing-number { width: 34px; height: 34px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--accent-bg); color: var(--primary); border-radius: 8px; font-size: 12px; font-weight: 700; }
+    .sharing-item h3 { color: var(--primary); font-size: 14px; font-weight: 680; }
+    .sharing-item p { margin-top: 4px; font-size: 13px; line-height: 1.7; }
+    .notice { margin-top: 18px; padding: 17px 18px; background: var(--secondary-soft); border: 1px solid #f2d4c4; border-radius: 12px; color: #7a4a2f; font-size: 13px; line-height: 1.7; }
+    .security-box { margin-top: 24px; display: flex; align-items: flex-start; gap: 14px; padding: 20px; background: var(--accent-bg); border-radius: 13px; }
+    .security-icon { width: 36px; height: 36px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: white; color: var(--primary); border-radius: 50%; font-weight: 750; }
+    .security-box p { color: var(--primary); font-size: 13px; line-height: 1.7; }
+    .rights-grid { margin-top: 24px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .right-card { padding: 17px; border: 1px solid var(--border); border-radius: 12px; color: var(--primary); font-size: 13px; font-weight: 600; transition: 0.2s ease; }
+    .right-card:hover { border-color: #cbd5e1; background: #fafafa; }
+    .contact-box { margin-top: 24px; padding: 30px; background: var(--primary); border-radius: 17px; }
+    .contact-box .section-number { color: #d97b4a; }
+    .contact-box h2 { color: white; }
+    .contact-box p { max-width: 650px; margin-top: 15px; color: #cbd5e1; }
+    .contact-button { display: inline-flex; align-items: center; gap: 9px; margin-top: 23px; padding: 12px 17px; background: white; color: var(--primary); border-radius: 9px; font-size: 13px; font-weight: 680; transition: 0.2s ease; }
+    .contact-button:hover { background: #f1f5f9; }
+    .contact-button svg { width: 15px; height: 15px; }
+    .mobile-toc { display: none; margin-bottom: 25px; background: var(--card); border: 1px solid var(--border); border-radius: 13px; box-shadow: var(--shadow); }
+    .mobile-toc-header { width: 100%; padding: 15px 17px; display: flex; align-items: center; justify-content: space-between; border: 0; background: transparent; color: var(--primary); cursor: pointer; font-size: 14px; font-weight: 650; }
+    .mobile-toc-header svg { width: 17px; height: 17px; transition: transform 0.2s ease; }
+    .mobile-toc.open .mobile-toc-header svg { transform: rotate(180deg); }
+    .mobile-toc-content { display: none; padding: 0 10px 10px; }
+    .mobile-toc.open .mobile-toc-content { display: block; }
+    .mobile-toc-content a { display: block; padding: 9px 10px; color: var(--muted); border-radius: 7px; font-size: 13px; }
+    .mobile-toc-content a:hover { background: var(--bg); color: var(--primary); }
+    footer { background: var(--primary); color: #cbd5e1; }
+    .footer-inner { width: min(1200px, calc(100% - 40px)); margin: auto; padding: 28px 0; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .footer-logo { color: white; font-weight: 700; }
+    .footer-copy { font-size: 12px; }
+    @media (max-width: 900px) { .layout { grid-template-columns: 1fr; gap: 0; } .sidebar { display: none; } .mobile-toc { display: block; } .content { padding: 38px 30px; } }
+    @media (max-width: 640px) { .topbar { height: 64px; } .topbar-inner, .hero-inner, .main, .footer-inner { width: min(100% - 28px, 1200px); } .back-link span { display: none; } .hero-inner { padding: 50px 0 45px; } .hero h1 { font-size: 38px; letter-spacing: -1.5px; } .hero-description { font-size: 16px; } .main { padding: 30px 0 60px; } .content { padding: 28px 20px; border-radius: 15px; } .feature-grid, .rights-grid { grid-template-columns: 1fr; } .divider { margin: 38px 0; } .section h2 { font-size: 22px; } .footer-inner { flex-direction: column; align-items: flex-start; } }
     .scroll-mt-24 { scroll-margin-top: 6rem; }
+    .toc-active { position: relative; }
+    .toc-active::before { content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 16px; border-radius: 0 4px 4px 0; background: var(--color-secondary); }
   </style>
 {% endblock extra_css %}
+
+{% block inline_javascript %}
+  <script>
+    const mobileToc = document.getElementById("mobileToc");
+    const mobileTocButton = document.getElementById("mobileTocButton");
+    const mobileTocContent = document.querySelector(".mobile-toc-content");
+    if (mobileToc && mobileTocButton && mobileTocContent) {
+      mobileTocButton.addEventListener("click", () => {
+        mobileToc.classList.toggle("open");
+        mobileTocContent.classList.toggle("hidden");
+      });
+      mobileTocContent.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => {
+          mobileToc.classList.remove("open");
+          mobileTocContent.classList.add("hidden");
+        });
+      });
+    }
+
+    const sections = document.querySelectorAll(".section");
+    const tocLinks = document.querySelectorAll(".toc-link");
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const id = entry.target.id;
+        tocLinks.forEach(link => {
+          link.classList.remove("active", "toc-active");
+          if (link.getAttribute("href") === "#" + id) {
+            link.classList.add("active", "toc-active");
+          }
+        });
+      });
+    }, { rootMargin: "-20% 0px -65% 0px", threshold: 0 });
+    sections.forEach(section => observer.observe(section));
+
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener("click", function (event) {
+        const targetId = this.getAttribute("href");
+        if (targetId === "#") return;
+        const target = document.querySelector(targetId);
+        if (!target) return;
+        event.preventDefault();
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        history.replaceState(null, "", targetId);
+      });
+    });
+  </script>
+{% endblock inline_javascript %}

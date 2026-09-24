@@ -668,6 +668,18 @@ wheels = [
 ]
 
 [[package]]
+name = "digipay-python"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/5a/77/6f29e721138e0a680ae1d557a34b7f46c4ae008465362cddcb9d11310944/digipay_python-1.0.0.tar.gz", hash = "sha256:44970a0772fff913c76412af4ceb5fcb6e7e95330a219179f5151eb4e43ee315", size = 8496, upload-time = "2026-04-13T01:26:46.117Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f5/40/ea0fd0d92476f0fb47fd4c57e1c6e4e053e02a4d0400afc962f4ccfd2140/digipay_python-1.0.0-py3-none-any.whl", hash = "sha256:e977c61def25bc7d865a12a84ef939137cdd21888aa1f9c4ef21c03b4d40d10f", size = 8575, upload-time = "2026-04-13T01:26:44.904Z" },
+]
+
+[[package]]
 name = "distlib"
 version = "0.4.3"
 source = { registry = "https://pypi.org/simple" }
@@ -2100,6 +2112,7 @@ dependencies = [
     { name = "celery" },
     { name = "channels", extra = ["daphne"] },
     { name = "channels-redis" },
+    { name = "digipay-python" },
     { name = "django" },
     { name = "django-anymail" },
     { name = "django-celery-beat" },
@@ -2162,6 +2175,7 @@ requires-dist = [
     { name = "celery", specifier = "==5.6.3" },
     { name = "channels", extras = ["daphne"], specifier = ">=4.3.2" },
     { name = "channels-redis", specifier = ">=4.3.0" },
+    { name = "digipay-python", specifier = ">=1.0.0" },
     { name = "django", specifier = "==6.0.8" },
     { name = "django-anymail", specifier = "==15.1" },
     { name = "django-celery-beat", specifier = "==2.9.0" },

@@ -46,6 +46,7 @@ dependencies = [
   "pypdf>=6.19.0",
   "channels[daphne]>=4.3.2",
   "channels-redis>=4.3.0",
+  "digipay-python>=1.0.0",
 ]
 
 [dependency-groups]
