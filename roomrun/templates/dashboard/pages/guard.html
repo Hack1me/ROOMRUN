@@ -27,7 +27,7 @@
             <i class="ti ti-users"></i>
             <span>{% translate "Visitors" %}</span>
           </a>
-          <a href="#" class="nav-item">
+          <a href="{% url 'operations:guard-visitors' %}" class="nav-item">
             <i class="ti ti-arrows-left-right"></i>
             <span>{% translate "Entries / Exits" %}</span>
           </a>
@@ -42,7 +42,7 @@
         </div>
         <div class="nav-section">
           <div class="nav-title">{% translate "Communication" %}</div>
-          <a href="#" class="nav-item">
+          <a href="{% url 'communications:conversation-list' %}" class="nav-item">
             <i class="ti ti-message"></i>
             <span>{% translate "Messages" %}</span>
             <span class="nav-badge">2</span>

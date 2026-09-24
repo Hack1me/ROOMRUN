@@ -1,0 +1,21 @@
+{% load i18n %}
+<aside class="sidebar guard-sidebar overflow-y-auto" id="sidebar">
+  <div class="brand">
+    <div class="brand-mark"></div>
+    <div><div class="brand-name">ROOMRUN</div><div class="brand-subtitle">{% translate "Security desk" %}</div></div>
+  </div>
+  <div class="sidebar-content">
+    <div class="nav-section">
+      <div class="nav-title">{% translate "Main" %}</div>
+      <a href="{% url 'dashboard:guard' %}" class="nav-item"><i class="ti ti-layout-dashboard"></i><span>{% translate "Dashboard" %}</span></a>
+      <a href="{% url 'operations:guard-visitors' %}" class="nav-item"><i class="ti ti-users"></i><span>{% translate "Visitors" %}</span></a>
+      <a href="{% url 'communications:conversation-list' %}" class="nav-item active"><i class="ti ti-message"></i><span>{% translate "Messages" %}</span></a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-title">{% translate "System" %}</div>
+      <a href="{% url 'users:profile' %}" class="nav-item"><i class="ti ti-settings"></i><span>{% translate "Profile" %}</span></a>
+      <a href="{% url 'users:logout' %}" class="nav-item"><i class="ti ti-logout"></i><span>{% translate "Sign out" %}</span></a>
+    </div>
+  </div>
+  <div class="sidebar-user"><div class="user-avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div><div><div class="user-name">{{ user.full_name|default:user.email }}</div><div class="user-role">{% translate "Guard" %}</div></div></div>
+</aside>

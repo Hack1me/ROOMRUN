@@ -14,7 +14,11 @@
 
 {% block body %}
   <div class="conversation-page">
-    {% include "dashboard/includes/landlord_sidebar.html" %}
+    {% if is_guard_chat %}
+      {% include "dashboard/includes/guard_sidebar.html" %}
+    {% else %}
+      {% include "dashboard/includes/landlord_sidebar.html" %}
+    {% endif %}
 
     <main class="conversation-main">
       <header class="conversation-topbar">

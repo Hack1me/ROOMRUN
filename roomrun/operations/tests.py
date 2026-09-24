@@ -70,4 +70,3 @@ class GuardVisitorAccessTests(TestCase):
         self.assertEqual(response.status_code, 404)
         self.visit.refresh_from_db()
         self.assertEqual(self.visit.status, VisitorStatus.EXPECTED)
-

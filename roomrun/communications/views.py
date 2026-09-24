@@ -14,6 +14,7 @@ from django.views import View
 from django.views.generic import DetailView
 from django.views.generic import ListView
 from rentals.models import RentalContract
+from utils.enums import ContractStatus
 from users.models import User
 
 
@@ -37,6 +38,19 @@ def contacts_for_user(user):
         contacts = User.objects.filter(
             landlord_profile__properties__buildings__units__rental_contracts__tenant=user.tenant_profile
         )
+    elif (
+        hasattr(user, "employee_profile")
+        and hasattr(user.employee_profile, "guard_profile")
+    ):
+        landlords = user.employee_profile.guard_profile.landlords.all()
+        contacts = User.objects.filter(
+            Q(landlord_profile__in=landlords)
+            | Q(
+                tenant_profile__rental_contracts__unit__building__property_ref__landlord__in=landlords,
+                tenant_profile__rental_contracts__status=ContractStatus.ACTIVE,
+            )
+        )
+
     elif hasattr(user, "employee_profile"):
         contacts = User.objects.filter(
             Q(
@@ -105,6 +119,20 @@ def tenant_chat_context(user):
         "tenant_contract": contract,
         "tenant_landlord": contract.unit.building.property_ref.landlord,
     }
+def guard_chat_context(user):
+    return {"is_guard_chat": bool(
+        hasattr(user, "employee_profile")
+        and hasattr(user.employee_profile, "guard_profile")
+    )}
+
+
+
+def conversations_for_user(user):
+    conversations = Conversation.objects.filter(participants=user)
+    if hasattr(user, "employee_profile") and hasattr(user.employee_profile, "guard_profile"):
+        return conversations.filter(participants__in=contacts_for_user(user)).distinct()
+    return conversations
+
 
 
 class ConversationListView(LoginRequiredMixin, ListView):
@@ -123,7 +151,7 @@ class ConversationListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
         queryset = (
-            Conversation.objects
+            conversations_for_user(user)
             .filter(participants=user)
             .annotate(
                 msg_count=Count("messages", distinct=True),
@@ -171,6 +199,7 @@ class ConversationListView(LoginRequiredMixin, ListView):
             contacts=contacts_for_user(self.request.user)
         )
         context.update(tenant_chat_context(self.request.user))
+        context.update(guard_chat_context(self.request.user))
         if selected_conversation:
             context["chat_messages"] = list(
                 selected_conversation.messages.select_related("sender")
@@ -200,7 +229,7 @@ class ConversationDetailView(LoginRequiredMixin, DetailView):
     def get_object(self, queryset=None):
         # Ensure the user is a participant.
         return get_object_or_404(
-            Conversation.objects
+            conversations_for_user(self.request.user)
             .prefetch_related("participants")
             .filter(participants=self.request.user),
             pk=self.kwargs["pk"],
@@ -217,7 +246,7 @@ class ConversationDetailView(LoginRequiredMixin, DetailView):
         )
 
         conversations = list(
-            Conversation.objects.filter(participants=self.request.user)
+            conversations_for_user(self.request.user)
             .annotate(
                 msg_count=Count("messages", distinct=True),
                 last_msg=Max("messages__created_at"),
@@ -239,6 +268,7 @@ class ConversationDetailView(LoginRequiredMixin, DetailView):
             contacts=contacts_for_user(self.request.user)
         )
         context.update(tenant_chat_context(self.request.user))
+        context.update(guard_chat_context(self.request.user))
         context["chat_messages"] = list(
             conversation.messages.select_related("sender").order_by("-created_at")[:50][::-1]
         )
@@ -278,7 +308,7 @@ class ConversationDeleteView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         conversation = get_object_or_404(
-            Conversation.objects.filter(participants=request.user),
+            conversations_for_user(request.user),
             pk=kwargs["pk"],
         )
         conversation.delete()
