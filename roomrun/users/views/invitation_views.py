@@ -22,7 +22,9 @@ class LandlordInvitationListView(LandlordRequiredMixin, FormView):
     form_class = LandlordInvitationForm
 
     def get_queryset(self):
-        return UserInvitation.objects.filter(invited_by=self.request.user).order_by("-created_at")
+        return UserInvitation.objects.filter(invited_by=self.request.user).order_by(
+            "-created_at"
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -40,14 +42,21 @@ class LandlordInvitationListView(LandlordRequiredMixin, FormView):
         )
         delivered = EmailUtil.send_email_with_template(
             template="emails/invitations/user_invitation.html",
-            context={"invitation": invitation, "accept_url": accept_url, "landlord": self.get_landlord()},
+            context={
+                "invitation": invitation,
+                "accept_url": accept_url,
+                "landlord": self.get_landlord(),
+            },
             receivers=[invitation.email],
             subject=_("You are invited to ROOMRUN"),
         )
         if delivered:
             messages.success(self.request, _("Invitation sent successfully."))
         else:
-            messages.warning(self.request, _("Invitation created, but the email could not be delivered."))
+            messages.warning(
+                self.request,
+                _("Invitation created, but the email could not be delivered."),
+            )
         return redirect("dashboard:invitation-list")
 
 
@@ -94,4 +103,3 @@ class InvitationAcceptView(FormView):
         login(self.request, user)
         messages.success(self.request, _("Your account is ready."))
         return redirect("dashboard:dashboard")
-
