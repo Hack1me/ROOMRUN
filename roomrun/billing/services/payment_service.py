@@ -10,8 +10,8 @@ from django.db import transaction
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from utils.enums import ChargeType
-from utils.enums import PaymentStatus
 from utils.enums import NotificationType
+from utils.enums import PaymentStatus
 
 logger = logging.getLogger(__name__)
 
@@ -99,8 +99,64 @@ class PaymentService:
         )
         return payment
 
+    # Helpers: synchronize validation + provider status
     # -------------------------------------------------------------------------
-    # Synchronize
+
+    _SUCCESSFUL_PROVIDER_STATUSES = frozenset({"SUCCESSFUL", "SUCCESS", "COMPLETED"})
+    _FAILED_PROVIDER_STATUSES = frozenset({"FAILED", "CANCELLED", "EXPIRED"})
+    _PENDING_PROVIDER_STATUSES = frozenset({"PENDING", "PROCESSING"})
+
+    def _validate_synchronizable(self, *, payment: Payment) -> None:
+        """Ensure the payment has the data required for synchronization."""
+        if not payment.provider:
+            raise ValidationError(_("Payment provider is required."))
+        if not payment.provider_reference:
+            raise ValidationError(
+                _("Payment has no provider transaction reference.")
+            )
+
+    def _fetch_provider_status(self, *, payment: Payment):
+        """Fetch the provider transaction status, mapping errors."""
+        try:
+            gateway = self._gateway or get_gateway(payment.provider)
+            return gateway.get_transaction_status(payment.provider_reference)
+        except (PaymentGatewayError, ValueError) as exc:
+            logger.exception(
+                "Gateway status failed | payment=%s | provider=%s",
+                payment.payment_number,
+                payment.provider,
+            )
+            raise PaymentServiceError(
+                _("Unable to verify the payment status. Please try again.")
+            ) from exc
+
+    def _apply_provider_status(
+        self, *, payment: Payment, provider_status: str
+    ) -> list[str]:
+        """Apply a normalized provider status to the payment."""
+        if provider_status in self._SUCCESSFUL_PROVIDER_STATUSES:
+            payment.status = PaymentStatus.COMPLETED
+            if not payment.paid_at:
+                payment.paid_at = timezone.now()
+            return ["status", "paid_at", "updated_at"]
+        if provider_status in self._FAILED_PROVIDER_STATUSES:
+            payment.status = PaymentStatus.FAILED
+            payment.paid_at = None
+            return ["status", "paid_at", "updated_at"]
+        if provider_status in self._PENDING_PROVIDER_STATUSES:
+            return []
+        logger.warning(
+            "Unknown provider status | payment=%s | provider=%s | status=%s",
+            payment.payment_number,
+            payment.provider,
+            provider_status,
+        )
+        raise PaymentServiceError(
+            _("Unknown payment status received from provider.")
+        )
+
+    # -------------------------------------------------------------------------
+    # Post-sync helpers
     # -------------------------------------------------------------------------
 
     @transaction.atomic
@@ -218,6 +274,23 @@ class PaymentService:
                     RentalContractService.activate(contract=payment.charge.contract)
                 except DjangoValidationError:
                     logger.info("Initial payment completed; contract activation deferred | payment=%s", payment.payment_number)
+            if (
+                previous_status != PaymentStatus.COMPLETED
+                and payment.status == PaymentStatus.COMPLETED
+                and payment.charge.charge_type == ChargeType.CONTRACT_EXTENSION
+            ):
+                from django.core.exceptions import (
+                    ValidationError as DjangoValidationError,
+                )
+                from rentals.services import ContractExtensionService  # noqa: PLC0415
+
+                try:
+                    ContractExtensionService.mark_paid(charge=payment.charge)
+                except DjangoValidationError:
+                    logger.exception(
+                        "Could not apply paid contract extension | payment=%s",
+                        payment.payment_number,
+                    )
 
         logger.info(
             "Payment synchronized | payment=%s | status=%s",

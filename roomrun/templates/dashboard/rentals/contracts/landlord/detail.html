@@ -18,4 +18,22 @@
   <dt>{% translate "Monthly rent" %}</dt>
   <dd>{{ contract.monthly_rent }}</dd>
 </dl>
+{% if contract.status == 'ACTIVE' %}
+<section class="card mt-6 p-5">
+  <h2>{% translate "Terminate this lease" %}</h2>
+  <p>{% translate "The tenant will be notified and the unit will become available." %}</p>
+  <form method="post" action="{% url 'rentals:rental-contract-terminate' contract.slug %}" class="mt-4 space-y-3" onsubmit="return confirm('{% translate "Terminate this rental contract?" %}')">
+    {% csrf_token %}
+    <label for="termination-reason">{% translate "Reason for termination" %}</label>
+    <textarea id="termination-reason" name="reason" minlength="10" required rows="3" class="form-control w-full" placeholder="{% translate 'Explain why this lease is being terminated' %}"></textarea>
+    <button class="btn btn-primary" type="submit"><i class="ti ti-logout"></i> {% translate "Terminate contract" %}</button>
+  </form>
+</section>
+{% elif contract.status == 'TERMINATED' %}
+<section class="card mt-6 p-5">
+  <h2>{% translate "Contract terminated" %}</h2>
+  <p>{{ contract.terminated_at|date:"SHORT_DATETIME_FORMAT" }}{% if contract.terminated_by %} · {{ contract.terminated_by.full_name }}{% endif %}</p>
+  {% if contract.termination_reason %}<p>{{ contract.termination_reason }}</p>{% endif %}
+</section>
+{% endif %}
 {% endblock content %}

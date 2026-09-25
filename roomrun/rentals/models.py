@@ -11,6 +11,7 @@ from rentals.managers import LandlordRentalManager
 from users.models import Tenant
 from utils.enums import ApplicationStatus
 from utils.enums import ContractStatus
+from utils.enums import ExtensionRequestStatus
 
 
 # RENTAL APPLICATION
@@ -265,6 +266,13 @@ class RentalContract(BaseModel):
         help_text=_("Current lifecycle status of the contract."),
     )
 
+    terminated_at = models.DateTimeField(_("Terminated at"), null=True, blank=True)
+    terminated_by = models.ForeignKey(
+        "users.User", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="terminated_rental_contracts", verbose_name=_("Terminated by"),
+    )
+    termination_reason = models.TextField(_("Termination reason"), blank=True)
+
     landlord_signed_at = models.DateTimeField(
         _("Landlord signed at"),
         null=True,
@@ -370,3 +378,39 @@ class RentalContract(BaseModel):
             ).exclude(pk=self.pk)
             if existing.exists():
                 raise ValidationError(_("This unit already has an active contract."))
+
+
+class ContractExtensionRequest(BaseModel):
+    """A tenant's request to extend a fixed-term contract."""
+
+    contract = models.ForeignKey(
+        RentalContract, on_delete=models.PROTECT, related_name="extension_requests",
+        verbose_name=_("Rental contract"),
+    )
+    requested_end_date = models.DateField(_("Requested end date"))
+    status = models.CharField(
+        max_length=20, choices=ExtensionRequestStatus.choices,
+        default=ExtensionRequestStatus.PENDING, db_index=True,
+    )
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    reviewed_by = models.ForeignKey(
+        "users.User", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="reviewed_contract_extensions",
+    )
+    approved_amount = MoneyField(
+        max_digits=12, decimal_places=2, default_currency="XAF",
+        null=True, blank=True, verbose_name=_("Approved extension amount"),
+    )
+    payment_charge_id = models.UUIDField(null=True, blank=True, unique=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["contract"], condition=models.Q(status="PENDING"),
+                name="one_pending_extension_per_contract",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.contract.contract_number} → {self.requested_end_date}"

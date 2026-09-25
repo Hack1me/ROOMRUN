@@ -116,6 +116,7 @@ class ChargeType(models.TextChoices):
 
     RENT = "RENT", _("Rent")
     INITIAL_PAYMENT = "INITIAL_PAYMENT", _("Initial payment")
+    CONTRACT_EXTENSION = "CONTRACT_EXTENSION", _("Contract extension")
     ELECTRICITY = "ELECTRICITY", _("Electricity")
     WATER = "WATER", _("Water")
     GAS = "GAS", _("Gas")
@@ -125,6 +126,13 @@ class ChargeType(models.TextChoices):
     PARKING = "PARKING", _("Parking")
     LATE_FEE = "LATE_FEE", _("Late fee")
     OTHER = "OTHER", _("Other")
+
+
+class ExtensionRequestStatus(models.TextChoices):
+    PENDING = "PENDING", _("Pending")
+    APPROVED = "APPROVED", _("Approved, awaiting payment")
+    PAID = "PAID", _("Paid")
+    REJECTED = "REJECTED", _("Rejected")
 
 
 class ChargeStatus(models.TextChoices):

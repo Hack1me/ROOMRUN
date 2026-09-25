@@ -362,7 +362,7 @@ class LandlordRentalContractDetailView(LandlordRequiredMixin, DetailView):
         return RentalContract.landlord_objects.for_landlord(
             self.get_landlord()
         ).select_related(
-            "tenant__user", "unit", "unit__building", "application"
+            "tenant__user", "unit", "unit__building", "application", "terminated_by"
         )
 
 

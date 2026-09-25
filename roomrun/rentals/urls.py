@@ -12,6 +12,7 @@ from rentals.views.ten_ren_views import RentalApplicationDetailView
 from rentals.views.ten_ren_views import RentalApplicationListView
 from rentals.views.ten_ren_views import TenantLeaseDetailView
 from rentals.views.ten_ren_views import TenantRentalContractSignView
+from rentals.views.ten_ren_views import RentalContractTerminateView
 from rentals.views.document_views import LeaseDocumentPreviewView
 from rentals.views.document_views import LeasePDFView
 
@@ -47,6 +48,11 @@ urlpatterns = [
         "contracts/<slug:pk>/sign/",
         TenantRentalContractSignView.as_view(),
         name="tenant-rental-contract-sign",
+    ),
+    path(
+        "contracts/<slug:pk>/terminate/",
+        RentalContractTerminateView.as_view(),
+        name="rental-contract-terminate",
     ),
     path(
         "mylease/",

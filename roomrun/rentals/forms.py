@@ -24,6 +24,22 @@ class SignatureInput(forms.ClearableFileInput):
         return files.get(name) or data.get(name)
 
 
+class ContractExtensionRequestForm(forms.Form):
+    requested_end_date = forms.DateField(
+        label=_("Requested end date"),
+        widget=forms.DateInput(attrs={"type": "date", "class": "form-control"}),
+    )
+
+
+class ContractExtensionApprovalForm(forms.Form):
+    amount = forms.DecimalField(
+        label=_("Extension amount (FCFA)"),
+        min_value=1,
+        decimal_places=0,
+        widget=forms.NumberInput(attrs={"class": "form-control", "min": "1"}),
+    )
+
+
 class SignatureImageField(forms.ImageField):
     """Accept either an uploaded signature image or a PNG/JPEG data URL."""
 

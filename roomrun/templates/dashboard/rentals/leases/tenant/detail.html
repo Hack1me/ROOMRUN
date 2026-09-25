@@ -146,12 +146,28 @@
             {% elif contract.status == 'SIGNED' %}
               <a href="{% url 'billing:tenant-contract-payment' contract.slug %}" class="btn btn-primary">
                 <i class="ti ti-arrow-right"></i>
-                {% translate "Review & Pay" %}
+              {% translate "Review & Pay" %}
               </a>
+            {% elif contract.status == 'ACTIVE' %}
+              <form method="post" action="{% url 'rentals:rental-contract-terminate' contract.slug %}" onsubmit="return confirm('{% translate "Terminate this rental contract?" %}')">
+                {% csrf_token %}
+                <label for="termination-reason" class="sr-only">{% translate "Reason for termination" %}</label>
+                <textarea id="termination-reason" name="reason" minlength="10" required rows="2" class="form-control" placeholder="{% translate 'Reason for termination (at least 10 characters)' %}"></textarea>
+                <button type="submit" class="btn btn-secondary mt-2"><i class="ti ti-logout"></i> {% translate "Terminate contract" %}</button>
+              </form>
             {% endif %}
           </div>
         </div>
       </section>
+
+      {% if contract.status == 'TERMINATED' %}
+        <section class="section card p-5">
+          <h2 class="section-title">{% translate "Contract terminated" %}</h2>
+          <p>{% translate "Terminated on" %} {{ contract.terminated_at|date:"SHORT_DATETIME_FORMAT" }}</p>
+          {% if contract.terminated_by %}<p>{% translate "Terminated by" %}: {{ contract.terminated_by.full_name }}</p>{% endif %}
+          {% if contract.termination_reason %}<p>{{ contract.termination_reason }}</p>{% endif %}
+        </section>
+      {% endif %}
 
       <!-- CONTRACT SUMMARY -->
       <section class="section">

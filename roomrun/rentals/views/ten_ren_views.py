@@ -1,10 +1,13 @@
+from communications.services.notification_ser import send_notification
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
+from django.views import View
 from django.views.generic import CreateView
 from django.views.generic import DetailView
 from django.views.generic import FormView
@@ -18,6 +21,7 @@ from rentals.models import RentalContract
 from rentals.services import RentalApplicationService
 from rentals.services import RentalContractService
 from utils.enums import ContractStatus
+from utils.enums import NotificationType
 from utils.enums import PaymentMethod
 
 
@@ -140,6 +144,7 @@ class TenantLeaseDetailView(LoginRequiredMixin, DetailView):
                     ContractStatus.SIGNING,
                     ContractStatus.SIGNED,
                     ContractStatus.ACTIVE,
+                    ContractStatus.TERMINATED,
                 ],
             )
             .select_related(
@@ -166,6 +171,7 @@ class TenantLeaseDetailView(LoginRequiredMixin, DetailView):
             ContractStatus.ACTIVE: 0,
             ContractStatus.SIGNED: 1,
             ContractStatus.SIGNING: 2,
+            ContractStatus.TERMINATED: 3,
         }
 
         contracts = list(queryset)
@@ -175,3 +181,54 @@ class TenantLeaseDetailView(LoginRequiredMixin, DetailView):
 
         contracts.sort(key=lambda c: priority.get(c.status, 99))
         return contracts[0]
+
+
+class RentalContractTerminateView(LoginRequiredMixin, View):
+    """Allow either party to terminate an active lease with a recorded reason."""
+
+    def post(self, request, pk):
+        contract = get_object_or_404(
+            RentalContract.objects.select_related(
+                "tenant__user", "unit__building__property_ref__landlord__user",
+            ).filter(
+                Q(tenant__user=request.user)
+                | Q(unit__building__property_ref__landlord__user=request.user)
+            ),
+            pk=pk,
+        )
+        reason = request.POST.get("reason", "")
+        try:
+            RentalContractService.terminate(
+                contract=contract, actor=request.user, reason=reason,
+            )
+        except ValidationError as exc:
+            for error in exc.messages:
+                messages.error(request, error)
+        else:
+            landlord = contract.unit.building.property_ref.landlord
+            counterparty = (
+                landlord.user if request.user.pk == contract.tenant.user_id
+                else contract.tenant.user
+            )
+            send_notification(
+                recipient=counterparty,
+                title=_("Rental contract terminated"),
+                message=(
+                    _(
+                        "Contract %(number)s was terminated by %(name)s. "
+                        "Reason: %(reason)s"
+                    )
+                    % {
+                        "number": contract.contract_number,
+                        "name": request.user.full_name,
+                        "reason": reason.strip(),
+                    }
+                ),
+                notification_type=NotificationType.SYSTEM,
+                related_object=contract,
+            )
+            messages.success(request, _("The rental contract has been terminated."))
+
+        if request.user.pk == contract.tenant.user_id:
+            return redirect("rentals:tenant-lease-detail")
+        return redirect("rentals:landlord-rental-contract-detail", pk=contract.slug)

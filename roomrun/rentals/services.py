@@ -6,12 +6,15 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from djmoney.money import Money
 from properties.models import Unit
+from rentals.models import ContractExtensionRequest
 from rentals.models import RentalApplication
 from rentals.models import RentalContract
 from utils.enums import ApplicationStatus
 from utils.enums import ChargeType
 from utils.enums import ContractStatus
+from utils.enums import ExtensionRequestStatus
 from utils.enums import PaymentMethod
 from utils.enums import PaymentStatus
 from utils.enums import UnitStatus
@@ -141,6 +144,7 @@ class RentalApplicationService:
 
 
 class RentalContractService:
+    TERMINATION_REASON_MIN_LENGTH = 10
     """Business logic related to rental contracts."""
 
     # -------------------------------------------------------------------------
@@ -299,6 +303,62 @@ class RentalContractService:
         contract.status = ContractStatus.CANCELLED
         contract.save(update_fields=["status", "updated_at"])
 
+        return contract
+
+    @staticmethod
+    @transaction.atomic
+    def terminate(*, contract: RentalContract, actor, reason: str) -> RentalContract:
+        """Terminate an active lease at the request of either contract party."""
+        contract = (
+            RentalContract.objects.select_for_update()
+            .select_related(
+                "tenant__user",
+                "unit__building__property_ref__landlord__user",
+            )
+            .get(pk=contract.pk)
+        )
+        landlord = contract.unit.building.property_ref.landlord
+        if actor.pk not in {contract.tenant.user_id, landlord.user_id}:
+            raise ValidationError(
+                _("Only the tenant or landlord can terminate this contract.")
+            )
+        if contract.status != ContractStatus.ACTIVE:
+            raise ValidationError(_("Only an active contract can be terminated."))
+        reason = (reason or "").strip()
+        if len(reason) < RentalContractService.TERMINATION_REASON_MIN_LENGTH:
+            raise ValidationError(
+                _("Please provide a termination reason of at least 10 characters.")
+            )
+
+        now = timezone.now()
+        contract.status = ContractStatus.TERMINATED
+        contract.end_date = timezone.localdate(now)
+        contract.terminated_at = now
+        contract.terminated_by = actor
+        contract.termination_reason = reason
+        contract.save(
+            update_fields=[
+                "status",
+                "end_date",
+                "terminated_at",
+                "terminated_by",
+                "termination_reason",
+                "updated_at",
+            ]
+        )
+
+        unit = Unit.objects.select_for_update().get(pk=contract.unit_id)
+        has_open_contract = RentalContract.objects.filter(
+            unit=unit,
+            status__in=[
+                ContractStatus.SIGNING,
+                ContractStatus.SIGNED,
+                ContractStatus.ACTIVE,
+            ],
+        ).exists()
+        if not has_open_contract and unit.status == UnitStatus.OCCUPIED:
+            unit.status = UnitStatus.AVAILABLE
+            unit.save(update_fields=["status", "updated_at"])
         return contract
 
     # -------------------------------------------------------------------------
@@ -471,3 +531,131 @@ class RentalContractService:
         payment.save()
 
         return payment
+
+
+class ContractExtensionService:
+    """Handle tenant extension requests, landlord decisions, and payment."""
+
+    @staticmethod
+    @transaction.atomic
+    def request_extension(*, contract, tenant, requested_end_date):
+        contract = RentalContract.objects.select_for_update().get(pk=contract.pk)
+        if contract.tenant_id != tenant.pk:
+            raise ValidationError(_("You are not the tenant on this contract."))
+        if contract.status != ContractStatus.ACTIVE or not contract.end_date:
+            raise ValidationError(
+                _("Only an active fixed-term contract can be extended.")
+            )
+        if requested_end_date <= contract.end_date:
+            raise ValidationError(
+                _("The requested date must be after the current contract end date.")
+            )
+        if ContractExtensionRequest.objects.filter(
+            contract=contract,
+            status=ExtensionRequestStatus.PENDING,
+        ).exists():
+            raise ValidationError(
+                _("There is already a pending extension request for this contract.")
+            )
+        extension = ContractExtensionRequest(
+            contract=contract,
+            requested_end_date=requested_end_date,
+        )
+        extension.full_clean()
+        extension.save()
+        return extension
+
+    @staticmethod
+    @transaction.atomic
+    def approve(*, extension, landlord, amount):
+        extension = (
+            ContractExtensionRequest.objects.select_for_update()
+            .select_related("contract__unit__building__property_ref__landlord")
+            .get(pk=extension.pk)
+        )
+        contract = RentalContract.objects.select_for_update().get(
+            pk=extension.contract_id,
+        )
+        if contract.unit.building.property_ref.landlord_id != landlord.pk:
+            raise ValidationError(_("You do not manage this contract."))
+        if extension.status != ExtensionRequestStatus.PENDING:
+            raise ValidationError(
+                _("This extension request has already been reviewed.")
+            )
+        if contract.status != ContractStatus.ACTIVE or not contract.end_date:
+            raise ValidationError(_("This contract can no longer be extended."))
+        if extension.requested_end_date <= contract.end_date:
+            raise ValidationError(_("The requested date is no longer valid."))
+        try:
+            approved_amount = Money(amount, contract.monthly_rent.currency)
+        except (TypeError, ValueError, ArithmeticError) as exc:
+            raise ValidationError(_("Enter a valid extension amount.")) from exc
+        if approved_amount.amount <= 0:
+            raise ValidationError(_("The amount must be greater than zero."))
+
+        charge = Charge(
+            contract=contract,
+            charge_type=ChargeType.CONTRACT_EXTENSION,
+            amount=approved_amount,
+            due_date=timezone.localdate(),
+            description=_("Contract extension until %(date)s")
+            % {"date": extension.requested_end_date},
+        )
+        charge.full_clean()
+        charge.save()
+        extension.status = ExtensionRequestStatus.APPROVED
+        extension.approved_amount = approved_amount
+        extension.payment_charge_id = charge.pk
+        extension.reviewed_at = timezone.now()
+        extension.reviewed_by = landlord.user
+        extension.save(
+            update_fields=[
+                "status",
+                "approved_amount",
+                "payment_charge_id",
+                "reviewed_at",
+                "reviewed_by",
+                "updated_at",
+            ]
+        )
+        return extension
+
+    @staticmethod
+    @transaction.atomic
+    def reject(*, extension, landlord):
+        extension = (
+            ContractExtensionRequest.objects.select_for_update()
+            .select_related("contract__unit__building__property_ref__landlord")
+            .get(pk=extension.pk)
+        )
+        if extension.contract.unit.building.property_ref.landlord_id != landlord.pk:
+            raise ValidationError(_("You do not manage this contract."))
+        if extension.status != ExtensionRequestStatus.PENDING:
+            raise ValidationError(
+                _("This extension request has already been reviewed.")
+            )
+        extension.status = ExtensionRequestStatus.REJECTED
+        extension.reviewed_at = timezone.now()
+        extension.reviewed_by = landlord.user
+        extension.save(
+            update_fields=["status", "reviewed_at", "reviewed_by", "updated_at"]
+        )
+        return extension
+
+    @staticmethod
+    @transaction.atomic
+    def mark_paid(*, charge):
+        extension = ContractExtensionRequest.objects.select_for_update().get(
+            payment_charge_id=charge.pk,
+            status=ExtensionRequestStatus.APPROVED,
+        )
+        contract = RentalContract.objects.select_for_update().get(
+            pk=extension.contract_id,
+        )
+        if contract.status != ContractStatus.ACTIVE:
+            raise ValidationError(_("The rental contract is no longer active."))
+        contract.end_date = extension.requested_end_date
+        contract.save(update_fields=["end_date", "updated_at"])
+        extension.status = ExtensionRequestStatus.PAID
+        extension.save(update_fields=["status", "updated_at"])
+        return extension
