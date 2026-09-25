@@ -1,4 +1,3 @@
-from typing import TYPE_CHECKING
 
 from billing.models import Charge
 from billing.models import Payment
@@ -18,9 +17,6 @@ from utils.enums import ExtensionRequestStatus
 from utils.enums import PaymentMethod
 from utils.enums import PaymentStatus
 from utils.enums import UnitStatus
-
-if TYPE_CHECKING:
-    from djmoney.money import Money
 
 
 class RentalApplicationService:

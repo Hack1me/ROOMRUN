@@ -99,6 +99,7 @@ class PaymentService:
         )
         return payment
 
+    # -------------------------------------------------------------------------
     # Helpers: synchronize validation + provider status
     # -------------------------------------------------------------------------
 
@@ -159,138 +160,139 @@ class PaymentService:
     # Post-sync helpers
     # -------------------------------------------------------------------------
 
-    @transaction.atomic
-    def synchronize(self, *, payment: Payment) -> Payment:
-        """
-        Synchronize a payment with its provider.
-        """
-        if not payment.provider:
-            raise ValidationError(_("Payment provider is required."))
-
-        if not payment.provider_reference:
-            raise ValidationError(
-                _("Payment has no provider transaction reference.")
+    def _notify_payment_completed(self, *, payment: Payment) -> None:
+        """Send tenant/landlord notifications for a completed payment."""
+        try:
+            contract = payment.charge.contract
+            property_ref = contract.unit.building.property_ref
+            amount = f"{payment.amount.amount:,.0f}"
+            send_notification(
+                recipient=contract.tenant.user,
+                title=_("Payment confirmed"),
+                message=_(
+                    "Your payment %(reference)s of %(amount)s FCFA was "
+                    "completed for %(property)s."
+                )
+                % {
+                    "reference": payment.payment_number,
+                    "amount": amount,
+                    "property": property_ref.name,
+                },
+                notification_type=NotificationType.PAYMENT,
+                related_object=payment,
             )
+            send_notification(
+                recipient=property_ref.landlord.user,
+                title=_("Tenant payment received"),
+                message=_(
+                    "%(tenant)s paid %(amount)s FCFA for %(property)s."
+                )
+                % {
+                    "tenant": contract.tenant.user.full_name,
+                    "amount": amount,
+                    "property": property_ref.name,
+                },
+                notification_type=NotificationType.PAYMENT,
+                related_object=payment,
+            )
+        except Exception:
+            logger.exception(
+                "Could not create notifications for payment %s",
+                payment.payment_number,
+            )
+
+    def _schedule_completion_notifications(
+        self, *, payment: Payment, previous_status: str
+    ) -> None:
+        """Schedule completion notifications on transaction commit."""
+        if previous_status == PaymentStatus.COMPLETED:
+            return
+        if payment.status != PaymentStatus.COMPLETED:
+            return
+
+        def notify_payment_completed() -> None:
+            self._notify_payment_completed(payment=payment)
+
+        transaction.on_commit(notify_payment_completed)
+
+    def _is_newly_completed(
+        self, *, payment: Payment, previous_status: str
+    ) -> bool:
+        """Return True when the payment just transitioned to completed."""
+        return (
+            previous_status != PaymentStatus.COMPLETED
+            and payment.status == PaymentStatus.COMPLETED
+        )
+
+    def _maybe_activate_initial_payment(self, *, payment: Payment) -> None:
+        """Activate the contract once its initial payment completes."""
+        if payment.status != PaymentStatus.COMPLETED:
+            return
+        if payment.charge.charge_type != ChargeType.INITIAL_PAYMENT:
+            return
+        from django.core.exceptions import ValidationError as DjangoValidationError  # noqa: PLC0415
+        from rentals.services import RentalContractService  # noqa: PLC0415
 
         try:
-            gateway = self._gateway or get_gateway(payment.provider)
-            result = gateway.get_transaction_status(payment.provider_reference)
-        except (PaymentGatewayError, ValueError) as exc:
+            RentalContractService.activate(contract=payment.charge.contract)
+        except DjangoValidationError:
+            logger.info(
+                "Initial payment completed; contract activation deferred | payment=%s",
+                payment.payment_number,
+            )
+
+    def _maybe_apply_contract_extension(
+        self, *, payment: Payment, previous_status: str
+    ) -> None:
+        """Mark a contract extension charge as paid once completed."""
+        if not self._is_newly_completed(
+            payment=payment, previous_status=previous_status
+        ):
+            return
+        if payment.charge.charge_type != ChargeType.CONTRACT_EXTENSION:
+            return
+        from django.core.exceptions import ValidationError as DjangoValidationError  # noqa: PLC0415
+        from rentals.services import ContractExtensionService  # noqa: PLC0415
+
+        try:
+            ContractExtensionService.mark_paid(charge=payment.charge)
+        except DjangoValidationError:
             logger.exception(
-                "Gateway status failed | payment=%s | provider=%s",
+                "Could not apply paid contract extension | payment=%s",
                 payment.payment_number,
-                payment.provider,
             )
-            raise PaymentServiceError(
-                _("Unable to verify the payment status. Please try again.")
-            ) from exc
 
+    def _persist_synchronized_payment(
+        self, *, payment: Payment, previous_status: str
+    ) -> None:
+        """Persist synchronized state and run post-sync side effects."""
+        self._schedule_completion_notifications(
+            payment=payment, previous_status=previous_status
+        )
+        self._maybe_activate_initial_payment(payment=payment)
+        self._maybe_apply_contract_extension(
+            payment=payment, previous_status=previous_status
+        )
+
+    # -------------------------------------------------------------------------
+    # Synchronize
+    # -------------------------------------------------------------------------
+
+    @transaction.atomic
+    def synchronize(self, *, payment: Payment) -> Payment:
+        """Synchronize a payment with its provider."""
+        self._validate_synchronizable(payment=payment)
+        result = self._fetch_provider_status(payment=payment)
         previous_status = payment.status
-        provider_status = str(result.status).upper()
-        update_fields: list[str] = []
-
-        if provider_status in ("SUCCESSFUL", "SUCCESS", "COMPLETED"):
-            payment.status = PaymentStatus.COMPLETED
-            if not payment.paid_at:
-                payment.paid_at = timezone.now()
-            update_fields = ["status", "paid_at", "updated_at"]
-
-        elif provider_status in ("FAILED", "CANCELLED", "EXPIRED"):
-            payment.status = PaymentStatus.FAILED
-            payment.paid_at = None
-            update_fields = ["status", "paid_at", "updated_at"]
-
-        elif provider_status in ("PENDING", "PROCESSING"):
-            pass  # No change
-
-        else:
-            logger.warning(
-                "Unknown provider status | payment=%s | provider=%s | status=%s",
-                payment.payment_number,
-                payment.provider,
-                provider_status,
-            )
-            raise PaymentServiceError(
-                _("Unknown payment status received from provider.")
-            )
+        update_fields = self._apply_provider_status(
+            payment=payment, provider_status=str(result.status).upper()
+        )
 
         if update_fields:
             payment.save(update_fields=update_fields)
-            if (
-                previous_status != PaymentStatus.COMPLETED
-                and payment.status == PaymentStatus.COMPLETED
-            ):
-                def notify_payment_completed():
-                    try:
-                        contract = payment.charge.contract
-                        property_ref = contract.unit.building.property_ref
-                        amount = f"{payment.amount.amount:,.0f}"
-                        send_notification(
-                            recipient=contract.tenant.user,
-                            title=_("Payment confirmed"),
-                            message=_(
-                                "Your payment %(reference)s of %(amount)s FCFA was "
-                                "completed for %(property)s."
-                            )
-                            % {
-                                "reference": payment.payment_number,
-                                "amount": amount,
-                                "property": property_ref.name,
-                            },
-                            notification_type=NotificationType.PAYMENT,
-                            related_object=payment,
-                        )
-                        send_notification(
-                            recipient=property_ref.landlord.user,
-                            title=_("Tenant payment received"),
-                            message=_(
-                                "%(tenant)s paid %(amount)s FCFA for %(property)s."
-                            )
-                            % {
-                                "tenant": contract.tenant.user.full_name,
-                                "amount": amount,
-                                "property": property_ref.name,
-                            },
-                            notification_type=NotificationType.PAYMENT,
-                            related_object=payment,
-                        )
-                    except Exception:
-                        logger.exception(
-                            "Could not create notifications for payment %s",
-                            payment.payment_number,
-                        )
-
-                transaction.on_commit(notify_payment_completed)
-            if (
-                payment.status == PaymentStatus.COMPLETED
-                and payment.charge.charge_type == ChargeType.INITIAL_PAYMENT
-            ):
-                from django.core.exceptions import (
-                    ValidationError as DjangoValidationError,
-                )
-                from rentals.services import RentalContractService  # noqa: PLC0415
-
-                try:
-                    RentalContractService.activate(contract=payment.charge.contract)
-                except DjangoValidationError:
-                    logger.info("Initial payment completed; contract activation deferred | payment=%s", payment.payment_number)
-            if (
-                previous_status != PaymentStatus.COMPLETED
-                and payment.status == PaymentStatus.COMPLETED
-                and payment.charge.charge_type == ChargeType.CONTRACT_EXTENSION
-            ):
-                from django.core.exceptions import (
-                    ValidationError as DjangoValidationError,
-                )
-                from rentals.services import ContractExtensionService  # noqa: PLC0415
-
-                try:
-                    ContractExtensionService.mark_paid(charge=payment.charge)
-                except DjangoValidationError:
-                    logger.exception(
-                        "Could not apply paid contract extension | payment=%s",
-                        payment.payment_number,
-                    )
+            self._persist_synchronized_payment(
+                payment=payment, previous_status=previous_status
+            )
 
         logger.info(
             "Payment synchronized | payment=%s | status=%s",
