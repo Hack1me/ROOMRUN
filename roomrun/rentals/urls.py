@@ -1,4 +1,7 @@
 from django.urls import path
+from rentals.views.document_views import LeaseDocumentPreviewView
+from rentals.views.document_views import LeasePDFView
+from rentals.views.land_ren_views import LandlordContractExtensionDecisionView
 from rentals.views.land_ren_views import LandlordRentalApplicationDetailView
 from rentals.views.land_ren_views import LandlordRentalApplicationListView
 from rentals.views.land_ren_views import LandlordRentalContractCreateView
@@ -10,11 +13,10 @@ from rentals.views.land_ren_views import TenantSearchView
 from rentals.views.ten_ren_views import RentalApplicationCreateView
 from rentals.views.ten_ren_views import RentalApplicationDetailView
 from rentals.views.ten_ren_views import RentalApplicationListView
+from rentals.views.ten_ren_views import RentalContractTerminateView
+from rentals.views.ten_ren_views import TenantContractExtensionRequestView
 from rentals.views.ten_ren_views import TenantLeaseDetailView
 from rentals.views.ten_ren_views import TenantRentalContractSignView
-from rentals.views.ten_ren_views import RentalContractTerminateView
-from rentals.views.document_views import LeaseDocumentPreviewView
-from rentals.views.document_views import LeasePDFView
 
 app_name = "rentals"
 
@@ -53,6 +55,11 @@ urlpatterns = [
         "contracts/<slug:pk>/terminate/",
         RentalContractTerminateView.as_view(),
         name="rental-contract-terminate",
+    ),
+    path(
+        "contracts/<slug:pk>/extensions/request/",
+        TenantContractExtensionRequestView.as_view(),
+        name="tenant-extension-request",
     ),
     path(
         "mylease/",
@@ -99,6 +106,11 @@ urlpatterns += [
         "landlord/contracts/<slug:pk>/",
         LandlordRentalContractDetailView.as_view(),
         name="landlord-rental-contract-detail",
+    ),
+    path(
+        "landlord/extensions/<slug:pk>/decision/",
+        LandlordContractExtensionDecisionView.as_view(),
+        name="landlord-extension-decision",
     ),
     path(
         "landlord/tenants/search/",

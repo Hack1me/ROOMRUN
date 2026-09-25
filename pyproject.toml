@@ -28,6 +28,7 @@ dependencies = [
   "gunicorn==26.1.0",
   "hiredis==3.4.1",
   "pillow==12.3.0",
+  "qrcode[pil]>=8.2",
   "psycopg[c]==3.3.4",
   "python-slugify==8.0.4",
   "redis==8.1.0",

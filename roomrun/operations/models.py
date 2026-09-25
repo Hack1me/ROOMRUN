@@ -7,8 +7,8 @@ from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from properties.models import Building
-from users.models import Tenant
 from users.models import Guard
+from users.models import Tenant
 from utils.enums import CleaningStatus
 from utils.enums import InvitationStatus
 from utils.enums import UserRole

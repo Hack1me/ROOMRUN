@@ -230,7 +230,7 @@ class PaymentService:
             return
         if payment.charge.charge_type != ChargeType.INITIAL_PAYMENT:
             return
-        from django.core.exceptions import ValidationError as DjangoValidationError  # noqa: PLC0415
+        from django.core.exceptions import ValidationError as DjangoValidationError
         from rentals.services import RentalContractService  # noqa: PLC0415
 
         try:
@@ -251,7 +251,7 @@ class PaymentService:
             return
         if payment.charge.charge_type != ChargeType.CONTRACT_EXTENSION:
             return
-        from django.core.exceptions import ValidationError as DjangoValidationError  # noqa: PLC0415
+        from django.core.exceptions import ValidationError as DjangoValidationError
         from rentals.services import ContractExtensionService  # noqa: PLC0415
 
         try:

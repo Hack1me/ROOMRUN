@@ -546,6 +546,8 @@ class ContractExtensionService:
             raise ValidationError(
                 _("The requested date must be after the current contract end date.")
             )
+        if requested_end_date <= timezone.localdate():
+            raise ValidationError(_("The new end date must be in the future."))
         if ContractExtensionRequest.objects.filter(
             contract=contract,
             status=ExtensionRequestStatus.PENDING,
@@ -582,6 +584,8 @@ class ContractExtensionService:
             raise ValidationError(_("This contract can no longer be extended."))
         if extension.requested_end_date <= contract.end_date:
             raise ValidationError(_("The requested date is no longer valid."))
+        if extension.requested_end_date <= timezone.localdate():
+            raise ValidationError(_("The new end date must still be in the future."))
         try:
             approved_amount = Money(amount, contract.monthly_rent.currency)
         except (TypeError, ValueError, ArithmeticError) as exc:

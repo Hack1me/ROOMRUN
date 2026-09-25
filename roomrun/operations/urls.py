@@ -53,6 +53,11 @@ urlpatterns = [
         name="guard-visitor-check-in",
     ),
     path(
+        "guard/visitors/scan/",
+        views.GuardVisitorQRScanView.as_view(),
+        name="guard-visitor-qr-scan",
+    ),
+    path(
         "guard/visitors/history/",
         views.GuardVisitorHistoryView.as_view(),
         name="guard-visitor-history",

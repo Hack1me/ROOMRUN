@@ -1,11 +1,13 @@
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core import signing
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
+from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -16,6 +18,8 @@ from django.views.generic import ListView
 from django.views.generic import UpdateView
 from operations.models import CleaningSchedule
 from operations.models import VisitorVisit
+from operations.visitor_qr import get_visit_qr_data_uri
+from operations.visitor_qr import read_visit_token
 from properties.mixins import LandlordRequiredMixin
 from properties.models import Building
 from rentals.mixins import TenantRequiredMixin
@@ -229,7 +233,11 @@ class VisitorInvitationView(VisitorHostMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["visits"] = self.get_visit_queryset()[:30]
+        visits = list(self.get_visit_queryset()[:30])
+        for visit in visits:
+            if visit.status in (VisitorStatus.EXPECTED, VisitorStatus.CHECKED_IN):
+                visit.qr_data_uri = get_visit_qr_data_uri(visit)
+        context["visits"] = visits
         return context
 
     def form_valid(self, form):
@@ -417,4 +425,57 @@ class GuardVisitorStatusView(GuardVisitorMixin, View):
         visit.updated_by = request.user
         visit.save()
         messages.success(request, _("Visitor status updated."))
+        return redirect("operations:guard-visitors")
+
+
+class GuardVisitorQRScanView(GuardVisitorMixin, View):
+    """Scan a guest's signed QR and transition expected/in-progress visits."""
+
+    template_name = "dashboard/operations/guard/visitor_qr_scan.html"
+
+    def get(self, request, *args, **kwargs):
+        self.get_guard()
+        return render(request, self.template_name)
+
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        guard = self.get_guard()
+        token = request.POST.get("token", "")
+        try:
+            visit_pk = read_visit_token(token)
+        except (signing.BadSignature, KeyError, TypeError, ValueError):
+            messages.error(request, _("This visitor QR code is invalid or expired."))
+            return redirect("operations:guard-visitor-qr-scan")
+
+        visit = get_object_or_404(
+            self.get_guard_visits().select_for_update(of=("self",)), pk=visit_pk,
+        )
+        now = timezone.now()
+        if visit.status == VisitorStatus.EXPECTED:
+            if visit.expected_arrival > now + timezone.timedelta(minutes=30):
+                messages.error(request, _("This visitor has not arrived yet."))
+                return redirect("operations:guard-visitor-qr-scan")
+            visit.status = VisitorStatus.CHECKED_IN
+            visit.checked_in_at = now
+            visit.checked_in_by = guard
+            action = _("checked in")
+        elif visit.status == VisitorStatus.CHECKED_IN:
+            visit.status = VisitorStatus.CHECKED_OUT
+            visit.checked_out_at = now
+            visit.checked_out_by = guard
+            action = _("checked out")
+        else:
+            messages.error(
+                request,
+                _("This invitation has already been used or cancelled."),
+            )
+            return redirect("operations:guard-visitor-qr-scan")
+
+        visit.updated_by = request.user
+        visit.save()
+        messages.success(
+            request,
+            _("%(visitor)s was %(action)s successfully.")
+            % {"visitor": visit.visitor_name, "action": action},
+        )
         return redirect("operations:guard-visitors")
