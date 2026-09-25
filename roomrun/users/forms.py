@@ -76,6 +76,9 @@ class SignupForm(NormalizedEmailMixin, PasswordConfirmMixin, forms.ModelForm):
     password1 = forms.CharField(
         label=_("Password"),
         strip=False,
+        help_text=_(
+            "Use at least 8 characters and avoid common or numeric-only passwords."
+        ),
         widget=forms.PasswordInput(
             attrs={
                 "class": (

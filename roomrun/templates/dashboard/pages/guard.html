@@ -103,28 +103,25 @@
           <div class="section-header">
             <h2 class="section-title">{% translate "Quick actions" %}</h2>
           </div>
-          <div class="actions-grid">
+          <div class="actions-grid actions-grid--three">
             <a href="{% url 'operations:guard-visitor-check-in' %}" class="action">
               <div class="action-icon icon-blue"><i class="ti ti-user-plus"></i></div>
               <div class="action-content">
-                <div class="action-title">{% translate "Register visitor" %}</div>
-                <div class="action-description">{% translate "Add a new visitor" %}</div>
+                <div class="action-title">{% translate "Check in visitor" %}</div>
               </div>
               <i class="ti ti-chevron-right action-arrow"></i>
             </a>
             <a href="{% url 'operations:guard-visitors' %}" class="action">
               <div class="action-icon icon-green"><i class="ti ti-login"></i></div>
               <div class="action-content">
-                <div class="action-title">{% translate "Record entry" %}</div>
-                <div class="action-description">{% translate "Check in a visitor" %}</div>
+                <div class="action-title">{% translate "Active visits" %}</div>
               </div>
               <i class="ti ti-chevron-right action-arrow"></i>
             </a>
             <a href="{% url 'operations:guard-visitor-history' %}" class="action">
-              <div class="action-icon icon-orange"><i class="ti ti-alert-triangle"></i></div>
+              <div class="action-icon icon-orange"><i class="ti ti-history"></i></div>
               <div class="action-content">
-                <div class="action-title">{% translate "Report incident" %}</div>
-                <div class="action-description">{% translate "Create a security report" %}</div>
+                <div class="action-title">{% translate "Visit history" %}</div>
               </div>
               <i class="ti ti-chevron-right action-arrow"></i>
             </a>

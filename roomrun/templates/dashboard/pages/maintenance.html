@@ -103,31 +103,28 @@
           <div class="section-header">
             <h2 class="section-title">{% translate "Quick actions" %}</h2>
           </div>
-          <div class="actions-grid">
+          <div class="actions-grid actions-grid--three">
             <a href="{% url 'maintenance:task-list' %}" class="action">
               <div class="action-icon icon-blue"><i class="ti ti-tool"></i></div>
               <div class="action-content">
                 <div class="action-title">{% translate "My tasks" %}</div>
-                <div class="action-description">{% translate "View assigned interventions" %}</div>
               </div>
               <i class="ti ti-chevron-right action-arrow"></i>
             </a>
             <a href="{% url 'maintenance:agent-queue' %}" class="action">
               <div class="action-icon icon-orange"><i class="ti ti-clipboard-list"></i></div>
               <div class="action-content">
-                <div class="action-title">{% translate "New requests" %}</div>
-                <div class="action-description">{% translate "Review maintenance requests" %}</div>
+                <div class="action-title">{% translate "Requests" %}</div>
               </div>
               <i class="ti ti-chevron-right action-arrow"></i>
             </a>
-            <button class="action">
-              <div class="action-icon icon-purple"><i class="ti ti-calendar"></i></div>
+            <a href="{% url 'communications:conversation-list' %}" class="action">
+              <div class="action-icon icon-purple"><i class="ti ti-message"></i></div>
               <div class="action-content">
-                <div class="action-title">{% translate "My calendar" %}</div>
-                <div class="action-description">{% translate "View today's schedule" %}</div>
+                <div class="action-title">{% translate "Messages" %}</div>
               </div>
               <i class="ti ti-chevron-right action-arrow"></i>
-            </button>
+            </a>
           </div>
         </section>
 

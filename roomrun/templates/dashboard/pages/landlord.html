@@ -123,22 +123,22 @@
           <div class="actions-grid">
             <a class="action" href="{% url 'rentals:landlord-rental-application-list' %}">
               <div class="action-icon icon-orange"><i class="ti ti-inbox"></i></div>
-              <div class="action-content"><div class="action-title">{% translate "Review applications" %}{% if pending_applications %} <span class="action-count">{{ pending_applications }}</span>{% endif %}</div><div class="action-description">{% translate "Check new tenant requests" %}</div></div>
+              <div class="action-content"><div class="action-title">{% translate "Applications" %}{% if pending_applications %} <span class="action-count">{{ pending_applications }}</span>{% endif %}</div></div>
               <i class="ti ti-chevron-right action-arrow"></i>
             </a>
             <a class="action" href="{% url 'rentals:landlord-rental-contract-create' %}">
               <div class="action-icon icon-green"><i class="ti ti-file-plus"></i></div>
-              <div class="action-content"><div class="action-title">{% translate "Create a lease" %}</div><div class="action-description">{% translate "Prepare a rental contract" %}</div></div>
+              <div class="action-content"><div class="action-title">{% translate "New lease" %}</div></div>
               <i class="ti ti-chevron-right action-arrow"></i>
             </a>
             <a class="action" href="{% url 'properties:property-create' %}">
               <div class="action-icon icon-blue"><i class="ti ti-building-plus"></i></div>
-              <div class="action-content"><div class="action-title">{% translate "Add a property" %}</div><div class="action-description">{% translate "Register a property or building" %}</div></div>
+              <div class="action-content"><div class="action-title">{% translate "Add property" %}</div></div>
               <i class="ti ti-chevron-right action-arrow"></i>
             </a>
             <a class="action" href="{% url 'billing:landlord-wallet' %}">
               <div class="action-icon icon-purple"><i class="ti ti-wallet"></i></div>
-              <div class="action-content"><div class="action-title">{% translate "Payments & balance" %}</div><div class="action-description">{% translate "Track rent and request a payout" %}</div></div>
+              <div class="action-content"><div class="action-title">{% translate "Wallet" %}</div></div>
               <i class="ti ti-chevron-right action-arrow"></i>
             </a>
           </div>

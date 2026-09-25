@@ -10,6 +10,7 @@ document.querySelectorAll("[data-password-toggle]").forEach((button) => {
     const showLabel = button.dataset.i18nShow || gettext("Show password");
     const hideLabel = button.dataset.i18nHide || gettext("Hide password");
     button.setAttribute("aria-label", visible ? hideLabel : showLabel);
+    button.setAttribute("aria-pressed", String(visible));
   });
 });
 
