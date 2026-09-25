@@ -1,0 +1,37 @@
+{% extends "dashboard/layout.html" %}
+{% load i18n %}
+
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+{% block sidebar %}{% include "dashboard/includes/landlord_sidebar.html" %}{% endblock %}
+{% block topbar %}
+  <header class="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-white px-7 py-4">
+    <div class="flex items-center gap-3"><button type="button" id="mobileMenu" class="grid h-9 w-9 place-items-center rounded-md border border-border md:hidden" aria-label="{% translate 'Open menu' %}"><i class="ti ti-menu-2"></i></button><div><h1 class="text-lg font-semibold">{% translate "Payments & balance" %}</h1><p class="text-xs text-muted">{% translate "Tenant payments and withdrawal requests" %}</p></div></div>
+    <a class="rounded-lg border border-border px-4 py-2 text-sm" href="{% url 'billing:landlord-wallet' %}"><i class="ti ti-wallet"></i> {{ balance|floatformat:0 }} FCFA</a>
+  </header>
+{% endblock %}
+{% block content %}
+<div class="mx-auto grid max-w-5xl gap-6 p-4 md:grid-cols-[1.1fr_.9fr] md:p-8">
+  <section class="rounded-2xl border border-border bg-white p-6 shadow-sm">
+    <p class="text-sm text-muted">{% translate "Available balance" %}</p>
+    <h2 class="my-2 text-3xl font-bold">{{ balance|floatformat:0 }} FCFA</h2>
+    <p class="mb-6 text-sm text-muted">{% translate "Completed tenant payments, less pending and completed withdrawals." %}</p>
+    <h3 class="mb-3 font-semibold">{% translate "Request a withdrawal" %}</h3>
+    <form method="post" class="grid gap-4">{% csrf_token %}
+      {% if form.non_field_errors %}<div class="text-sm text-red-600">{{ form.non_field_errors }}</div>{% endif %}
+      {% for field in form %}<div><label class="mb-1 block text-sm font-medium" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<p class="mt-1 text-sm text-red-600">{{ error }}</p>{% endfor %}</div>{% endfor %}
+      <p class="text-xs text-muted">{% translate "Minimum withdrawal: 5,000 FCFA. Requests are reviewed and paid to the Mobile Money number above." %}</p>
+      <button class="rounded-lg bg-primary px-4 py-3 font-semibold text-white" type="submit">{% translate "Request withdrawal" %}</button>
+    </form>
+  </section>
+  <section class="rounded-2xl border border-border bg-white p-6 shadow-sm">
+    <h3 class="mb-4 font-semibold">{% translate "Withdrawal history" %}</h3>
+    <div class="divide-y divide-border">{% for withdrawal in withdrawals %}
+      <article class="flex items-start justify-between gap-3 py-4"><div><strong>{{ withdrawal.amount|floatformat:0 }} FCFA</strong><p class="text-xs text-muted">{{ withdrawal.phone_number }} · {{ withdrawal.created_at|date:"d M Y, H:i" }}</p></div><span class="rounded-full bg-slate-100 px-2 py-1 text-xs">{{ withdrawal.get_status_display }}</span></article>
+    {% empty %}<p class="py-6 text-sm text-muted">{% translate "No withdrawal requests yet." %}</p>{% endfor %}</div>
+  </section>
+</div>
+<style>
+  #id_amount,#id_phone_number{width:100%;border:1px solid #dbe2ea;border-radius:.6rem;padding:.7rem .85rem;background:white}
+</style>
+{% endblock content %}

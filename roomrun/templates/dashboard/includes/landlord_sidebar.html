@@ -52,9 +52,9 @@
       <a href="{% url 'rentals:landlord-rental-contract-list' %}" class="nav-item{% if current_url == 'landlord-rental-contract-list' or current_url == 'landlord-rental-contract-create' or current_url == 'landlord-rental-contract-detail' %} active{% endif %}">
         <i class="ti ti-file-text"></i><span>{% translate "Leases" %}</span>
       </a>
-      <span class="nav-item nav-item--disabled" aria-disabled="true" title="{% translate 'Coming soon' %}">
-        <i class="ti ti-credit-card"></i><span>{% translate "Payments" %}</span>
-      </span>
+      <a href="{% url 'billing:landlord-wallet' %}" class="nav-item{% if request.resolver_match.url_name == 'landlord-wallet' %} active{% endif %}">
+        <i class="ti ti-wallet"></i><span>{% translate "Payments & balance" %}</span>
+      </a>
       <a href="{% url 'maintenance:landlord-request-list' %}" class="nav-item{% if request.resolver_match.namespace == 'maintenance' %} active{% endif %}">
         <i class="ti ti-tool"></i><span>{% translate "Maintenance" %}</span>
       </a>

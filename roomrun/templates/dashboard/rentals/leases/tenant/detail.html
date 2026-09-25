@@ -144,7 +144,7 @@
                 {% translate "Sign contract" %}
               </a>
             {% elif contract.status == 'SIGNED' %}
-              <a href="#" class="btn btn-primary">
+              <a href="{% url 'billing:tenant-contract-payment' contract.pk %}" class="btn btn-primary">
                 <i class="ti ti-arrow-right"></i>
                 {% translate "Review & Pay" %}
               </a>
@@ -226,11 +226,7 @@
                 <div class="activation-amount">
                   <div class="activation-amount-label">{% translate "Amount to pay" %}</div>
                   <div class="activation-amount-value">
-                    {% if contract.deposit %}
-                      {{ contract.deposit.amount|floatformat:0 }} {{ contract.deposit.currency }}
-                    {% else %}
-                      {{ contract.monthly_rent.amount|floatformat:0 }} {{ contract.monthly_rent.currency }}
-                    {% endif %}
+                    {{ initial_payment_due.amount|floatformat:0 }} {{ initial_payment_due.currency }}
                   </div>
                 </div>
               {% endif %}
@@ -243,7 +239,7 @@
                 {% translate "Sign contract" %}
               </a>
             {% elif contract.status == 'SIGNED' %}
-              <a href="#" class="btn btn-primary">
+              <a href="{% url 'billing:tenant-contract-payment' contract.pk %}" class="btn btn-primary">
                 <i class="ti ti-arrow-right"></i>
                 {% translate "Review & Pay" %}
               </a>

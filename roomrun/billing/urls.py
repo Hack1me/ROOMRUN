@@ -1,13 +1,21 @@
 from billing.views import CamPayWebhookView
 from billing.views import TenantChargeListView
+from billing.views import TenantContractPaymentView
 from billing.views import TenantPaymentInitiateView
 from billing.views import TenantPaymentSynchronizeView
+from billing.views import LandlordWalletView
 from django.urls import path
 
 app_name = "billing"
 
 urlpatterns = [
+    path("landlord/wallet/", LandlordWalletView.as_view(), name="landlord-wallet"),
     path("charges/", TenantChargeListView.as_view(), name="tenant-charge-list"),
+    path(
+        "contracts/<uuid:pk>/pay/",
+        TenantContractPaymentView.as_view(),
+        name="tenant-contract-payment",
+    ),
     path(
         "charges/<uuid:pk>/pay/",
         TenantPaymentInitiateView.as_view(),

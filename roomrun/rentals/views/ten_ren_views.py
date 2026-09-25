@@ -18,6 +18,7 @@ from rentals.models import RentalContract
 from rentals.services import RentalApplicationService
 from rentals.services import RentalContractService
 from utils.enums import ContractStatus
+from utils.enums import PaymentMethod
 
 
 class RentalApplicationListView(TenantApplicationQuerysetMixin, ListView):
@@ -94,13 +95,17 @@ class TenantRentalContractSignView(TenantRequiredMixin, FormView):
                 contract=self.contract,
                 tenant_signature=form.cleaned_data["tenant_signature"],
             )
+            RentalContractService.create_initial_payment(
+                contract=self.contract,
+                payment_method=PaymentMethod.MOBILE_MONEY,
+            )
         except ValidationError as exc:
             for error in exc.messages:
                 form.add_error(None, error)
             return self.form_invalid(form)
 
         messages.success(self.request, _("Rental contract signed successfully."))
-        return redirect("dashboard:tenant")
+        return redirect("billing:tenant-charge-list")
 
 
 class TenantLeaseDetailView(LoginRequiredMixin, DetailView):
@@ -113,6 +118,18 @@ class TenantLeaseDetailView(LoginRequiredMixin, DetailView):
 
     template_name = "dashboard/rentals/leases/tenant/detail.html"
     context_object_name = "contract"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        contract = context["contract"]
+        initial_charge = contract.charges.filter(charge_type="INITIAL_PAYMENT").first()
+        if initial_charge:
+            context["initial_payment_due"] = initial_charge.balance_due
+        else:
+            context["initial_payment_due"] = (
+                RentalContractService.calculate_initial_payment(contract=contract)
+            )
+        return context
 
     def get_queryset(self):
         return (

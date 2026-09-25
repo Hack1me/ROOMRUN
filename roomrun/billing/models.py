@@ -134,9 +134,9 @@ class Charge(BaseModel):
     def refresh_status(self) -> None:
         zero = Money(0, self.amount.currency)
 
-        if self.balance_due.amount == zero:
+        if self.balance_due.amount == zero.amount:
             status = ChargeStatus.PAID
-        elif self.total_paid.amount > zero:
+        elif self.total_paid.amount > zero.amount:
             status = ChargeStatus.PARTIAL
         elif self.is_overdue:
             status = ChargeStatus.OVERDUE
@@ -392,3 +392,29 @@ class Receipt(BaseModel):
             raise ValidationError(
                 _("Receipts can only be issued for completed payments.")
             )
+
+
+class Withdrawal(BaseModel):
+    """A landlord payout request. Pending requests reserve wallet funds."""
+
+    class Status(models.TextChoices):
+        PENDING = "PENDING", _("Pending")
+        COMPLETED = "COMPLETED", _("Completed")
+        REJECTED = "REJECTED", _("Rejected")
+
+    landlord = models.ForeignKey(
+        "users.Landlord", on_delete=models.PROTECT, related_name="withdrawals"
+    )
+    amount = MoneyField(max_digits=12, decimal_places=2, default_currency="XAF")
+    phone_number = models.CharField(max_length=32)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    processed_at = models.DateTimeField(null=True, blank=True)
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def clean(self):
+        super().clean()
+        if self.amount and self.amount.amount < 5000:
+            raise ValidationError({"amount": _("The minimum withdrawal is 5,000 FCFA.")})

@@ -1,6 +1,7 @@
 import logging
 
 from billing.models import Payment
+from billing.models import Charge
 from billing.services.gateways import PaymentGatewayError
 from billing.services.gateways import get_gateway
 from django.core.exceptions import ValidationError
@@ -9,6 +10,7 @@ from django.db import transaction
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from utils.enums import PaymentStatus
+from utils.enums import ChargeType
 
 logger = logging.getLogger(__name__)
 
@@ -73,11 +75,11 @@ class PaymentService:
                 _("Unable to initiate the payment. Please try again.")
             ) from exc
 
-        payment.transaction_reference = result.transaction_id
+        payment.provider_reference = result.transaction_id
 
         try:
             payment.save(update_fields=[
-                "transaction_reference",
+                "provider_reference",
                 "updated_at",
             ])
         except IntegrityError as exc:
@@ -109,7 +111,7 @@ class PaymentService:
         if not payment.provider:
             raise ValidationError(_("Payment provider is required."))
 
-        if not payment.transaction_reference:
+        if not payment.provider_reference:
             raise ValidationError(
                 _("Payment has no provider transaction reference.")
             )
@@ -117,7 +119,7 @@ class PaymentService:
         gateway = self._gateway or get_gateway(payment.provider)
 
         try:
-            result = gateway.get_transaction_status(payment.transaction_reference)
+            result = gateway.get_transaction_status(payment.provider_reference)
         except PaymentGatewayError as exc:
             logger.exception(
                 "Gateway status failed | payment=%s | provider=%s",
@@ -158,6 +160,14 @@ class PaymentService:
 
         if update_fields:
             payment.save(update_fields=update_fields)
+            if payment.status == PaymentStatus.COMPLETED and payment.charge.charge_type == ChargeType.INITIAL_PAYMENT:
+                from rentals.services import RentalContractService  # noqa: PLC0415
+                from django.core.exceptions import ValidationError as DjangoValidationError  # noqa: PLC0415
+
+                try:
+                    RentalContractService.activate(contract=payment.charge.contract)
+                except DjangoValidationError:
+                    logger.info("Initial payment completed; contract activation deferred | payment=%s", payment.payment_number)
 
         logger.info(
             "Payment synchronized | payment=%s | status=%s",
@@ -187,7 +197,7 @@ class PaymentService:
                 Payment.objects
                 .select_for_update()
                 .get(
-                    transaction_reference=transaction_reference,
+                    provider_reference=transaction_reference,
                     provider=provider,
                 )
             )

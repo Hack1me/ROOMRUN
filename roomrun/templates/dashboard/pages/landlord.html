@@ -27,6 +27,11 @@
                  placeholder="{% translate 'Search a property, a tenant…' %}" />
         </label>
         <div class="topbar-right">
+          <a href="{% url 'billing:landlord-wallet' %}"
+             class="landlord-wallet-link"
+             aria-label="{% translate 'Available balance' %}: {{ landlord_wallet_balance }} FCFA">
+            <i class="ti ti-wallet"></i><span>{% translate "Balance" %}</span><strong>{{ landlord_wallet_balance|floatformat:0 }} FCFA</strong>
+          </a>
           <button type="button"
                   class="icon-button"
                   aria-label="{% translate 'Notifications' %}">

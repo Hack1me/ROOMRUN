@@ -429,14 +429,18 @@ class RentalContractService:
             contract=contract, charge_type=ChargeType.INITIAL_PAYMENT
         ).first()
         if existing_charge:
-            existing_payment = existing_charge.payments.exclude(
-                status=PaymentStatus.FAILED
+            existing_payment = existing_charge.payments.filter(
+                status__in=[PaymentStatus.PENDING, PaymentStatus.COMPLETED]
             ).first()
             if existing_payment:
                 return existing_payment
 
         # --- 4. Calculate amount ---
-        amount = RentalContractService.calculate_initial_payment(contract=contract)
+        amount = (
+            existing_charge.balance_due
+            if existing_charge
+            else RentalContractService.calculate_initial_payment(contract=contract)
+        )
 
         if amount.amount <= 0:
             raise ValidationError(
@@ -444,20 +448,21 @@ class RentalContractService:
             )
 
         # --- 5. Create the charge ---
-        charge = Charge(
-            contract=contract,
-            charge_type=ChargeType.INITIAL_PAYMENT,
-            amount=amount,
-            due_date=contract.start_date,
-            description=_("Initial payment for rental contract %(contract)s.")
-            % {"contract": contract.contract_number},
-        )
-        charge.full_clean()
-        charge.save()
+        if not existing_charge:
+            existing_charge = Charge(
+                contract=contract,
+                charge_type=ChargeType.INITIAL_PAYMENT,
+                amount=amount,
+                due_date=contract.start_date,
+                description=_("Initial payment for rental contract %(contract)s.")
+                % {"contract": contract.contract_number},
+            )
+            existing_charge.full_clean()
+            existing_charge.save()
 
         # --- 6. Create the payment ---
         payment = Payment(
-            charge=charge,
+            charge=existing_charge,
             amount=amount,
             payment_method=payment_method,
             status=PaymentStatus.PENDING,
