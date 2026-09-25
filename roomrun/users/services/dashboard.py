@@ -547,11 +547,6 @@ class GuardDashboardService:
     def _build_context(guard) -> dict:
         now = timezone.now()
         today = now.date()
-        logs = guard.logs.all() if hasattr(guard, "logs") else None
-
-        total_logs = logs.count() if logs is not None else 0
-        today_logs = logs.filter(created_at__date=today).count() if logs is not None else 0
-
         visits = VisitorVisit.objects.filter(
             building__property_ref__landlord__in=guard.landlords.all()
         ).select_related("host", "building")
@@ -559,10 +554,17 @@ class GuardDashboardService:
         expected_visitors = visits.filter(
             expected_arrival__date=today, status=VisitorStatus.EXPECTED
         ).count()
-        today_logs = visits.filter(checked_in_at__date=today).count()
-        recent_visitors = visits.filter(checked_in_at__date=today).order_by("-checked_in_at")[:GuardDashboardService.RECENT_LIMIT]
-        expected_visits = visits.filter(status=VisitorStatus.EXPECTED, expected_arrival__date=today).order_by("expected_arrival")[:GuardDashboardService.RECENT_LIMIT]
-        recent_logs = []
+        today_visits = visits.filter(checked_in_at__date=today)
+        today_logs = today_visits.count()
+        recent_visitors = today_visits.order_by("-checked_in_at")[
+            : GuardDashboardService.RECENT_LIMIT
+        ]
+        expected_visits = visits.filter(
+            status=VisitorStatus.EXPECTED, expected_arrival__date=today
+        ).order_by("expected_arrival")[: GuardDashboardService.RECENT_LIMIT]
+        completed_visitors = visits.filter(
+            status=VisitorStatus.CHECKED_OUT, checked_out_at__date=today
+        ).count()
 
         shift_info = {
             "shift": guard.shift,
@@ -572,11 +574,12 @@ class GuardDashboardService:
 
         return {
             "guard": guard,
-            "total_logs": total_logs,
+            "total_logs": visits.count(),
             "today_logs": today_logs,
             "active_visitors": active_visitors,
             "expected_visitors": expected_visitors,
-            "recent_logs": recent_logs,
+            "recent_logs": recent_visitors,
+            "completed_visitors": completed_visitors,
             "shift_info": shift_info,
             "recent_visitors": recent_visitors,
             "expected_visits": expected_visits,

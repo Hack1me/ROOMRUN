@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -261,6 +262,11 @@ class VisitorInvitationCancelView(VisitorHostMixin, View):
 
 
 class GuardVisitorMixin(LoginRequiredMixin):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["sidebar_template"] = "dashboard/includes/guard_sidebar.html"
+        return context
+
     def get_guard(self):
         try:
             guard = self.request.user.employee_profile.guard_profile
@@ -288,11 +294,23 @@ class GuardVisitorListView(GuardVisitorMixin, ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return (
+        queryset = (
             self.get_guard_visits()
             .filter(status__in=[VisitorStatus.EXPECTED, VisitorStatus.CHECKED_IN])
             .order_by("expected_arrival")
         )
+        search = self.request.GET.get("q", "").strip()
+        if search:
+            queryset = queryset.filter(
+                Q(visitor_name__icontains=search)
+                | Q(visitor_phone__icontains=search)
+                | Q(host__first_name__icontains=search)
+                | Q(host__last_name__icontains=search)
+                | Q(host__email__icontains=search)
+                | Q(building__name__icontains=search)
+                | Q(building__property_ref__name__icontains=search)
+            )
+        return queryset
 
 
 class GuardCheckInForm(forms.ModelForm):

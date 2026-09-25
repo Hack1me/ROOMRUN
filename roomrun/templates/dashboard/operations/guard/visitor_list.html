@@ -10,10 +10,12 @@
       <h1 class="mt-3 font-display text-3xl text-primary">{% translate "Visitor register" %}</h1>
       <p class="mt-2 text-sm text-muted">{% translate "Only invitations for residences assigned to you are shown." %}</p>
     </div>
-    <div class="flex flex-wrap gap-3">
+    <form method="get" class="flex flex-wrap gap-3">
+      <input class="rr-input" type="search" name="q" value="{{ request.GET.q }}" placeholder="{% translate 'Search visitors, hosts or residences…' %}" aria-label="{% translate 'Search visitors' %}">
+      <button class="rr-btn-outline" type="submit">{% translate "Search" %}</button>
       <a href="{% url 'operations:guard-visitor-history' %}" class="rr-btn-outline">{% translate "History" %}</a>
       <a href="{% url 'operations:guard-visitor-check-in' %}" class="rr-btn-primary">{% translate "Register walk-in" %}</a>
-    </div>
+    </form>
   </div>
   <section class="rr-card overflow-hidden">
     <div class="overflow-x-auto">
