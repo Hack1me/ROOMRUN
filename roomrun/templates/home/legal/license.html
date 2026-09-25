@@ -17,7 +17,7 @@
       </div>
       <h1>{% translate "License" %}</h1>
       <p class="hero-description">{% translate "ROOMRUN is licensed to users for use under the terms and conditions set forth in this agreement." %}</p>
-      <p class="updated">{% translate "Last updated" %} <strong>23 septembre 2026</strong></p>
+      <p class="updated">{% translate "Last updated" %} <strong><time datetime="{{ last_updated|date:'Y-m-d' }}">{{ last_updated|date:"DATE_FORMAT" }}</time></strong></p>
     </div>
   </section>
 

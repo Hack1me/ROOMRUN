@@ -1,25 +1,33 @@
 # Translations
 
-Start by configuring the `LANGUAGES` settings in `base.py`, by uncommenting languages you are willing to support. Then, translation strings will be placed in this folder when running:
+English (`en`) is the source language and the default application language.
+Keep user-facing strings in English in Python and templates, and wrap them in
+Django's translation helpers so other locales can translate them.
+
+Extract server-rendered strings and JavaScript strings separately:
 
 ```bash
-docker compose -f docker-compose.local.yml run --rm django python manage.py makemessages --all --no-location
+python manage.py makemessages --all --no-location
+python manage.py makemessages --domain djangojs --all --no-location
+python manage.py compilemessages
 ```
 
-This should generate `django.po` (stands for Portable Object) files under each locale `<locale name>/LC_MESSAGES/django.po`. Each translatable string in the codebase is collected with its `msgid` and need to be translated as `msgstr`, for example:
+The `django` domain contains Python and template messages. The `djangojs`
+domain contains strings requested from JavaScript with `gettext()`.
+
+Supported languages are configured in the `LANGUAGES` setting in `config/settings/base.py`.
+The extraction commands generate `django.po` (Portable Object) files under each
+locale's `LC_MESSAGES` directory. Each translatable string is stored as a
+`msgid` and its translation as a `msgstr`, for example:
 
 ```po
 msgid "users"
 msgstr "utilisateurs"
 ```
 
-Once all translations are done, they need to be compiled into `.mo` files (stands for Machine Object), which are the actual binary files used by the application:
-
-```bash
-docker compose -f docker-compose.local.yml run --rm django python manage.py compilemessages
-```
-
-Note that the `.po` files are NOT used by the application directly, so if the `.mo` files are out of date, the content won't appear as translated even if the `.po` files are up-to-date.
+Compile the catalogues into `.mo` (Machine Object) files after updating
+translations. The application uses these compiled files at runtime, so compile
+them again whenever a `.po` file changes.
 
 ## Production
 

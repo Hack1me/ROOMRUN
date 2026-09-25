@@ -12,7 +12,7 @@
   });
   document.querySelectorAll("[data-delete-conversation]").forEach((form) => {
     form.addEventListener("submit", (event) => {
-      if (!window.confirm("Delete this conversation and all of its messages?")) {
+      if (!window.confirm(gettext("Delete this conversation and all of its messages?"))) {
         event.preventDefault();
       }
     });

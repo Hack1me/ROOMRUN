@@ -17,7 +17,7 @@
       </div>
       <h1>{% translate "Cookies Policy" %}</h1>
       <p class="hero-description">{% translate "ROOMRUN uses cookies to improve your experience, analyze site traffic, and personalize content." %}</p>
-      <p class="updated">{% translate "Last updated" %} <strong>23 septembre 2026</strong></p>
+      <p class="updated">{% translate "Last updated" %} <strong><time datetime="{{ last_updated|date:'Y-m-d' }}">{{ last_updated|date:"DATE_FORMAT" }}</time></strong></p>
     </div>
   </section>
 

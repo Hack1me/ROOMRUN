@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-25 12:53+0000\n"
+"POT-Creation-Date: 2026-09-25 13:03+0000\n"
 "Language: fr-FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -757,6 +757,9 @@ msgid "The request is now assigned to you."
 msgstr ""
 
 msgid "Task updated successfully."
+msgstr ""
+
+msgid "Invitation details"
 msgstr ""
 
 msgid "Schedule number"
@@ -1688,6 +1691,9 @@ msgstr ""
 msgid "Property management made simple."
 msgstr ""
 
+msgid "Close"
+msgstr ""
+
 msgid "Open menu"
 msgstr ""
 
@@ -1766,9 +1772,6 @@ msgid "Start a conversation"
 msgstr ""
 
 msgid "Choose a tenant or employee from your workspace."
-msgstr ""
-
-msgid "Close"
 msgstr ""
 
 msgid "Cancel"
@@ -2798,7 +2801,7 @@ msgstr ""
 msgid "Apartment T2 — Bonamoussadi"
 msgstr ""
 
-msgid "Résidence Les Palmiers · Door A12"
+msgid "The Palms Residence · Door A12"
 msgstr ""
 
 msgid "month"
@@ -2807,7 +2810,7 @@ msgstr ""
 msgid "Studio — Deido"
 msgstr ""
 
-msgid "Résidence La Paix · Door B04"
+msgid "La Paix Residence · Door B04"
 msgstr ""
 
 msgid "Apartment T3 — Akwa"
@@ -2822,7 +2825,7 @@ msgstr ""
 msgid "Studio — Makepe"
 msgstr ""
 
-msgid "Résidence Horizon · Door A07"
+msgid "Horizon Residence · Door A07"
 msgstr ""
 
 msgid "Add a property"
@@ -2953,8 +2956,352 @@ msgstr ""
 msgid "Open visitor register"
 msgstr ""
 
-msgid "Le registre de votre cité"
+msgid "Your community, clearly managed"
 msgstr ""
+
+msgid "Main navigation"
+msgstr ""
+
+msgid "Ecosystem"
+msgstr ""
+
+msgid "Features"
+msgstr ""
+
+msgid "Results"
+msgstr ""
+
+msgid "Pricing"
+msgstr ""
+
+#, fuzzy
+#| msgid "Sign In"
+msgid "Sign in"
+msgstr "S'identifier"
+
+#, fuzzy
+#| msgid "Re-send Verification"
+msgid "Page sections"
+msgstr "Renvoyer vérification"
+
+msgid "Property management,"
+msgstr ""
+
+msgid "finally made clear."
+msgstr ""
+
+msgid ""
+"Applications, leases, payments, maintenance and visitors — all brought "
+"together in one shared workspace for landlords, tenants, staff and security "
+"teams."
+msgstr ""
+
+msgid "Explore the platform"
+msgstr ""
+
+msgid ""
+"LIVE — 27 active communities · 340+ homes tracked · synced 4 minutes ago"
+msgstr ""
+
+msgid "GET STARTED"
+msgstr ""
+
+msgid "Create your account"
+msgstr ""
+
+msgid "List your homes"
+msgstr ""
+
+msgid "Manage everything from your dashboard"
+msgstr ""
+
+msgid "THE ECOSYSTEM"
+msgstr ""
+
+msgid "Five roles, one shared record."
+msgstr ""
+
+msgid ""
+"Most tools focus on just one side. ROOMRUN records the relationship itself: "
+"a payment, a charge or a request is one event, seen from five different "
+"perspectives."
+msgstr ""
+
+msgid "Manage communities, homes and income from one dashboard."
+msgstr ""
+
+msgid "Find a home, pay rent and follow up on requests in a few clicks."
+msgstr ""
+
+msgid "Maintenance staff"
+msgstr ""
+
+msgid "Receive and resolve requests across one or more communities."
+msgstr ""
+
+msgid "Security guard"
+msgstr ""
+
+msgid "Log every visitor in seconds, without a paper register."
+msgstr ""
+
+msgid "Administrator"
+msgstr ""
+
+msgid "Oversee the platform and verify new landlords."
+msgstr ""
+
+msgid "ONE COMMUNITY. ONE CLEAR VIEW."
+msgstr ""
+
+msgid "Residential property,<br>"
+msgstr ""
+
+msgid "managed with clarity."
+msgstr ""
+
+msgid ""
+"ROOMRUN does more than manage homes. It makes every community easier to "
+"understand, coordinate and run."
+msgstr ""
+
+msgid "The Palms"
+msgstr ""
+
+msgid ""
+"A living property portfolio: occupancy, payments, requests, documents and "
+"the resident experience come together in one place."
+msgstr ""
+
+msgid "homes"
+msgstr ""
+
+#, python-format
+msgid "%% occupied"
+msgstr ""
+
+msgid "active requests"
+msgstr ""
+
+msgid "See how ROOMRUN brings property management together"
+msgstr ""
+
+msgid "Editorial view of The Palms residence"
+msgstr ""
+
+msgid "Contemporary interior at The Palms residence"
+msgstr ""
+
+msgid "THE PALMS / 2026"
+msgstr ""
+
+msgid "HOMES"
+msgstr ""
+
+msgid "Placeholder image — replace with photos of your properties."
+msgstr ""
+
+msgid "FEATURES"
+msgstr ""
+
+msgid "Six everyday needs, handled one by one."
+msgstr ""
+
+msgid ""
+"Each module solves a practical need without adding unnecessary complexity."
+msgstr ""
+
+msgid "Online payments"
+msgstr ""
+
+msgid ""
+"Rent, deposits and charges paid by Mobile Money or card, with fees deducted "
+"automatically before payout."
+msgstr ""
+
+msgid "Built-in messaging"
+msgstr ""
+
+msgid "Tenants and landlords can communicate without leaving the platform."
+msgstr ""
+
+msgid "Tracked maintenance"
+msgstr ""
+
+msgid ""
+"Prioritize requests, assign them to staff and track them through resolution."
+msgstr ""
+
+msgid "Visitor log"
+msgstr ""
+
+msgid ""
+"Security staff can record every arrival and departure, including walk-in "
+"visitors."
+msgstr ""
+
+msgid "Centralized documents"
+msgstr ""
+
+msgid ""
+"Keep identity documents, supporting files and signed leases together in one "
+"place."
+msgstr ""
+
+#, fuzzy
+#| msgid "Verified"
+msgid "Verified reviews"
+msgstr "Vérifié"
+
+msgid "Tenants and landlords can review each other at the end of a lease."
+msgstr ""
+
+msgid "RESULTS"
+msgstr ""
+
+msgid "What landlords measure."
+msgstr ""
+
+msgid "Homes managed"
+msgstr ""
+
+msgid "Rent collected on time"
+msgstr ""
+
+msgid "Less administrative work"
+msgstr ""
+
+msgid "Average resolution time"
+msgstr ""
+
+msgid "1.6 days"
+msgstr ""
+
+msgid ""
+"We manage four communities and more than sixty homes. ROOMRUN is the first "
+"place where our tenants, staff and our team can finally see the same picture."
+msgstr ""
+
+msgid "Landlord, The Palms Residence"
+msgstr ""
+
+msgid "PRICING"
+msgstr ""
+
+msgid "Two plans, no long-term commitment."
+msgstr ""
+
+msgid "Free"
+msgstr ""
+
+#, fuzzy
+#| msgid "My Profile"
+msgid "Pro"
+msgstr "Mon Profil"
+
+msgid "Communities"
+msgstr ""
+
+msgid "Up to 2"
+msgstr ""
+
+msgid "Unlimited"
+msgstr ""
+
+msgid "Homes"
+msgstr ""
+
+msgid "Up to 10"
+msgstr ""
+
+msgid "Analytics"
+msgstr ""
+
+msgid "Basic"
+msgstr ""
+
+msgid "Advanced"
+msgstr ""
+
+msgid "Listing visibility"
+msgstr ""
+
+msgid "Standard"
+msgstr ""
+
+msgid "Featured"
+msgstr ""
+
+msgid "Transaction fee"
+msgstr ""
+
+msgid "Reduced"
+msgstr ""
+
+msgid "Price"
+msgstr ""
+
+msgid "Start for free"
+msgstr ""
+
+msgid "Upgrade to Pro"
+msgstr ""
+
+msgid "QUESTIONS"
+msgstr ""
+
+msgid "How do online payments work?"
+msgstr ""
+
+msgid ""
+"Tenants pay rent, deposits and charges in the app using Mobile Money or a "
+"bank card. The platform deducts its fee before paying the remaining balance "
+"to the landlord."
+msgstr ""
+
+msgid "Who can create a maintenance or security staff account?"
+msgstr ""
+
+msgid ""
+"Only a landlord can create these accounts. If the person already uses "
+"ROOMRUN, link their account to your community instead of creating a "
+"duplicate."
+msgstr ""
+
+msgid "How is my landlord account verified?"
+msgstr ""
+
+msgid ""
+"After you sign up, our team verifies your identity document before "
+"activating your account. This usually takes less than 24 hours."
+msgstr ""
+
+msgid "Can I manage more than one community?"
+msgstr ""
+
+msgid ""
+"Yes. The free plan includes up to two communities. Pro removes this limit "
+"and provides combined analytics across your portfolio."
+msgstr ""
+
+msgid "Is ROOMRUN available in French?"
+msgstr ""
+
+msgid ""
+"ROOMRUN is available in English and French, with more languages planned. You "
+"can change your language at any time in your account settings."
+msgstr ""
+
+msgid "Ready to keep your community in sync?"
+msgstr ""
+
+msgid "Sign-up takes just a few minutes. We will guide you through every step."
+msgstr ""
+
+#, fuzzy
+#| msgid "Sign In"
+msgid "or contact us"
+msgstr "S'identifier"
 
 msgid "Landlord dashboard"
 msgstr ""
@@ -4504,6 +4851,32 @@ msgstr ""
 msgid "The request could not be processed. Please try again."
 msgstr ""
 
+msgid "Forbidden (403)"
+msgstr ""
+
+msgid "You're not allowed to access this page."
+msgstr ""
+
+msgid "Page not found"
+msgstr ""
+
+msgid "This is not the page you were looking for."
+msgstr ""
+
+msgid "Server Error"
+msgstr ""
+
+msgid "Oops! Error 500"
+msgstr ""
+
+msgid "Looks like something went wrong."
+msgstr ""
+
+msgid ""
+"We track these errors automatically, but if the problem persists, contact "
+"us. In the meantime, try refreshing the page."
+msgstr ""
+
 msgid "Back to home"
 msgstr ""
 
@@ -4519,6 +4892,26 @@ msgstr ""
 msgid "Payment tracking"
 msgstr ""
 
+msgid "A calm workspace for residential management in Central Africa."
+msgstr ""
+
+msgid "Platform"
+msgstr ""
+
+#, fuzzy
+#| msgid "My Profile"
+msgid "Profiles"
+msgstr "Mon Profil"
+
+msgid "Landlords"
+msgstr ""
+
+msgid "Maintenance staff and guards"
+msgstr ""
+
+msgid "Company"
+msgstr ""
+
 msgid "Back to RoomRun"
 msgstr ""
 
@@ -4530,16 +4923,7 @@ msgstr ""
 msgid "PLATFORM"
 msgstr ""
 
-msgid "Features"
-msgstr ""
-
-msgid "Pricing"
-msgstr ""
-
 msgid "PROFILES"
-msgstr ""
-
-msgid "Landlords"
 msgstr ""
 
 msgid "Maintenance teams"
@@ -4547,17 +4931,6 @@ msgstr ""
 
 msgid "COMPANY"
 msgstr ""
-
-msgid "Main navigation"
-msgstr ""
-
-msgid "Ecosystem"
-msgstr ""
-
-#, fuzzy
-#| msgid "Sign In"
-msgid "Sign in"
-msgstr "S'identifier"
 
 msgid "Cookies Policy"
 msgstr ""
@@ -5259,9 +5632,6 @@ msgstr ""
 msgid "ROOMRUN invitation"
 msgstr ""
 
-msgid "Create your account"
-msgstr ""
-
 #, python-format
 msgid "You were invited as %(role)s at %(email)s."
 msgstr ""
@@ -5453,6 +5823,150 @@ msgid "Change email address"
 msgstr "Confirmez votre adresse email"
 
 msgid "Your verification is secure"
+msgstr ""
+
+msgid "Rental agreement"
+msgstr ""
+
+msgid "Print / PDF"
+msgstr ""
+
+msgid "RENTAL AGREEMENT"
+msgstr ""
+
+msgid "For residential use"
+msgstr ""
+
+msgid "Agreement no."
+msgstr ""
+
+msgid "Between the following parties"
+msgstr ""
+
+msgid "LANDLORD"
+msgstr ""
+
+msgid "reference"
+msgstr ""
+
+msgid "residing at"
+msgstr ""
+
+msgid "phone"
+msgstr ""
+
+msgid "TENANT"
+msgstr ""
+
+msgid "nationality"
+msgstr ""
+
+msgid "hereinafter referred to as the Tenant."
+msgstr ""
+
+msgid ""
+"The parties enter into this rental agreement for the property described "
+"below and freely agree to its rental terms, subject to applicable laws and "
+"regulations."
+msgstr ""
+
+msgid "Purpose of the agreement"
+msgstr ""
+
+msgid ""
+"The Landlord rents to the Tenant, who accepts, the residential property at"
+msgstr ""
+
+msgid ""
+"The Tenant agrees to use the premises for their intended purpose and to "
+"follow the building rules and the terms agreed with the Landlord."
+msgstr ""
+
+msgid "Term and financial conditions"
+msgstr ""
+
+msgid "This agreement begins on"
+msgstr ""
+
+msgid "and ends on"
+msgstr ""
+
+msgid "and has no fixed end date"
+msgstr ""
+
+msgid "The monthly rent is"
+msgstr ""
+
+msgid "The Tenant also pays a security deposit of"
+msgstr ""
+
+msgid "and advance rent for"
+msgstr ""
+
+msgid "months, totaling"
+msgstr ""
+
+msgid "Initial total"
+msgstr ""
+
+msgid "Responsibilities of the parties"
+msgstr ""
+
+msgid ""
+"The Landlord will provide the Tenant with peaceful use of the property and "
+"fulfil the Landlord's obligations. The Tenant will pay rent and agreed "
+"charges on time, take care of the property, report damage or issues, and "
+"follow the residence rules. Utility costs, including water, electricity, gas "
+"and internet, will be paid as agreed by the parties."
+msgstr ""
+
+msgid "Condition and return of the property"
+msgstr ""
+
+msgid ""
+"A property condition report may be prepared at move-in and move-out. At the "
+"end of the agreement, the Tenant will return the property in a condition "
+"consistent with normal use, subject to ordinary wear and the parties' "
+"respective obligations."
+msgstr ""
+
+msgid "Termination and disputes"
+msgstr ""
+
+msgid ""
+"This agreement may be terminated in accordance with the terms agreed by the "
+"parties and applicable law. If a dispute arises over the interpretation or "
+"performance of this agreement, the parties will first try to resolve it "
+"amicably before bringing it before a competent court."
+msgstr ""
+
+msgid "Final provisions"
+msgstr ""
+
+msgid ""
+"The parties confirm that they have read, understood and accepted this "
+"agreement. Any amendment must be recorded in accordance with applicable "
+"requirements."
+msgstr ""
+
+#, fuzzy
+#| msgid "Signup"
+msgid "Signed at"
+msgstr "S'inscrire"
+
+msgid "on"
+msgstr ""
+
+msgid "The parties confirm that they have read and accepted this agreement."
+msgstr ""
+
+msgid "Electronically signed on"
+msgstr ""
+
+msgid "Read and approved"
+msgstr ""
+
+msgid "Generated electronically on"
 msgstr ""
 
 msgid "Personal info"
