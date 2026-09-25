@@ -6,75 +6,7 @@
 {% block header %}{% endblock header %}
 {% block dashboard_body %}
   <div class="app maintenance-app">
-    <aside class="sidebar maintenance-sidebar overflow-y-auto" id="sidebar">
-      <div class="brand">
-        <div class="brand-mark"></div>
-        <div>
-          <div class="brand-name">ROOMRUN</div>
-          <div class="brand-subtitle">
-            {% translate "Property Management" %}
-          </div>
-        </div>
-      </div>
-      <div class="sidebar-content">
-        <div class="nav-section">
-          <div class="nav-title">{% translate "Main" %}</div>
-          <a href="{% url 'dashboard:maintenance' %}" class="nav-item active">
-            <i class="ti ti-layout-dashboard"></i>
-            <span>{% translate "Dashboard" %}</span>
-          </a>
-          <a href="{% url 'maintenance:task-list' %}" class="nav-item">
-            <i class="ti ti-tool"></i>
-            <span>{% translate "My tasks" %}</span>
-            <span class="nav-badge">{{ pending_tasks }}</span>
-          </a>
-          <a href="{% url 'maintenance:agent-queue' %}" class="nav-item">
-            <i class="ti ti-clipboard-list"></i>
-            <span>{% translate "Requests" %}</span>
-          </a>
-          <a href="#" class="nav-item">
-            <i class="ti ti-calendar"></i>
-            <span>{% translate "Calendar" %}</span>
-          </a>
-        </div>
-        <div class="nav-section">
-          <div class="nav-title">{% translate "Communication" %}</div>
-          <a href="{% url 'communications:conversation-list' %}" class="nav-item">
-            <i class="ti ti-message"></i>
-            <span>{% translate "Messages" %}</span>
-          </a>
-          <a href="{% url 'communications:notification-list' %}" class="nav-item">
-            <i class="ti ti-bell"></i>
-            <span>{% translate "Notifications" %}</span>
-            {% if unread_notification_count %}<span class="nav-badge">{{ unread_notification_count }}</span>{% endif %}
-          </a>
-        </div>
-        <div class="nav-section">
-          <div class="nav-title">{% translate "System" %}</div>
-          <a href="#" class="nav-item">
-            <i class="ti ti-settings"></i>
-            <span>{% translate "Settings" %}</span>
-          </a>
-          <a href="#" class="nav-item">
-            <i class="ti ti-help-circle"></i>
-            <span>{% translate "Help" %}</span>
-          </a>
-          <a href="{% url 'users:logout' %}" class="nav-item">
-            <i class="ti ti-logout"></i>
-            <span>{% translate "Sign out" %}</span>
-          </a>
-        </div>
-      </div>
-      <div class="sidebar-user">
-        <div class="user-avatar">
-          {{ user.first_name|first }}{{ user.last_name|first }}
-        </div>
-        <div>
-          <div class="user-name">{{ user.full_name }}</div>
-          <div class="user-role">{% translate "Maintenance agent" %}</div>
-        </div>
-      </div>
-    </aside>
+    {% include "dashboard/includes/landlord_sidebar.html" %}
     <main class="main">
       <header class="topbar">
         <div class="topbar-left">

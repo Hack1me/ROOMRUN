@@ -45,10 +45,6 @@
         <i class="ti ti-inbox"></i>
         <span>{% translate "Applications" %}</span>
       </a>
-      <a href="{% url 'dashboard:invitation-list' %}" class="nav-item{% if current_url == 'invitation-list' %} active{% endif %}">
-        <i class="ti ti-mail-forward"></i>
-        <span>{% translate "Invitations" %}</span
-      </a>
       <a href="{% url 'rentals:landlord-rental-contract-list' %}" class="nav-item{% if current_url == 'landlord-rental-contract-list' or current_url == 'landlord-rental-contract-create' or current_url == 'landlord-rental-contract-detail' %} active{% endif %}">
         <i class="ti ti-file-text"></i><span>{% translate "Leases" %}</span>
       </a>
@@ -67,6 +63,10 @@
       <a href="{% url 'communications:notification-list' %}" class="nav-item{% if current_url == 'notification-list' or current_url == 'notification-detail' %} active{% endif %}">
         <i class="ti ti-bell"></i><span>{% translate "Notifications" %}</span>
         {% if unread_notification_count %}<span class="nav-badge">{{ unread_notification_count }}</span>{% endif %}
+      </a>
+      <a href="{% url 'dashboard:invitation-list' %}" class="nav-item{% if current_url == 'invitation-list' %} active{% endif %}">
+        <i class="ti ti-mail-forward"></i>
+        <span>{% translate "Invitations" %}</span>
       </a>
     </div>
     <div class="nav-section">
