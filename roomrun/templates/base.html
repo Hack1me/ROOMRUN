@@ -16,6 +16,8 @@
           content="{% translate 'Property management made simple.' %}" />
     <meta name="author" content="SAHIT HEUFEU" />
     <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}" />
+    <link rel="icon" href="{% static 'images/favicons/favicon-light.ico' %}" media="(prefers-color-scheme: light)" />
+    <link rel="icon" href="{% static 'images/favicons/favicon-dark.ico' %}" media="(prefers-color-scheme: dark)"/>
     {% block css %}
       <link href="{% static 'css/output.css' %}" rel="stylesheet" />
       <link href="{% static 'css/project.css' %}" rel="stylesheet" />

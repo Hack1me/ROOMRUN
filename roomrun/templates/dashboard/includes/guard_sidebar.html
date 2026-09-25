@@ -11,7 +11,8 @@
       <a href="{% url 'operations:guard-visitor-check-in' %}" class="nav-item"><i class="ti ti-user-plus"></i><span>{% translate "Check in" %}</span></a>
       <a href="{% url 'operations:guard-visitors' %}" class="nav-item"><i class="ti ti-users"></i><span>{% translate "Active visits" %}</span></a>
       <a href="{% url 'operations:guard-visitor-history' %}" class="nav-item"><i class="ti ti-history"></i><span>{% translate "History" %}</span></a>
-      <a href="{% url 'communications:conversation-list' %}" class="nav-item active"><i class="ti ti-message"></i><span>{% translate "Messages" %}</span></a>
+      <a href="{% url 'communications:conversation-list' %}" class="nav-item{% if request.resolver_match.url_name == 'conversation-list' or request.resolver_match.url_name == 'conversation-detail' %} active{% endif %}"><i class="ti ti-message"></i><span>{% translate "Messages" %}</span></a>
+      <a href="{% url 'communications:notification-list' %}" class="nav-item{% if request.resolver_match.url_name == 'notification-list' or request.resolver_match.url_name == 'notification-detail' %} active{% endif %}"><i class="ti ti-bell"></i><span>{% translate "Notifications" %}</span>{% if unread_notification_count %}<span class="nav-badge">{{ unread_notification_count }}</span>{% endif %}</a>
     </div>
     <div class="nav-section">
       <div class="nav-title">{% translate "System" %}</div>

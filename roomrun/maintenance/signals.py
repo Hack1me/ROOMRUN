@@ -22,6 +22,25 @@ def set_task_number(sender, instance, **kwargs):
     assign_reference_identifier(instance, field="task_number", prefix="TSK")
 
 
+@receiver(post_save, sender=Task)
+def notify_task_assignment(sender, instance, created, **kwargs):
+    if not created:
+        return
+    agent_user = instance.maintenance_agent.employee.user
+    request = instance.maintenance_request
+    send_notification(
+        recipient=agent_user,
+        title=_("Maintenance task assigned"),
+        message=_("You have been assigned '%(title)s' at %(property)s.")
+        % {
+            "title": instance.title,
+            "property": request.unit.building.property_ref.name,
+        },
+        notification_type=NotificationType.TASK,
+        related_object=instance,
+    )
+
+
 @receiver(pre_save, sender=MaintenanceRequest)
 def capture_request_status(sender, instance, **kwargs):
     instance.notification_previous_status = None
@@ -37,20 +56,31 @@ def capture_request_status(sender, instance, **kwargs):
 def notify_request_updates(sender, instance, created, **kwargs):
     property_ref = instance.unit.building.property_ref
     if created:
-        send_notification(
-            recipient=property_ref.landlord.user,
-            title=_("New maintenance request"),
-            message=_("%(tenant)s submitted a request: %(title)s.")
-            % {"tenant": instance.tenant.user.full_name, "title": instance.title},
-            notification_type=NotificationType.MAINTENANCE,
-            related_object=instance,
-        )
+        owner = property_ref.landlord.user
+        if instance.created_by_id != owner.pk:
+            send_notification(
+                recipient=owner,
+                title=_("New maintenance request"),
+                message=_("%(tenant)s submitted a request: %(title)s.")
+                % {"tenant": instance.tenant.user.full_name, "title": instance.title},
+                notification_type=NotificationType.MAINTENANCE,
+                related_object=instance,
+            )
     elif instance.notification_previous_status != instance.status:
-        send_notification(
-            recipient=instance.tenant.user,
-            title=_("Maintenance request updated"),
-            message=_("Your request '%(title)s' is now %(status)s.")
-            % {"title": instance.title, "status": instance.get_status_display()},
-            notification_type=NotificationType.MAINTENANCE,
-            related_object=instance,
-        )
+        owner = property_ref.landlord.user
+        recipients = {instance.tenant.user, owner}
+        if instance.updated_by_id:
+            recipients = {
+                recipient
+                for recipient in recipients
+                if recipient.pk != instance.updated_by_id
+            }
+        for recipient in recipients:
+            send_notification(
+                recipient=recipient,
+                title=_("Maintenance request updated"),
+                message=_("Request '%(title)s' is now %(status)s.")
+                % {"title": instance.title, "status": instance.get_status_display()},
+                notification_type=NotificationType.MAINTENANCE,
+                related_object=instance,
+            )

@@ -39,15 +39,14 @@
         </div>
         <div class="nav-section">
           <div class="nav-title">{% translate "Communication" %}</div>
-          <a href="#" class="nav-item">
+          <a href="{% url 'communications:conversation-list' %}" class="nav-item">
             <i class="ti ti-message"></i>
             <span>{% translate "Messages" %}</span>
-            <span class="nav-badge">2</span>
           </a>
-          <a href="#" class="nav-item">
+          <a href="{% url 'communications:notification-list' %}" class="nav-item">
             <i class="ti ti-bell"></i>
             <span>{% translate "Notifications" %}</span>
-            <span class="nav-badge">3</span>
+            {% if unread_notification_count %}<span class="nav-badge">{{ unread_notification_count }}</span>{% endif %}
           </a>
         </div>
         <div class="nav-section">
@@ -96,11 +95,12 @@
             <input type="search"
                    placeholder="{% translate 'Search an intervention…' %}" />
           </label>
-          <button type="button"
+          <a href="{% url 'communications:notification-list' %}"
                   class="icon-button"
                   aria-label="{% translate 'Notifications' %}">
             <i class="ti ti-bell"></i>
-          </button>
+            {% if unread_notification_count %}<span class="notification-badge"></span>{% endif %}
+          </a>
           <a href="{% url 'users:profile' %}"
              class="icon-button profile-button"
              aria-label="{% translate 'Profile' %}">

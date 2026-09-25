@@ -49,7 +49,7 @@ def update_conversation_last_message_at(sender, instance, created, **kwargs):
                 title=_("New message from %(name)s")
                 % {"name": instance.sender.full_name},
                 message=instance.content[:240],
-                notification_type=NotificationType.SYSTEM,
+                notification_type=NotificationType.MESSAGE,
                 related_object=instance.conversation,
             )
 

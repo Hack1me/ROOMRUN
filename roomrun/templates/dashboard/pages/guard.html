@@ -103,11 +103,12 @@
             <input type="search"
                    placeholder="{% translate 'Search a visitor…' %}" />
           </label>
-          <button type="button"
+          <a href="{% url 'communications:notification-list' %}"
                   class="icon-button"
                   aria-label="{% translate 'Notifications' %}">
             <i class="ti ti-bell"></i>
-          </button>
+            {% if unread_notification_count %}<span class="notification-badge"></span>{% endif %}
+          </a>
           <a href="{% url 'users:profile' %}"
              class="icon-button profile-button"
              aria-label="{% translate 'Profile' %}">

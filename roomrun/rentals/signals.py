@@ -16,6 +16,47 @@ def set_application_number(sender, instance, **kwargs):
     assign_reference_identifier(instance, field="application_number", prefix="APP")
 
 
+@receiver(pre_save, sender=RentalApplication)
+def capture_application_status(sender, instance, **kwargs):
+    instance.notification_previous_status = None
+    if instance.pk:
+        instance.notification_previous_status = (
+            sender.objects.filter(pk=instance.pk)
+            .values_list("status", flat=True)
+            .first()
+        )
+
+
+@receiver(post_save, sender=RentalApplication)
+def notify_application_updates(sender, instance, created, **kwargs):
+    property_ref = instance.unit.building.property_ref
+    if created:
+        send_notification(
+            recipient=property_ref.landlord.user,
+            title=_("New rental application"),
+            message=_("%(tenant)s applied for unit %(unit)s at %(property)s.")
+            % {
+                "tenant": instance.tenant.user.full_name,
+                "unit": instance.unit.unit_number,
+                "property": property_ref.name,
+            },
+            notification_type=NotificationType.SYSTEM,
+            related_object=instance,
+        )
+    elif instance.notification_previous_status != instance.status:
+        send_notification(
+            recipient=instance.tenant.user,
+            title=_("Rental application updated"),
+            message=_("Your application for %(property)s is now %(status)s.")
+            % {
+                "property": property_ref.name,
+                "status": instance.get_status_display(),
+            },
+            notification_type=NotificationType.SYSTEM,
+            related_object=instance,
+        )
+
+
 @receiver(pre_save, sender=RentalContract)
 def set_contract_number(sender, instance, **kwargs):
     """Auto-generate contract_number if not already set."""

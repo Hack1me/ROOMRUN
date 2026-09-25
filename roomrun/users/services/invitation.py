@@ -128,14 +128,16 @@ class InvitationAcceptanceService:
         except IntegrityError:
             raise ValidationError(_("An account already exists with this email."))
 
-        InvitationAcceptanceService._create_profile_for_role(user, invitation.role)
+        InvitationAcceptanceService._create_profile_for_role(
+            user, invitation.role, invitation.invited_by
+        )
 
         UserInvitationService.accept(invitation)
 
         return user
 
     @staticmethod
-    def _create_profile_for_role(user: User, role: str) -> None:
+    def _create_profile_for_role(user: User, role: str, invited_by=None) -> None:
         if role == UserRole.LANDLORD:
             from users.models import Landlord
             Landlord.objects.create(user=user)
@@ -149,8 +151,9 @@ class InvitationAcceptanceService:
             from users.models import Guard
             employee = Employee.objects.create(user=user)
             guard = Guard.objects.create(employee=employee)
-            if hasattr(invitation.invited_by, "landlord_profile"):
-                guard.landlords.add(invitation.invited_by.landlord_profile)
+            landlord = getattr(invited_by, "landlord_profile", None)
+            if landlord is not None:
+                guard.landlords.add(landlord)
 
         elif role == UserRole.MAINTENANCE:
             from users.models import Employee

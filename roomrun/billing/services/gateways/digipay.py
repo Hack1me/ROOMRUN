@@ -42,17 +42,19 @@ class DigiPayGateway(PaymentGateway):
         metadata: dict[str, Any] | None = None,
     ) -> GatewayInitResult:
         """Initiate a DigiPay payment."""
+        # DigiPay's installed SDK accepts its own argument set; merchant
+        # references belong in metadata and the amount must be JSON numeric.
+        provider_metadata = dict(metadata or {})
+        provider_metadata["external_reference"] = external_reference
+        normalized_phone = re.sub(r"[\s()-]", "", phone_number)
+        normalized_phone = normalized_phone.removeprefix("+")
+        logger.info(
+            "DigiPay initiate | ref=%s | phone=%s | amount=%s",
+            external_reference,
+            phone_number,
+            amount,
+        )
         try:
-            # DigiPay's installed SDK accepts its own argument set; merchant
-            # references belong in metadata and the amount must be JSON numeric.
-            provider_metadata = dict(metadata or {})
-            provider_metadata["external_reference"] = external_reference
-            normalized_phone = re.sub(r"[\s()-]", "", phone_number)
-            normalized_phone = normalized_phone.removeprefix("+")
-            logger.info(
-                "DigiPay initiate | ref=%s | phone=%s | amount=%s",
-                external_reference, phone_number, amount,
-            )
             response = self.client.payments.initiate(
                 amount=float(amount),
                 customer_phone=normalized_phone,
@@ -60,24 +62,21 @@ class DigiPayGateway(PaymentGateway):
                 metadata=provider_metadata,
                 webhook_url=settings.DIGIPAY_WEBHOOK_URL or None,
             )
-            transaction_id = response.get("transaction_id")
-            if not transaction_id:
-                raise PaymentGatewayError(
-                    "DigiPay did not return a transaction identifier."
-                )
-            logger.info("DigiPay initiate OK | ref=%s", external_reference)
-
-            return GatewayInitResult(
-                transaction_id=transaction_id,
-                status=str(response.get("status", "PENDING")).upper(),
-                raw=response,
-            )
-
-        except PaymentGatewayError:
-            raise
         except Exception as exc:
             logger.exception("DigiPay initiate failed | ref=%s", external_reference)
             raise PaymentGatewayError(str(exc)) from exc
+
+        transaction_id = response.get("transaction_id")
+        if not transaction_id:
+            msg = "DigiPay did not return a transaction identifier."
+            raise PaymentGatewayError(msg)
+        logger.info("DigiPay initiate OK | ref=%s", external_reference)
+
+        return GatewayInitResult(
+            transaction_id=transaction_id,
+            status=str(response.get("status", "PENDING")).upper(),
+            raw=response,
+        )
 
     # -------------------------------------------------------------------------
     # Status

@@ -128,6 +128,24 @@ def guard_chat_context(user):
     )}
 
 
+def notification_role_context(user):
+    is_tenant = hasattr(user, "tenant_profile") and not hasattr(
+        user, "landlord_profile"
+    )
+    is_guard = hasattr(user, "employee_profile") and hasattr(
+        user.employee_profile, "guard_profile"
+    )
+    is_maintenance = hasattr(user, "employee_profile") and hasattr(
+        user.employee_profile, "maintenance_agent_profile"
+    )
+    return {
+        "is_tenant_notifications": is_tenant,
+        "is_guard_notifications": is_guard,
+        "is_maintenance_notifications": is_maintenance,
+        "is_landlord_notifications": not (is_tenant or is_guard or is_maintenance),
+    }
+
+
 class NotificationListView(LoginRequiredMixin, ListView):
     """Show only notifications belonging to the signed-in user."""
 
@@ -149,9 +167,7 @@ class NotificationListView(LoginRequiredMixin, ListView):
             recipient=self.request.user, is_read=False
         ).count()
         context["unread_only"] = self.request.GET.get("status") == "unread"
-        context["is_tenant_notifications"] = hasattr(
-            self.request.user, "tenant_profile"
-        ) and not hasattr(self.request.user, "landlord_profile")
+        context.update(notification_role_context(self.request.user))
         return context
 
 
@@ -170,9 +186,7 @@ class NotificationDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["is_tenant_notifications"] = hasattr(
-            self.request.user, "tenant_profile"
-        ) and not hasattr(self.request.user, "landlord_profile")
+        context.update(notification_role_context(self.request.user))
         return context
 
 

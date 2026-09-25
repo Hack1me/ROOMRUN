@@ -259,6 +259,7 @@ class NotificationType(models.TextChoices):
     RENT_REMINDER = "RENT_REMINDER", _("Rent reminder")
     MAINTENANCE = "MAINTENANCE", _("Maintenance")
     TASK = "TASK", _("Task")
+    MESSAGE = "MESSAGE", _("Message")
     ANNOUNCEMENT = "ANNOUNCEMENT", _("Announcement")
     SYSTEM = "SYSTEM", _("System")
 
