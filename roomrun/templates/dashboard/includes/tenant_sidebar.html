@@ -62,10 +62,10 @@
     </div>
     <div class="nav-section">
       <div class="nav-title">{% translate "System" %}</div>
-      <a href="#" class="nav-item">
+      <a href="{% url 'communications:notification-list' %}" class="nav-item{% if request.resolver_match.url_name == 'notification-list' or request.resolver_match.url_name == 'notification-detail' %} active{% endif %}">
         <i class="ti ti-bell"></i>
         <span>{% translate "Notifications" %}</span>
-        <span class="nav-badge">3</span>
+        {% if unread_notification_count %}<span class="nav-badge">{{ unread_notification_count }}</span>{% endif %}
       </a>
       <a href="{% url 'users:profile' %}" class="nav-item{% if request.resolver_match.url_name == 'profile' %} active{% endif %}">
         <i class="ti ti-settings"></i>

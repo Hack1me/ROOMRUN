@@ -5,6 +5,24 @@ app_name = "communications"
 
 urlpatterns = [
     path(
+        "notifications/", views.NotificationListView.as_view(), name="notification-list"
+    ),
+    path(
+        "notifications/read-all/",
+        views.NotificationMarkAllReadView.as_view(),
+        name="notification-read-all",
+    ),
+    path(
+        "notifications/<uuid:pk>/",
+        views.NotificationDetailView.as_view(),
+        name="notification-detail",
+    ),
+    path(
+        "notifications/<uuid:pk>/toggle-read/",
+        views.NotificationToggleReadView.as_view(),
+        name="notification-toggle-read",
+    ),
+    path(
         "conversations/",
         views.ConversationListView.as_view(),
         name="conversation-list",

@@ -32,14 +32,12 @@
              aria-label="{% translate 'Available balance' %}: {{ landlord_wallet_balance }} FCFA">
             <i class="ti ti-wallet"></i><span>{% translate "Balance" %}</span><strong>{{ landlord_wallet_balance|floatformat:0 }} FCFA</strong>
           </a>
-          <button type="button"
-                  class="icon-button"
+          <a href="{% url 'communications:notification-list' %}"
+                  class="icon-button notification-link"
                   aria-label="{% translate 'Notifications' %}">
             <i class="ti ti-bell"></i>
-            {% if pending_maintenance %}
-              <span class="notification-badge"></span>
-            {% endif %}
-          </button>
+            {% if unread_notification_count %}<span class="notification-badge"></span>{% endif %}
+          </a>
           <a href="{% url 'users:profile' %}"
              class="icon-button profile-button"
              aria-label="{% translate 'Profile' %}">

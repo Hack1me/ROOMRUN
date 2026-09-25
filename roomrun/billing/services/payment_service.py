@@ -1,16 +1,17 @@
 import logging
 
 from billing.models import Payment
-from billing.models import Charge
 from billing.services.gateways import PaymentGatewayError
 from billing.services.gateways import get_gateway
+from communications.services.notification_ser import send_notification
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db import transaction
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from utils.enums import PaymentStatus
 from utils.enums import ChargeType
+from utils.enums import PaymentStatus
+from utils.enums import NotificationType
 
 logger = logging.getLogger(__name__)
 
@@ -128,6 +129,7 @@ class PaymentService:
                 _("Unable to verify the payment status. Please try again.")
             ) from exc
 
+        previous_status = payment.status
         provider_status = str(result.status).upper()
         update_fields: list[str] = []
 
@@ -158,9 +160,59 @@ class PaymentService:
 
         if update_fields:
             payment.save(update_fields=update_fields)
-            if payment.status == PaymentStatus.COMPLETED and payment.charge.charge_type == ChargeType.INITIAL_PAYMENT:
+            if (
+                previous_status != PaymentStatus.COMPLETED
+                and payment.status == PaymentStatus.COMPLETED
+            ):
+                def notify_payment_completed():
+                    try:
+                        contract = payment.charge.contract
+                        property_ref = contract.unit.building.property_ref
+                        amount = f"{payment.amount.amount:,.0f}"
+                        send_notification(
+                            recipient=contract.tenant.user,
+                            title=_("Payment confirmed"),
+                            message=_(
+                                "Your payment %(reference)s of %(amount)s FCFA was "
+                                "completed for %(property)s."
+                            )
+                            % {
+                                "reference": payment.payment_number,
+                                "amount": amount,
+                                "property": property_ref.name,
+                            },
+                            notification_type=NotificationType.PAYMENT,
+                            related_object=payment,
+                        )
+                        send_notification(
+                            recipient=property_ref.landlord.user,
+                            title=_("Tenant payment received"),
+                            message=_(
+                                "%(tenant)s paid %(amount)s FCFA for %(property)s."
+                            )
+                            % {
+                                "tenant": contract.tenant.user.full_name,
+                                "amount": amount,
+                                "property": property_ref.name,
+                            },
+                            notification_type=NotificationType.PAYMENT,
+                            related_object=payment,
+                        )
+                    except Exception:
+                        logger.exception(
+                            "Could not create notifications for payment %s",
+                            payment.payment_number,
+                        )
+
+                transaction.on_commit(notify_payment_completed)
+            if (
+                payment.status == PaymentStatus.COMPLETED
+                and payment.charge.charge_type == ChargeType.INITIAL_PAYMENT
+            ):
+                from django.core.exceptions import (
+                    ValidationError as DjangoValidationError,
+                )
                 from rentals.services import RentalContractService  # noqa: PLC0415
-                from django.core.exceptions import ValidationError as DjangoValidationError  # noqa: PLC0415
 
                 try:
                     RentalContractService.activate(contract=payment.charge.contract)

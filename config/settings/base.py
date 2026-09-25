@@ -229,6 +229,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "billing.context_processors.landlord_wallet",
+                "communications.context_processors.notification_context",
             ],
         },
     },

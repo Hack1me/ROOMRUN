@@ -26,11 +26,12 @@
                  placeholder="{% translate 'Search…' %}" />
         </label>
         <div class="topbar-actions">
-          <button type="button"
-                  class="icon-button"
+          <a href="{% url 'communications:notification-list' %}"
+                  class="icon-button relative"
                   aria-label="{% translate 'Notifications' %}">
             <i class="ti ti-bell"></i>
-          </button>
+            {% if unread_notification_count %}<span class="notification-badge"></span>{% endif %}
+          </a>
           <a href="{% url 'users:profile' %}"
              class="topbar-avatar overflow-hidden"
              aria-label="{% translate 'Profile' %}">

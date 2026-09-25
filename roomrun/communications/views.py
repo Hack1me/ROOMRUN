@@ -1,5 +1,6 @@
 from communications.forms import StartConversationForm
 from communications.models import Conversation
+from communications.models import Notification
 from communications.services import ConversationService
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -9,13 +10,14 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import DetailView
 from django.views.generic import ListView
 from rentals.models import RentalContract
-from utils.enums import ContractStatus
 from users.models import User
+from utils.enums import ContractStatus
 
 
 def contacts_for_user(user):
@@ -126,10 +128,81 @@ def guard_chat_context(user):
     )}
 
 
+class NotificationListView(LoginRequiredMixin, ListView):
+    """Show only notifications belonging to the signed-in user."""
+
+    model = Notification
+    template_name = "communications/notifications/list.html"
+    context_object_name = "notifications"
+    paginate_by = 30
+
+    def get_queryset(self):
+        queryset = Notification.objects.filter(recipient=self.request.user)
+        unread = self.request.GET.get("status") == "unread"
+        if unread:
+            queryset = queryset.filter(is_read=False)
+        return queryset.select_related("related_content_type")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["unread_notification_count"] = Notification.objects.filter(
+            recipient=self.request.user, is_read=False
+        ).count()
+        context["unread_only"] = self.request.GET.get("status") == "unread"
+        context["is_tenant_notifications"] = hasattr(
+            self.request.user, "tenant_profile"
+        ) and not hasattr(self.request.user, "landlord_profile")
+        return context
+
+
+class NotificationDetailView(LoginRequiredMixin, DetailView):
+    model = Notification
+    template_name = "communications/notifications/detail.html"
+    context_object_name = "notification"
+
+    def get_queryset(self):
+        return Notification.objects.filter(recipient=self.request.user)
+
+    def get_object(self, queryset=None):
+        notification = super().get_object(queryset)
+        notification.mark_as_read()
+        return notification
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["is_tenant_notifications"] = hasattr(
+            self.request.user, "tenant_profile"
+        ) and not hasattr(self.request.user, "landlord_profile")
+        return context
+
+
+class NotificationToggleReadView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        notification = get_object_or_404(
+            Notification, pk=pk, recipient=request.user
+        )
+        if notification.is_read:
+            notification.mark_as_unread()
+        else:
+            notification.mark_as_read()
+        return HttpResponseRedirect(reverse("communications:notification-list"))
+
+
+class NotificationMarkAllReadView(LoginRequiredMixin, View):
+    def post(self, request):
+        Notification.objects.filter(recipient=request.user, is_read=False).update(
+            is_read=True, read_at=timezone.now()
+        )
+        messages.success(request, _("All notifications have been marked as read."))
+        return HttpResponseRedirect(reverse("communications:notification-list"))
+
+
 
 def conversations_for_user(user):
     conversations = Conversation.objects.filter(participants=user)
-    if hasattr(user, "employee_profile") and hasattr(user.employee_profile, "guard_profile"):
+    if hasattr(user, "employee_profile") and hasattr(
+        user.employee_profile, "guard_profile"
+    ):
         return conversations.filter(participants__in=contacts_for_user(user)).distinct()
     return conversations
 
