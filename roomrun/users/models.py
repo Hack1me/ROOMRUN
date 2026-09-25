@@ -196,7 +196,7 @@ class User(BaseModel, AbstractUser):
 
     def get_absolute_url(self) -> str:
         """URL to the user detail page (for admin or frontend)."""
-        return safe_reverse("users:detail", kwargs={"pk": self.id})
+        return safe_reverse("users:detail", kwargs={"pk": self.slug})
 
 
 class Otp(BaseModel):
@@ -334,7 +334,7 @@ class Landlord(BaseModel):
         return str(self.user)
 
     def get_absolute_url(self) -> str:
-        return safe_reverse("users:landlord-detail", kwargs={"pk": self.id})
+        return safe_reverse("users:landlord-detail", kwargs={"pk": self.slug})
 
 
 # =====================================================================
@@ -407,7 +407,7 @@ class Tenant(BaseModel):
         return str(self.user)
 
     def get_absolute_url(self) -> str:
-        return safe_reverse("users:tenant-detail", kwargs={"pk": self.id})
+        return safe_reverse("users:tenant-detail", kwargs={"pk": self.slug})
 
 
 # =====================================================================
@@ -494,7 +494,7 @@ class Employee(BaseModel):
         return str(self.user)
 
     def get_absolute_url(self) -> str:
-        return safe_reverse("users:employee-detail", kwargs={"pk": self.id})
+        return safe_reverse("users:employee-detail", kwargs={"pk": self.slug})
 
 
 # =====================================================================
@@ -557,7 +557,7 @@ class MaintenanceAgent(BaseModel):
 
     def get_absolute_url(self) -> str:
         # Using the 'users' namespace for consistency with other profiles.
-        return safe_reverse("users:maintenance-agent-detail", kwargs={"pk": self.id})
+        return safe_reverse("users:maintenance-agent-detail", kwargs={"pk": self.slug})
 
 
 # =====================================================================
@@ -623,7 +623,7 @@ class Guard(BaseModel):
 
     def get_absolute_url(self) -> str:
         # Using the 'users' namespace for consistency.
-        return safe_reverse("users:guard-detail", kwargs={"pk": self.id})
+        return safe_reverse("users:guard-detail", kwargs={"pk": self.slug})
 
 
 # =====================================================================

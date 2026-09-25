@@ -127,7 +127,7 @@ class LandlordCleaningStatusView(LandlordRequiredMixin, View):
                 messages.error(
                     request, _("This cleaning is scheduled for a future date.")
                 )
-                return redirect("operations:cleaning-detail", pk=schedule.pk)
+                return redirect("operations:cleaning-detail", pk=schedule.slug)
             schedule.status = CleaningStatus.IN_PROGRESS
         elif action == "complete" and schedule.status == CleaningStatus.IN_PROGRESS:
             schedule.status = CleaningStatus.COMPLETED
@@ -138,12 +138,12 @@ class LandlordCleaningStatusView(LandlordRequiredMixin, View):
             schedule.status = CleaningStatus.CANCELLED
         else:
             messages.error(request, _("This cleaning action is not allowed."))
-            return redirect("operations:cleaning-detail", pk=schedule.pk)
+            return redirect("operations:cleaning-detail", pk=schedule.slug)
 
         schedule.updated_by = request.user
         schedule.save(update_fields=["status", "updated_by", "updated_at"])
         messages.success(request, _("Cleaning schedule updated."))
-        return redirect("operations:cleaning-detail", pk=schedule.pk)
+        return redirect("operations:cleaning-detail", pk=schedule.slug)
 
 
 class TenantCleaningScheduleListView(TenantRequiredMixin, ListView):

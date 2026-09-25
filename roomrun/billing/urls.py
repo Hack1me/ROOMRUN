@@ -13,17 +13,17 @@ urlpatterns = [
     path("landlord/wallet/", LandlordWalletView.as_view(), name="landlord-wallet"),
     path("charges/", TenantChargeListView.as_view(), name="tenant-charge-list"),
     path(
-        "contracts/<uuid:pk>/pay/",
+        "contracts/<slug:pk>/pay/",
         TenantContractPaymentView.as_view(),
         name="tenant-contract-payment",
     ),
     path(
-        "charges/<uuid:pk>/pay/",
+        "charges/<slug:pk>/pay/",
         TenantPaymentInitiateView.as_view(),
         name="tenant-payment-initiate",
     ),
     path(
-        "payments/<uuid:pk>/sync/",
+        "payments/<slug:pk>/sync/",
         TenantPaymentSynchronizeView.as_view(),
         name="tenant-payment-sync",
     ),
@@ -39,6 +39,6 @@ urlpatterns = [
     ),
     # Autres routes (à ajouter plus tard) :
     # path("payments/", PaymentListView.as_view(), name="payment-list"),  # noqa: ERA001
-    # path("payments/<uuid:pk>/", PaymentDetailView.as_view(), name="payment-detail"),  # noqa: E501, ERA001
-    # path("payments/<uuid:pk>/initiate/", PaymentInitiateView.as_view(), name="payment-initiate"),  # noqa: E501, ERA001
+    # path("payments/<slug:pk>/", PaymentDetailView.as_view(), name="payment-detail"),  # noqa: E501, ERA001
+    # path("payments/<slug:pk>/initiate/", PaymentInitiateView.as_view(), name="payment-initiate"),  # noqa: E501, ERA001
 ]

@@ -133,7 +133,7 @@
               <div class="property-body">
                 <div class="property-title-row">
                   <h2 class="property-name">{{ property.name }}</h2>
-                  <a href="{% url 'properties:property-edit' pk=property.pk %}" class="more-btn" aria-label="{% translate 'More options' %}">
+                  <a href="{% url 'properties:property-edit' pk=property.slug %}" class="more-btn" aria-label="{% translate 'More options' %}">
                     <i class="ti ti-dots"></i>
                   </a>
                 </div>
@@ -163,7 +163,7 @@
                     <div class="rent-label">{% translate "Monthly rent (avg.)" %}</div>
                     <div class="rent-value">{{ property.average_rent|floatformat:0 }} FCFA</div>
                   </div>
-                  <a href="{% url 'properties:property-detail' pk=property.pk %}" class="details-link">
+                  <a href="{% url 'properties:property-detail' pk=property.slug %}" class="details-link">
                     {% translate "View details" %}
                     <i class="ti ti-arrow-right"></i>
                   </a>

@@ -114,7 +114,7 @@ class MaintenanceRequest(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the maintenance request detail view."""
-        return safe_reverse("maintenance:request-detail", kwargs={"pk": self.id})
+        return safe_reverse("maintenance:request-detail", kwargs={"pk": self.slug})
 
     def clean(self):
         """
@@ -290,7 +290,7 @@ class Task(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the task detail view."""
-        return safe_reverse("maintenance:task-detail", kwargs={"pk": self.id})
+        return safe_reverse("maintenance:task-detail", kwargs={"pk": self.slug})
 
     def clean(self):
         """

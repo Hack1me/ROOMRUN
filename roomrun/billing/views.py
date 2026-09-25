@@ -204,7 +204,7 @@ class TenantContractPaymentView(TenantRequiredMixin, View):
                 return redirect("rentals:tenant-lease-detail")
             charge = payment.charge
         if charge and charge.balance_due.amount > 0:
-            return redirect("billing:tenant-payment-initiate", pk=charge.pk)
+            return redirect("billing:tenant-payment-initiate", pk=charge.slug)
         if contract.status == "SIGNED":
             try:
                 RentalContractService.activate(contract=contract)
@@ -248,7 +248,7 @@ class TenantPaymentInitiateView(TenantRequiredMixin, View):
             charge=charge, status=PaymentStatus.PENDING
         ).first()
         if payment and payment.provider_reference:
-            return redirect("billing:tenant-payment-sync", pk=payment.pk)
+            return redirect("billing:tenant-payment-sync", pk=payment.slug)
         if not payment:
             payment = Payment.objects.create(
                 charge=charge,
@@ -268,7 +268,7 @@ class TenantPaymentInitiateView(TenantRequiredMixin, View):
         except (PaymentServiceError, ValidationError) as exc:
             form.add_error(None, str(exc))
             return render(request, self.template_name, {"charge": charge, "form": form})
-        return redirect("billing:tenant-payment-sync", pk=payment.pk)
+        return redirect("billing:tenant-payment-sync", pk=payment.slug)
 
 
 class TenantPaymentSynchronizeView(TenantRequiredMixin, View):

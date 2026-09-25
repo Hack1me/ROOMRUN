@@ -192,7 +192,7 @@
                       {{ contract.get_status_display }}
                     </span>
                   </div>
-                  <a href="{% url 'rentals:landlord-rental-contract-detail' contract.pk %}" class="w-[29px] h-[29px] border-0 bg-transparent text-muted rounded-[6px] grid place-items-center no-underline hover:bg-bg" aria-label="{% translate 'More options' %}">
+                  <a href="{% url 'rentals:landlord-rental-contract-detail' contract.slug %}" class="w-[29px] h-[29px] border-0 bg-transparent text-muted rounded-[6px] grid place-items-center no-underline hover:bg-bg" aria-label="{% translate 'More options' %}">
                     <i class="ti ti-dots-vertical"></i>
                   </a>
                 </div>

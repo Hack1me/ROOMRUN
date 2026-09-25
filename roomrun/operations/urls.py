@@ -15,17 +15,17 @@ urlpatterns = [
         name="cleaning-create",
     ),
     path(
-        "cleaning/<uuid:pk>/",
+        "cleaning/<slug:pk>/",
         views.LandlordCleaningScheduleDetailView.as_view(),
         name="cleaning-detail",
     ),
     path(
-        "cleaning/<uuid:pk>/edit/",
+        "cleaning/<slug:pk>/edit/",
         views.LandlordCleaningScheduleUpdateView.as_view(),
         name="cleaning-edit",
     ),
     path(
-        "cleaning/<uuid:pk>/status/",
+        "cleaning/<slug:pk>/status/",
         views.LandlordCleaningStatusView.as_view(),
         name="cleaning-status",
     ),
@@ -40,7 +40,7 @@ urlpatterns = [
         name="visitor-invitations",
     ),
     path(
-        "visitors/invitations/<uuid:pk>/cancel/",
+        "visitors/invitations/<slug:pk>/cancel/",
         views.VisitorInvitationCancelView.as_view(),
         name="visitor-invitation-cancel",
     ),
@@ -58,7 +58,7 @@ urlpatterns = [
         name="guard-visitor-history",
     ),
     path(
-        "guard/visitors/<uuid:pk>/status/",
+        "guard/visitors/<slug:pk>/status/",
         views.GuardVisitorStatusView.as_view(),
         name="guard-visitor-status",
     ),

@@ -186,7 +186,7 @@ class Property(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the property detail page."""
-        return safe_reverse("properties:property-detail", kwargs={"pk": self.id})
+        return safe_reverse("properties:property-detail", kwargs={"pk": self.slug})
 
     # -------------------------------------------------------------------------
     # Computed Properties (Derived from Related Models)
@@ -314,7 +314,7 @@ class PropertyImage(BaseModel):
         Return the canonical URL for the image detail view.
         Note: In practice, images are often displayed as part of the property detail.
         """
-        return safe_reverse("properties:property-image-detail", kwargs={"pk": self.id})
+        return safe_reverse("properties:property-image-detail", kwargs={"pk": self.slug})
 
 # BUILDING
 class Building(BaseModel):
@@ -408,7 +408,7 @@ class Building(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the building detail page."""
-        return safe_reverse("properties:building-detail", kwargs={"pk": self.id})
+        return safe_reverse("properties:building-detail", kwargs={"pk": self.slug})
 
     # -------------------------------------------------------------------------
     # Computed Properties
@@ -548,4 +548,4 @@ class Unit(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the unit detail page."""
-        return safe_reverse("properties:unit-detail", kwargs={"pk": self.id})
+        return safe_reverse("properties:unit-detail", kwargs={"pk": self.slug})

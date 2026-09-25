@@ -108,13 +108,13 @@ class BaseRentalApplicationReviewView(LandlordRequiredMixin, View):
                 messages.error(request, message)
             return redirect(
                 "rentals:landlord-rental-application-detail",
-                pk=application.pk,
+                pk=application.slug,
             )
 
         messages.success(request, self.success_message)
         return redirect(
             "rentals:landlord-rental-application-detail",
-            pk=application.pk,
+            pk=application.slug,
         )
 
 
@@ -162,7 +162,7 @@ class RentalApplicationApproveView(LandlordRequiredMixin, FormView):
             )
             return redirect(
                 "rentals:landlord-rental-application-detail",
-                pk=self.application.pk,
+                pk=self.application.slug,
             )
 
         return super().dispatch(request, *args, **kwargs)
@@ -248,7 +248,7 @@ class RentalApplicationApproveView(LandlordRequiredMixin, FormView):
                 "is now awaiting the tenant's signature."
             ),
         )
-        return redirect("rentals:landlord-rental-contract-detail", pk=contract.pk)
+        return redirect("rentals:landlord-rental-contract-detail", pk=contract.slug)
 
 class LandlordRentalContractCreateView(LandlordRequiredMixin, FormView):
     """
@@ -307,7 +307,7 @@ class LandlordRentalContractCreateView(LandlordRequiredMixin, FormView):
             )
             return redirect(
                 "rentals:landlord-rental-contract-detail",
-                pk=contract.pk,
+                pk=contract.slug,
             )
 
         # -------------------------------------------------------------

@@ -21,7 +21,7 @@
       <div class="content configuration-page">
         {% include "common/includes/messages.html" %}
 
-        <a href="{% url 'properties:property-edit' pk=property.pk %}" class="back-link">
+        <a href="{% url 'properties:property-edit' pk=property.slug %}" class="back-link">
           <i class="ti ti-arrow-left"></i>
           <span>{% translate "Back to property information" %}</span>
         </a>
@@ -47,7 +47,7 @@
               </div>
             </div>
 
-            <form id="configurationForm" method="post" novalidate data-configuration-form data-back-url="{% url 'properties:property-edit' pk=property.pk %}">
+            <form id="configurationForm" method="post" novalidate data-configuration-form data-back-url="{% url 'properties:property-edit' pk=property.slug %}">
               {% csrf_token %}
               <input type="hidden" name="action" id="configurationAction" value="continue" />
               <div class="form-grid">

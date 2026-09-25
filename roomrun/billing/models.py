@@ -109,7 +109,7 @@ class Charge(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the charge detail view."""
-        return safe_reverse("billing:charge-detail", kwargs={"pk": self.id})
+        return safe_reverse("billing:charge-detail", kwargs={"pk": self.slug})
 
     def clean(self):
         super().clean()
@@ -276,7 +276,7 @@ class Payment(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the payment detail view."""
-        return safe_reverse("billing:payment-detail", kwargs={"pk": self.id})
+        return safe_reverse("billing:payment-detail", kwargs={"pk": self.slug})
 
     def clean(self):
         """
@@ -380,7 +380,7 @@ class Receipt(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the receipt detail view."""
-        return safe_reverse("billing:receipt-detail", kwargs={"pk": self.id})
+        return safe_reverse("billing:receipt-detail", kwargs={"pk": self.slug})
 
     def clean(self):
         """

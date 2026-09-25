@@ -11,7 +11,7 @@
 
   <section class="tp-next" aria-label="{% translate 'Outstanding balance' %}">
     <div><span class="tp-overline">{% translate "Outstanding balance" %}</span><h3>{% if charges %}{% translate "Payments to complete" %}{% else %}{% translate "You are up to date" %}{% endif %}</h3><p>{% if charges %}{% translate "Pay an outstanding charge securely with Mobile Money." %}{% else %}{% translate "There are no outstanding charges on your active lease." %}{% endif %}</p></div>
-    <div class="tp-next-action"><strong>{{ outstanding_total|floatformat:0 }} FCFA</strong>{% if charges %}<a class="tp-button tp-button-light" href="{% url 'billing:tenant-payment-initiate' charges.0.pk %}">{% translate "Pay now" %}<i class="ti ti-arrow-up-right"></i></a>{% endif %}</div>
+    <div class="tp-next-action"><strong>{{ outstanding_total|floatformat:0 }} FCFA</strong>{% if charges %}<a class="tp-button tp-button-light" href="{% url 'billing:tenant-payment-initiate' charges.0.slug %}">{% translate "Pay now" %}<i class="ti ti-arrow-up-right"></i></a>{% endif %}</div>
   </section>
 
   <section class="tp-stats">
@@ -29,7 +29,7 @@
         <div class="tp-charge-icon"><i class="ti ti-home-dollar"></i></div>
         <div class="tp-charge-info"><strong>{{ charge.get_charge_type_display }}</strong><span>{{ charge.contract.unit }} · {{ charge.charge_number }}</span><small>{% translate "Due" %} {{ charge.due_date|date:"d M Y" }}</small></div>
         <strong class="tp-charge-amount">{{ charge.balance_due|floatformat:0 }} FCFA</strong>
-        <a class="tp-button tp-button-primary" href="{% url 'billing:tenant-payment-initiate' charge.pk %}">{% translate "Pay" %}<i class="ti ti-arrow-right"></i></a>
+        <a class="tp-button tp-button-primary" href="{% url 'billing:tenant-payment-initiate' charge.slug %}">{% translate "Pay" %}<i class="ti ti-arrow-right"></i></a>
       </article>
       {% endfor %}
     </div>
@@ -48,7 +48,7 @@
           <strong class="tp-amount">{{ payment.amount|floatformat:0 }} FCFA</strong>
           <span class="tp-status tp-status-{{ payment.status|lower }}">{{ payment.get_status_display }}</span>
           <time datetime="{{ payment.display_date|date:'c' }}">{{ payment.display_date|date:"d M Y" }}</time>
-          <a class="tp-row-link" href="{% url 'billing:tenant-payment-sync' payment.pk %}" aria-label="{% translate 'View payment status' %}"><i class="ti ti-chevron-right"></i></a>
+          <a class="tp-row-link" href="{% url 'billing:tenant-payment-sync' payment.slug %}" aria-label="{% translate 'View payment status' %}"><i class="ti ti-chevron-right"></i></a>
         </article>
       {% empty %}<div class="tp-empty"><i class="ti ti-receipt"></i><strong>{% translate "No payment yet" %}</strong><span>{% translate "Your payment history will appear here." %}</span></div>{% endfor %}
       </div>

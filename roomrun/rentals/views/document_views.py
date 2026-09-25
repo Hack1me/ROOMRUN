@@ -111,4 +111,4 @@ class LeasePDFView(LeaseDocumentAccessMixin, View):
         except PDFError:
             logger.exception("Unable to generate lease PDF | contract=%s", lease.pk)
             messages.error(request, _("The lease PDF could not be generated. Please try again."))
-            return redirect("rentals:lease-document", pk=lease.pk)
+            return redirect("rentals:lease-document", pk=lease.slug)

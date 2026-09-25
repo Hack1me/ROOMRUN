@@ -128,7 +128,7 @@ class CleaningSchedule(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the cleaning schedule detail view."""
-        return safe_reverse("operations:cleaning-detail", kwargs={"pk": self.id})
+        return safe_reverse("operations:cleaning-detail", kwargs={"pk": self.slug})
 
     def clean(self):
         """

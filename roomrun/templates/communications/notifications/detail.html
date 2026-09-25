@@ -16,25 +16,25 @@
           <h2>{{ notification.title }}</h2><p>{{ notification.message }}</p>
           <time datetime="{{ notification.created_at|date:'c' }}">{{ notification.created_at|date:"d M Y, H:i" }}</time>
           {% if notification.related_object.payment_number and is_tenant_notifications %}
-            <div class="notification-detail-actions"><a class="notification-detail-button" href="{% url 'billing:tenant-payment-sync' notification.related_object.pk %}">{% translate "View payment" %}<i class="ti ti-arrow-right"></i></a></div>
+            <div class="notification-detail-actions"><a class="notification-detail-button" href="{% url 'billing:tenant-payment-sync' notification.related_object.slug %}">{% translate "View payment" %}<i class="ti ti-arrow-right"></i></a></div>
           {% elif notification.related_object.payment_number %}
             <div class="notification-detail-actions"><a class="notification-detail-button" href="{% url 'billing:landlord-wallet' %}">{% translate "View payments" %}<i class="ti ti-arrow-right"></i></a></div>
           {% elif notification.related_object.application_number and is_tenant_notifications %}
-            <div class="notification-detail-actions"><a class="notification-detail-button" href="{% url 'rentals:rental-application-detail' notification.related_object.pk %}">{% translate "View application" %}<i class="ti ti-arrow-right"></i></a></div>
+            <div class="notification-detail-actions"><a class="notification-detail-button" href="{% url 'rentals:rental-application-detail' notification.related_object.slug %}">{% translate "View application" %}<i class="ti ti-arrow-right"></i></a></div>
           {% elif notification.related_object.application_number %}
-            <div class="notification-detail-actions"><a class="notification-detail-button" href="{% url 'rentals:landlord-rental-application-detail' notification.related_object.pk %}">{% translate "Review application" %}<i class="ti ti-arrow-right"></i></a></div>
+            <div class="notification-detail-actions"><a class="notification-detail-button" href="{% url 'rentals:landlord-rental-application-detail' notification.related_object.slug %}">{% translate "Review application" %}<i class="ti ti-arrow-right"></i></a></div>
           {% elif notification.related_object.contract_number and is_tenant_notifications and notification.related_object.status == 'SIGNING' %}
-            <div class="notification-detail-actions"><a class="notification-detail-button" href="{% url 'rentals:tenant-rental-contract-sign' notification.related_object.pk %}">{% translate "Review contract" %}<i class="ti ti-arrow-right"></i></a></div>
+            <div class="notification-detail-actions"><a class="notification-detail-button" href="{% url 'rentals:tenant-rental-contract-sign' notification.related_object.slug %}">{% translate "Review contract" %}<i class="ti ti-arrow-right"></i></a></div>
           {% elif notification.related_object.contract_number and is_tenant_notifications %}
             <div class="notification-detail-actions"><a class="notification-detail-button" href="{% url 'rentals:tenant-lease-detail' %}">{% translate "View lease" %}<i class="ti ti-arrow-right"></i></a></div>
           {% elif notification.related_object.contract_number %}
-            <div class="notification-detail-actions"><a class="notification-detail-button" href="{% url 'rentals:landlord-rental-contract-detail' notification.related_object.pk %}">{% translate "View contract" %}<i class="ti ti-arrow-right"></i></a></div>
+            <div class="notification-detail-actions"><a class="notification-detail-button" href="{% url 'rentals:landlord-rental-contract-detail' notification.related_object.slug %}">{% translate "View contract" %}<i class="ti ti-arrow-right"></i></a></div>
           {% elif notification.related_object.request_number and is_tenant_notifications %}
-            <div class="notification-detail-actions"><a class="notification-detail-button" href="{% url 'maintenance:request-detail' notification.related_object.pk %}">{% translate "View request" %}<i class="ti ti-arrow-right"></i></a></div>
+            <div class="notification-detail-actions"><a class="notification-detail-button" href="{% url 'maintenance:request-detail' notification.related_object.slug %}">{% translate "View request" %}<i class="ti ti-arrow-right"></i></a></div>
           {% elif notification.related_object.request_number and is_landlord_notifications %}
-            <div class="notification-detail-actions"><a class="notification-detail-button" href="{% url 'maintenance:landlord-request-detail' notification.related_object.pk %}">{% translate "View request" %}<i class="ti ti-arrow-right"></i></a></div>
+            <div class="notification-detail-actions"><a class="notification-detail-button" href="{% url 'maintenance:landlord-request-detail' notification.related_object.slug %}">{% translate "View request" %}<i class="ti ti-arrow-right"></i></a></div>
           {% elif notification.related_object.task_number and is_maintenance_notifications %}
-            <div class="notification-detail-actions"><a class="notification-detail-button" href="{% url 'maintenance:task-detail' notification.related_object.pk %}">{% translate "View task" %}<i class="ti ti-arrow-right"></i></a></div>
+            <div class="notification-detail-actions"><a class="notification-detail-button" href="{% url 'maintenance:task-detail' notification.related_object.slug %}">{% translate "View task" %}<i class="ti ti-arrow-right"></i></a></div>
           {% elif notification.related_object.schedule_number and is_tenant_notifications %}
             <div class="notification-detail-actions"><a class="notification-detail-button" href="{% url 'operations:tenant-cleaning-list' %}">{% translate "View schedule" %}<i class="ti ti-arrow-right"></i></a></div>
           {% elif notification.related_object.visit_number %}

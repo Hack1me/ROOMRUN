@@ -42,6 +42,15 @@ class BaseModel(models.Model):
         verbose_name=_("ID"),
     )
 
+    slug = models.SlugField(
+        max_length=200,
+        unique=True,
+        null=True,
+        blank=True,
+        editable=False,
+        verbose_name=_("URL slug"),
+    )
+
     # -------------------------------------------------------------------------
     # Timestamps
     # -------------------------------------------------------------------------
@@ -123,9 +132,7 @@ class BaseModel(models.Model):
             )
 
         # Cache the current status from the DB to detect transitions.
-        has_status_field = any(
-            field.name == "status" for field in self._meta.fields
-        )
+        has_status_field = any(field.name == "status" for field in self._meta.fields)
         previous_status = None
         status_changed = False
         if has_status_field and not self._state.adding:

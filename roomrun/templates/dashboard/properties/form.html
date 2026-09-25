@@ -22,7 +22,7 @@
       <div class="content">
         {% include "common/includes/messages.html" %}
 
-        <a href="{% if property %}{% url 'properties:property-detail' pk=property.pk %}{% else %}{% url 'properties:property-list' %}{% endif %}" class="back-link">
+        <a href="{% if property %}{% url 'properties:property-detail' pk=property.slug %}{% else %}{% url 'properties:property-list' %}{% endif %}" class="back-link">
           <i class="ti ti-arrow-left"></i>
           <span>{% if property %}{% translate "Back to property" %}{% else %}{% translate "Back to properties" %}{% endif %}</span>
         </a>
@@ -48,7 +48,7 @@
               </div>
             </div>
 
-            <form id="propertyForm" method="post" novalidate data-property-form data-cancel-url="{% if property %}{% url 'properties:property-detail' pk=property.pk %}{% else %}{% url 'properties:property-list' %}{% endif %}">
+            <form id="propertyForm" method="post" novalidate data-property-form data-cancel-url="{% if property %}{% url 'properties:property-detail' pk=property.slug %}{% else %}{% url 'properties:property-list' %}{% endif %}">
               {% csrf_token %}
               <input type="hidden" name="action" id="propertyAction" value="{% if property %}save{% else %}continue{% endif %}" />
               <div class="form-grid">

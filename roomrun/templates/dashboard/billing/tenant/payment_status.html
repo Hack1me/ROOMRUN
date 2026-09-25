@@ -16,7 +16,7 @@
     {% else %}
       <span class="rr-payment-result__icon rr-payment-result__icon--pending"><i class="ti ti-clock"></i></span>
       <div><h2>{% translate "Waiting for confirmation" %}</h2><p>{% translate "Approve the Mobile Money prompt on your phone, then check the payment status again." %}</p><small>{{ payment.payment_number }}</small></div>
-      <a class="rr-btn rr-btn-primary" href="{% url 'billing:tenant-payment-sync' payment.pk %}"><i class="ti ti-refresh"></i> {% translate "Check status" %}</a>
+      <a class="rr-btn rr-btn-primary" href="{% url 'billing:tenant-payment-sync' payment.slug %}"><i class="ti ti-refresh"></i> {% translate "Check status" %}</a>
     {% endif %}
   </section>
 </div>

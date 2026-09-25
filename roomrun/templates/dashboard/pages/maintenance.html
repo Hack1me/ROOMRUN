@@ -103,7 +103,7 @@
             </div>
             <div class="maintenance-list">
               {% for task in recent_tasks %}
-                <a href="{% url 'maintenance:task-detail' task.pk %}" class="maintenance-item">
+                <a href="{% url 'maintenance:task-detail' task.slug %}" class="maintenance-item">
                   <div class="item-icon icon-orange"><i class="ti ti-tools"></i></div>
                   <div class="item-content">
                     <div class="item-title">{{ task.title }}</div>

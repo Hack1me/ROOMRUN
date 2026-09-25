@@ -63,7 +63,7 @@
         </div>
         <div>
           <span class="text-muted text-xs">{% translate "Contract" %} <span class="font-semibold text-ink">{{ contract.contract_number }}</span></span>
-          <a class="btn btn-secondary mt-2" href="{% url 'rentals:lease-document' contract.pk %}"><i class="ti ti-file-description"></i> {% translate "Preview lease document" %}</a>
+          <a class="btn btn-secondary mt-2" href="{% url 'rentals:lease-document' contract.slug %}"><i class="ti ti-file-description"></i> {% translate "Preview lease document" %}</a>
         </div>
       </div>
 

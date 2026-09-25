@@ -19,12 +19,12 @@ app_name = "rentals"
 
 urlpatterns = [
     path(
-        "contracts/<uuid:pk>/document/",
+        "contracts/<slug:pk>/document/",
         LeaseDocumentPreviewView.as_view(),
         name="lease-document",
     ),
     path(
-        "contracts/<uuid:pk>/document/pdf/",
+        "contracts/<slug:pk>/document/pdf/",
         LeasePDFView.as_view(),
         name="lease-pdf",
     ),
@@ -39,12 +39,12 @@ urlpatterns = [
         name="rental-application-create",
     ),
     path(
-        "applications/<uuid:pk>/",
+        "applications/<slug:pk>/",
         RentalApplicationDetailView.as_view(),
         name="rental-application-detail",
     ),
     path(
-        "contracts/<uuid:pk>/sign/",
+        "contracts/<slug:pk>/sign/",
         TenantRentalContractSignView.as_view(),
         name="tenant-rental-contract-sign",
     ),
@@ -63,19 +63,19 @@ urlpatterns += [
     ),
 
     path(
-        "landlord/applications/<uuid:pk>/",
+        "landlord/applications/<slug:pk>/",
         LandlordRentalApplicationDetailView.as_view(),
         name="landlord-rental-application-detail",
     ),
 
     path(
-        "landlord/applications/<uuid:pk>/approve/",
+        "landlord/applications/<slug:pk>/approve/",
         RentalApplicationApproveView.as_view(),
         name="rental-application-approve",
     ),
 
     path(
-        "landlord/applications/<uuid:pk>/reject/",
+        "landlord/applications/<slug:pk>/reject/",
         RentalApplicationRejectView.as_view(),
         name="rental-application-reject",
     ),
@@ -90,7 +90,7 @@ urlpatterns += [
         name="landlord-rental-contract-list",
     ),
     path(
-        "landlord/contracts/<uuid:pk>/",
+        "landlord/contracts/<slug:pk>/",
         LandlordRentalContractDetailView.as_view(),
         name="landlord-rental-contract-detail",
     ),

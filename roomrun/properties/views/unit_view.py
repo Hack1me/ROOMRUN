@@ -184,7 +184,7 @@ class UnitCreateView(LandlordUnitAccessMixin, ServiceFormMixin, View):
         return self.service_success(
             _("Unit created successfully."),
             "properties:building-detail",
-            pk=building.pk,
+            pk=building.slug,
         )
 
 
@@ -214,7 +214,7 @@ class UnitImagesView(LandlordUnitAccessMixin, ServiceFormMixin, View):
 
         if not files:
             messages.info(request, _("Choose at least one image to upload."))
-            return redirect("properties:unit-images", pk=unit.pk)
+            return redirect("properties:unit-images", pk=unit.slug)
 
         if existing_count + len(files) > self.max_images:
             messages.error(
@@ -222,7 +222,7 @@ class UnitImagesView(LandlordUnitAccessMixin, ServiceFormMixin, View):
                 _("A unit can have a maximum of %(count)s images.")
                 % {"count": self.max_images},
             )
-            return redirect("properties:unit-images", pk=unit.pk)
+            return redirect("properties:unit-images", pk=unit.slug)
 
         forms = []
         for uploaded_file in files:
@@ -232,7 +232,7 @@ class UnitImagesView(LandlordUnitAccessMixin, ServiceFormMixin, View):
             )
             if not form.is_valid():
                 self.add_form_errors_as_messages(form)
-                return redirect("properties:unit-images", pk=unit.pk)
+                return redirect("properties:unit-images", pk=unit.slug)
             forms.append(form)
 
         try:
@@ -242,10 +242,10 @@ class UnitImagesView(LandlordUnitAccessMixin, ServiceFormMixin, View):
         except ValidationError as exc:
             self.handle_service_errors(forms[0], exc)
             self.add_form_errors_as_messages(forms[0])
-            return redirect("properties:unit-images", pk=unit.pk)
+            return redirect("properties:unit-images", pk=unit.slug)
 
         messages.success(request, _("Unit images uploaded successfully."))
-        return redirect("properties:unit-images", pk=unit.pk)
+        return redirect("properties:unit-images", pk=unit.slug)
 
 
 class UnitDetailView(LandlordUnitAccessMixin, View):
@@ -314,7 +314,7 @@ class UnitUpdateView(LandlordUnitAccessMixin, ServiceFormMixin, View):
         return self.service_success(
             _("Unit updated successfully."),
             "properties:unit-detail",
-            pk=unit.id,
+            pk=unit.slug,
         )
 
 

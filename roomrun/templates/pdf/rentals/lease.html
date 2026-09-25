@@ -36,7 +36,7 @@
     <div><div class="toolbar-title">{% translate "Rental agreement" %}</div><div class="toolbar-reference">{{ lease.contract_number }}</div></div>
     <div class="toolbar-actions">
       <button class="print-button" type="button" onclick="window.print()">{% translate "Print / PDF" %}</button>
-      <a class="download-button" href="{% url 'rentals:lease-pdf' lease.pk %}">{% translate "Download PDF" %}</a>
+      <a class="download-button" href="{% url 'rentals:lease-pdf' lease.slug %}">{% translate "Download PDF" %}</a>
     </div>
   </div>
 

@@ -36,7 +36,7 @@
             <span class="status-dot"></span>
             {{ property.get_status_display }}
           </span>
-          <a href="{% url 'properties:property-edit' pk=property.pk %}" class="button button-secondary">
+          <a href="{% url 'properties:property-edit' pk=property.slug %}" class="button button-secondary">
             <i class="ti ti-edit"></i> {% translate "Edit property" %}
           </a>
           <button class="more-button">
@@ -86,7 +86,7 @@
                 <div class="card-title">{% translate "Property information" %}</div>
                 <div class="card-subtitle">{% translate "General information about this property." %}</div>
               </div>
-              <a href="{% url 'properties:property-edit' pk=property.pk %}" class="button button-secondary">
+              <a href="{% url 'properties:property-edit' pk=property.slug %}" class="button button-secondary">
                 <i class="ti ti-edit"></i> {% translate "Edit" %}
               </a>
             </div>
@@ -130,7 +130,7 @@
                 <div class="card-title">{% translate "Buildings" %}</div>
                 <div class="card-subtitle">{% translate "Manage the buildings and their units." %}</div>
               </div>
-              <a href="{% url 'properties:property-buildings-create' property_id=property.pk %}" class="add-building">
+              <a href="{% url 'properties:property-buildings-create' property_id=property.slug %}" class="add-building">
                 <i class="ti ti-plus"></i> {% translate "Add building" %}
               </a>
             </div>
@@ -162,7 +162,7 @@
                         <td class="number">{{ data.occupied }}</td>
                         <td class="available">{{ data.available }}</td>
                         <td>
-                          <a href="{% url 'properties:building-detail' pk=data.building.pk %}" class="view-link">{% translate "View" %} →</a>
+                          <a href="{% url 'properties:building-detail' pk=data.building.slug %}" class="view-link">{% translate "View" %} →</a>
                         </td>
                       </tr>
                     {% endfor %}
@@ -210,12 +210,12 @@
 
           <div class="card actions-card">
             <div class="action-title">{% translate "Quick actions" %}</div>
-            <a href="{% url 'properties:property-buildings-create' property_id=property.pk %}" class="quick-action">
+            <a href="{% url 'properties:property-buildings-create' property_id=property.slug %}" class="quick-action">
               <i class="ti ti-building-plus"></i>
               <span>{% translate "Add building" %}</span>
               <i class="ti ti-chevron-right"></i>
             </a>
-            <a href="{% url 'properties:property-images' pk=property.pk %}" class="quick-action">
+            <a href="{% url 'properties:property-images' pk=property.slug %}" class="quick-action">
               <i class="ti ti-photo-plus"></i>
               <span>{% translate "Manage images" %}</span>
               <i class="ti ti-chevron-right"></i>

@@ -152,7 +152,7 @@
             </div>
             <div class="list-body">
               {% for property in recent_properties %}
-                <a class="attention-item" href="{% url 'properties:property-detail' property.pk %}">
+                <a class="attention-item" href="{% url 'properties:property-detail' property.slug %}">
                   <div class="item-icon icon-blue"><i class="ti ti-home"></i></div>
                   <div class="item-content">
                     <div class="item-title">{{ property.name }}</div>
@@ -199,7 +199,7 @@
           </div>
           <div class="maintenance-list">
             {% for request in recent_maintenance_requests %}
-              <a class="maintenance-item" href="{% url 'maintenance:landlord-request-detail' request.pk %}">
+              <a class="maintenance-item" href="{% url 'maintenance:landlord-request-detail' request.slug %}">
                 <div class="item-icon icon-orange"><i class="ti ti-tools"></i></div>
                 <div class="item-content">
                   <div class="item-title">{{ request.title }}</div>

@@ -160,7 +160,7 @@ class PropertyCreateView(LandlordRequiredMixin, ServiceFormMixin, View):
             return redirect("properties:property-list")
 
         messages.success(request, _("Property created successfully."))
-        return redirect("properties:property-configure", pk=property_obj.pk)
+        return redirect("properties:property-configure", pk=property_obj.slug)
 
 
 class PropertyDetailView(LandlordPropertyMixin, View):
@@ -264,12 +264,12 @@ class PropertyUpdateView(LandlordPropertyMixin, ServiceFormMixin, View):
 
         if request.POST.get("action") == "continue":
             messages.success(request, _("Property information updated successfully."))
-            return redirect("properties:property-configure", pk=property_obj.pk)
+            return redirect("properties:property-configure", pk=property_obj.slug)
 
         return self.service_success(
             _("Property updated successfully."),
             "properties:property-detail",
-            pk=property_obj.pk,
+            pk=property_obj.slug,
         )
 
 
@@ -327,7 +327,7 @@ class PropertyConfigurationView(LandlordPropertyMixin, ServiceFormMixin, View):
             return redirect("properties:property-list")
 
         messages.success(request, _("Property configuration updated successfully."))
-        return redirect("properties:property-images", pk=property_obj.pk)
+        return redirect("properties:property-images", pk=property_obj.slug)
 
 
 class PropertyImagesView(LandlordPropertyMixin, ServiceFormMixin, View):
@@ -355,7 +355,7 @@ class PropertyImagesView(LandlordPropertyMixin, ServiceFormMixin, View):
                 _("A property can have a maximum of %(count)s images.")
                 % {"count": self.max_images},
             )
-            return redirect("properties:property-images", pk=property_obj.pk)
+            return redirect("properties:property-images", pk=property_obj.slug)
 
         has_primary_image = property_obj.images.filter(is_primary=True).exists()
         forms = []
@@ -372,7 +372,7 @@ class PropertyImagesView(LandlordPropertyMixin, ServiceFormMixin, View):
             )
             if not form.is_valid():
                 self.add_form_errors_as_messages(form)
-                return redirect("properties:property-images", pk=property_obj.pk)
+                return redirect("properties:property-images", pk=property_obj.slug)
             forms.append(form)
 
         try:
@@ -385,10 +385,10 @@ class PropertyImagesView(LandlordPropertyMixin, ServiceFormMixin, View):
         except ValidationError as exc:
             self.handle_service_errors(forms[0], exc)
             self.add_form_errors_as_messages(forms[0])
-            return redirect("properties:property-images", pk=property_obj.pk)
+            return redirect("properties:property-images", pk=property_obj.slug)
 
         messages.success(request, _("Property created successfully."))
-        return redirect("properties:property-detail", pk=property_obj.pk)
+        return redirect("properties:property-detail", pk=property_obj.slug)
 
 
 class PropertyDeleteView(LandlordPropertyMixin, View):

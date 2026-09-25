@@ -39,7 +39,7 @@
         </thead>
         <tbody class="divide-y divide-line">
           {% for visit in visits %}
-            <tr><td class="px-6 py-4 font-medium text-primary">{{ visit.visitor_name }}<span class="mt-1 block text-xs text-muted">{{ visit.visit_number }}</span></td><td class="px-6 py-4">{{ visit.building }}</td><td class="px-6 py-4">{{ visit.expected_arrival|date:"d/m/Y H:i" }}</td><td class="px-6 py-4">{{ visit.get_status_display }}</td><td class="px-6 py-4">{% if visit.status == "EXPECTED" %}<form method="post" action="{% url 'operations:visitor-invitation-cancel' visit.pk %}">{% csrf_token %}<button class="text-sm text-danger hover:underline">{% translate "Cancel" %}</button></form>{% endif %}</td></tr>
+            <tr><td class="px-6 py-4 font-medium text-primary">{{ visit.visitor_name }}<span class="mt-1 block text-xs text-muted">{{ visit.visit_number }}</span></td><td class="px-6 py-4">{{ visit.building }}</td><td class="px-6 py-4">{{ visit.expected_arrival|date:"d/m/Y H:i" }}</td><td class="px-6 py-4">{{ visit.get_status_display }}</td><td class="px-6 py-4">{% if visit.status == "EXPECTED" %}<form method="post" action="{% url 'operations:visitor-invitation-cancel' visit.slug %}">{% csrf_token %}<button class="text-sm text-danger hover:underline">{% translate "Cancel" %}</button></form>{% endif %}</td></tr>
           {% empty %}
             <tr><td class="px-6 py-8 text-center text-muted" colspan="5">{% translate "No visitor invitation yet." %}</td></tr>
           {% endfor %}

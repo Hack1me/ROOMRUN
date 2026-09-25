@@ -134,17 +134,17 @@
             {% endif %}
           </div>
           <div class="lease-action-buttons">
-            <a href="{% url 'rentals:lease-document' contract.pk %}" class="btn btn-secondary">
+            <a href="{% url 'rentals:lease-document' contract.slug %}" class="btn btn-secondary">
               <i class="ti ti-file-description"></i>
               {% translate "View contract" %}
             </a>
             {% if contract.status == 'SIGNING' %}
-              <a href="{% url 'rentals:tenant-rental-contract-sign' contract.pk %}" class="btn btn-primary">
+              <a href="{% url 'rentals:tenant-rental-contract-sign' contract.slug %}" class="btn btn-primary">
                 <i class="ti ti-signature"></i>
                 {% translate "Sign contract" %}
               </a>
             {% elif contract.status == 'SIGNED' %}
-              <a href="{% url 'billing:tenant-contract-payment' contract.pk %}" class="btn btn-primary">
+              <a href="{% url 'billing:tenant-contract-payment' contract.slug %}" class="btn btn-primary">
                 <i class="ti ti-arrow-right"></i>
                 {% translate "Review & Pay" %}
               </a>
@@ -234,12 +234,12 @@
           </div>
           <div class="activation-action">
             {% if contract.status == 'SIGNING' %}
-              <a href="{% url 'rentals:tenant-rental-contract-sign' contract.pk %}" class="btn btn-primary">
+              <a href="{% url 'rentals:tenant-rental-contract-sign' contract.slug %}" class="btn btn-primary">
                 <i class="ti ti-signature"></i>
                 {% translate "Sign contract" %}
               </a>
             {% elif contract.status == 'SIGNED' %}
-              <a href="{% url 'billing:tenant-contract-payment' contract.pk %}" class="btn btn-primary">
+              <a href="{% url 'billing:tenant-contract-payment' contract.slug %}" class="btn btn-primary">
                 <i class="ti ti-arrow-right"></i>
                 {% translate "Review & Pay" %}
               </a>
@@ -254,7 +254,7 @@
         <section class="card">
           <div class="card-header">
             <div class="card-title">{% translate "Lease details" %}</div>
-            <a href="{% url 'rentals:lease-document' contract.pk %}" class="btn btn-secondary">
+            <a href="{% url 'rentals:lease-document' contract.slug %}" class="btn btn-secondary">
               {% translate "View contract" %}
             </a>
           </div>
@@ -346,7 +346,7 @@
                 <span>{{ contract.unit.floor|default:"—" }}</span>
               </div>
             </div>
-            <a href="{% url 'properties:property-detail' contract.unit.building.property_ref.pk %}" class="btn btn-secondary" style="width:100%;margin-top:14px">
+            <a href="{% url 'properties:property-detail' contract.unit.building.property_ref.slug %}" class="btn btn-secondary" style="width:100%;margin-top:14px">
               {% translate "View property" %}
             </a>
           </div>

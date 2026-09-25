@@ -62,12 +62,12 @@
                 <tbody>
                   {% for unit in units %}
                     <tr>
-                      <td><a class="landlord-unit-name" href="{% url 'properties:unit-detail' pk=unit.pk %}"><span class="landlord-unit-row-icon"><i class="ti ti-home" aria-hidden="true"></i></span><span><strong>{{ unit.unit_number }}</strong><small>{% blocktranslate with floor=unit.floor %}Floor {{ floor }}{% endblocktranslate %}</small></span></a></td>
-                      <td><a class="landlord-unit-location" href="{% url 'properties:building-detail' pk=unit.building.pk %}"><strong>{{ unit.building.property_ref.name }}</strong><small>{{ unit.building.name }}</small></a></td>
+                      <td><a class="landlord-unit-name" href="{% url 'properties:unit-detail' pk=unit.slug %}"><span class="landlord-unit-row-icon"><i class="ti ti-home" aria-hidden="true"></i></span><span><strong>{{ unit.unit_number }}</strong><small>{% blocktranslate with floor=unit.floor %}Floor {{ floor }}{% endblocktranslate %}</small></span></a></td>
+                      <td><a class="landlord-unit-location" href="{% url 'properties:building-detail' pk=unit.building.slug %}"><strong>{{ unit.building.property_ref.name }}</strong><small>{{ unit.building.name }}</small></a></td>
                       <td>{{ unit.get_unit_type_display }}</td>
                       <td><strong>{{ unit.monthly_rent.amount|floatformat:0 }} {{ unit.monthly_rent.currency }}</strong><small class="landlord-unit-rent-period">{% translate "per month" %}</small></td>
                       <td><span class="landlord-unit-status landlord-unit-status--{{ unit.status|lower }}"><i></i>{{ unit.get_status_display }}</span></td>
-                      <td><a class="landlord-unit-open" href="{% url 'properties:unit-detail' pk=unit.pk %}" aria-label="{% blocktranslate with unit=unit.unit_number %}View unit {{ unit }}{% endblocktranslate %}"><i class="ti ti-chevron-right" aria-hidden="true"></i></a></td>
+                      <td><a class="landlord-unit-open" href="{% url 'properties:unit-detail' pk=unit.slug %}" aria-label="{% blocktranslate with unit=unit.unit_number %}View unit {{ unit }}{% endblocktranslate %}"><i class="ti ti-chevron-right" aria-hidden="true"></i></a></td>
                     </tr>
                   {% empty %}
                     <tr><td colspan="6"><div class="landlord-units-empty"><span><i class="ti ti-home-off" aria-hidden="true"></i></span><h2>{% if search or status_filter or property_filter %}{% translate "No matching units" %}{% else %}{% translate "No housing units yet" %}{% endif %}</h2><p>{% if search or status_filter or property_filter %}{% translate "Try changing your search or filters." %}{% else %}{% translate "Add a property and a building to start creating rental units." %}{% endif %}</p><a href="{% url 'properties:property-list' %}">{% translate "View properties" %}</a></div></td></tr>

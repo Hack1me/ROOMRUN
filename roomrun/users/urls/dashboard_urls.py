@@ -21,7 +21,7 @@ urlpatterns = [
     path("maintenance/", MaintenanceDashboardView.as_view(), name="maintenance"),
     path("guard/", GuardDashboardView.as_view(), name="guard"),
     path("landlord/invitations/", LandlordInvitationListView.as_view(), name="invitation-list"),
-    path("landlord/invitations/<uuid:pk>/cancel/", LandlordInvitationCancelView.as_view(), name="invitation-cancel"),
+    path("landlord/invitations/<slug:pk>/cancel/", LandlordInvitationCancelView.as_view(), name="invitation-cancel"),
     path(
         "user/",
         TemplateView.as_view(template_name="dashboard/pages/user.html"),
