@@ -16,6 +16,9 @@
     .dashboard-main .main {
       margin-left: 0;
     }
+    @media (max-width: 1024px) {
+      .dashboard-main { margin-left: 0; }
+    }
   </style>
 {% endblock extra_css %}
 {% block header %}{% endblock header %}
@@ -39,6 +42,12 @@
         {% block topbar %}
           {% if topbar_template %}
             {% include topbar_template %}
+          {% else %}
+            <header class="dashboard-mobile-bar">
+              <button type="button" class="menu-button" id="mobile-menu" aria-label="{% translate 'Open menu' %}">
+                <i class="ti ti-menu-2" aria-hidden="true"></i>
+              </button>
+            </header>
           {% endif %}
         {% endblock topbar %}
         <main class="main">

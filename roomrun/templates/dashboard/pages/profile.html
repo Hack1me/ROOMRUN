@@ -23,6 +23,7 @@
   <div class="profile-page">
     <main class="profile-main">
       <header class="profile-topbar">
+        <button type="button" class="icon-button mobile-menu" id="mobile-menu" aria-label="{% translate 'Open menu' %}"><i class="ti ti-menu-2" aria-hidden="true"></i></button>
         <div class="profile-breadcrumb">
           <a href="{% url 'dashboard:dashboard' %}" class="back-link">
             <i class="ti ti-arrow-left"></i>
@@ -288,5 +289,6 @@
 {% block footer %}
 {% endblock footer %}
 {% block inline_javascript %}
+  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
   <script defer src="{% static 'js/auth/profile.js' %}"></script>
 {% endblock %}

@@ -347,13 +347,6 @@
         filterLeases();
       });
 
-      const mobileMenu = document.getElementById('mobileMenu');
-      const sidebar = document.getElementById('sidebar');
-      if (mobileMenu && sidebar) {
-        mobileMenu.addEventListener('click', function () {
-          sidebar.classList.toggle('open');
-        });
-      }
     });
   </script>
 {% endblock inline_javascript %}

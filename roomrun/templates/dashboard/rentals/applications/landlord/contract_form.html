@@ -740,6 +740,7 @@
 
 {% block inline_javascript %}
   {{ block.super }}
+  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
   <script>
     (() => {
       const canvas = document.getElementById("signatureCanvas");
