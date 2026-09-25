@@ -211,6 +211,29 @@ class NotificationMarkAllReadView(LoginRequiredMixin, View):
         return HttpResponseRedirect(reverse("communications:notification-list"))
 
 
+class NotificationDeleteView(LoginRequiredMixin, View):
+    """Delete one notification belonging to the signed-in user."""
+
+    def post(self, request, pk):
+        notification = get_object_or_404(
+            Notification,
+            pk=pk,
+            recipient=request.user,
+        )
+        notification.delete()
+        messages.success(request, _("Notification deleted."))
+        return HttpResponseRedirect(reverse("communications:notification-list"))
+
+
+class NotificationDeleteAllView(LoginRequiredMixin, View):
+    """Clear the signed-in user's notification inbox."""
+
+    def post(self, request):
+        Notification.objects.filter(recipient=request.user).delete()
+        messages.success(request, _("All notifications have been deleted."))
+        return HttpResponseRedirect(reverse("communications:notification-list"))
+
+
 
 def conversations_for_user(user):
     conversations = Conversation.objects.filter(participants=user)
