@@ -1,13 +1,14 @@
 {% extends "errors/base.html" %}
+{% load i18n %}
 
-{% block title %}Page not found{% endblock title %}
+{% block title %}{% translate "Page not found" %}{% endblock title %}
 {% block content %}
-  <h1 class="rr-display text-3xl">Page not found</h1>
+  <h1 class="rr-display text-3xl">{% translate "Page not found" %}</h1>
   <p class="mt-4 leading-7 text-muted">
     {% if exception %}
       {{ exception }}
     {% else %}
-      This is not the page you were looking for.
+      {% translate "This is not the page you were looking for." %}
     {% endif %}
   </p>
 {% endblock content %}

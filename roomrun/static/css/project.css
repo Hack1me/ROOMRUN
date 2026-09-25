@@ -32,6 +32,29 @@
   }
 }
 
+/* Keep the landing page brand, links and actions on one horizontal row. */
+.rr-landing-page .nav {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.rr-landing-page .nav__word,
+.rr-landing-page .nav__links,
+.rr-landing-page .nav__actions,
+.rr-landing-page .nav__burger {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.rr-landing-page .nav__links,
+.rr-landing-page .nav__actions {
+  align-items: center;
+}
+
 .landlord-units-page {
   max-width: 1440px;
   margin: 0 auto;
@@ -88,12 +111,18 @@
   padding: 0 15px;
   border: 0;
   border-radius: 8px;
-  background: #28654f;
+  background: var(--primary);
   color: #fff;
   font-size: 12px;
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
+}
+
+.landlord-units-primary-action:hover,
+.landlord-units-filters button:hover {
+  background: var(--primary-hover);
+  color: #fff;
 }
 
 .landlord-unit-stats {
@@ -239,10 +268,26 @@
 .landlord-units-empty > span { width: 50px; height: 50px; margin: auto; background: #f0f5f2; color: #34735a; font-size: 22px; }
 .landlord-units-empty h2 { margin: 14px 0 5px; color: #263246; font-size: 16px; }
 .landlord-units-empty p { margin: 0 0 15px; color: #788395; font-size: 12px; }
-.landlord-units-empty a { color: #28654f; font-size: 12px; font-weight: 600; }
+.landlord-units-empty a { color: var(--primary); font-size: 12px; font-weight: 600; }
 .landlord-units-pagination { align-items: center; justify-content: space-between; padding: 13px 16px; border-top: 1px solid #edf0f4; color: #788395; font-size: 11px; }
 .landlord-units-pagination div { display: flex; gap: 6px; }
 .landlord-units-pagination a { display: grid; place-items: center; width: 30px; height: 30px; border: 1px solid #e1e6ec; border-radius: 6px; color: #455166; }
+
+.unit-form-page .unit-form-submit,
+.unit-detail-page .unit-detail-edit,
+.images-page .images-actions .btn-primary {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+}
+
+.unit-form-page .unit-form-submit:hover,
+.unit-detail-page .unit-detail-edit:hover,
+.images-page .images-actions .btn-primary:hover {
+  border-color: var(--primary-hover);
+  background: var(--primary-hover);
+  color: #fff;
+}
 
 @media (max-width: 900px) {
   .landlord-unit-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }

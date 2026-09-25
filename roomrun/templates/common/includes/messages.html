@@ -1,3 +1,5 @@
+{% load i18n %}
+
 {% if messages %}
   <div class="mb-6" aria-live="polite">
     {% for message in messages %}
@@ -6,7 +8,7 @@
         <button type="button"
                 class="shrink-0 text-current/70 hover:text-current"
                 onclick="this.parentElement.remove()"
-                aria-label="Close">×</button>
+                aria-label="{% translate 'Close' %}">×</button>
       </div>
     {% endfor %}
   </div>

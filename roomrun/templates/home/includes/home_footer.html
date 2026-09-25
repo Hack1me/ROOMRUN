@@ -5,29 +5,29 @@
   <div class="footer__top">
     <div class="footer__brand">
       <p class="nav__word nav__word--light"><span class="nav__dot"></span>ROOMRUN</p>
-      <p>Un registre calme pour la gestion résidentielle en Afrique centrale.</p>
+      <p>{% translate "A calm workspace for residential management in Central Africa." %}</p>
     </div>
 
     <div class="footer__col">
-      <h4>Plateforme</h4>
-      <a href="{% url 'users:signup' %}">Réservations</a>
-      <a href="{% url 'users:signup' %}">Baux</a>
-      <a href="{% url 'users:signup' %}">Paiements</a>
-      <a href="{% url 'users:signup' %}">Maintenance</a>
+      <h4>{% translate "Platform" %}</h4>
+      <a href="{% url 'users:signup' %}">{% translate "Applications" %}</a>
+      <a href="{% url 'users:signup' %}">{% translate "Leases" %}</a>
+      <a href="{% url 'users:signup' %}">{% translate "Payments" %}</a>
+      <a href="{% url 'users:signup' %}">{% translate "Maintenance" %}</a>
     </div>
 
     <div class="footer__col">
-      <h4>Profils</h4>
-      <a href="{% url 'users:signup' %}">Bailleurs</a>
-      <a href="{% url 'users:signup' %}">Locataires</a>
-      <a href="{% url 'users:signup' %}">Agents &amp; gardiens</a>
+      <h4>{% translate "Profiles" %}</h4>
+      <a href="{% url 'users:signup' %}">{% translate "Landlords" %}</a>
+      <a href="{% url 'users:signup' %}">{% translate "Tenants" %}</a>
+      <a href="{% url 'users:signup' %}">{% translate "Maintenance staff and guards" %}</a>
     </div>
 
     <div class="footer__col">
-      <h4>Entreprise</h4>
-      <a href="{% url 'users:signup' %}">À propos</a>
-      <a href="{% url 'users:signup' %}">Sécurité</a>
-      <a href="{% url 'users:signup' %}">Contact</a>
+      <h4>{% translate "Company" %}</h4>
+      <a href="{% url 'about' %}">{% translate "About" %}</a>
+      <a href="{% url 'users:signup' %}">{% translate "Security" %}</a>
+      <a href="mailto:support@room-run.com">{% translate "Contact" %}</a>
     </div>
   </div>
 
