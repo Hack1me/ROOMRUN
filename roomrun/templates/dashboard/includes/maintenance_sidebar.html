@@ -3,13 +3,13 @@
   <div class="brand"><div class="brand-mark"></div><div><div class="brand-name">ROOMRUN</div><div class="brand-subtitle">{% translate "Property Management" %}</div></div></div>
   <div class="sidebar-content">
     <div class="nav-section"><div class="nav-title">{% translate "Work" %}</div>
-      <a href="{% url 'dashboard:maintenance' %}" class="nav-item"><i class="ti ti-layout-dashboard"></i><span>{% translate "Dashboard" %}</span></a>
-      <a href="{% url 'maintenance:task-list' %}" class="nav-item"><i class="ti ti-tool"></i><span>{% translate "My tasks" %}</span></a>
-      <a href="{% url 'maintenance:agent-queue' %}" class="nav-item"><i class="ti ti-clipboard-list"></i><span>{% translate "Requests" %}</span></a>
+      <a href="{% url 'dashboard:maintenance' %}" class="nav-item{% if request.resolver_match.url_name == 'maintenance' %} active{% endif %}"><i class="ti ti-layout-dashboard"></i><span>{% translate "Dashboard" %}</span></a>
+      <a href="{% url 'maintenance:task-list' %}" class="nav-item{% if request.resolver_match.url_name == 'task-list' or request.resolver_match.url_name == 'task-detail' %} active{% endif %}"><i class="ti ti-tool"></i><span>{% translate "My tasks" %}</span></a>
+      <a href="{% url 'maintenance:agent-queue' %}" class="nav-item{% if request.resolver_match.url_name == 'agent-queue' %} active{% endif %}"><i class="ti ti-clipboard-list"></i><span>{% translate "Requests" %}</span></a>
     </div>
     <div class="nav-section"><div class="nav-title">{% translate "Communication" %}</div>
       <a href="{% url 'communications:conversation-list' %}" class="nav-item"><i class="ti ti-message"></i><span>{% translate "Messages" %}</span></a>
-      <a href="{% url 'communications:notification-list' %}" class="nav-item active"><i class="ti ti-bell"></i><span>{% translate "Notifications" %}</span>{% if unread_notification_count %}<span class="nav-badge">{{ unread_notification_count }}</span>{% endif %}</a>
+      <a href="{% url 'communications:notification-list' %}" class="nav-item{% if request.resolver_match.url_name == 'notification-list' or request.resolver_match.url_name == 'notification-detail' %} active{% endif %}"><i class="ti ti-bell"></i><span>{% translate "Notifications" %}</span>{% if unread_notification_count %}<span class="nav-badge">{{ unread_notification_count }}</span>{% endif %}</a>
     </div>
     <div class="nav-section"><div class="nav-title">{% translate "Account" %}</div><a href="{% url 'users:profile' %}" class="nav-item"><i class="ti ti-settings"></i><span>{% translate "Profile" %}</span></a><a href="{% url 'users:logout' %}" class="nav-item"><i class="ti ti-logout"></i><span>{% translate "Sign out" %}</span></a></div>
   </div>

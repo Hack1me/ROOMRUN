@@ -3,9 +3,11 @@
 {% load i18n static %}
 
 {% block bodyclass %}dashboard-page{% endblock bodyclass %}
+{% block css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
+{% endblock css %}
 {% block extra_css %}
-  <link rel="stylesheet"
-        href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
   <style>
     .dashboard-main {
       margin-left: 232px;
@@ -16,17 +18,21 @@
     }
   </style>
 {% endblock extra_css %}
-{% block header %}
-  {% if not skip_dashboard_header %}
-    {% include "home/includes/site_header.html" %}
-  {% endif %}
-{% endblock header %}
+{% block header %}{% endblock header %}
 {% block body %}
   {% block dashboard_body %}
     <div class="app {% block app_class %}{% endblock app_class %}">
       {% block sidebar %}
         {% if sidebar_template %}
           {% include sidebar_template %}
+        {% elif user.landlord_profile %}
+          {% include "dashboard/includes/landlord_sidebar.html" %}
+        {% elif user.tenant_profile %}
+          {% include "dashboard/includes/tenant_sidebar.html" %}
+        {% elif user.employee_profile.guard_profile %}
+          {% include "dashboard/includes/guard_sidebar.html" %}
+        {% elif user.employee_profile.maintenance_agent_profile %}
+          {% include "dashboard/includes/maintenance_sidebar.html" %}
         {% endif %}
       {% endblock sidebar %}
       <div class="dashboard-main">
@@ -45,7 +51,5 @@
       </div>
     </div>
   {% endblock dashboard_body %}
-  {% block footer %}
-    {% include "home/includes/site_footer.html" %}
-  {% endblock footer %}
+  {% block footer %}{% endblock footer %}
 {% endblock body %}

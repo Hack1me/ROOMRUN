@@ -9,6 +9,17 @@
 <link rel="stylesheet" href="{% static 'vendor/django_countries/countries.css' %}">
 {% endblock %}
 {% block dashboard_body %}
+  <div class="app">
+    {% if user.landlord_profile %}
+      {% include "dashboard/includes/landlord_sidebar.html" %}
+    {% elif user.tenant_profile %}
+      {% include "dashboard/includes/tenant_sidebar.html" %}
+    {% elif user.employee_profile.guard_profile %}
+      {% include "dashboard/includes/guard_sidebar.html" %}
+    {% elif user.employee_profile.maintenance_agent_profile %}
+      {% include "dashboard/includes/maintenance_sidebar.html" %}
+    {% endif %}
+    <div class="dashboard-main">
   <div class="profile-page">
     <main class="profile-main">
       <header class="profile-topbar">
@@ -269,6 +280,8 @@
           <button class="btn btn-primary" type="submit">{% translate "Save changes" %}</button>
         </footer>
       </form>
+    </div>
+  </div>
     </div>
   </div>
 {% endblock dashboard_body %}
