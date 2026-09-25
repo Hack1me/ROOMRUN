@@ -19,6 +19,7 @@ from properties.views.unit_view import UnitDetailView
 from properties.views.unit_view import UnitListView
 from properties.views.unit_view import UnitUpdateView
 from properties.views.unit_view import UnitImagesView
+from properties.views.unit_view import LandlordUnitOverviewView
 from properties.views.unit_img_view import UnitImageCreateView
 from properties.views.unit_img_view import UnitImageDeleteView
 from properties.views.unit_img_view import UnitImagePrimaryView
@@ -87,6 +88,11 @@ urlpatterns += [
 ]
 
 urlpatterns += [
+    path(
+        "units/",
+        LandlordUnitOverviewView.as_view(),
+        name="landlord-unit-list",
+    ),
     path(
         "buildings/<uuid:pk>/",
         BuildingDetailView.as_view(),

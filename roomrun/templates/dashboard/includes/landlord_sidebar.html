@@ -29,10 +29,10 @@
         ><i class="ti ti-building"></i>
         <span>{% translate "Properties" %}</span>
       </a>
-      <span class="nav-item nav-item--disabled" aria-disabled="true" title="{% translate 'Coming soon' %}">
+      <a href="{% url 'properties:landlord-unit-list' %}" class="nav-item{% if current_url == 'landlord-unit-list' or current_url == 'unit-list' %} active{% endif %}">
         <i class="ti ti-home"></i>
         <span>{% translate "Housing units" %}</span>
-      </span>
+      </a>
       <a href="{% url 'dashboard:tenant-list' %}" class="nav-item{% if current_url == 'tenant-list' %} active{% endif %}">
         <i class="ti ti-users"></i>
         <span>{% translate "Tenants" %}</span>

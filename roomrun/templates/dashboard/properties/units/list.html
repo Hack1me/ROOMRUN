@@ -1,0 +1,93 @@
+{% extends "dashboard/layout.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Housing units" %} — ROOMRUN{% endblock %}
+{% block header %}{% endblock header %}
+{% block dashboard_body %}
+  <div class="app landlord-app">
+    {% include "dashboard/includes/landlord_sidebar.html" %}
+    <div class="dashboard-main">
+      {% include "dashboard/topbars/landlord.html" %}
+      <main class="main">
+        <div class="content landlord-units-page">
+          {% include "common/includes/messages.html" %}
+          <header class="landlord-units-heading">
+            <div>
+              <span class="landlord-units-eyebrow">{% translate "Portfolio" %}</span>
+              <h1>{% translate "Housing units" %}</h1>
+              <p>{% translate "Manage and track all units across your properties." %}</p>
+            </div>
+            <a class="landlord-units-primary-action" href="{% url 'properties:property-list' %}">
+              <i class="ti ti-plus" aria-hidden="true"></i>{% translate "Add a unit" %}
+            </a>
+          </header>
+
+          <section class="landlord-unit-stats" aria-label="{% translate 'Unit summary' %}">
+            <article><span class="landlord-unit-stat-icon landlord-unit-stat-icon--all"><i class="ti ti-home" aria-hidden="true"></i></span><div><small>{% translate "Total units" %}</small><strong>{{ unit_count }}</strong></div></article>
+            <article><span class="landlord-unit-stat-icon landlord-unit-stat-icon--available"><i class="ti ti-door-enter" aria-hidden="true"></i></span><div><small>{% translate "Available" %}</small><strong>{{ available_count }}</strong></div></article>
+            <article><span class="landlord-unit-stat-icon landlord-unit-stat-icon--occupied"><i class="ti ti-users" aria-hidden="true"></i></span><div><small>{% translate "Occupied" %}</small><strong>{{ occupied_count }}</strong></div></article>
+            <article><span class="landlord-unit-stat-icon landlord-unit-stat-icon--maintenance"><i class="ti ti-tool" aria-hidden="true"></i></span><div><small>{% translate "Under maintenance" %}</small><strong>{{ maintenance_count }}</strong></div></article>
+          </section>
+
+          <section class="landlord-units-card">
+            <form class="landlord-units-filters" method="get">
+              <label class="landlord-units-search">
+                <i class="ti ti-search" aria-hidden="true"></i>
+                <input type="search" name="search" value="{{ search }}" placeholder="{% translate 'Search units, buildings or properties' %}" />
+              </label>
+              <label>
+                <span class="sr-only">{% translate "Property" %}</span>
+                <select name="property">
+                  <option value="">{% translate "All properties" %}</option>
+                  {% for property in properties %}
+                    <option value="{{ property.pk }}" {% if property_filter == property.pk|stringformat:"s" %}selected{% endif %}>{{ property.name }}</option>
+                  {% endfor %}
+                </select>
+              </label>
+              <label>
+                <span class="sr-only">{% translate "Status" %}</span>
+                <select name="status">
+                  <option value="">{% translate "All statuses" %}</option>
+                  {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+                  {% endfor %}
+                </select>
+              </label>
+              <button type="submit">{% translate "Filter" %}</button>
+            </form>
+
+            <div class="landlord-units-table-wrap">
+              <table class="landlord-units-table">
+                <thead><tr><th>{% translate "Unit" %}</th><th>{% translate "Property / building" %}</th><th>{% translate "Type" %}</th><th>{% translate "Monthly rent" %}</th><th>{% translate "Status" %}</th><th><span class="sr-only">{% translate "Actions" %}</span></th></tr></thead>
+                <tbody>
+                  {% for unit in units %}
+                    <tr>
+                      <td><a class="landlord-unit-name" href="{% url 'properties:unit-detail' pk=unit.pk %}"><span class="landlord-unit-row-icon"><i class="ti ti-home" aria-hidden="true"></i></span><span><strong>{{ unit.unit_number }}</strong><small>{% blocktranslate with floor=unit.floor %}Floor {{ floor }}{% endblocktranslate %}</small></span></a></td>
+                      <td><a class="landlord-unit-location" href="{% url 'properties:building-detail' pk=unit.building.pk %}"><strong>{{ unit.building.property_ref.name }}</strong><small>{{ unit.building.name }}</small></a></td>
+                      <td>{{ unit.get_unit_type_display }}</td>
+                      <td><strong>{{ unit.monthly_rent.amount|floatformat:0 }} {{ unit.monthly_rent.currency }}</strong><small class="landlord-unit-rent-period">{% translate "per month" %}</small></td>
+                      <td><span class="landlord-unit-status landlord-unit-status--{{ unit.status|lower }}"><i></i>{{ unit.get_status_display }}</span></td>
+                      <td><a class="landlord-unit-open" href="{% url 'properties:unit-detail' pk=unit.pk %}" aria-label="{% blocktranslate with unit=unit.unit_number %}View unit {{ unit }}{% endblocktranslate %}"><i class="ti ti-chevron-right" aria-hidden="true"></i></a></td>
+                    </tr>
+                  {% empty %}
+                    <tr><td colspan="6"><div class="landlord-units-empty"><span><i class="ti ti-home-off" aria-hidden="true"></i></span><h2>{% if search or status_filter or property_filter %}{% translate "No matching units" %}{% else %}{% translate "No housing units yet" %}{% endif %}</h2><p>{% if search or status_filter or property_filter %}{% translate "Try changing your search or filters." %}{% else %}{% translate "Add a property and a building to start creating rental units." %}{% endif %}</p><a href="{% url 'properties:property-list' %}">{% translate "View properties" %}</a></div></td></tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            {% if page_obj.has_other_pages %}
+              <nav class="landlord-units-pagination" aria-label="{% translate 'Pagination' %}">
+                <span>{% blocktranslate with current=page_obj.number total=page_obj.paginator.num_pages %}Page {{ current }} of {{ total }}{% endblocktranslate %}</span>
+                <div>
+                  {% if page_obj.has_previous %}<a href="?search={{ search|urlencode }}&property={{ property_filter|urlencode }}&status={{ status_filter|urlencode }}&page={{ page_obj.previous_page_number }}" aria-label="{% translate 'Previous page' %}"><i class="ti ti-chevron-left"></i></a>{% endif %}
+                  {% if page_obj.has_next %}<a href="?search={{ search|urlencode }}&property={{ property_filter|urlencode }}&status={{ status_filter|urlencode }}&page={{ page_obj.next_page_number }}" aria-label="{% translate 'Next page' %}"><i class="ti ti-chevron-right"></i></a>{% endif %}
+                </div>
+              </nav>
+            {% endif %}
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+{% endblock dashboard_body %}
