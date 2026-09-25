@@ -1,9 +1,11 @@
 """Resolve readable model slugs for views that still query by primary key."""
 
+import re
 import uuid
 from contextlib import suppress
 
 from django.apps import apps
+from django.http import HttpResponsePermanentRedirect
 
 ROUTE_MODELS = {
     "property-detail": ("properties", "Property"),
@@ -57,6 +59,8 @@ ROUTE_MODELS = {
     "invitation-cancel": ("users", "Invitation"),
 }
 
+LEGACY_SLUG_SUFFIX = re.compile(r"^(?P<base>.+)-[0-9a-f]{8}$", re.IGNORECASE)
+
 PARAMETER_MODELS = {
     "property_id": ("properties", "Property"),
     "building_id": ("properties", "Building"),
@@ -94,7 +98,22 @@ class SlugToPrimaryKeyMiddleware:
                 continue
             try:
                 view_kwargs[name] = model.objects.only("pk").get(slug=value).pk
+                continue
             except model.DoesNotExist:
+                legacy_match = LEGACY_SLUG_SUFFIX.fullmatch(value)
+                if legacy_match:
+                    current = (
+                        model.objects.filter(slug=legacy_match.group("base"))
+                        .only("pk", "slug")
+                        .first()
+                    )
+                    if current:
+                        canonical_path = request.path.replace(value, current.slug, 1)
+                        query = request.META.get("QUERY_STRING")
+                        if query:
+                            canonical_path = f"{canonical_path}?{query}"
+                        return HttpResponsePermanentRedirect(canonical_path)
                 # Preserve old UUID links while users transition to slugs.
                 with suppress(ValueError, TypeError, AttributeError):
                     view_kwargs[name] = uuid.UUID(value)
+        return None
