@@ -3,3 +3,31 @@
  * This file is intentionally lightweight; Tailwind utilities in
  * `output.css` handle most styling. Add custom rules here.
  */
+
+/* Keep dashboard navigation toggles limited to tablet and mobile layouts.
+   This stylesheet loads after page and utility styles, so local rules cannot
+   accidentally leave a hamburger visible on desktop. */
+@media (max-width: 1024px) {
+  button#mobile-menu,
+  button.menu-button,
+  button.mobile-menu,
+  button.payments-mobile-toggle {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dashboard-mobile-bar {
+    display: flex !important;
+  }
+}
+
+@media (min-width: 1025px) {
+  button#mobile-menu,
+  button.menu-button,
+  button.mobile-menu,
+  button.payments-mobile-toggle,
+  .dashboard-mobile-bar {
+    display: none !important;
+  }
+}
