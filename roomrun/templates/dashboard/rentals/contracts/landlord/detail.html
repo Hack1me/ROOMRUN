@@ -2,6 +2,10 @@
 {% block sidebar %}{% include "dashboard/includes/landlord_sidebar.html" %}{% endblock sidebar %}
 {% block content %}
 <h1>{% translate "Rental contract" %} {{ contract.contract_number }}</h1>
+<p class="my-4 flex flex-wrap gap-3">
+  <a class="btn btn-secondary" href="{% url 'rentals:lease-document' contract.pk %}"><i class="ti ti-file-description"></i> {% translate "Preview lease" %}</a>
+  <a class="btn btn-primary" href="{% url 'rentals:lease-pdf' contract.pk %}"><i class="ti ti-download"></i> {% translate "Download PDF" %}</a>
+</p>
 <dl>
   <dt>{% translate "Tenant" %}</dt>
   <dd>{{ contract.tenant }}</dd>

@@ -55,9 +55,8 @@ class PaymentService:
         if not payment.provider:
             raise ValidationError(_("Payment provider is required."))
 
-        gateway = self._gateway or get_gateway(payment.provider)
-
         try:
+            gateway = self._gateway or get_gateway(payment.provider)
             result = gateway.initiate_payment(
                 amount=payment.amount.amount,
                 phone_number=phone_number,
@@ -65,7 +64,7 @@ class PaymentService:
                 email=getattr(payment, "customer_email", None),
                 metadata={"description": f"RoomRun payment {payment.payment_number}"},
             )
-        except PaymentGatewayError as exc:
+        except (PaymentGatewayError, ValueError) as exc:
             logger.exception(
                 "Payment initiation failed | payment=%s | provider=%s",
                 payment.payment_number,
@@ -116,11 +115,10 @@ class PaymentService:
                 _("Payment has no provider transaction reference.")
             )
 
-        gateway = self._gateway or get_gateway(payment.provider)
-
         try:
+            gateway = self._gateway or get_gateway(payment.provider)
             result = gateway.get_transaction_status(payment.provider_reference)
-        except PaymentGatewayError as exc:
+        except (PaymentGatewayError, ValueError) as exc:
             logger.exception(
                 "Gateway status failed | payment=%s | provider=%s",
                 payment.payment_number,
@@ -130,7 +128,7 @@ class PaymentService:
                 _("Unable to verify the payment status. Please try again.")
             ) from exc
 
-        provider_status = result.status
+        provider_status = str(result.status).upper()
         update_fields: list[str] = []
 
         if provider_status in ("SUCCESSFUL", "SUCCESS", "COMPLETED"):

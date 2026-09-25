@@ -1,1 +1,74 @@
-{% extends "dashboard/pages/tenant.html" %}{% load i18n %}{% block tenant_content %}<div class="rr-maintenance"><div class="rr-page-head"><div><h1>{% translate "Payments due" %}</h1><p>{% translate "Pay your outstanding charges securely." %}</p></div></div><div class="rr-list">{% for charge in charges %}<section class="rr-card rr-request"><div><div class="rr-card-title">{{ charge.get_charge_type_display }}</div><div class="rr-muted">{{ charge.charge_number }} · {% translate "Due" %} {{ charge.due_date|date:"d M Y" }}</div><strong>{{ charge.balance_due }}</strong></div><a class="rr-btn rr-btn-primary" href="{% url 'billing:tenant-payment-initiate' charge.pk %}">{% translate "Pay" %}</a></section>{% empty %}<section class="rr-empty"><i class="ti ti-circle-check"></i><h2>{% translate "No payment due" %}</h2></section>{% endfor %}</div></div>{% endblock %}{% block extra_css %}{{ block.super }}{% include "dashboard/maintenance/includes/styles.html" %}{% endblock %}
+{% extends "dashboard/pages/tenant.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "My payments" %} — ROOMRUN{% endblock %}
+
+{% block tenant_content %}
+<div class="tenant-payments">
+  <div class="tp-heading">
+    <div><span class="tp-eyebrow">ROOMRUN · {% translate "TENANT SPACE" %}</span><h2>{% translate "My payments" %}</h2><p>{% translate "Review your rent, upcoming charges and payment history." %}</p></div>
+  </div>
+
+  <section class="tp-next" aria-label="{% translate 'Outstanding balance' %}">
+    <div><span class="tp-overline">{% translate "Outstanding balance" %}</span><h3>{% if charges %}{% translate "Payments to complete" %}{% else %}{% translate "You are up to date" %}{% endif %}</h3><p>{% if charges %}{% translate "Pay an outstanding charge securely with Mobile Money." %}{% else %}{% translate "There are no outstanding charges on your active lease." %}{% endif %}</p></div>
+    <div class="tp-next-action"><strong>{{ outstanding_total|floatformat:0 }} FCFA</strong>{% if charges %}<a class="tp-button tp-button-light" href="{% url 'billing:tenant-payment-initiate' charges.0.pk %}">{% translate "Pay now" %}<i class="ti ti-arrow-up-right"></i></a>{% endif %}</div>
+  </section>
+
+  <section class="tp-stats">
+    <article><span>{% translate "Outstanding charges" %}</span><strong>{{ charges|length }}</strong><small>{{ outstanding_total|floatformat:0 }} FCFA</small></article>
+    <article><span>{% translate "Payments made" %}</span><strong>{{ completed_payment_count }}</strong><small>{% translate "Completed" %}</small></article>
+    <article><span>{% translate "Payment activity" %}</span><strong>{{ payment_count }}</strong><small>{% translate "Latest 100 transactions" %}</small></article>
+  </section>
+
+  {% if charges %}
+  <section class="tp-panel tp-due-panel">
+    <header class="tp-panel-head"><div><h3>{% translate "Payments due" %}</h3><p>{% translate "Select a charge to continue to secure payment." %}</p></div><span class="tp-count">{{ charges|length }}</span></header>
+    <div class="tp-charge-list">
+      {% for charge in charges %}
+      <article class="tp-charge">
+        <div class="tp-charge-icon"><i class="ti ti-home-dollar"></i></div>
+        <div class="tp-charge-info"><strong>{{ charge.get_charge_type_display }}</strong><span>{{ charge.contract.unit }} · {{ charge.charge_number }}</span><small>{% translate "Due" %} {{ charge.due_date|date:"d M Y" }}</small></div>
+        <strong class="tp-charge-amount">{{ charge.balance_due|floatformat:0 }} FCFA</strong>
+        <a class="tp-button tp-button-primary" href="{% url 'billing:tenant-payment-initiate' charge.pk %}">{% translate "Pay" %}<i class="ti ti-arrow-right"></i></a>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="tp-panel">
+    <header class="tp-panel-head tp-history-head"><div><h3>{% translate "Payment history" %}</h3><p>{% translate "Track the status of your Mobile Money payments." %}</p></div><button type="button" class="tp-button tp-button-outline" id="tp-export"><i class="ti ti-download"></i>{% translate "Export CSV" %}</button></header>
+    <div class="tp-filters"><label class="tp-search"><i class="ti ti-search"></i><input type="search" id="tp-search" placeholder="{% translate 'Search reference, charge or property…' %}"></label><select id="tp-status" aria-label="{% translate 'Filter by status' %}"><option value="">{% translate "All statuses" %}</option><option value="COMPLETED">{% translate "Completed" %}</option><option value="PENDING">{% translate "Pending" %}</option><option value="FAILED">{% translate "Failed" %}</option><option value="CANCELLED">{% translate "Cancelled" %}</option><option value="REFUNDED">{% translate "Refunded" %}</option></select></div>
+    <div class="tp-table-wrap"><div class="tp-table-head"><span>{% translate "Payment" %}</span><span>{% translate "Charge" %}</span><span>{% translate "Amount" %}</span><span>{% translate "Status" %}</span><span>{% translate "Date" %}</span><span></span></div>
+      <div id="tp-payment-list">
+      {% for payment in payments %}
+        <article class="tp-row" data-status="{{ payment.status }}" data-search="{{ payment.payment_number }} {{ payment.charge.get_charge_type_display }} {{ payment.charge.contract.unit }} {{ payment.charge.contract.unit.building.property_ref.name }}">
+          <div class="tp-reference"><span class="tp-icon"><i class="ti ti-credit-card"></i></span><span><strong>{{ payment.payment_number }}</strong><small>{{ payment.get_payment_method_display }}</small></span></div>
+          <div class="tp-charge-label"><strong>{{ payment.charge.get_charge_type_display }}</strong><small>{{ payment.charge.contract.unit }}</small></div>
+          <strong class="tp-amount">{{ payment.amount|floatformat:0 }} FCFA</strong>
+          <span class="tp-status tp-status-{{ payment.status|lower }}">{{ payment.get_status_display }}</span>
+          <time datetime="{{ payment.display_date|date:'c' }}">{{ payment.display_date|date:"d M Y" }}</time>
+          <a class="tp-row-link" href="{% url 'billing:tenant-payment-sync' payment.pk %}" aria-label="{% translate 'View payment status' %}"><i class="ti ti-chevron-right"></i></a>
+        </article>
+      {% empty %}<div class="tp-empty"><i class="ti ti-receipt"></i><strong>{% translate "No payment yet" %}</strong><span>{% translate "Your payment history will appear here." %}</span></div>{% endfor %}
+      </div>
+      <div class="tp-empty" id="tp-filter-empty" hidden><i class="ti ti-search-off"></i><strong>{% translate "No payment found" %}</strong><span>{% translate "Try another search or status." %}</span></div>
+    </div>
+    <footer class="tp-footer"><span id="tp-result-count">{{ payment_count }} {% translate "payments" %}</span><span>{% translate "Showing up to 100 recent transactions" %}</span></footer>
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<style>
+.tenant-payments{--tp-navy:#16283f;--tp-muted:#687486;--tp-border:#e7e9ed;--tp-bg:#f6f7f9;color:#1e293b}.tp-heading{display:flex;justify-content:space-between;align-items:flex-end;margin:4px 0 22px}.tp-eyebrow{font-size:10px;font-weight:700;letter-spacing:.12em;color:#a15b32}.tp-heading h2{font-size:25px;margin:7px 0 5px}.tp-heading p,.tp-panel-head p{font-size:12px;color:var(--tp-muted)}.tp-next{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 25px;background:var(--tp-navy);border-radius:14px;color:#fff;margin-bottom:16px}.tp-overline{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#bac6d4}.tp-next h3{font-size:18px;margin:7px 0}.tp-next p{font-size:12px;color:#bdc8d5}.tp-next-action{display:flex;align-items:flex-end;flex-direction:column;gap:10px;white-space:nowrap}.tp-next-action>strong{font-size:24px}.tp-button{min-height:37px;padding:0 13px;border:1px solid transparent;border-radius:8px;display:inline-flex;justify-content:center;align-items:center;gap:7px;text-decoration:none;font-size:11px;font-weight:700;cursor:pointer}.tp-button-light{background:#fff;color:var(--tp-navy)}.tp-button-primary{background:var(--tp-navy);color:#fff}.tp-button-outline{background:#fff;border-color:var(--tp-border);color:#344256}.tp-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-bottom:17px}.tp-stats article,.tp-panel{background:#fff;border:1px solid var(--tp-border);border-radius:12px}.tp-stats article{padding:16px}.tp-stats article span,.tp-stats article small{display:block;font-size:11px;color:var(--tp-muted)}.tp-stats article strong{display:block;font-size:21px;margin:8px 0 3px}.tp-panel{overflow:hidden;margin-bottom:16px}.tp-panel-head{padding:17px 19px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eef0f3}.tp-panel-head h3{font-size:14px;margin-bottom:4px}.tp-count{font-size:11px;background:#f0f3f6;border-radius:20px;padding:5px 9px}.tp-charge{display:grid;grid-template-columns:38px minmax(0,1fr) auto auto;align-items:center;gap:14px;padding:14px 19px;border-bottom:1px solid #eef0f3}.tp-charge:last-child{border-bottom:0}.tp-charge-icon,.tp-icon{width:36px;height:36px;display:grid;place-items:center;border-radius:9px;background:#f0f3f6;color:var(--tp-navy)}.tp-charge-info strong,.tp-charge-info span,.tp-charge-info small{display:block}.tp-charge-info strong{font-size:12px}.tp-charge-info span,.tp-charge-info small{font-size:10px;color:var(--tp-muted);margin-top:3px}.tp-charge-amount{font-size:12px;white-space:nowrap}.tp-filters{display:flex;gap:10px;padding:13px 18px}.tp-search{position:relative;flex:1}.tp-search i{position:absolute;left:11px;top:11px;color:#8a94a3}.tp-search input,.tp-filters select{height:36px;border:1px solid var(--tp-border);border-radius:8px;background:#fff;padding:0 10px;font:inherit;font-size:11px}.tp-search input{width:100%;padding-left:32px}.tp-filters select{min-width:150px}.tp-table-wrap{overflow:auto}.tp-table-head,.tp-row{min-width:740px;display:grid;grid-template-columns:1.35fr 1fr .9fr .9fr .8fr 28px;gap:12px;align-items:center;padding:12px 18px}.tp-table-head{background:#fafbfc;color:var(--tp-muted);font-size:10px;font-weight:700}.tp-row{border-top:1px solid #eef0f3;font-size:11px}.tp-reference{display:flex;align-items:center;gap:9px;min-width:0}.tp-icon{width:32px;height:32px;flex-shrink:0}.tp-reference strong,.tp-reference small,.tp-charge-label strong,.tp-charge-label small{display:block}.tp-reference strong,.tp-charge-label strong{font-size:11px}.tp-reference small,.tp-charge-label small{font-size:10px;color:var(--tp-muted);margin-top:3px}.tp-amount{white-space:nowrap}.tp-status{justify-self:start;padding:5px 8px;border-radius:18px;font-size:10px;white-space:nowrap;background:#f0f3f6;color:#586476}.tp-status-completed{background:#edf8f1;color:#27834a}.tp-status-pending{background:#fff7e8;color:#a46b0a}.tp-status-failed,.tp-status-cancelled{background:#fff0f0;color:#c33f3f}.tp-row time{font-size:10px;color:var(--tp-muted);white-space:nowrap}.tp-row-link{color:var(--tp-muted);text-align:center}.tp-empty{padding:38px 15px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--tp-muted);font-size:11px}.tp-empty>i{font-size:22px;color:var(--tp-navy)}.tp-empty strong{color:#243247;font-size:13px}.tp-footer{display:flex;justify-content:space-between;padding:12px 18px;border-top:1px solid #eef0f3;color:var(--tp-muted);font-size:10px}[hidden]{display:none!important}@media(max-width:700px){.tp-stats{grid-template-columns:1fr}.tp-next{align-items:flex-start;flex-direction:column}.tp-next-action{align-items:flex-start}.tp-charge{grid-template-columns:36px minmax(0,1fr) auto}.tp-charge-amount{grid-column:2}.tp-charge .tp-button{grid-column:3;grid-row:1/3}.tp-history-head{gap:8px;align-items:flex-start}.tp-footer{gap:8px;flex-direction:column}}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+(()=>{const rows=[...document.querySelectorAll('.tp-row')],search=document.getElementById('tp-search'),status=document.getElementById('tp-status'),empty=document.getElementById('tp-filter-empty'),count=document.getElementById('tp-result-count');if(!search||!status)return;const filter=()=>{const q=search.value.trim().toLowerCase();let shown=0;rows.forEach(row=>{const match=(!q||row.dataset.search.toLowerCase().includes(q))&&(!status.value||row.dataset.status===status.value);row.hidden=!match;if(match)shown++});empty.hidden=shown!==0;count.textContent=`${shown} ${shown===1?'payment':'payments'}`};search.addEventListener('input',filter);status.addEventListener('change',filter);document.getElementById('tp-export')?.addEventListener('click',()=>{const visible=rows.filter(row=>!row.hidden);const csv=[['Reference','Charge','Amount','Status','Date'],...visible.map(row=>[row.querySelector('.tp-reference strong')?.innerText,row.querySelector('.tp-charge-label strong')?.innerText,row.querySelector('.tp-amount')?.innerText,row.querySelector('.tp-status')?.innerText,row.querySelector('time')?.innerText])].map(line=>line.map(value=>`"${(value||'').replaceAll('"','""')}"`).join(',')).join('\n');const link=document.createElement('a');link.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));link.download='roomrun-mes-paiements.csv';link.click();URL.revokeObjectURL(link.href)})})();
+</script>
+{% endblock %}

@@ -12,10 +12,22 @@ from rentals.views.ten_ren_views import RentalApplicationDetailView
 from rentals.views.ten_ren_views import RentalApplicationListView
 from rentals.views.ten_ren_views import TenantLeaseDetailView
 from rentals.views.ten_ren_views import TenantRentalContractSignView
+from rentals.views.document_views import LeaseDocumentPreviewView
+from rentals.views.document_views import LeasePDFView
 
 app_name = "rentals"
 
 urlpatterns = [
+    path(
+        "contracts/<uuid:pk>/document/",
+        LeaseDocumentPreviewView.as_view(),
+        name="lease-document",
+    ),
+    path(
+        "contracts/<uuid:pk>/document/pdf/",
+        LeasePDFView.as_view(),
+        name="lease-pdf",
+    ),
     path(
         "applications/",
         RentalApplicationListView.as_view(),

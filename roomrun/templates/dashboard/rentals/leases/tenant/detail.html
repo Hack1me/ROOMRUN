@@ -134,7 +134,7 @@
             {% endif %}
           </div>
           <div class="lease-action-buttons">
-            <a href="{% url 'rentals:landlord-rental-contract-detail' contract.pk %}" class="btn btn-secondary">
+            <a href="{% url 'rentals:lease-document' contract.pk %}" class="btn btn-secondary">
               <i class="ti ti-file-description"></i>
               {% translate "View contract" %}
             </a>
@@ -254,7 +254,7 @@
         <section class="card">
           <div class="card-header">
             <div class="card-title">{% translate "Lease details" %}</div>
-            <a href="{% url 'rentals:landlord-rental-contract-detail' contract.pk %}" class="btn btn-secondary">
+            <a href="{% url 'rentals:lease-document' contract.pk %}" class="btn btn-secondary">
               {% translate "View contract" %}
             </a>
           </div>

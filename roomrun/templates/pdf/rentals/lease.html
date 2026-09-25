@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROOMRUN — Contrat de bail {{ lease.contract_number }}</title>
+  <style>
+    *{box-sizing:border-box}:root{--ink:#171717;--muted:#555;--line:#bdbdbd;--paper:#fff;--background:#e8e8e8}
+    html{font-size:16px}body{margin:0;background:var(--background);color:var(--ink);font-family:Georgia,"Times New Roman",serif}
+    .toolbar{height:58px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;background:#fff;border-bottom:1px solid #d5d5d5;font-family:Arial,sans-serif}
+    .toolbar-title{font-size:13px;font-weight:600}.toolbar-reference{margin-top:3px;font-size:11px;color:#777}
+    .toolbar-actions{display:flex;align-items:center;gap:9px}.print-button,.download-button{padding:8px 15px;border:1px solid #222;background:#fff;color:#222;font:600 12px Arial,sans-serif;cursor:pointer;text-decoration:none}
+    .print-button:hover,.download-button:hover{background:#222;color:#fff}
+    .document{width:210mm;min-height:297mm;margin:35px auto;padding:22mm 24mm 20mm;background:var(--paper);box-shadow:0 4px 22px #0000001a}
+    .header{text-align:center;margin-bottom:38px}.brand{margin-bottom:24px;font:700 15px Arial,sans-serif;letter-spacing:4px}
+    .title{margin:0;font-size:18px;letter-spacing:.3px}.subtitle{margin-top:7px;font-size:12px;font-style:italic;color:#444}
+    .reference{margin-top:20px;font:11px Arial,sans-serif;color:#444}.document p{margin:0 0 17px;font-size:12.5px;line-height:1.8;text-align:justify}
+    .section-title{margin:28px 0 10px;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.25px}
+    .parties{margin-top:25px}.party{margin-bottom:18px}.party-label{margin-bottom:5px;font-size:11.5px;font-weight:700}.party p{margin-bottom:4px;font-size:12px;line-height:1.55}
+    .financial-table{width:100%;margin:14px 0 22px;border-collapse:collapse;font-size:11.5px}.financial-table td{padding:8px 9px;border:1px solid var(--line)}
+    .financial-table td:first-child{width:55%;font-weight:600}.financial-table td:last-child{text-align:right}
+    .signature-section{margin-top:45px;break-inside:avoid}.signature-introduction{margin-bottom:32px!important}
+    .signatures{display:grid;grid-template-columns:1fr 1fr;gap:50px}.signature{text-align:center}.signature-title{margin-bottom:7px;font-size:11.5px;font-weight:700}
+    .signature-note{font-size:10.5px;font-style:italic}.signature-space{height:90px;margin-top:10px;border-bottom:1px solid #222}.signature-name{margin-top:8px;font-size:11px}
+    .footer{margin-top:42px;padding-top:9px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;font:8.5px Arial,sans-serif;color:#666}
+    @page{size:A4;margin:0}
+    @media screen and (max-width:850px){.toolbar{padding:0 14px}.document{width:calc(100% - 24px);margin:12px;padding:38px 25px}.signatures{grid-template-columns:1fr;gap:35px}}
+    @media print{body{background:#fff}.toolbar{display:none}.document{width:210mm;min-height:297mm;margin:0;padding:20mm 23mm;box-shadow:none}}
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <div><div class="toolbar-title">Contrat de bail</div><div class="toolbar-reference">{{ lease.contract_number }}</div></div>
+    <div class="toolbar-actions">
+      <button class="print-button" type="button" onclick="window.print()">Imprimer / PDF</button>
+      <a class="download-button" href="{% url 'rentals:lease-pdf' lease.pk %}">Télécharger le PDF</a>
+    </div>
+  </div>
+
+  <main class="document">
+    <header class="header">
+      <div class="brand">ROOMRUN</div><h1 class="title">CONTRAT DE BAIL</h1>
+      <div class="subtitle">À usage d'habitation</div>
+      <div class="reference">Contrat n° <strong>{{ lease.contract_number }}</strong></div>
+    </header>
+
+    <section class="parties">
+      <div class="section-title">Entre les soussignés</div>
+      <div class="party">
+        <div class="party-label">LE BAILLEUR</div>
+        <p><strong>{{ lease.unit.building.property_ref.landlord.user.full_name|default:lease.unit.building.property_ref.landlord.user.email }}</strong>, référence {{ lease.unit.building.property_ref.landlord.landlord_number }}, demeurant à {{ lease.unit.building.property_ref.address }}{% if lease.unit.building.property_ref.city %}, {{ lease.unit.building.property_ref.city }}{% endif %}{% if lease.unit.building.property_ref.country %}, {{ lease.unit.building.property_ref.country.name }}{% endif %}, téléphone {{ lease.unit.building.property_ref.landlord.user.phone|default:"non renseigné" }}.</p>
+      </div>
+      <div class="party">
+        <div class="party-label">LE LOCATAIRE</div>
+        <p><strong>{{ lease.tenant.user.full_name|default:lease.tenant.user.email }}</strong>, référence {{ lease.tenant.tenant_number }}, téléphone {{ lease.tenant.user.phone|default:"non renseigné" }}{% if lease.tenant.nationality %}, nationalité {{ lease.tenant.nationality }}{% endif %}, ci-après désigné « le Locataire ».</p>
+      </div>
+    </section>
+
+    <p>Les parties déclarent conclure le présent contrat de bail relativement au logement décrit ci-dessous et conviennent librement des conditions de sa location, sous réserve des dispositions légales et réglementaires applicables.</p>
+
+    <div class="section-title">Objet du contrat</div>
+    <p>Le Bailleur donne en location au Locataire, qui accepte, le logement situé à la <strong>{{ lease.unit.building.property_ref.name }}</strong>, <strong>{{ lease.unit.building.name }}</strong>, <strong>Appartement {{ lease.unit.unit_number }}</strong>, à usage exclusif d'habitation. Le Locataire s'engage à utiliser les lieux conformément à leur destination et à respecter les règles applicables à l'immeuble ainsi que les conditions convenues avec le Bailleur.</p>
+
+    <div class="section-title">Durée et conditions financières</div>
+    <p>Le présent bail prend effet le <strong>{{ lease.start_date|date:"d/m/Y" }}</strong>{% if lease.end_date %} et prend fin le <strong>{{ lease.end_date|date:"d/m/Y" }}</strong>{% else %} pour une durée indéterminée{% endif %}. Le loyer mensuel est fixé à <strong>{{ lease.monthly_rent.amount|floatformat:0 }} {{ lease.monthly_rent.currency }}</strong>. Le Locataire verse également un dépôt de garantie de <strong>{{ lease.deposit.amount|floatformat:0 }} {{ lease.deposit.currency }}</strong> ainsi qu'une avance correspondant à {{ lease.advance_rent_months }} mois de loyer, soit <strong>{{ advance_total.amount|floatformat:0 }} {{ advance_total.currency }}</strong>.</p>
+
+    <table class="financial-table">
+      <tr><td>Loyer mensuel</td><td>{{ lease.monthly_rent.amount|floatformat:0 }} {{ lease.monthly_rent.currency }}</td></tr>
+      <tr><td>Dépôt de garantie</td><td>{{ lease.deposit.amount|floatformat:0 }} {{ lease.deposit.currency }}</td></tr>
+      <tr><td>Avance de loyer ({{ lease.advance_rent_months }} mois)</td><td>{{ advance_total.amount|floatformat:0 }} {{ advance_total.currency }}</td></tr>
+      <tr><td>Total initial</td><td><strong>{{ lease.initial_payment.amount|floatformat:0 }} {{ lease.initial_payment.currency }}</strong></td></tr>
+    </table>
+
+    <div class="section-title">Obligations des parties</div>
+    <p>Le Bailleur s'engage à permettre au Locataire la jouissance paisible du logement et à accomplir les obligations qui lui incombent. Le Locataire s'engage à payer régulièrement le loyer et les charges convenues, à préserver le logement, à signaler toute dégradation ou anomalie et à respecter les règles de la résidence. Les consommations et charges relatives notamment à l'eau, à l'électricité, au gaz ou à Internet sont supportées conformément aux conditions convenues entre les parties.</p>
+
+    <div class="section-title">État des lieux et restitution</div>
+    <p>Un état des lieux peut être établi lors de l'entrée dans les lieux et lors de leur restitution. À la fin du bail, le Locataire s'engage à restituer le logement dans un état compatible avec son usage normal, sous réserve de l'usure normale et des obligations respectives des parties.</p>
+
+    <div class="section-title">Fin du contrat et différends</div>
+    <p>Toute résiliation du présent contrat intervient conformément aux conditions convenues entre les parties et aux dispositions applicables. En cas de différend relatif à l'interprétation ou à l'exécution du présent contrat, les parties s'efforceront prioritairement de rechercher une solution amiable avant tout recours auprès des juridictions compétentes.</p>
+
+    <div class="section-title">Dispositions finales</div>
+    <p>Les parties déclarent avoir pris connaissance du présent contrat, en comprendre les conditions et les accepter. Toute modification du présent contrat devra être constatée conformément aux conditions applicables.</p>
+
+    <section class="signature-section">
+      <p class="signature-introduction">Fait à ________________________________, le ________________________________.<br><br>Les parties reconnaissent avoir pris connaissance du présent contrat et l'accepter.</p>
+      <div class="signatures">
+        <div class="signature"><div class="signature-title">LE BAILLEUR</div><div class="signature-note">{% if lease.landlord_signature %}Signature électronique enregistrée le {{ lease.landlord_signed_at|date:"d/m/Y à H:i" }}{% else %}« Lu et approuvé »{% endif %}</div><div class="signature-space"></div><div class="signature-name">{{ lease.unit.building.property_ref.landlord.user.full_name|default:lease.unit.building.property_ref.landlord.user.email }}</div></div>
+        <div class="signature"><div class="signature-title">LE LOCATAIRE</div><div class="signature-note">{% if lease.tenant_signature %}Signature électronique enregistrée le {{ lease.tenant_signed_at|date:"d/m/Y à H:i" }}{% else %}« Lu et approuvé »{% endif %}</div><div class="signature-space"></div><div class="signature-name">{{ lease.tenant.user.full_name|default:lease.tenant.user.email }}</div></div>
+      </div>
+    </section>
+    <footer class="footer"><span>ROOMRUN</span><span>Contrat n° {{ lease.contract_number }}</span><span>Document généré électroniquement le {{ document_date|date:"d/m/Y" }}</span></footer>
+  </main>
+</body>
+</html>

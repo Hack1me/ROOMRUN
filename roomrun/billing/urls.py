@@ -1,4 +1,5 @@
 from billing.views import CamPayWebhookView
+from billing.views import DigiPayWebhookView
 from billing.views import TenantChargeListView
 from billing.views import TenantContractPaymentView
 from billing.views import TenantPaymentInitiateView
@@ -30,6 +31,11 @@ urlpatterns = [
         "webhook/campay/",
         CamPayWebhookView.as_view(),
         name="campay-webhook",
+    ),
+    path(
+        "webhook/digipay/",
+        DigiPayWebhookView.as_view(),
+        name="digipay-webhook",
     ),
     # Autres routes (à ajouter plus tard) :
     # path("payments/", PaymentListView.as_view(), name="payment-list"),  # noqa: ERA001
