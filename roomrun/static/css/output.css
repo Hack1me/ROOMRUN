@@ -457,9 +457,6 @@
   .inline {
     display: inline;
   }
-  .inline-block {
-    display: inline-block;
-  }
   .inline-flex {
     display: inline-flex;
   }
@@ -469,21 +466,9 @@
   .table {
     display: table;
   }
-  .size-1\.5 {
-    width: calc(var(--spacing) * 1.5);
-    height: calc(var(--spacing) * 1.5);
-  }
   .size-2\.5 {
     width: calc(var(--spacing) * 2.5);
     height: calc(var(--spacing) * 2.5);
-  }
-  .size-4 {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
-  }
-  .size-5 {
-    width: calc(var(--spacing) * 5);
-    height: calc(var(--spacing) * 5);
   }
   .size-6 {
     width: calc(var(--spacing) * 6);
@@ -665,9 +650,6 @@
   .w-px {
     width: 1px;
   }
-  .max-w-2xl {
-    max-width: var(--container-2xl);
-  }
   .max-w-3xl {
     max-width: var(--container-3xl);
   }
@@ -697,6 +679,9 @@
   }
   .min-w-47\.5 {
     min-width: calc(var(--spacing) * 47.5);
+  }
+  .min-w-180 {
+    min-width: calc(var(--spacing) * 180);
   }
   .min-w-200 {
     min-width: calc(var(--spacing) * 200);
@@ -887,11 +872,6 @@
     margin-block-start: calc(calc(var(--spacing) * 8) * var(--tw-space-y-reverse));
     margin-block-end: calc(calc(var(--spacing) * 8) * calc(1 - var(--tw-space-y-reverse)));
   }
-  :where(.space-y-10 > :not(:last-child)) {
-    --tw-space-y-reverse: 0;
-    margin-block-start: calc(calc(var(--spacing) * 10) * var(--tw-space-y-reverse));
-    margin-block-end: calc(calc(var(--spacing) * 10) * calc(1 - var(--tw-space-y-reverse)));
-  }
   :where(.divide-y > :not(:last-child)) {
     --tw-divide-y-reverse: 0;
     border-bottom-style: var(--tw-border-style);
@@ -913,9 +893,6 @@
   }
   .rounded {
     border-radius: 0.25rem;
-  }
-  .rounded-2xl {
-    border-radius: var(--radius-2xl);
   }
   .rounded-\[6px\] {
     border-radius: 6px;
@@ -1052,19 +1029,10 @@
       background-color: color-mix(in oklab, var(--color-danger) 10%, transparent);
     }
   }
-  .bg-paper {
-    background-color: var(--color-paper);
-  }
   .bg-paper\/92 {
     background-color: color-mix(in srgb, #fcfcfb 92%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-paper) 92%, transparent);
-    }
-  }
-  .bg-paper\/95 {
-    background-color: color-mix(in srgb, #fcfcfb 95%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--color-paper) 95%, transparent);
     }
   }
   .bg-primary {
@@ -1255,9 +1223,6 @@
   }
   .py-14 {
     padding-block: calc(var(--spacing) * 14);
-  }
-  .py-16 {
-    padding-block: calc(var(--spacing) * 16);
   }
   .py-\[9px\] {
     padding-block: 9px;
@@ -1925,9 +1890,6 @@
     .sm\:flex {
       display: flex;
     }
-    .sm\:inline {
-      display: inline;
-    }
     .sm\:grid-cols-2 {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -1946,17 +1908,11 @@
     .sm\:p-8 {
       padding: calc(var(--spacing) * 8);
     }
-    .sm\:p-10 {
-      padding: calc(var(--spacing) * 10);
-    }
     .sm\:p-12 {
       padding: calc(var(--spacing) * 12);
     }
     .sm\:py-18 {
       padding-block: calc(var(--spacing) * 18);
-    }
-    .sm\:py-24 {
-      padding-block: calc(var(--spacing) * 24);
     }
     .sm\:text-5xl {
       font-size: var(--text-5xl);
@@ -1964,8 +1920,23 @@
     }
   }
   @media (width >= 48rem) {
+    .md\:col-span-2 {
+      grid-column: span 2 / span 2;
+    }
+    .md\:col-span-3 {
+      grid-column: span 3 / span 3;
+    }
     .md\:flex {
       display: flex;
+    }
+    .md\:grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .md\:grid-cols-\[1fr_220px_auto\] {
+      grid-template-columns: 1fr 220px auto;
+    }
+    .md\:items-end {
+      align-items: flex-end;
     }
   }
   @media (width >= 64rem) {

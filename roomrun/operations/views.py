@@ -1,28 +1,27 @@
 from django import forms
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
-from django.core.exceptions import PermissionDenied
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import CreateView
-from django.urls import reverse
 from django.views.generic import DetailView
 from django.views.generic import ListView
 from django.views.generic import UpdateView
 from operations.models import CleaningSchedule
+from operations.models import VisitorVisit
 from properties.mixins import LandlordRequiredMixin
 from properties.models import Building
 from rentals.mixins import TenantRequiredMixin
 from rentals.models import RentalContract
-from operations.models import VisitorVisit
 from utils.enums import CleaningStatus
 from utils.enums import ContractStatus
 from utils.enums import EmployeeStatus
-
 from utils.enums import VisitorStatus
 
 
@@ -213,7 +212,7 @@ class VisitorInvitationForm(forms.ModelForm):
     def __init__(self, *args, buildings, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["building"].queryset = buildings
-        for name, field in self.fields.items():
+        for field in self.fields.values():
             field.widget.attrs.setdefault("class", "rr-input")
         self.fields["purpose"].widget.attrs["placeholder"] = _("Reason for the visit")
 
@@ -301,7 +300,13 @@ class GuardCheckInForm(forms.ModelForm):
 
     class Meta:
         model = VisitorVisit
-        fields = ("building", "visitor_name", "visitor_phone", "purpose", "check_in_note")
+        fields = (
+            "building",
+            "visitor_name",
+            "visitor_phone",
+            "purpose",
+            "check_in_note",
+        )
         widgets = {
             "purpose": forms.Textarea(attrs={"rows": 3}),
             "check_in_note": forms.Textarea(attrs={"rows": 3}),
@@ -352,13 +357,17 @@ class GuardVisitorHistoryView(GuardVisitorMixin, ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return self.get_guard_visits().filter(
-            status__in=[
-                VisitorStatus.CHECKED_OUT,
-                VisitorStatus.DENIED,
-                VisitorStatus.CANCELLED,
-            ]
-        ).order_by("-updated_at")
+        return (
+            self.get_guard_visits()
+            .filter(
+                status__in=[
+                    VisitorStatus.CHECKED_OUT,
+                    VisitorStatus.DENIED,
+                    VisitorStatus.CANCELLED,
+                ]
+            )
+            .order_by("-updated_at")
+        )
 
 
 class GuardVisitorStatusView(GuardVisitorMixin, View):
@@ -385,4 +394,3 @@ class GuardVisitorStatusView(GuardVisitorMixin, View):
         visit.save()
         messages.success(request, _("Visitor status updated."))
         return redirect("operations:guard-visitors")
-

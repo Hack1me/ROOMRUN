@@ -43,11 +43,11 @@
       </a>
       <a href="{% url 'rentals:landlord-rental-application-list' %}" class="nav-item{% if current_url == 'landlord-rental-application-list' or current_url == 'landlord-rental-application-detail' %} active{% endif %}">
         <i class="ti ti-inbox"></i>
+        <span>{% translate "Applications" %}</span>
+      </a>
       <a href="{% url 'dashboard:invitation-list' %}" class="nav-item{% if current_url == 'invitation-list' %} active{% endif %}">
         <i class="ti ti-mail-forward"></i>
-        <span>{% translate "Invitations" %}</span>
-      </a>
-        <span>{% translate "Applications" %}</span>
+        <span>{% translate "Invitations" %}</span
       </a>
       <a href="{% url 'rentals:landlord-rental-contract-list' %}" class="nav-item{% if current_url == 'landlord-rental-contract-list' or current_url == 'landlord-rental-contract-create' or current_url == 'landlord-rental-contract-detail' %} active{% endif %}">
         <i class="ti ti-file-text"></i><span>{% translate "Leases" %}</span>
