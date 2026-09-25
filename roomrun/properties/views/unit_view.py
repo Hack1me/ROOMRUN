@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
@@ -9,7 +11,6 @@ from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from djmoney.money import Money
-from uuid import UUID
 from properties.forms import PropertyImageForm
 from properties.forms import UnitForm
 from properties.mixins import LandlordUnitAccessMixin

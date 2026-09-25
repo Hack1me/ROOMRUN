@@ -392,7 +392,13 @@ class GuardVisitorStatusView(GuardVisitorMixin, View):
     @transaction.atomic
     def post(self, request, pk):
         guard = self.get_guard()
-        visit = get_object_or_404(self.get_guard_visits().select_for_update(), pk=pk)
+        # Lock only the visitor row: related guard fields are nullable joins,
+        # and PostgreSQL cannot apply FOR UPDATE to the nullable side of those
+        # joins when select_related() is present.
+        visit = get_object_or_404(
+            self.get_guard_visits().select_for_update(of=("self",)),
+            pk=pk,
+        )
         action = request.POST.get("action")
         now = timezone.now()
         if action == "check-in" and visit.status == VisitorStatus.EXPECTED:
