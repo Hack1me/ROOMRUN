@@ -169,6 +169,34 @@
         </section>
       {% endif %}
 
+      {% if contract.status == 'ACTIVE' and contract.end_date %}
+        <section class="section card space-y-4 p-5">
+          <h2 class="section-title">{% translate "Extend this contract" %}</h2>
+          {% if extension_requests %}
+            <div class="space-y-3">
+              {% for extension in extension_requests %}
+                <div class="rounded-lg border border-line p-4">
+                  <p><strong>{% translate "Requested end date" %}:</strong> {{ extension.requested_end_date|date:"d F Y" }}</p>
+                  <p><strong>{% translate "Status" %}:</strong> {{ extension.get_status_display }}</p>
+                  {% if extension.approved_amount %}<p><strong>{% translate "Extension fee" %}:</strong> {{ extension.approved_amount }}</p>{% endif %}
+                  {% if extension.status == 'APPROVED' and extension.payment_charge %}
+                    <a class="btn btn-primary mt-3" href="{% url 'billing:tenant-payment-initiate' extension.payment_charge.slug %}">{% translate "Pay extension fee" %}</a>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+          {% if not extension_requests or extension_requests.0.status == 'REJECTED' or extension_requests.0.status == 'PAID' %}
+            <form method="post" action="{% url 'rentals:tenant-extension-request' contract.slug %}" class="space-y-3">
+              {% csrf_token %}
+              <label for="requested-end-date" class="detail-label">{% translate "New contract end date" %}</label>
+              <input id="requested-end-date" type="date" name="requested_end_date" min="{{ contract.end_date|date:'Y-m-d' }}" required class="form-control">
+              <button class="btn btn-primary" type="submit">{% translate "Request extension" %}</button>
+            </form>
+          {% endif %}
+        </section>
+      {% endif %}
+
       <!-- CONTRACT SUMMARY -->
       <section class="section">
         <h2 class="section-title">{% translate "Contract summary" %}</h2>

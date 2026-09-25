@@ -1,3 +1,4 @@
+from billing.models import Charge
 from communications.services.notification_ser import send_notification
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -12,12 +13,14 @@ from django.views.generic import CreateView
 from django.views.generic import DetailView
 from django.views.generic import FormView
 from django.views.generic import ListView
+from rentals.forms import ContractExtensionRequestForm
 from rentals.forms import RentalApplicationForm
 from rentals.forms import TenantContractSignatureForm
 from rentals.mixins import TenantApplicationQuerysetMixin
 from rentals.mixins import TenantRequiredMixin
 from rentals.models import RentalApplication
 from rentals.models import RentalContract
+from rentals.services import ContractExtensionService
 from rentals.services import RentalApplicationService
 from rentals.services import RentalContractService
 from utils.enums import ContractStatus
@@ -133,6 +136,20 @@ class TenantLeaseDetailView(LoginRequiredMixin, DetailView):
             context["initial_payment_due"] = (
                 RentalContractService.calculate_initial_payment(contract=contract)
             )
+        extensions = list(contract.extension_requests.all())
+        charges = {
+            charge.pk: charge
+            for charge in Charge.objects.filter(
+                pk__in=[
+                    item.payment_charge_id
+                    for item in extensions
+                    if item.payment_charge_id
+                ]
+            )
+        }
+        for extension in extensions:
+            extension.payment_charge = charges.get(extension.payment_charge_id)
+        context["extension_requests"] = extensions
         return context
 
     def get_queryset(self):
@@ -232,3 +249,49 @@ class RentalContractTerminateView(LoginRequiredMixin, View):
         if request.user.pk == contract.tenant.user_id:
             return redirect("rentals:tenant-lease-detail")
         return redirect("rentals:landlord-rental-contract-detail", pk=contract.slug)
+
+
+class TenantContractExtensionRequestView(TenantRequiredMixin, View):
+    def post(self, request, pk):
+        contract = get_object_or_404(
+            RentalContract.objects.select_related(
+                "unit__building__property_ref__landlord__user"
+            ),
+            pk=pk,
+            tenant=self.get_tenant(),
+        )
+        form = ContractExtensionRequestForm(request.POST)
+        if not form.is_valid():
+            for errors in form.errors.values():
+                for error in errors:
+                    messages.error(request, error)
+            return redirect("rentals:tenant-lease-detail")
+        try:
+            extension = ContractExtensionService.request_extension(
+                contract=contract,
+                tenant=self.get_tenant(),
+                requested_end_date=form.cleaned_data["requested_end_date"],
+            )
+        except ValidationError as exc:
+            for error in exc.messages:
+                messages.error(request, error)
+            return redirect("rentals:tenant-lease-detail")
+        send_notification(
+            recipient=contract.unit.building.property_ref.landlord.user,
+            title=_("Contract extension requested"),
+            message=(
+                _(
+                    "%(tenant)s requested to extend contract %(contract)s "
+                    "until %(date)s."
+                )
+            )
+            % {
+                "tenant": request.user.full_name,
+                "contract": contract.contract_number,
+                "date": extension.requested_end_date,
+            },
+            notification_type=NotificationType.SYSTEM,
+            related_object=extension,
+        )
+        messages.success(request, _("Your extension request was sent to the landlord."))
+        return redirect("rentals:tenant-lease-detail")

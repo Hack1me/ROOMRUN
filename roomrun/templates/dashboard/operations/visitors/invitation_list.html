@@ -35,11 +35,11 @@
     <div class="overflow-x-auto">
       <table class="w-full min-w-180 text-left text-sm">
         <thead class="bg-bg text-xs uppercase tracking-wide text-muted">
-          <tr><th class="px-6 py-3">{% translate "Visitor" %}</th><th class="px-6 py-3">{% translate "Residence" %}</th><th class="px-6 py-3">{% translate "Expected" %}</th><th class="px-6 py-3">{% translate "Status" %}</th><th class="px-6 py-3"></th></tr>
+          <tr><th class="px-6 py-3">{% translate "Visitor" %}</th><th class="px-6 py-3">{% translate "Residence" %}</th><th class="px-6 py-3">{% translate "Expected" %}</th><th class="px-6 py-3">{% translate "Status" %}</th><th class="px-6 py-3">{% translate "Visitor QR" %}</th><th class="px-6 py-3"></th></tr>
         </thead>
         <tbody class="divide-y divide-line">
           {% for visit in visits %}
-            <tr><td class="px-6 py-4 font-medium text-primary">{{ visit.visitor_name }}<span class="mt-1 block text-xs text-muted">{{ visit.visit_number }}</span></td><td class="px-6 py-4">{{ visit.building }}</td><td class="px-6 py-4">{{ visit.expected_arrival|date:"d/m/Y H:i" }}</td><td class="px-6 py-4">{{ visit.get_status_display }}</td><td class="px-6 py-4">{% if visit.status == "EXPECTED" %}<form method="post" action="{% url 'operations:visitor-invitation-cancel' visit.slug %}">{% csrf_token %}<button class="text-sm text-danger hover:underline">{% translate "Cancel" %}</button></form>{% endif %}</td></tr>
+            <tr><td class="px-6 py-4 font-medium text-primary">{{ visit.visitor_name }}<span class="mt-1 block text-xs text-muted">{{ visit.visit_number }}</span></td><td class="px-6 py-4">{{ visit.building }}</td><td class="px-6 py-4">{{ visit.expected_arrival|date:"d/m/Y H:i" }}</td><td class="px-6 py-4">{{ visit.get_status_display }}</td><td class="px-6 py-4">{% if visit.qr_data_uri %}<img src="{{ visit.qr_data_uri }}" alt="{% translate 'Visitor access QR code' %}" width="112" height="112" loading="lazy"><span class="block max-w-36 text-xs text-muted">{% translate "Show this code at the gate for check-in and check-out." %}</span>{% else %}—{% endif %}</td><td class="px-6 py-4">{% if visit.status == "EXPECTED" %}<form method="post" action="{% url 'operations:visitor-invitation-cancel' visit.slug %}">{% csrf_token %}<button class="text-sm text-danger hover:underline">{% translate "Cancel" %}</button></form>{% endif %}</td></tr>
           {% empty %}
             <tr><td class="px-6 py-8 text-center text-muted" colspan="5">{% translate "No visitor invitation yet." %}</td></tr>
           {% endfor %}
