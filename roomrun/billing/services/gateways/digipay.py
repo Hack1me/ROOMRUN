@@ -22,8 +22,17 @@ class DigiPayGateway(PaymentGateway):
     provider = "DIGIPAY"
 
     def __init__(self) -> None:
+        if settings.DIGIPAY_ENVIRONMENT not in {"production", "sandbox"}:
+            message = "DIGIPAY_ENVIRONMENT must be 'production' or 'sandbox'."
+            raise PaymentGatewayError(message)
+        if not settings.DIGIPAY_API_KEY:
+            message = "No DigiPay API key is configured for the selected environment."
+            raise PaymentGatewayError(message)
         try:
-            self.client = DigiPay(api_key=settings.DIGIPAY_API_KEY)
+            self.client = DigiPay(
+                api_key=settings.DIGIPAY_API_KEY,
+                environment=settings.DIGIPAY_ENVIRONMENT,
+            )
         except Exception as exc:
             msg = "DigiPay is not configured correctly."
             raise PaymentGatewayError(msg) from exc
@@ -62,19 +71,28 @@ class DigiPayGateway(PaymentGateway):
                 metadata=provider_metadata,
                 webhook_url=settings.DIGIPAY_WEBHOOK_URL or None,
             )
+            transaction_id = response.get("transaction_id")
+            if not transaction_id:
+                detail = response.get("message") or response.get("error")
+                message = str(detail or "DigiPay did not return a transaction ID.")
+                raise PaymentGatewayError(message)  # noqa: TRY301
+            status = str(response.get("status", "PENDING")).upper()
+            if status in {"FAILED", "FAILURE", "REJECTED", "ERROR"}:
+                detail = response.get("message") or response.get("error")
+                message = str(detail or "DigiPay rejected the payment request.")
+                raise PaymentGatewayError(message)  # noqa: TRY301
         except Exception as exc:
+            if isinstance(exc, PaymentGatewayError):
+                raise
             logger.exception("DigiPay initiate failed | ref=%s", external_reference)
-            raise PaymentGatewayError(str(exc)) from exc
+            detail = str(exc).replace(settings.DIGIPAY_API_KEY, "[hidden]")
+            raise PaymentGatewayError(detail) from exc
 
-        transaction_id = response.get("transaction_id")
-        if not transaction_id:
-            msg = "DigiPay did not return a transaction identifier."
-            raise PaymentGatewayError(msg)
         logger.info("DigiPay initiate OK | ref=%s", external_reference)
 
         return GatewayInitResult(
             transaction_id=transaction_id,
-            status=str(response.get("status", "PENDING")).upper(),
+            status=status,
             raw=response,
         )
 

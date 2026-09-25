@@ -1,12 +1,13 @@
-import contextlib
 import json
 import logging
 from datetime import date
 from datetime import timedelta
 
+from billing.forms import LandlordChargeForm
 from billing.models import Charge
 from billing.models import Payment
 from billing.models import Withdrawal
+from billing.services.charge_service import ChargeService
 from billing.services.payment_service import PaymentService
 from billing.services.payment_service import PaymentServiceError
 from django import forms
@@ -25,6 +26,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import FormView
 from django.views.generic import ListView
 from djmoney.money import Money
 from phonenumber_field.formfields import PhoneNumberField
@@ -185,6 +187,52 @@ class TenantChargeListView(TenantRequiredMixin, ListView):
         return context
 
 
+class LandlordChargeListView(LandlordRequiredMixin, ListView):
+    template_name = "dashboard/billing/landlord/charge_list.html"
+    context_object_name = "charges"
+    paginate_by = 25
+
+    def get_queryset(self):
+        return (
+            Charge.objects.filter(
+                contract__unit__building__property_ref__landlord=self.get_landlord()
+            )
+            .select_related(
+                "contract__tenant__user",
+                "contract__unit__building__property_ref",
+            )
+            .order_by("-created_at")
+        )
+
+
+class LandlordChargeCreateView(LandlordRequiredMixin, FormView):
+    template_name = "dashboard/billing/landlord/charge_form.html"
+    form_class = LandlordChargeForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["landlord"] = self.get_landlord()
+        return kwargs
+
+    def form_valid(self, form):
+        try:
+            charge = ChargeService.create_for_landlord(
+                landlord=self.get_landlord(),
+                data=form.cleaned_data,
+                actor=self.request.user,
+            )
+        except ValidationError as exc:
+            for error in exc.messages:
+                form.add_error(None, error)
+            return self.form_invalid(form)
+        messages.success(
+            self.request,
+            _("Charge %(number)s was created and the tenant was notified.")
+            % {"number": charge.charge_number},
+        )
+        return redirect("billing:landlord-charge-list")
+
+
 class TenantContractPaymentView(TenantRequiredMixin, View):
     """Prepare or resume the initial payment for the tenant's signed contract."""
 
@@ -259,25 +307,26 @@ class TenantPaymentInitiateView(TenantRequiredMixin, View):
         ).first()
         if payment and payment.provider_reference:
             return redirect("billing:tenant-payment-sync", pk=payment.slug)
-        if not payment:
+        provider = str(
+            getattr(settings, "DEFAULT_PAYMENT_PROVIDER", PaymentProvider.DIGIPAY)
+        ).strip().upper()
+        if provider not in PaymentProvider.values:
+            form.add_error(None, _("The configured payment provider is invalid."))
+            return render(request, self.template_name, {"charge": charge, "form": form})
+        if payment is None:
             payment = Payment.objects.create(
                 charge=charge,
                 amount=charge.balance_due,
                 payment_method=PaymentMethod.MOBILE_MONEY,
+                provider=provider,
             )
-
-        def _resolve_default_provider():
-            provider = getattr(
-                settings, "DEFAULT_PAYMENT_PROVIDER", PaymentProvider.CAMPAY
-            )
-            if provider not in PaymentProvider.values:
-                raise ValidationError(_("The configured payment provider is invalid."))
-            return provider
+        elif payment.provider != provider:
+            # A pending payment without a provider transaction reference can
+            # safely be retried through the provider currently selected in env.
+            payment.provider = provider
+            payment.save(update_fields=["provider", "updated_at"])
 
         try:
-            if not payment.provider:
-                payment.provider = _resolve_default_provider()
-                payment.save(update_fields=["provider", "updated_at"])
             PaymentService().initiate(
                 payment=payment, phone_number=form.cleaned_data["phone_number"]
             )
@@ -297,8 +346,14 @@ class TenantPaymentSynchronizeView(TenantRequiredMixin, View):
             charge__contract__tenant=self.get_tenant(),
         )
         if payment.status == PaymentStatus.PENDING and payment.provider_reference:
-            with contextlib.suppress(PaymentServiceError, ValidationError):
+            try:
                 PaymentService().synchronize(payment=payment)
+            except (PaymentServiceError, ValidationError) as exc:
+                messages.warning(
+                    request,
+                    _("Could not verify the payment status: %(detail)s")
+                    % {"detail": str(exc)},
+                )
             payment.refresh_from_db()
         return render(request, self.template_name, {"payment": payment})
 

@@ -51,6 +51,9 @@
       <a href="{% url 'billing:landlord-wallet' %}" class="nav-item{% if request.resolver_match.url_name == 'landlord-wallet' %} active{% endif %}">
         <i class="ti ti-wallet"></i><span>{% translate "Payments & balance" %}</span>
       </a>
+      <a href="{% url 'billing:landlord-charge-list' %}" class="nav-item{% if request.resolver_match.url_name == 'landlord-charge-list' or request.resolver_match.url_name == 'landlord-charge-create' %} active{% endif %}">
+        <i class="ti ti-receipt"></i><span>{% translate "Tenant charges" %}</span>
+      </a>
       <a href="{% url 'maintenance:landlord-request-list' %}" class="nav-item{% if request.resolver_match.namespace == 'maintenance' %} active{% endif %}">
         <i class="ti ti-tool"></i><span>{% translate "Maintenance" %}</span>
       </a>

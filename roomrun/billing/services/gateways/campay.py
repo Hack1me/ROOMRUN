@@ -1,6 +1,7 @@
 # billing/services/gateways/campay.py
 
 import logging
+import re
 from decimal import Decimal
 from typing import Any
 
@@ -45,10 +46,11 @@ class CamPayGateway(PaymentGateway):
         metadata: dict[str, Any] | None = None,
     ) -> GatewayInitResult:
         """Initiate a CamPay collection."""
+        normalized_phone = re.sub(r"[\s()+-]", "", phone_number)
         payload = {
             "amount": str(amount),
             "currency": CURRENCY,
-            "from": phone_number,
+            "from": normalized_phone,
             "description": metadata.get("description", "") if metadata else "",
             "external_reference": external_reference,
         }
@@ -58,7 +60,14 @@ class CamPayGateway(PaymentGateway):
             external_reference, phone_number, amount,
         )
 
-        response = self.client.initCollect(payload)
+        try:
+            response = self.client.initCollect(payload)
+        except Exception as exc:
+            logger.exception(
+                "CamPay initiate failed | ref=%s", external_reference
+            )
+            message = "CamPay could not initiate the payment."
+            raise PaymentGatewayError(message) from exc
 
         # CamPay returns {"status": "FAILED", "message": "..."} on error.
         if response.get("status") == "FAILED" or "reference" not in response:

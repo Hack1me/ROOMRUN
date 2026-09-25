@@ -56,6 +56,12 @@ class PaymentService:
         if not payment.provider:
             raise ValidationError(_("Payment provider is required."))
 
+        # django-phonenumber-field returns a PhoneNumber value object after
+        # validation; payment gateways expect its canonical E.164 string.
+        phone_number = str(phone_number).strip()
+        if not phone_number:
+            raise ValidationError(_("A valid mobile money phone number is required."))
+
         try:
             gateway = self._gateway or get_gateway(payment.provider)
             result = gateway.initiate_payment(
@@ -65,14 +71,18 @@ class PaymentService:
                 email=getattr(payment, "customer_email", None),
                 metadata={"description": f"RoomRun payment {payment.payment_number}"},
             )
-        except (PaymentGatewayError, ValueError) as exc:
+        except Exception as exc:
             logger.exception(
                 "Payment initiation failed | payment=%s | provider=%s",
                 payment.payment_number,
                 payment.provider,
             )
+            detail = str(exc).strip()
+            if not detail:
+                detail = str(_("The payment provider returned an unexpected error."))
             raise PaymentServiceError(
-                _("Unable to initiate the payment. Please try again.")
+                _("Unable to initiate the payment: %(detail)s")
+                % {"detail": detail}
             ) from exc
 
         payment.provider_reference = result.transaction_id
@@ -230,12 +240,11 @@ class PaymentService:
             return
         if payment.charge.charge_type != ChargeType.INITIAL_PAYMENT:
             return
-        from django.core.exceptions import ValidationError as DjangoValidationError
         from rentals.services import RentalContractService  # noqa: PLC0415
 
         try:
             RentalContractService.activate(contract=payment.charge.contract)
-        except DjangoValidationError:
+        except ValidationError:
             logger.info(
                 "Initial payment completed; contract activation deferred | payment=%s",
                 payment.payment_number,
@@ -251,12 +260,11 @@ class PaymentService:
             return
         if payment.charge.charge_type != ChargeType.CONTRACT_EXTENSION:
             return
-        from django.core.exceptions import ValidationError as DjangoValidationError
         from rentals.services import ContractExtensionService  # noqa: PLC0415
 
         try:
             ContractExtensionService.mark_paid(charge=payment.charge)
-        except DjangoValidationError:
+        except ValidationError:
             logger.exception(
                 "Could not apply paid contract extension | payment=%s",
                 payment.payment_number,

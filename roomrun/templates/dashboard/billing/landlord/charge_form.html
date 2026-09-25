@@ -1,0 +1,30 @@
+{% extends "dashboard/layout.html" %}
+{% load i18n %}
+{% block title %}{% translate "Create a charge" %} — ROOMRUN{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-3xl space-y-6">
+  <header>
+    <a class="text-sm text-muted hover:underline" href="{% url 'billing:landlord-charge-list' %}"><i class="ti ti-arrow-left"></i> {% translate "Tenant charges" %}</a>
+    <h1 class="mt-3 text-3xl font-semibold text-primary">{% translate "Create a charge" %}</h1>
+    <p class="mt-2 text-sm text-muted">{% translate "The tenant will be notified and can pay securely from their payments page." %}</p>
+  </header>
+  <section class="rounded-xl border border-line bg-white p-6">
+    <form method="post" class="space-y-5">
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="rounded-lg bg-red-50 p-3 text-sm text-danger">{{ form.non_field_errors }}</div>{% endif %}
+      {% for field in form %}
+        <div>
+          <label class="mb-1 block text-sm font-medium" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}<p class="mt-1 text-xs text-muted">{{ field.help_text }}</p>{% endif %}
+          {% for error in field.errors %}<p class="mt-1 text-xs text-danger">{{ error }}</p>{% endfor %}
+        </div>
+      {% endfor %}
+      <div class="flex flex-wrap gap-3 border-t border-line pt-4">
+        <button class="btn btn-primary" type="submit"><i class="ti ti-send"></i> {% translate "Create charge and notify tenant" %}</button>
+        <a class="btn btn-secondary" href="{% url 'billing:landlord-charge-list' %}">{% translate "Cancel" %}</a>
+      </div>
+    </form>
+  </section>
+</div>
+{% endblock content %}

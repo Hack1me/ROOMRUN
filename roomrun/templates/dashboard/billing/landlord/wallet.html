@@ -20,6 +20,8 @@
   <div class="payments-heading">
     <div><h1>{% translate "Payments" %}</h1><p>{% translate "Track received payments and amounts due across your rentals." %}</p></div>
     <div class="payments-heading__actions">
+      <a class="pay-btn" href="{% url 'billing:landlord-charge-list' %}"><i class="ti ti-receipt"></i>{% translate "Manage charges" %}</a>
+      <a class="pay-btn pay-btn--primary" href="{% url 'billing:landlord-charge-create' %}"><i class="ti ti-plus"></i>{% translate "Create a charge" %}</a>
       <button class="pay-btn" type="button" id="exportBtn"><i class="ti ti-download"></i>{% translate "Export" %}</button>
       <a class="pay-btn pay-btn--primary" href="#withdrawal-form"><i class="ti ti-arrow-up-right"></i>{% translate "Request a withdrawal" %}</a>
     </div>

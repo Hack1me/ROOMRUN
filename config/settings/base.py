@@ -391,9 +391,24 @@ CAMPAY_WEBHOOK_SECRET = env("CAMPAY_WEBHOOK_SECRET", default="")
 CAMPAY_WEBHOOK_URL = env("CAMPAY_WEBHOOK_URL", default="")
 
 # DigiPay
-DIGIPAY_TEST_API_KEY = env("DIGIPAY_TEST_API_KEY")
-DIGIPAY_API_KEY = env("DIGIPAY_LIVE_API_KEY", default=DIGIPAY_TEST_API_KEY)
+DIGIPAY_LIVE_API_KEY = env("DIGIPAY_LIVE_API_KEY", default="")
+DIGIPAY_TEST_API_KEY = env("DIGIPAY_TEST_API_KEY", default="")
+DIGIPAY_ENVIRONMENT = env(
+    "DIGIPAY_ENVIRONMENT",
+    default="production" if DIGIPAY_LIVE_API_KEY else "sandbox",
+).strip().lower()
+DIGIPAY_ENVIRONMENT = {
+    "live": "production",
+    "prod": "production",
+    "test": "sandbox",
+    "dev": "sandbox",
+}.get(DIGIPAY_ENVIRONMENT, DIGIPAY_ENVIRONMENT)
+DIGIPAY_API_KEY = env("DIGIPAY_API_KEY", default="") or (
+    DIGIPAY_TEST_API_KEY
+    if DIGIPAY_ENVIRONMENT == "sandbox"
+    else DIGIPAY_LIVE_API_KEY
+)
 DIGIPAY_WEBHOOK_URL = env("DIGIPAY_WEBHOOK_URL", default="")
 
 # Default provider
-DEFAULT_PAYMENT_PROVIDER = env("DEFAULT_PAYMENT_PROVIDER", default="CAMPAY")
+DEFAULT_PAYMENT_PROVIDER = env("DEFAULT_PAYMENT_PROVIDER", default="DIGIPAY").strip().upper()

@@ -55,5 +55,5 @@ def get_default_gateway() -> PaymentGateway:
 
     Falls back to CamPay.
     """
-    default = getattr(settings, "DEFAULT_PAYMENT_PROVIDER", PaymentProvider.CAMPAY)
+    default = getattr(settings, "DEFAULT_PAYMENT_PROVIDER", PaymentProvider.DIGIPAY)
     return get_gateway(default)
