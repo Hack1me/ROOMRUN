@@ -8,44 +8,7 @@
   <div class="app maintenance-app">
     {% include "dashboard/includes/landlord_sidebar.html" %}
     <main class="main">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button type="button"
-                  class="menu-button"
-                  id="mobile-menu"
-                  aria-label="{% translate 'Open menu' %}">
-            <i class="ti ti-menu-2"></i>
-          </button>
-          <div class="page-heading">
-            <h1>{% translate "Dashboard" %}</h1>
-            <p>{% translate "Overview of your interventions" %}</p>
-          </div>
-        </div>
-        <div class="topbar-right">
-          <label class="topbar-search">
-            <i class="ti ti-search"></i>
-            <input type="search"
-                   placeholder="{% translate 'Search an intervention…' %}" />
-          </label>
-          <a href="{% url 'communications:notification-list' %}"
-                  class="icon-button"
-                  aria-label="{% translate 'Notifications' %}">
-            <i class="ti ti-bell"></i>
-            {% if unread_notification_count %}<span class="notification-badge"></span>{% endif %}
-          </a>
-          <a href="{% url 'users:profile' %}"
-             class="icon-button profile-button"
-             aria-label="{% translate 'Profile' %}">
-            {% if user.profile_picture %}
-              <img class="h-full w-full object-cover"
-                   src="{{ user.profile_picture.url }}"
-                   alt="" />
-            {% else %}
-              <i class="ti ti-user"></i>
-            {% endif %}
-          </a>
-        </div>
-      </header>
+      {% include "dashboard/topbars/maintenance.html" %}
       <div class="content">
         {% include "common/includes/messages.html" %}
 

@@ -8,49 +8,7 @@
   <div class="app landlord-app">
     {% include "dashboard/includes/landlord_sidebar.html" %}
     <main class="main">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button type="button"
-                  class="menu-button"
-                  id="mobile-menu"
-                  aria-label="{% translate 'Open menu' %}">
-            <i class="ti ti-menu-2"></i>
-          </button>
-          <div class="page-heading">
-            <h1>{% translate "Dashboard" %}</h1>
-            <p>{% translate "Overview of your activity" %}</p>
-          </div>
-        </div>
-        <form class="topbar-search" method="get" action="{% url 'properties:property-list' %}">
-          <i class="ti ti-search"></i>
-          <input type="search" name="search" placeholder="{% translate 'Search a property…' %}" />
-          <button class="sr-only" type="submit">{% translate "Search properties" %}</button>
-        </form>
-        <div class="topbar-right">
-          <a href="{% url 'billing:landlord-wallet' %}"
-             class="landlord-wallet-link"
-             aria-label="{% translate 'Available balance' %}: {{ landlord_wallet_balance }} FCFA">
-            <i class="ti ti-wallet"></i><span>{% translate "Balance" %}</span><strong>{{ landlord_wallet_balance|floatformat:0 }} FCFA</strong>
-          </a>
-          <a href="{% url 'communications:notification-list' %}"
-                  class="icon-button notification-link"
-                  aria-label="{% translate 'Notifications' %}">
-            <i class="ti ti-bell"></i>
-            {% if unread_notification_count %}<span class="notification-badge"></span>{% endif %}
-          </a>
-          <a href="{% url 'users:profile' %}"
-             class="icon-button profile-button"
-             aria-label="{% translate 'Profile' %}">
-            {% if user.profile_picture %}
-              <img class="h-full w-full object-cover"
-                   src="{{ user.profile_picture.url }}"
-                   alt="" />
-            {% else %}
-              <i class="ti ti-user"></i>
-            {% endif %}
-          </a>
-        </div>
-      </header>
+      {% include "dashboard/topbars/landlord.html" %}
       <div class="content">
         {% include "common/includes/messages.html" %}
 

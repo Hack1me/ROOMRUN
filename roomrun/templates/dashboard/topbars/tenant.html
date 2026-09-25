@@ -1,0 +1,24 @@
+{% extends "dashboard/topbars/base.html" %}
+{% load i18n %}
+
+{% block topbar_title %}{% translate "Dashboard" %}{% endblock %}
+{% block topbar_subtitle %}<p>{% translate "Your rental at a glance" %}</p>{% endblock %}
+{% block topbar_search %}
+  <label class="topbar-search">
+    <i class="ti ti-search" aria-hidden="true"></i>
+    <input type="search" placeholder="{% translate 'Search…' %}" />
+  </label>
+{% endblock %}
+{% block topbar_actions %}
+  <a href="{% url 'communications:notification-list' %}"
+     class="icon-button relative"
+     aria-label="{% translate 'Notifications' %}">
+    <i class="ti ti-bell" aria-hidden="true"></i>
+    {% if unread_notification_count %}<span class="notification-badge"></span>{% endif %}
+  </a>
+  <a href="{% url 'users:profile' %}"
+     class="topbar-avatar overflow-hidden"
+     aria-label="{% translate 'Profile' %}">
+    {% if user.profile_picture %}<img class="h-full w-full object-cover" src="{{ user.profile_picture.url }}" alt="" />{% else %}{{ user.first_name|first }}{{ user.last_name|first }}{% endif %}
+  </a>
+{% endblock %}
