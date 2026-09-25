@@ -1,19 +1,13 @@
-{% extends "base.html" %}
+{% extends "dashboard/layout.html" %}
 {% load i18n static %}
 
 {% block title %}{{ page_title }} — ROOMRUN{% endblock %}
-{% block extra_css %}
+{% block extra_css %}{{ block.super }}
   <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
 {% endblock %}
-{% block header %}{% endblock %}
-{% block footer %}{% endblock %}
+{% block app_class %}landlord-app building-form-page{% endblock %}
+{% block content %}
 
-{% block body %}
-  <div class="app landlord-app building-form-page">
-    {% include "dashboard/includes/landlord_sidebar.html" %}
-    <main class="main">
-      <section class="content">
-        {% include "common/includes/messages.html" %}
 
         <nav class="building-form-breadcrumb" aria-label="{% translate 'Breadcrumb' %}">
           <a href="{% url 'properties:property-list' %}">{% translate "Properties" %}</a>
@@ -84,9 +78,4 @@
             </div>
           </aside>
         </div>
-      </section>
-    </main>
-  </div>
-{% endblock %}
-
-{% block inline_javascript %}<script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>{% endblock %}
+{% endblock content %}

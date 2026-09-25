@@ -4,7 +4,7 @@
 
 {% block title %}{% translate "Dashboard" %} — ROOMRUN{% endblock title %}
 {% block bodyclass %}dashboard-page{% endblock bodyclass %}
-{% block sidebar %}{% include "dashboard/includes/landlord_sidebar.html" %}{% endblock sidebar %}
+{% block sidebar %}{% include "dashboard/includes/role_sidebar.html" %}{% endblock sidebar %}
 {% block content %}
   <header class="topbar">
         <div class="topbar-left">
@@ -239,5 +239,5 @@
       </div>
 {% endblock content %}
 {% block inline_javascript %}
-  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
+
 {% endblock inline_javascript %}

@@ -4,9 +4,9 @@
 {% block header %}{% endblock %}
 {% block dashboard_body %}
 <div class="app notification-app">
-  {% if is_tenant_notifications %}{% include "dashboard/includes/tenant_sidebar.html" %}{% elif is_guard_notifications %}{% include "dashboard/includes/guard_sidebar.html" %}{% elif is_maintenance_notifications %}{% include "dashboard/includes/maintenance_sidebar.html" %}{% else %}{% include "dashboard/includes/landlord_sidebar.html" %}{% endif %}
+  {% include "dashboard/includes/role_sidebar.html" %}
   <main class="main">
-    <header class="topbar"><div class="topbar-left"><button class="icon-button mobile-menu" id="mobile-menu" type="button" aria-label="{% translate 'Open menu' %}"><i class="ti ti-menu-2"></i></button><div class="page-heading"><h1>{% translate "Notification" %}</h1><p>{% translate "ROOMRUN updates" %}</p></div></div><div class="topbar-actions">{% if is_landlord_notifications %}<a class="notification-wallet" href="{% url 'billing:landlord-wallet' %}"><i class="ti ti-wallet"></i>{{ landlord_wallet_balance|floatformat:0 }} FCFA</a>{% endif %}<a class="icon-button" href="{% url 'communications:notification-list' %}" aria-label="{% translate 'All notifications' %}"><i class="ti ti-bell"></i>{% if unread_notification_count %}<span class="notification-badge"></span>{% endif %}</a></div></header>
+    {% include "dashboard/topbars/notifications.html" with notification_detail=True %}
     <div class="content notification-content">
       <a class="notification-back" href="{% url 'communications:notification-list' %}">← {% translate "Back to notifications" %}</a>
       <article class="notification-detail-card">

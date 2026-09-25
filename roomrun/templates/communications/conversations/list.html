@@ -14,11 +14,7 @@
 
 {% block body %}
   <div class="conversation-page">
-    {% if is_guard_chat %}
-      {% include "dashboard/includes/guard_sidebar.html" %}
-    {% else %}
-      {% include "dashboard/includes/landlord_sidebar.html" %}
-    {% endif %}
+    {% include "dashboard/includes/role_sidebar.html" %}
 
     <main class="conversation-main">
       <header class="conversation-topbar">
@@ -126,6 +122,6 @@
 {% endblock body %}
 
 {% block inline_javascript %}
-  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
+
   <script defer src="{% static 'js/conversations.js' %}"></script>
 {% endblock inline_javascript %}

@@ -1,0 +1,29 @@
+{% extends "dashboard/topbars/base.html" %}
+{% load i18n %}
+
+{% block topbar_title %}
+  {% if notification_detail %}{% translate "Notification" %}{% else %}{% translate "Notifications" %}{% endif %}
+{% endblock %}
+{% block topbar_subtitle %}
+  {% if notification_detail %}
+    <p>{% translate "ROOMRUN updates" %}</p>
+  {% else %}
+    <p>{% blocktranslate with count=unread_notification_count %}{{ count }} unread{% endblocktranslate %}</p>
+  {% endif %}
+{% endblock %}
+{% block topbar_actions %}
+  {% if is_landlord_notifications %}
+    <a class="notification-wallet" href="{% url 'billing:landlord-wallet' %}">
+      <i class="ti ti-wallet"></i>{{ landlord_wallet_balance|floatformat:0 }} FCFA
+    </a>
+  {% endif %}
+  <a class="icon-button" href="{% url 'communications:notification-list' %}"
+     aria-label="{% translate 'Notifications' %}">
+    <i class="ti ti-bell"></i>
+    {% if unread_notification_count %}<span class="notification-badge"></span>{% endif %}
+  </a>
+  {% if not notification_detail %}
+    <a class="icon-button" href="{% url 'users:profile' %}"
+       aria-label="{% translate 'Profile' %}"><i class="ti ti-user"></i></a>
+  {% endif %}
+{% endblock %}

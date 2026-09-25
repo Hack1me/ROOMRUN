@@ -533,7 +533,7 @@
 
 {% block body %}
   <div class="app landlord-app">
-    {% include "dashboard/includes/landlord_sidebar.html" %}
+    {% include "dashboard/includes/role_sidebar.html" %}
 
     <main class="main">
       <header class="flex items-center justify-between gap-4 border-b border-[#e6e8ec] bg-white px-4 py-3">
@@ -813,7 +813,7 @@
 {% endblock body %}
 
 {% block inline_javascript %}
-  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
+
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const searchInput = document.getElementById('searchInput');

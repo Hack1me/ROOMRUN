@@ -1,18 +1,13 @@
-{% extends "base.html" %}
+{% extends "dashboard/layout.html" %}
 {% load i18n static %}
 
 {% block title %}{% translate "Property Details" %} — ROOMRUN{% endblock %}
-{% block extra_css %}
+{% block extra_css %}{{ block.super }}
   <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
 {% endblock %}
-{% block header %}{% endblock %}
-{% block footer %}{% endblock %}
+{% block app_class %}landlord-app{% endblock %}
+{% block content %}
 
-{% block body %}
-<div class="app landlord-app">
-  {% include "dashboard/includes/landlord_sidebar.html" %}
-  <main class="main">
-    <section class="content">
 
       <a href="{% url 'properties:property-list' %}" class="back-link">
         <i class="ti ti-arrow-left"></i> {% translate "Back to properties" %}
@@ -236,14 +231,10 @@
 
       </div>
 
-    </section>
-
-  </main>
-</div>
-{% endblock %}
+{% endblock content %}
 
 {% block inline_javascript %}
-  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
+
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       document.getElementById("addBuilding")?.addEventListener("click", function () {

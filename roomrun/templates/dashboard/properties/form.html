@@ -1,26 +1,17 @@
-{% extends "base.html" %}
+{% extends "dashboard/layout.html" %}
 {% load i18n static country_extras %}
 
 {% block title %}
   {{ page_title }} — ROOMRUN
 {% endblock %}
 
-{% block extra_css %}
+{% block extra_css %}{{ block.super }}
   <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
 {% endblock extra_css %}
 
-{% block header %}
-{% endblock header %}
+{% block app_class %}landlord-app{% endblock %}
+{% block content %}
 
-{% block footer %}
-{% endblock footer %}
-
-{% block body %}
-  <div class="app landlord-app">
-    {% include "dashboard/includes/landlord_sidebar.html" %}
-    <main class="main">
-      <div class="content">
-        {% include "common/includes/messages.html" %}
 
         <a href="{% if property %}{% url 'properties:property-detail' pk=property.slug %}{% else %}{% url 'properties:property-list' %}{% endif %}" class="back-link">
           <i class="ti ti-arrow-left"></i>
@@ -275,13 +266,10 @@
             {% endif %}
           </div>
         </div>
-      </div>
-    </main>
-  </div>
-{% endblock body %}
+{% endblock content %}
 
 {% block inline_javascript %}
-  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
+
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="{% static 'smart-selects/admin/js/chainedfk.js' %}"></script>
   <script src="{% static 'smart-selects/admin/js/bindfields.js' %}"></script>

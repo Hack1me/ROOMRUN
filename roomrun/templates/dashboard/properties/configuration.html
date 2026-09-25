@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "dashboard/layout.html" %}
 
 {% load i18n static country_extras %}
 
@@ -6,20 +6,14 @@
   {% translate "Property Configuration" %} — ROOMRUN
 {% endblock %}
 
-{% block extra_css %}
+{% block extra_css %}{{ block.super }}
   <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
 {% endblock extra_css %}
 
-{% block header %}{% endblock header %}
+{% block app_class %}landlord-app{% endblock %}
+{% block content %}
+  <div class="configuration-page">
 
-{% block footer %}{% endblock footer %}
-
-{% block body %}
-  <div class="app landlord-app">
-    {% include "dashboard/includes/landlord_sidebar.html" %}
-    <main class="main">
-      <div class="content configuration-page">
-        {% include "common/includes/messages.html" %}
 
         <a href="{% url 'properties:property-edit' pk=property.slug %}" class="back-link">
           <i class="ti ti-arrow-left"></i>
@@ -250,12 +244,10 @@
             </button>
           </div>
         </div>
-      </div>
-    </main>
   </div>
-{% endblock body %}
+{% endblock content %}
 
 {% block inline_javascript %}
-  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
+
   <script defer src="{% static 'js/property-configuration.js' %}"></script>
 {% endblock %}

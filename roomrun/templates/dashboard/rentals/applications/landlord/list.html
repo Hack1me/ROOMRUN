@@ -15,7 +15,7 @@
 {% block footer %}{% endblock %}
 {% block body %}
   <div class="app landlord-app landlord-applications">
-    {% include "dashboard/includes/landlord_sidebar.html" %}
+    {% include "dashboard/includes/role_sidebar.html" %}
     <main class="main"><section class="content">
       {% include "common/includes/messages.html" %}
       <header class="landlord-applications__header"><div><h1>{% translate "Rental applications" %}</h1><p>{% translate "Review and manage rental requests from prospective tenants." %}</p></div><div class="landlord-applications__indicator"><i class="ti ti-clock"></i>{% blocktranslate count count=application_counts.pending %}{{ count }} application requires your review{% plural %}{{ count }} applications require your review{% endblocktranslate %}</div></header>
@@ -27,7 +27,7 @@
   </div>
 {% endblock %}
 {% block inline_javascript %}
-  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
+
   <script>
     (() => {
       const search = document.getElementById("application-search");

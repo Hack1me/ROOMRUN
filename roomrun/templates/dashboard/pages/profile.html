@@ -10,15 +10,7 @@
 {% endblock %}
 {% block dashboard_body %}
   <div class="app">
-    {% if user.landlord_profile %}
-      {% include "dashboard/includes/landlord_sidebar.html" %}
-    {% elif user.tenant_profile %}
-      {% include "dashboard/includes/tenant_sidebar.html" %}
-    {% elif user.employee_profile.guard_profile %}
-      {% include "dashboard/includes/guard_sidebar.html" %}
-    {% elif user.employee_profile.maintenance_agent_profile %}
-      {% include "dashboard/includes/maintenance_sidebar.html" %}
-    {% endif %}
+    {% include "dashboard/includes/role_sidebar.html" %}
     <div class="dashboard-main">
   <div class="profile-page">
     <main class="profile-main">
@@ -289,6 +281,6 @@
 {% block footer %}
 {% endblock footer %}
 {% block inline_javascript %}
-  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
+
   <script defer src="{% static 'js/auth/profile.js' %}"></script>
 {% endblock %}

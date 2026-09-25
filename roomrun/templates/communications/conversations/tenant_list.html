@@ -14,7 +14,7 @@
 
 {% block body %}
   <div class="conversation-page tenant-conversation-page">
-    {% include "dashboard/includes/tenant_sidebar.html" %}
+    {% include "dashboard/includes/role_sidebar.html" %}
     <main class="conversation-main">
       <header class="conversation-topbar">
         <button type="button" class="conversation-icon-button" id="mobile-menu" aria-label="{% translate 'Open menu' %}"><i class="ti ti-menu-2"></i></button>
@@ -60,4 +60,4 @@
   </div>
 {% endblock body %}
 
-{% block inline_javascript %}<script defer src="{% static 'js/dashboard-sidebar.js' %}"></script><script defer src="{% static 'js/conversations.js' %}"></script>{% endblock inline_javascript %}
+{% block inline_javascript %}<script defer src="{% static 'js/conversations.js' %}"></script>{% endblock inline_javascript %}

@@ -1,19 +1,13 @@
-{% extends "base.html" %}
+{% extends "dashboard/layout.html" %}
 {% load i18n static %}
 
 {% block title %}{{ building.name }} — ROOMRUN{% endblock %}
-{% block extra_css %}
+{% block extra_css %}{{ block.super }}
   <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
 {% endblock %}
-{% block header %}{% endblock %}
-{% block footer %}{% endblock %}
+{% block app_class %}landlord-app building-detail-page{% endblock %}
+{% block content %}
 
-{% block body %}
-  <div class="app landlord-app building-detail-page">
-    {% include "dashboard/includes/landlord_sidebar.html" %}
-    <main class="main">
-      <section class="content">
-        {% include "common/includes/messages.html" %}
 
         <nav class="building-breadcrumb" aria-label="{% translate 'Breadcrumb' %}">
           <a href="{% url 'properties:property-list' %}">{% translate "Properties" %}</a>
@@ -100,9 +94,4 @@
             <article class="card building-quick-actions"><h2><i class="ti ti-bolt"></i>{% translate "Quick actions" %}</h2><a href="{% url 'properties:unit-create' property_id=property.slug building_id=building.slug %}"><i class="ti ti-home-plus"></i>{% translate "Add unit" %}</a><a href="{% url 'properties:property-detail' pk=property.slug %}"><i class="ti ti-building"></i>{% translate "View property" %}</a><a href="#"><i class="ti ti-tool"></i>{% translate "View maintenance" %}</a><a href="#"><i class="ti ti-file-description"></i>{% translate "View documents" %}</a></article>
           </aside>
         </div>
-      </section>
-    </main>
-  </div>
-{% endblock %}
-
-{% block inline_javascript %}<script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>{% endblock %}
+{% endblock content %}

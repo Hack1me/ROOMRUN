@@ -26,22 +26,20 @@
   {% block dashboard_body %}
     <div class="app {% block app_class %}{% endblock app_class %}">
       {% block sidebar %}
-        {% if sidebar_template %}
-          {% include sidebar_template %}
-        {% elif user.landlord_profile %}
-          {% include "dashboard/includes/landlord_sidebar.html" %}
-        {% elif user.tenant_profile %}
-          {% include "dashboard/includes/tenant_sidebar.html" %}
-        {% elif user.employee_profile.guard_profile %}
-          {% include "dashboard/includes/guard_sidebar.html" %}
-        {% elif user.employee_profile.maintenance_agent_profile %}
-          {% include "dashboard/includes/maintenance_sidebar.html" %}
-        {% endif %}
+        {% include "dashboard/includes/role_sidebar.html" %}
       {% endblock sidebar %}
       <div class="dashboard-main">
         {% block topbar %}
           {% if topbar_template %}
             {% include topbar_template %}
+          {% elif user.landlord_profile %}
+            {% include "dashboard/topbars/landlord.html" %}
+          {% elif user.tenant_profile %}
+            {% include "dashboard/topbars/tenant.html" %}
+          {% elif user.employee_profile.guard_profile %}
+            {% include "dashboard/topbars/guard.html" %}
+          {% elif user.employee_profile.maintenance_agent_profile %}
+            {% include "dashboard/topbars/maintenance.html" %}
           {% else %}
             <header class="dashboard-mobile-bar">
               <button type="button" class="menu-button" id="mobile-menu" aria-label="{% translate 'Open menu' %}">

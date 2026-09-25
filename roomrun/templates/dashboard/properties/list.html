@@ -12,7 +12,7 @@
 
 {% block body %}
   <div class="app landlord-app">
-    {% include "dashboard/includes/landlord_sidebar.html" %}
+    {% include "dashboard/includes/role_sidebar.html" %}
     <main class="main">
       <header class="topbar">
         <div class="topbar-left">
@@ -198,7 +198,7 @@
 {% endblock body %}
 
 {% block inline_javascript %}
-  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
+
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const form = document.querySelector('.filters');
