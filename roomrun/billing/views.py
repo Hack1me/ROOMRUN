@@ -10,18 +10,19 @@ from billing.models import Withdrawal
 from billing.services.payment_service import PaymentService
 from billing.services.payment_service import PaymentServiceError
 from django import forms
+from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.conf import settings
 from django.db import transaction
-from django.db.models import Sum
 from django.db.models import Count
+from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
-from django.utils.decorators import method_decorator
 from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView
@@ -31,13 +32,16 @@ from properties.mixins import LandlordRequiredMixin
 from rentals.mixins import TenantRequiredMixin
 from rentals.models import RentalContract
 from rentals.services import RentalContractService
+from users.models import Landlord
+from utils.enums import ChargeType
 from utils.enums import PaymentMethod
 from utils.enums import PaymentProvider
 from utils.enums import PaymentStatus
-from utils.enums import ChargeType
-from django.utils.translation import gettext_lazy as _
 
 logger = logging.getLogger(__name__)
+
+DECEMBER_MONTH = 12
+MIN_PHONE_NUMBER_LENGTH = 8
 
 
 class BaseWebhookView(View):
@@ -130,7 +134,9 @@ class PaymentInitiationForm(forms.Form):
     phone_number = PhoneNumberField(
         region="CM",
         label=_("Mobile Money phone number"),
-        widget=forms.TextInput(attrs={"autocomplete": "tel", "placeholder": "+237 6XX XXX XXX"}),
+        widget=forms.TextInput(
+            attrs={"autocomplete": "tel", "placeholder": "+237 6XX XXX XXX"}
+        ),
     )
 
 
@@ -192,7 +198,9 @@ class TenantContractPaymentView(TenantRequiredMixin, View):
         charge = Charge.objects.filter(
             contract=contract, charge_type="INITIAL_PAYMENT"
         ).first()
-        if contract.status == "SIGNED" and (charge is None or charge.balance_due.amount > 0):
+        if contract.status == "SIGNED" and (
+            charge is None or charge.balance_due.amount > 0
+        ):
             try:
                 payment = RentalContractService.create_initial_payment(
                     contract=contract,
@@ -211,7 +219,9 @@ class TenantContractPaymentView(TenantRequiredMixin, View):
             except ValidationError as exc:
                 messages.error(request, exc.messages[0])
                 return redirect("rentals:tenant-lease-detail")
-        messages.info(request, _("The initial payment for this contract is already complete."))
+        messages.info(
+            request, _("The initial payment for this contract is already complete.")
+        )
         return redirect("rentals:tenant-lease-detail")
 
 
@@ -255,12 +265,18 @@ class TenantPaymentInitiateView(TenantRequiredMixin, View):
                 amount=charge.balance_due,
                 payment_method=PaymentMethod.MOBILE_MONEY,
             )
+
+        def _resolve_default_provider():
+            provider = getattr(
+                settings, "DEFAULT_PAYMENT_PROVIDER", PaymentProvider.CAMPAY
+            )
+            if provider not in PaymentProvider.values:
+                raise ValidationError(_("The configured payment provider is invalid."))
+            return provider
+
         try:
             if not payment.provider:
-                provider = getattr(settings, "DEFAULT_PAYMENT_PROVIDER", PaymentProvider.CAMPAY)
-                if provider not in PaymentProvider.values:
-                    raise ValidationError(_("The configured payment provider is invalid."))
-                payment.provider = provider
+                payment.provider = _resolve_default_provider()
                 payment.save(update_fields=["provider", "updated_at"])
             PaymentService().initiate(
                 payment=payment, phone_number=form.cleaned_data["phone_number"]
@@ -299,9 +315,9 @@ def landlord_wallet_balance(landlord):
     ).aggregate(total=Sum("amount"))["total"]
     # django-money's Sum on a MoneyField returns the raw Decimal amount. Convert
     # both aggregates back to Money before doing currency-aware arithmetic.
-    credits = Money(credits_total or 0, "XAF")
-    debits = Money(debits_total or 0, "XAF")
-    return credits - debits
+    credit_amount = Money(credits_total or 0, "XAF")
+    debit_amount = Money(debits_total or 0, "XAF")
+    return credit_amount - debit_amount
 
 
 class LandlordWalletView(LandlordRequiredMixin, View):
@@ -313,7 +329,7 @@ class LandlordWalletView(LandlordRequiredMixin, View):
         month_start = date(today.year, today.month, 1)
         next_month = (
             date(today.year + 1, 1, 1)
-            if today.month == 12
+            if today.month == DECEMBER_MONTH
             else date(today.year, today.month + 1, 1)
         )
         previous_month_start = month_start - timedelta(days=1)
@@ -342,7 +358,11 @@ class LandlordWalletView(LandlordRequiredMixin, View):
         )
         for payment in payments:
             local_created = timezone.localtime(payment.created_at).date()
-            event_date = timezone.localtime(payment.paid_at).date() if payment.paid_at else local_created
+            event_date = (
+                timezone.localtime(payment.paid_at).date()
+                if payment.paid_at
+                else local_created
+            )
             if event_date >= month_start:
                 payment.ui_period = "current"
             elif event_date >= previous_month_start:
@@ -393,30 +413,36 @@ class LandlordWalletView(LandlordRequiredMixin, View):
             return render(request, self.template_name, self.get_context_data(form))
         landlord = self.get_landlord()
         with transaction.atomic():
-            # Serialize wallet changes for this owner to prevent concurrent overspending.
-            from users.models import Landlord
+            # Serialize wallet changes for this owner
+            # to prevent concurrent overspending.
             Landlord.objects.select_for_update().get(pk=landlord.pk)
             balance = landlord_wallet_balance(landlord)
             amount = Money(form.cleaned_data["amount"], "XAF")
             if amount > balance:
-                form.add_error("amount", _("The requested amount exceeds your available balance."))
+                form.add_error(
+                    "amount", _("The requested amount exceeds your available balance.")
+                )
             else:
                 Withdrawal.objects.create(
                     landlord=landlord,
                     amount=amount,
                     phone_number=form.cleaned_data["phone_number"],
                 )
-                messages.success(request, _("Your withdrawal request has been recorded."))
+                messages.success(
+                    request, _("Your withdrawal request has been recorded.")
+                )
                 return redirect("billing:landlord-wallet")
         return render(request, self.template_name, self.get_context_data(form))
 
 
 class WithdrawalRequestForm(forms.Form):
-    amount = forms.DecimalField(min_value=5000, max_digits=12, decimal_places=2, label=_("Amount (FCFA)"))
+    amount = forms.DecimalField(
+        min_value=5000, max_digits=12, decimal_places=2, label=_("Amount (FCFA)")
+    )
     phone_number = forms.CharField(max_length=32, label=_("Mobile Money number"))
 
     def clean_phone_number(self):
         value = self.cleaned_data["phone_number"].strip()
-        if len(value) < 8:
+        if len(value) < MIN_PHONE_NUMBER_LENGTH:
             raise forms.ValidationError(_("Enter a valid phone number."))
         return value

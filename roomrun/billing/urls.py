@@ -1,10 +1,10 @@
 from billing.views import CamPayWebhookView
 from billing.views import DigiPayWebhookView
+from billing.views import LandlordWalletView
 from billing.views import TenantChargeListView
 from billing.views import TenantContractPaymentView
 from billing.views import TenantPaymentInitiateView
 from billing.views import TenantPaymentSynchronizeView
-from billing.views import LandlordWalletView
 from django.urls import path
 
 app_name = "billing"

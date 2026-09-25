@@ -172,8 +172,8 @@ def validate_signature(value):
 
     except ValidationError:
         raise
-    except Exception:
-        raise ValidationError(  # noqa: B904
+    except (OSError, ValueError, SyntaxError) as exc:
+        raise ValidationError(
             _("Invalid or corrupted signature image."),
             code="invalid_signature",
-        )
+        ) from exc
