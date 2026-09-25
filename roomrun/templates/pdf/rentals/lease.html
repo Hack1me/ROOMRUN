@@ -21,7 +21,7 @@
     .financial-table td:first-child{width:55%;font-weight:600}.financial-table td:last-child{text-align:right}
     .signature-section{margin-top:45px;break-inside:avoid}.signature-introduction{margin-bottom:32px!important}
     .signatures{display:grid;grid-template-columns:1fr 1fr;gap:50px}.signature{text-align:center}.signature-title{margin-bottom:7px;font-size:11.5px;font-weight:700}
-    .signature-note{font-size:10.5px;font-style:italic}.signature-space{height:90px;margin-top:10px;border-bottom:1px solid #222}.signature-name{margin-top:8px;font-size:11px}
+    .signature-note{font-size:10.5px;font-style:italic}.signature-space{height:90px;margin-top:10px;border-bottom:1px solid #222;display:flex;align-items:flex-end;justify-content:center}.signature-image{max-width:100%;max-height:78px;object-fit:contain;display:block}.signature-name{margin-top:8px;font-size:11px}
     .footer{margin-top:42px;padding-top:9px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;font:8.5px Arial,sans-serif;color:#666}
     @page{size:A4;margin:0}
     @media screen and (max-width:850px){.toolbar{padding:0 14px}.document{width:calc(100% - 24px);margin:12px;padding:38px 25px}.signatures{grid-template-columns:1fr;gap:35px}}
@@ -86,8 +86,8 @@
     <section class="signature-section">
       <p class="signature-introduction">Fait à ________________________________, le ________________________________.<br><br>Les parties reconnaissent avoir pris connaissance du présent contrat et l'accepter.</p>
       <div class="signatures">
-        <div class="signature"><div class="signature-title">LE BAILLEUR</div><div class="signature-note">{% if lease.landlord_signature %}Signature électronique enregistrée le {{ lease.landlord_signed_at|date:"d/m/Y à H:i" }}{% else %}« Lu et approuvé »{% endif %}</div><div class="signature-space"></div><div class="signature-name">{{ lease.unit.building.property_ref.landlord.user.full_name|default:lease.unit.building.property_ref.landlord.user.email }}</div></div>
-        <div class="signature"><div class="signature-title">LE LOCATAIRE</div><div class="signature-note">{% if lease.tenant_signature %}Signature électronique enregistrée le {{ lease.tenant_signed_at|date:"d/m/Y à H:i" }}{% else %}« Lu et approuvé »{% endif %}</div><div class="signature-space"></div><div class="signature-name">{{ lease.tenant.user.full_name|default:lease.tenant.user.email }}</div></div>
+        <div class="signature"><div class="signature-title">LE BAILLEUR</div><div class="signature-note">{% if landlord_signature_src %}Signé électroniquement le {{ lease.landlord_signed_at|date:"d/m/Y à H:i" }}{% else %}« Lu et approuvé »{% endif %}</div><div class="signature-space">{% if landlord_signature_src %}<img class="signature-image" src="{{ landlord_signature_src }}" alt="Signature du bailleur">{% endif %}</div><div class="signature-name">{{ lease.unit.building.property_ref.landlord.user.full_name|default:lease.unit.building.property_ref.landlord.user.email }}</div></div>
+        <div class="signature"><div class="signature-title">LE LOCATAIRE</div><div class="signature-note">{% if tenant_signature_src %}Signé électroniquement le {{ lease.tenant_signed_at|date:"d/m/Y à H:i" }}{% else %}« Lu et approuvé »{% endif %}</div><div class="signature-space">{% if tenant_signature_src %}<img class="signature-image" src="{{ tenant_signature_src }}" alt="Signature du locataire">{% endif %}</div><div class="signature-name">{{ lease.tenant.user.full_name|default:lease.tenant.user.email }}</div></div>
       </div>
     </section>
     <footer class="footer"><span>ROOMRUN</span><span>Contrat n° {{ lease.contract_number }}</span><span>Document généré électroniquement le {{ document_date|date:"d/m/Y" }}</span></footer>

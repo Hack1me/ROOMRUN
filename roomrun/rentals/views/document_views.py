@@ -1,4 +1,6 @@
+import base64
 import logging
+import mimetypes
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -47,7 +49,30 @@ class LeaseDocumentAccessMixin(LoginRequiredMixin):
             "lease": lease,
             "advance_total": advance_total,
             "document_date": timezone.localdate(),
+            "landlord_signature_src": LeaseDocumentAccessMixin.signature_data_uri(
+                lease.landlord_signature
+            ),
+            "tenant_signature_src": LeaseDocumentAccessMixin.signature_data_uri(
+                lease.tenant_signature
+            ),
         }
+
+    @staticmethod
+    def signature_data_uri(signature):
+        """Embed saved signature images so preview and WeasyPrint both render them."""
+        if not signature:
+            return ""
+        try:
+            with signature.open("rb") as signature_file:
+                encoded = base64.b64encode(signature_file.read()).decode("ascii")
+        except Exception:
+            logger.exception("Unable to read saved lease signature | file=%s", signature.name)
+            return ""
+
+        content_type = mimetypes.guess_type(signature.name)[0]
+        if not content_type or not content_type.startswith("image/"):
+            content_type = "image/png"
+        return f"data:{content_type};base64,{encoded}"
 
 
 class LeaseDocumentPreviewView(LeaseDocumentAccessMixin, View):
