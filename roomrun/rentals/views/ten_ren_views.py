@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from billing.models import Charge
 from communications.services.notification_ser import send_notification
 from django.contrib import messages
@@ -7,6 +9,7 @@ from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import CreateView
@@ -150,6 +153,7 @@ class TenantLeaseDetailView(LoginRequiredMixin, DetailView):
         for extension in extensions:
             extension.payment_charge = charges.get(extension.payment_charge_id)
         context["extension_requests"] = extensions
+        context["extension_min_date"] = timezone.localdate() + timedelta(days=1)
         return context
 
     def get_queryset(self):

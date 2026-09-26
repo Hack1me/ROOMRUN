@@ -18,6 +18,11 @@ urlpatterns = [
         name="notification-delete-all",
     ),
     path(
+        "notifications/<slug:pk>/open/",
+        views.NotificationOpenView.as_view(),
+        name="notification-open",
+    ),
+    path(
         "notifications/<slug:pk>/",
         views.NotificationDetailView.as_view(),
         name="notification-detail",

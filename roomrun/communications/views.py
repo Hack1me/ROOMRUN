@@ -40,9 +40,8 @@ def contacts_for_user(user):
         contacts = User.objects.filter(
             landlord_profile__properties__buildings__units__rental_contracts__tenant=user.tenant_profile
         )
-    elif (
-        hasattr(user, "employee_profile")
-        and hasattr(user.employee_profile, "guard_profile")
+    elif hasattr(user, "employee_profile") and hasattr(
+        user.employee_profile, "guard_profile"
     ):
         landlords = user.employee_profile.guard_profile.landlords.all()
         contacts = User.objects.filter(
@@ -121,11 +120,15 @@ def tenant_chat_context(user):
         "tenant_contract": contract,
         "tenant_landlord": contract.unit.building.property_ref.landlord,
     }
+
+
 def guard_chat_context(user):
-    return {"is_guard_chat": bool(
-        hasattr(user, "employee_profile")
-        and hasattr(user.employee_profile, "guard_profile")
-    )}
+    return {
+        "is_guard_chat": bool(
+            hasattr(user, "employee_profile")
+            and hasattr(user.employee_profile, "guard_profile")
+        )
+    }
 
 
 def notification_role_context(user):
@@ -190,11 +193,106 @@ class NotificationDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
+class NotificationOpenView(LoginRequiredMixin, View):
+    """Mark a notification read and send the user to its related page."""
+
+    def get(self, request, pk):
+        notification = get_object_or_404(
+            Notification.objects.select_related("related_content_type"),
+            pk=pk,
+            recipient=request.user,
+        )
+        notification.mark_as_read()
+        target = notification_target_url(notification, request.user)
+        return HttpResponseRedirect(
+            target
+            or reverse(
+                "communications:notification-detail", kwargs={"pk": notification.slug}
+            )
+        )
+
+
+def notification_target_url(notification, user):  # noqa: C901, PLR0911, PLR0912
+    """Resolve a notification's related object to the appropriate user page."""
+    related = notification.related_object
+    if not related:
+        return None
+    is_tenant = hasattr(user, "tenant_profile") and not hasattr(
+        user, "landlord_profile"
+    )
+    is_guard = hasattr(user, "employee_profile") and hasattr(
+        user.employee_profile, "guard_profile"
+    )
+    if hasattr(related, "payment_number"):
+        return (
+            reverse("billing:tenant-payment-sync", kwargs={"pk": related.slug})
+            if is_tenant
+            else reverse("billing:landlord-wallet")
+        )
+    if hasattr(related, "charge_number"):
+        return (
+            reverse("billing:tenant-payment-initiate", kwargs={"pk": related.slug})
+            if is_tenant
+            else reverse("billing:landlord-charge-list")
+        )
+    if hasattr(related, "application_number"):
+        route = (
+            "rentals:rental-application-detail"
+            if is_tenant
+            else "rentals:landlord-rental-application-detail"
+        )
+        return reverse(route, kwargs={"pk": related.slug})
+    if hasattr(related, "requested_end_date") and hasattr(related, "contract"):
+        if is_tenant:
+            return reverse("rentals:tenant-lease-detail")
+        return reverse(
+            "rentals:landlord-rental-contract-detail",
+            kwargs={"pk": related.contract.slug},
+        )
+    if hasattr(related, "contract_number"):
+        if is_tenant and related.status == "SIGNING":
+            return reverse(
+                "rentals:tenant-rental-contract-sign", kwargs={"pk": related.slug}
+            )
+        if is_tenant:
+            return reverse("rentals:tenant-lease-detail")
+        return reverse(
+            "rentals:landlord-rental-contract-detail", kwargs={"pk": related.slug}
+        )
+    if hasattr(related, "request_number"):
+        route = (
+            "maintenance:request-detail"
+            if is_tenant
+            else "maintenance:landlord-request-detail"
+        )
+        return reverse(route, kwargs={"pk": related.slug})
+    if hasattr(related, "task_number"):
+        return reverse("maintenance:task-detail", kwargs={"pk": related.slug})
+    if hasattr(related, "schedule_number"):
+        return (
+            reverse("operations:tenant-cleaning-list")
+            if is_tenant
+            else reverse("operations:cleaning-detail", kwargs={"pk": related.slug})
+        )
+    if hasattr(related, "visit_number"):
+        route = (
+            "operations:guard-visitors"
+            if is_guard
+            else "operations:visitor-invitations"
+        )
+        return reverse(route)
+    if related.__class__.__name__ == "Conversation":
+        return reverse(
+            "communications:conversation-detail", kwargs={"pk": related.slug}
+        )
+    if hasattr(related, "get_absolute_url"):
+        return related.get_absolute_url()
+    return None
+
+
 class NotificationToggleReadView(LoginRequiredMixin, View):
     def post(self, request, pk):
-        notification = get_object_or_404(
-            Notification, pk=pk, recipient=request.user
-        )
+        notification = get_object_or_404(Notification, pk=pk, recipient=request.user)
         if notification.is_read:
             notification.mark_as_unread()
         else:
@@ -234,7 +332,6 @@ class NotificationDeleteAllView(LoginRequiredMixin, View):
         return HttpResponseRedirect(reverse("communications:notification-list"))
 
 
-
 def conversations_for_user(user):
     conversations = Conversation.objects.filter(participants=user)
     if hasattr(user, "employee_profile") and hasattr(
@@ -244,11 +341,11 @@ def conversations_for_user(user):
     return conversations
 
 
-
 class ConversationListView(LoginRequiredMixin, ListView):
     """
     List all conversations the authenticated user is a participant of.
     """
+
     template_name = "communications/conversations/list.html"
     context_object_name = "conversations"
     paginate_by = 20
@@ -312,8 +409,9 @@ class ConversationListView(LoginRequiredMixin, ListView):
         context.update(guard_chat_context(self.request.user))
         if selected_conversation:
             context["chat_messages"] = list(
-                selected_conversation.messages.select_related("sender")
-                .order_by("-created_at")[:50][::-1]
+                selected_conversation.messages.select_related("sender").order_by(
+                    "-created_at"
+                )[:50][::-1]
             )
             context["other_participants"] = selected_conversation.participants.exclude(
                 pk=self.request.user.pk
@@ -329,6 +427,7 @@ class ConversationDetailView(LoginRequiredMixin, DetailView):
     """
     Display a single conversation with its messages.
     """
+
     context_object_name = "conversation"
 
     def get_template_names(self):
@@ -380,11 +479,12 @@ class ConversationDetailView(LoginRequiredMixin, DetailView):
         context.update(tenant_chat_context(self.request.user))
         context.update(guard_chat_context(self.request.user))
         context["chat_messages"] = list(
-            conversation.messages.select_related("sender").order_by("-created_at")[:50][::-1]
+            conversation.messages.select_related("sender").order_by("-created_at")[:50][
+                ::-1
+            ]
         )
-        context["other_participants"] = (
-            conversation.participants
-            .exclude(pk=self.request.user.pk)
+        context["other_participants"] = conversation.participants.exclude(
+            pk=self.request.user.pk
         )
 
         return context

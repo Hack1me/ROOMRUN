@@ -538,11 +538,11 @@ class ContractExtensionService:
         contract = RentalContract.objects.select_for_update().get(pk=contract.pk)
         if contract.tenant_id != tenant.pk:
             raise ValidationError(_("You are not the tenant on this contract."))
-        if contract.status != ContractStatus.ACTIVE or not contract.end_date:
+        if contract.status != ContractStatus.ACTIVE:
             raise ValidationError(
-                _("Only an active fixed-term contract can be extended.")
+                _("Only an active contract can be extended.")
             )
-        if requested_end_date <= contract.end_date:
+        if contract.end_date and requested_end_date <= contract.end_date:
             raise ValidationError(
                 _("The requested date must be after the current contract end date.")
             )
@@ -580,9 +580,9 @@ class ContractExtensionService:
             raise ValidationError(
                 _("This extension request has already been reviewed.")
             )
-        if contract.status != ContractStatus.ACTIVE or not contract.end_date:
+        if contract.status != ContractStatus.ACTIVE:
             raise ValidationError(_("This contract can no longer be extended."))
-        if extension.requested_end_date <= contract.end_date:
+        if contract.end_date and extension.requested_end_date <= contract.end_date:
             raise ValidationError(_("The requested date is no longer valid."))
         if extension.requested_end_date <= timezone.localdate():
             raise ValidationError(_("The new end date must still be in the future."))

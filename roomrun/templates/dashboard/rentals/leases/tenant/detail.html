@@ -149,6 +149,10 @@
               {% translate "Review & Pay" %}
               </a>
             {% elif contract.status == 'ACTIVE' %}
+              <a href="#lease-extension" class="btn btn-primary">
+                <i class="ti ti-calendar-plus"></i>
+                {% if contract.end_date %}{% translate "Request an extension" %}{% else %}{% translate "Set a lease end date" %}{% endif %}
+              </a>
               <form method="post" action="{% url 'rentals:rental-contract-terminate' contract.slug %}" onsubmit="return confirm('{% translate "Terminate this rental contract?" %}')">
                 {% csrf_token %}
                 <label for="termination-reason" class="sr-only">{% translate "Reason for termination" %}</label>
@@ -169,9 +173,10 @@
         </section>
       {% endif %}
 
-      {% if contract.status == 'ACTIVE' and contract.end_date %}
-        <section class="section card space-y-4 p-5">
-          <h2 class="section-title">{% translate "Extend this contract" %}</h2>
+      {% if contract.status == 'ACTIVE' %}
+        <section id="lease-extension" class="section card space-y-4 p-5">
+          <h2 class="section-title">{% if contract.end_date %}{% translate "Extend this contract" %}{% else %}{% translate "Set an end date for this lease" %}{% endif %}</h2>
+          <p class="text-sm text-muted">{% if contract.end_date %}{% translate "Choose the new end date you are requesting. Your landlord must approve it, then you must pay the extension fee to confirm it." %}{% else %}{% translate "Your lease currently has no end date. Request a proposed end date; it takes effect only after landlord approval and payment." %}{% endif %}</p>
           {% if extension_requests %}
             <div class="space-y-3">
               {% for extension in extension_requests %}
@@ -189,9 +194,9 @@
           {% if not extension_requests or extension_requests.0.status == 'REJECTED' or extension_requests.0.status == 'PAID' %}
             <form method="post" action="{% url 'rentals:tenant-extension-request' contract.slug %}" class="space-y-3">
               {% csrf_token %}
-              <label for="requested-end-date" class="detail-label">{% translate "New contract end date" %}</label>
-              <input id="requested-end-date" type="date" name="requested_end_date" min="{{ contract.end_date|date:'Y-m-d' }}" required class="form-control">
-              <button class="btn btn-primary" type="submit">{% translate "Request extension" %}</button>
+              <label for="requested-end-date" class="detail-label">{% translate "Requested contract end date" %}</label>
+              <input id="requested-end-date" type="date" name="requested_end_date" min="{{ extension_min_date|date:'Y-m-d' }}" required class="form-control">
+              <button class="btn btn-primary" type="submit">{% translate "Send request for approval" %}</button>
             </form>
           {% endif %}
         </section>

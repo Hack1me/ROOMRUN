@@ -46,6 +46,7 @@ ROUTE_MODELS = {
     "visitor-invitation-cancel": ("operations", "VisitorVisit"),
     "guard-visitor-status": ("operations", "VisitorVisit"),
     "notification-detail": ("communications", "Notification"),
+    "notification-open": ("communications", "Notification"),
     "notification-delete": ("communications", "Notification"),
     "notification-toggle-read": ("communications", "Notification"),
     "conversation-detail": ("communications", "Conversation"),
