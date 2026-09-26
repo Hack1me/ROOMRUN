@@ -19,6 +19,23 @@
       <a class="rr-nav-link" href="{% url 'home' %}#tarifs">{% translate "Pricing" %}</a>
       <a class="rr-nav-link" href="{% url 'about' %}">{% translate "About" %}</a>
     </div>
+    <form action="{% url 'set_language' %}" method="post" class="flex items-center">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+      <label class="sr-only" for="site-language">{% translate "Choose language" %}</label>
+      <select id="site-language"
+              name="language"
+              class="rounded-lg border border-line bg-white px-2 py-2 text-sm text-primary"
+              onchange="this.form.submit()">
+        {% get_current_language as CURRENT_LANGUAGE %}
+        {% get_available_languages as AVAILABLE_LANGUAGES %}
+        {% for language_code, language_name in AVAILABLE_LANGUAGES %}
+          <option value="{{ language_code }}" {% if language_code == CURRENT_LANGUAGE %}selected{% endif %}>
+            {% if language_code == 'en' %}{% translate "English" %}{% else %}{% translate "French" %}{% endif %}
+          </option>
+        {% endfor %}
+      </select>
+    </form>
     <div class="hidden items-center gap-4 sm:flex">
       {% if user.is_authenticated %}
         <a class="rr-btn-dark px-4 py-2.5"
