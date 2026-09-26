@@ -1,7 +1,7 @@
 (() => {
   const breakpoint = window.matchMedia("(max-width: 1024px)");
 
-  const createQuickActionsModal = (toggle) => {
+  const createQuickActionsPopover = (toggle) => {
     const panel = document.getElementById(toggle.getAttribute("aria-controls"));
     const source = toggle.closest("[data-quick-actions-source]");
     if (!panel || !source) return null;
@@ -11,77 +11,81 @@
     toggle.before(togglePlaceholder);
     panel.before(panelPlaceholder);
 
-    const dialog = document.createElement("dialog");
-    dialog.className = "quick-actions-dialog";
-    source.closest(".app")?.classList.forEach((className) => {
-      dialog.classList.add(className);
-    });
-    dialog.setAttribute("aria-labelledby", `${panel.id}-title`);
+    const popover = document.createElement("div");
+    popover.className = "quick-actions-popover";
+    popover.setAttribute("role", "region");
+    popover.setAttribute("aria-hidden", "true");
+    popover.inert = true;
 
-    const header = document.createElement("header");
-    header.className = "quick-actions-dialog__header";
-    const title = document.createElement("h2");
-    title.className = "quick-actions-dialog__title";
-    title.id = `${panel.id}-title`;
-    title.textContent = toggle.dataset.modalTitle;
-
-    const close = document.createElement("button");
-    close.className = "quick-actions-dialog__close";
-    close.type = "button";
-    close.setAttribute("aria-label", toggle.dataset.labelClose);
-    close.title = toggle.dataset.labelClose;
-    close.innerHTML = '<i class="ti ti-x" aria-hidden="true"></i>';
-    header.append(title, close);
+    const heading = document.createElement("h2");
+    heading.className = "quick-actions-popover__title";
+    heading.id = `${panel.id}-label`;
+    heading.textContent = toggle.dataset.modalTitle;
+    popover.setAttribute("aria-labelledby", heading.id);
 
     const body = document.createElement("div");
-    body.className = "quick-actions-dialog__body";
-    dialog.append(header, body);
+    body.className = "quick-actions-popover__body";
+    popover.append(heading, body);
+    body.append(panel);
 
     let active = false;
-    const setExpanded = (expanded) => {
-      toggle.setAttribute("aria-expanded", String(expanded));
-      const label = expanded ? toggle.dataset.labelClose : toggle.dataset.labelOpen;
+    const setOpen = (open) => {
+      toggle.setAttribute("aria-expanded", String(open));
+      const label = open ? toggle.dataset.labelClose : toggle.dataset.labelOpen;
       toggle.setAttribute("aria-label", label);
       toggle.title = label;
-      toggle.classList.toggle("is-open", expanded);
+      toggle.classList.toggle("is-open", open);
+      popover.setAttribute("aria-hidden", String(!open));
+      popover.inert = !open;
+      if (open) {
+        popover.classList.add("is-open");
+      } else {
+        popover.classList.remove("is-open");
+      }
     };
 
-    const open = () => {
-      if (!dialog.open) dialog.showModal();
-      setExpanded(true);
-    };
-    const dismiss = () => {
-      if (dialog.open) dialog.close();
+    const close = (returnFocus = false) => {
+      if (toggle.getAttribute("aria-expanded") !== "true") return;
+      setOpen(false);
+      if (returnFocus) toggle.focus();
     };
 
     toggle.addEventListener("click", () => {
-      if (dialog.open) dismiss();
-      else open();
+      const open = toggle.getAttribute("aria-expanded") === "true";
+      setOpen(!open);
     });
-    close.addEventListener("click", dismiss);
-    dialog.addEventListener("click", (event) => {
-      if (event.target === dialog) dismiss();
+
+    document.addEventListener("pointerdown", (event) => {
+      if (
+        active &&
+        !popover.contains(event.target) &&
+        !toggle.contains(event.target)
+      ) {
+        close();
+      }
     });
-    dialog.addEventListener("close", () => setExpanded(false));
+    document.addEventListener("keydown", (event) => {
+      if (active && event.key === "Escape") close(true);
+    });
 
     return {
       activate() {
         if (active) return;
         active = true;
         body.append(panel);
-        document.body.append(dialog, toggle);
+        document.body.append(popover, toggle);
         source.hidden = true;
         toggle.classList.add("is-floating");
-        setExpanded(false);
+        setOpen(false);
       },
       restore() {
         if (!active) return;
-        dismiss();
+        close();
         active = false;
         source.hidden = false;
         source.insertBefore(toggle, togglePlaceholder);
         source.insertBefore(panel, panelPlaceholder);
-        dialog.remove();
+        popover.remove();
         toggle.classList.remove("is-floating", "is-open");
         toggle.setAttribute("aria-expanded", "true");
         toggle.setAttribute("aria-label", toggle.dataset.labelOpen);
@@ -93,7 +97,7 @@
   const controls = Array.from(
     document.querySelectorAll("[data-quick-actions-toggle]"),
   )
-    .map(createQuickActionsModal)
+    .map(createQuickActionsPopover)
     .filter(Boolean);
 
   const syncLayout = () => {

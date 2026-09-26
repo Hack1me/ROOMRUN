@@ -439,85 +439,76 @@
   min-width: 0;
 }
 
-.quick-actions-dialog {
+.quick-actions-popover {
   position: fixed;
-  inset: auto 16px 16px auto;
-  width: min(460px, calc(100vw - 28px));
+  inset: auto max(20px, env(safe-area-inset-right))
+    calc(max(30px, env(safe-area-inset-bottom)) + 68px) auto;
+  width: min(340px, calc(100vw - 28px));
   max-width: 100%;
-  max-height: 78vh;
-  max-height: min(78dvh, 720px);
+  max-height: 44vh;
+  max-height: min(44dvh, 340px);
   margin: 0;
   padding: 0;
   overflow: hidden;
-  border: 1px solid rgb(255 255 255 / 70%);
-  border-radius: 20px;
+  border: 1px solid rgb(255 255 255 / 80%);
+  border-radius: 17px;
   background: #fff;
   color: #1e293b;
-  box-shadow: 0 24px 80px rgb(15 23 42 / 28%);
+  box-shadow: 0 18px 48px rgb(15 23 42 / 20%), 0 3px 10px rgb(15 23 42 / 8%);
   opacity: 0;
-  transform: translateY(14px) scale(.98);
-  transition: opacity .2s ease, transform .24s cubic-bezier(.2, .7, .2, 1);
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(9px) scale(.98);
+  transform-origin: bottom right;
+  transition: opacity .18s ease, transform .2s cubic-bezier(.2, .7, .2, 1),
+    visibility .2s;
 }
 
-.quick-actions-dialog[open] {
+.quick-actions-popover.is-open {
   opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
   transform: translateY(0) scale(1);
-  animation: quick-actions-dialog-in .24s cubic-bezier(.2, .7, .2, 1) both;
 }
 
-@keyframes quick-actions-dialog-in {
-  from { opacity: 0; transform: translateY(14px) scale(.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.quick-actions-dialog::backdrop {
-  background: rgb(12 22 36 / 46%);
-  backdrop-filter: blur(3px);
-}
-
-.quick-actions-dialog__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 19px 20px 14px;
-}
-
-.quick-actions-dialog__title {
+.quick-actions-popover__title {
   margin: 0;
+  padding: 13px 15px 5px;
   color: #16283f;
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 700;
 }
 
-.quick-actions-dialog__close {
-  display: grid;
-  width: 36px;
-  height: 36px;
-  flex: 0 0 auto;
-  place-items: center;
-  border: 1px solid #e7e9ed;
-  border-radius: 50%;
-  background: #f8f9fb;
-  color: #4b5563;
-  cursor: pointer;
-}
-
-.quick-actions-dialog__close i {
-  font-size: 18px;
-}
-
-.quick-actions-dialog__body {
-  max-height: calc(78vh - 70px);
-  max-height: calc(min(78dvh, 720px) - 70px);
+.quick-actions-popover__body {
+  max-height: calc(44vh - 62px);
+  max-height: calc(min(44dvh, 340px) - 62px);
   overflow-y: auto;
   overscroll-behavior: contain;
+}
+
+.quick-actions-popover__body .quick-actions-panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  padding: 10px 14px 14px;
+}
+
+.quick-actions-popover__body .quick-actions-panel > a {
+  min-height: 54px;
+  padding: 9px;
+  gap: 8px;
+}
+
+.quick-actions-popover__body .action-icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
 }
 
 .quick-actions-toggle.is-floating {
   position: fixed;
   right: max(20px, env(safe-area-inset-right));
-  bottom: max(20px, env(safe-area-inset-bottom));
+  bottom: max(30px, env(safe-area-inset-bottom));
   display: inline-flex;
 }
 
@@ -565,29 +556,40 @@
     height: 56px;
   }
 
-  .quick-actions-dialog {
-    inset: auto 12px 12px auto;
-    width: calc(100vw - 24px);
-    max-height: 82vh;
-    max-height: min(82dvh, 700px);
-    border-radius: 18px;
+  .quick-actions-popover {
+    inset: auto max(14px, env(safe-area-inset-right))
+      calc(max(30px, env(safe-area-inset-bottom)) + 68px) auto;
+    width: min(340px, calc(100vw - 28px));
+    max-height: 44vh;
+    max-height: min(44dvh, 340px);
+    border-radius: 16px;
   }
 
-  .quick-actions-dialog__body {
-    max-height: calc(82vh - 68px);
-    max-height: calc(min(82dvh, 700px) - 68px);
+  .quick-actions-popover__body {
+    max-height: calc(44vh - 62px);
+    max-height: calc(min(44dvh, 340px) - 62px);
   }
 
-  .quick-actions-dialog__header {
-    padding: 16px 16px 12px;
+  .quick-actions-popover__title {
+    padding: 12px 13px 5px;
+  }
+
+  .quick-actions-popover__body .quick-actions-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 8px 12px 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .quick-actions-popover__body .quick-actions-panel {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .quick-actions-toggle i,
-  .quick-actions-dialog {
+  .quick-actions-popover {
     transition: none !important;
-    animation: none !important;
   }
 }
 
