@@ -74,11 +74,12 @@
         </section>
 
         <!-- QUICK ACTIONS -->
-        <section class="section-card quick-actions">
+        <section class="section-card quick-actions" data-quick-actions-source>
           <div class="section-header">
             <h2 class="section-title">{% translate "Quick actions" %}</h2>
+            {% include "dashboard/includes/quick_actions_toggle.html" with panel_id="landlord-quick-actions" %}
           </div>
-          <div class="actions-grid">
+          <div class="actions-grid quick-actions-panel" id="landlord-quick-actions" data-quick-actions-panel>
             <a class="action" href="{% url 'rentals:landlord-rental-application-list' %}">
               <div class="action-icon icon-orange"><i class="ti ti-inbox"></i></div>
               <div class="action-content"><div class="action-title">{% translate "Applications" %}{% if pending_applications %} <span class="action-count">{{ pending_applications }}</span>{% endif %}</div></div>

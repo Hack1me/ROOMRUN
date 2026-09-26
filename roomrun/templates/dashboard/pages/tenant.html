@@ -83,11 +83,12 @@
         </section>
 
         <!-- QUICK ACTIONS -->
-        <section class="card quick-actions">
+        <section class="card quick-actions" data-quick-actions-source>
           <div class="section-head">
             <h2 class="section-title">{% translate "Quick actions" %}</h2>
+            {% include "dashboard/includes/quick_actions_toggle.html" with panel_id="tenant-quick-actions" %}
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 quick-actions-panel" id="tenant-quick-actions" data-quick-actions-panel>
             <a href="{% url 'billing:tenant-charge-list' %}" class="action-btn">
               <div class="action-icon green"><i class="ti ti-credit-card"></i></div>
               <div>

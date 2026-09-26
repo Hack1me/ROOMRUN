@@ -7,6 +7,10 @@
   {{ block.super }}
   <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
 {% endblock css %}
+{% block javascript %}
+  {{ block.super }}
+  <script defer src="{% static 'js/dashboard-quick-actions.js' %}"></script>
+{% endblock javascript %}
 {% block extra_css %}
   <style>
     .dashboard-main {

@@ -62,11 +62,12 @@
         </section>
 
         <!-- QUICK ACTIONS -->
-        <section class="section-card quick-actions">
+        <section class="section-card quick-actions" data-quick-actions-source>
           <div class="section-header">
             <h2 class="section-title">{% translate "Quick actions" %}</h2>
+            {% include "dashboard/includes/quick_actions_toggle.html" with panel_id="guard-quick-actions" %}
           </div>
-          <div class="actions-grid actions-grid--three">
+          <div class="actions-grid actions-grid--three quick-actions-panel" id="guard-quick-actions" data-quick-actions-panel>
             <a href="{% url 'operations:guard-visitor-check-in' %}" class="action">
               <div class="action-icon icon-blue"><i class="ti ti-user-plus"></i></div>
               <div class="action-content">

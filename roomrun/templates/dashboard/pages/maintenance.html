@@ -62,11 +62,12 @@
         </section>
 
         <!-- QUICK ACTIONS -->
-        <section class="section-card quick-actions">
+        <section class="section-card quick-actions" data-quick-actions-source>
           <div class="section-header">
             <h2 class="section-title">{% translate "Quick actions" %}</h2>
+            {% include "dashboard/includes/quick_actions_toggle.html" with panel_id="maintenance-quick-actions" %}
           </div>
-          <div class="actions-grid actions-grid--three">
+          <div class="actions-grid actions-grid--three quick-actions-panel" id="maintenance-quick-actions" data-quick-actions-panel>
             <a href="{% url 'maintenance:task-list' %}" class="action">
               <div class="action-icon icon-blue"><i class="ti ti-tool"></i></div>
               <div class="action-content">
