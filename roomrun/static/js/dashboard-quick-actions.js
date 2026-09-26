@@ -26,7 +26,6 @@
     const body = document.createElement("div");
     body.className = "quick-actions-popover__body";
     popover.append(heading, body);
-    body.append(panel);
 
     let active = false;
     const setOpen = (open) => {
