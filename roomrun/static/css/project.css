@@ -22,6 +22,95 @@
   }
 }
 
+.dashboard-page .tenant-content .payment-status--pending {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.dashboard-page .tenant-content .no-lease-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 20px;
+}
+
+.dashboard-page .tenant-content .no-lease-card > div:last-child {
+  min-width: 0;
+}
+
+.dashboard-page .tenant-content .chart-period {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+@media (max-width: 1024px) {
+  .dashboard-page .tenant-content {
+    padding: 24px clamp(16px, 3vw, 28px) 36px;
+  }
+
+  .dashboard-page .tenant-content .information-grid,
+  .dashboard-page .tenant-content .lower-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dashboard-page .tenant-content .charts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-page .tenant-content {
+    padding: 18px 14px 96px;
+  }
+
+  .dashboard-page .tenant-content .tenant-stats {
+    gap: 10px;
+  }
+
+  .dashboard-page .tenant-content .stat-card {
+    padding: 13px;
+    min-width: 0;
+  }
+
+  .dashboard-page .tenant-content .stat-value {
+    overflow-wrap: anywhere;
+    font-size: clamp(18px, 5vw, 24px);
+  }
+
+  .dashboard-page .tenant-content .charts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dashboard-page .tenant-content .chart-container {
+    height: 205px;
+  }
+
+  .dashboard-page .tenant-content .housing-details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-page .tenant-content .contract-footer,
+  .dashboard-page .tenant-content .housing-title-row {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .dashboard-page .tenant-content .list-item {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .dashboard-page .tenant-content .activity-time {
+    white-space: normal;
+    text-align: right;
+  }
+
+  .dashboard-page .tenant-content .table-wrapper table {
+    min-width: 620px;
+  }
+}
+
 @media (min-width: 1025px) {
   button#mobile-menu,
   button.menu-button,

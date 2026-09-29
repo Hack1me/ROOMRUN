@@ -308,7 +308,8 @@ class DirectRentalContractForm(RentalContractForm):
     landlord's available units.
     """
 
-    tenant_id = forms.IntegerField(
+    # Tenant inherits the UUID primary key from BaseModel.
+    tenant_id = forms.UUIDField(
         required=False,
         widget=forms.HiddenInput(),
     )

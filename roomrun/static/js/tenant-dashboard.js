@@ -36,20 +36,29 @@
   });
 
   function initCharts() {
+    const dataElement = document.getElementById('tenant-dashboard-data');
+    if (!dataElement || !window.Chart) return;
+    let dashboardData;
+    try {
+      dashboardData = JSON.parse(dataElement.textContent);
+    } catch (error) {
+      console.error('Invalid tenant dashboard chart data.', error);
+      return;
+    }
     const expensesCanvas = document.getElementById('expensesChart');
     const maintenanceCanvas = document.getElementById('maintenanceChart');
 
-    if (expensesCanvas && window.TENANT_DASHBOARD) {
+    if (expensesCanvas && dashboardData.expenses) {
       const expensesCtx = expensesCanvas.getContext('2d');
       new Chart(expensesCtx, {
         type: 'bar',
         data: {
-          labels: window.TENANT_DASHBOARD.expenses.labels,
+          labels: dashboardData.expenses.labels,
           datasets: [
             {
-              label: 'Dépenses',
-              data: window.TENANT_DASHBOARD.expenses.data,
-              backgroundColor: window.TENANT_DASHBOARD.expenses.backgroundColor,
+              label: 'Payments',
+              data: dashboardData.expenses.data,
+              backgroundColor: '#1E3A5F',
               borderRadius: 5,
               borderWidth: 0,
             },
@@ -63,7 +72,9 @@
             tooltip: {
               callbacks: {
                 label: function (context) {
-                  return context.parsed.y.toLocaleString('fr-FR') + ' FCFA';
+                  return new Intl.NumberFormat(document.documentElement.lang || undefined, {
+                    style: 'currency', currency: 'XAF', maximumFractionDigits: 0,
+                  }).format(context.parsed.y);
                 },
               },
             },
@@ -84,16 +95,16 @@
       });
     }
 
-    if (maintenanceCanvas && window.TENANT_DASHBOARD) {
+    if (maintenanceCanvas && dashboardData.maintenance) {
       const maintenanceCtx = maintenanceCanvas.getContext('2d');
       new Chart(maintenanceCtx, {
         type: 'doughnut',
         data: {
-          labels: window.TENANT_DASHBOARD.maintenance.labels,
+          labels: dashboardData.maintenance.labels,
           datasets: [
             {
-              data: window.TENANT_DASHBOARD.maintenance.data,
-              backgroundColor: window.TENANT_DASHBOARD.maintenance.backgroundColor,
+              data: dashboardData.maintenance.data,
+              backgroundColor: ['#2E9E5B', '#4A90D9', '#B9770E', '#9CA3AF'],
               borderWidth: 0,
               hoverOffset: 5,
             },

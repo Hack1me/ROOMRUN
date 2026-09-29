@@ -3,12 +3,6 @@
 
 {% block topbar_title %}{% translate "Dashboard" %}{% endblock %}
 {% block topbar_subtitle %}<p>{% translate "Your rental at a glance" %}</p>{% endblock %}
-{% block topbar_search %}
-  <label class="topbar-search">
-    <i class="ti ti-search" aria-hidden="true"></i>
-    <input type="search" placeholder="{% translate 'Search…' %}" />
-  </label>
-{% endblock %}
 {% block topbar_actions %}
   <a href="{% url 'communications:notification-list' %}"
      class="icon-button relative"

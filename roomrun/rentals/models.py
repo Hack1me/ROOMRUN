@@ -359,7 +359,11 @@ class RentalContract(BaseModel):
         1. End date must be after start date (if provided).
         2. A tenant cannot have another active contract for the same unit.
         """
-        if self.end_date and self.end_date <= self.start_date:
+        # ``clean()`` can run on an incomplete instance (for example, when
+        # another required field is missing during ``full_clean()``). Avoid
+        # comparing a date to ``None`` and let field validation report the
+        # missing start date.
+        if self.start_date and self.end_date and self.end_date <= self.start_date:
             raise ValidationError(_("End date must be after the start date."))
 
         super().clean()
