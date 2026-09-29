@@ -3,6 +3,7 @@ from django.db.models.signals import post_save
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
+from utils.enums import ContractStatus
 from utils.enums import NotificationType
 from utils.helpers import assign_reference_identifier
 
@@ -80,6 +81,16 @@ def notify_contract_status(sender, instance, created, **kwargs):
     previous_status = getattr(instance, "notification_previous_status", None)
     property_ref = instance.unit.building.property_ref
     if created:
+        if instance.status == ContractStatus.ACTIVE:
+            send_notification(
+                recipient=instance.tenant.user,
+                title=_("Existing lease registered"),
+                message=_("Your existing rental contract for %(property)s was added to ROOMRUN.")
+                % {"property": property_ref.name},
+                notification_type=NotificationType.SYSTEM,
+                related_object=instance,
+            )
+            return
         send_notification(
             recipient=instance.tenant.user,
             title=_("Rental contract ready"),

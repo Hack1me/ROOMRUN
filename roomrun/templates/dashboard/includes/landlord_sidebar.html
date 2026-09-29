@@ -45,7 +45,7 @@
         <i class="ti ti-inbox"></i>
         <span>{% translate "Applications" %}</span>
       </a>
-      <a href="{% url 'rentals:landlord-rental-contract-list' %}" class="nav-item{% if current_url == 'landlord-rental-contract-list' or current_url == 'landlord-rental-contract-create' or current_url == 'landlord-rental-contract-detail' %} active{% endif %}">
+      <a href="{% url 'rentals:landlord-rental-contract-list' %}" class="nav-item{% if current_url == 'landlord-rental-contract-list' or current_url == 'landlord-rental-contract-create' or current_url == 'landlord-existing-rental-contract-create' or current_url == 'landlord-rental-contract-detail' %} active{% endif %}">
         <i class="ti ti-file-text"></i><span>{% translate "Leases" %}</span>
       </a>
       <a href="{% url 'billing:landlord-wallet' %}" class="nav-item{% if request.resolver_match.url_name == 'landlord-wallet' %} active{% endif %}">

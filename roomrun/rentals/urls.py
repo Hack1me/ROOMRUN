@@ -1,10 +1,12 @@
 from django.urls import path
 from rentals.views.document_views import LeaseDocumentPreviewView
 from rentals.views.document_views import LeasePDFView
+from rentals.views.document_views import ExistingLeaseFileView
 from rentals.views.land_ren_views import LandlordContractExtensionDecisionView
 from rentals.views.land_ren_views import LandlordRentalApplicationDetailView
 from rentals.views.land_ren_views import LandlordRentalApplicationListView
 from rentals.views.land_ren_views import LandlordRentalContractCreateView
+from rentals.views.land_ren_views import LandlordExistingRentalContractCreateView
 from rentals.views.land_ren_views import LandlordRentalContractDetailView
 from rentals.views.land_ren_views import LandlordRentalContractListView
 from rentals.views.land_ren_views import RentalApplicationApproveView
@@ -21,6 +23,11 @@ from rentals.views.ten_ren_views import TenantRentalContractSignView
 app_name = "rentals"
 
 urlpatterns = [
+    path(
+        "contracts/<slug:pk>/original/",
+        ExistingLeaseFileView.as_view(),
+        name="existing-lease-file",
+    ),
     path(
         "contracts/<slug:pk>/document/",
         LeaseDocumentPreviewView.as_view(),
@@ -96,6 +103,11 @@ urlpatterns += [
         "landlord/contracts/create/",
         LandlordRentalContractCreateView.as_view(),
         name="landlord-rental-contract-create",
+    ),
+    path(
+        "landlord/contracts/register-existing/",
+        LandlordExistingRentalContractCreateView.as_view(),
+        name="landlord-existing-rental-contract-create",
     ),
     path(
         "landlord/contracts/",

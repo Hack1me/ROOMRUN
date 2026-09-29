@@ -11,7 +11,7 @@
       <button class="payments-mobile-toggle" type="button" id="mobile-menu" aria-label="{% translate 'Open menu' %}"><i class="ti ti-menu-2"></i></button>
       <div class="payments-breadcrumb">{% translate "Management" %}<span>/</span><strong>{% translate "Payments" %}</strong></div>
     </div>
-    <a class="payments-topbar__balance" href="#withdrawal-form"><i class="ti ti-wallet"></i><span>{{ balance|floatformat:0 }} FCFA</span></a>
+    <a class="payments-topbar__balance" href="#withdrawal-form"><i class="ti ti-wallet"></i><span>{{ balance.amount|floatformat:0 }} FCFA</span></a>
   </header>
 {% endblock %}
 
@@ -28,14 +28,14 @@
   </div>
 
   <section class="payments-summary" aria-label="{% translate 'Payment summary' %}">
-    <article class="summary-card"><div class="summary-card__top"><span>{% translate "Collected this month" %}</span><i class="ti ti-cash"></i></div><strong>{{ month_income|floatformat:0 }} FCFA</strong><small class="positive">{{ month_payment_count }} {% translate "payment(s)" %}</small></article>
-    <article class="summary-card"><div class="summary-card__top"><span>{% translate "Payments pending" %}</span><i class="ti ti-clock"></i></div><strong>{{ pending_amount|floatformat:0 }} FCFA</strong><small class="warning">{{ pending_count }} {% translate "payment(s)" %}</small></article>
-    <article class="summary-card"><div class="summary-card__top"><span>{% translate "Failed payments" %}</span><i class="ti ti-alert-circle"></i></div><strong>{{ failed_amount|floatformat:0 }} FCFA</strong><small class="danger">{{ failed_count }} {% translate "payment(s)" %}</small></article>
-    <article class="summary-card"><div class="summary-card__top"><span>{% translate "Available balance" %}</span><i class="ti ti-wallet"></i></div><strong>{{ balance|floatformat:0 }} FCFA</strong><small>{% translate "Ready for withdrawal" %}</small></article>
+    <article class="summary-card"><div class="summary-card__top"><span>{% translate "Collected this month" %}</span><i class="ti ti-cash"></i></div><strong>{{ month_income.amount|floatformat:0 }} FCFA</strong><small class="positive">{{ month_payment_count }} {% translate "payment(s)" %}</small></article>
+    <article class="summary-card"><div class="summary-card__top"><span>{% translate "Payments pending" %}</span><i class="ti ti-clock"></i></div><strong>{{ pending_amount.amount|floatformat:0 }} FCFA</strong><small class="warning">{{ pending_count }} {% translate "payment(s)" %}</small></article>
+    <article class="summary-card"><div class="summary-card__top"><span>{% translate "Failed payments" %}</span><i class="ti ti-alert-circle"></i></div><strong>{{ failed_amount.amount|floatformat:0 }} FCFA</strong><small class="danger">{{ failed_count }} {% translate "payment(s)" %}</small></article>
+    <article class="summary-card"><div class="summary-card__top"><span>{% translate "Available balance" %}</span><i class="ti ti-wallet"></i></div><strong>{{ balance.amount|floatformat:0 }} FCFA</strong><small>{% translate "Ready for withdrawal" %}</small></article>
   </section>
 
   <section class="payments-balance-strip">
-    <div><span>{% translate "Outstanding from tenants" %}</span><strong>{{ amount_due|floatformat:0 }} FCFA</strong><small>{% translate "Unpaid charges on signed and active leases" %}</small></div>
+    <div><span>{% translate "Outstanding from tenants" %}</span><strong>{{ amount_due.amount|floatformat:0 }} FCFA</strong><small>{% translate "Unpaid charges on signed and active leases" %}</small></div>
     <a class="pay-btn pay-btn--primary" href="#withdrawal-form">{% translate "Withdraw funds" %}<i class="ti ti-arrow-right"></i></a>
   </section>
 
@@ -59,7 +59,7 @@
               <td><div class="tenant-cell"><span class="tenant-avatar">{{ payment.charge.contract.tenant.user.first_name|first }}{{ payment.charge.contract.tenant.user.last_name|first }}</span><span><strong>{{ payment.charge.contract.tenant.user.full_name|default:payment.charge.contract.tenant.user.email }}</strong><small>{{ payment.charge.contract.tenant.user.email }}</small></span></div></td>
               <td><strong>{{ payment.charge.contract.unit.building.property_ref.name }}</strong><small>{{ payment.charge.contract.unit.building.name }} · {% translate "Unit" %} {{ payment.charge.contract.unit.unit_number }}</small></td>
               <td>{{ payment.charge.get_charge_type_display }}</td>
-              <td><strong class="amount">{{ payment.amount|floatformat:0 }} FCFA</strong></td>
+              <td><strong class="amount">{{ payment.amount.amount|floatformat:0 }} FCFA</strong></td>
               <td class="payment-date">{{ payment.display_date|date:"d/m/Y H:i" }}</td>
               <td><span class="payment-status payment-status--{{ payment.ui_status }}">{{ payment.get_status_display }}</span></td>
             </tr>
@@ -74,7 +74,7 @@
 
   <div class="payments-bottom-grid">
     <section class="payments-withdrawal-card" id="withdrawal-form">
-      <div class="payments-section-heading"><div><h2>{% translate "Withdraw your balance" %}</h2><p>{% translate "Request a Mobile Money payout to your preferred number." %}</p></div><strong>{{ balance|floatformat:0 }} FCFA</strong></div>
+      <div class="payments-section-heading"><div><h2>{% translate "Withdraw your balance" %}</h2><p>{% translate "Request a Mobile Money payout to your preferred number." %}</p></div><strong>{{ balance.amount|floatformat:0 }} FCFA</strong></div>
       <form method="post" class="withdrawal-form">{% csrf_token %}
         {% if form.non_field_errors %}<div class="withdrawal-errors">{{ form.non_field_errors }}</div>{% endif %}
         <div class="withdrawal-fields">
@@ -87,7 +87,7 @@
     </section>
     <section class="payments-withdrawals-card">
       <div class="payments-section-heading"><div><h2>{% translate "Withdrawal requests" %}</h2><p>{% translate "Recent requests and their status." %}</p></div></div>
-      <div class="withdrawal-list">{% for withdrawal in withdrawals %}<article><div><strong>{{ withdrawal.amount|floatformat:0 }} FCFA</strong><small>{{ withdrawal.phone_number }} · {{ withdrawal.created_at|date:"d/m/Y H:i" }}</small></div><span class="withdrawal-status withdrawal-status--{{ withdrawal.status|lower }}">{{ withdrawal.get_status_display }}</span></article>{% empty %}<p class="withdrawal-empty">{% translate "No withdrawal requests yet." %}</p>{% endfor %}</div>
+      <div class="withdrawal-list">{% for withdrawal in withdrawals %}<article><div><strong>{{ withdrawal.amount.amount|floatformat:0 }} FCFA</strong><small>{{ withdrawal.phone_number }} · {{ withdrawal.created_at|date:"d/m/Y H:i" }}</small></div><span class="withdrawal-status withdrawal-status--{{ withdrawal.status|lower }}">{{ withdrawal.get_status_display }}</span></article>{% empty %}<p class="withdrawal-empty">{% translate "No withdrawal requests yet." %}</p>{% endfor %}</div>
     </section>
   </div>
 </div>

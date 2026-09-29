@@ -143,6 +143,39 @@ class RentalContractService:
     TERMINATION_REASON_MIN_LENGTH = 10
     """Business logic related to rental contracts."""
 
+    @staticmethod
+    @transaction.atomic
+    def register_existing(*, landlord, tenant, unit, data, existing_document):
+        """Import a previously signed lease and mark its unit as occupied."""
+        unit = Unit.objects.select_for_update().select_related(
+            "building__property_ref"
+        ).get(pk=unit.pk)
+        if unit.building.property_ref.landlord_id != landlord.pk:
+            raise ValidationError(_("You cannot register a lease for this unit."))
+        if RentalContract.objects.filter(
+            unit=unit,
+            status__in=(ContractStatus.ACTIVE, ContractStatus.SIGNING, ContractStatus.SIGNED),
+        ).exists():
+            raise ValidationError(_("This unit already has a contract in progress."))
+
+        allowed_fields = {
+            "start_date", "end_date", "monthly_rent", "deposit", "advance_rent_months"
+        }
+        contract = RentalContract(
+            tenant=tenant,
+            unit=unit,
+            status=ContractStatus.ACTIVE,
+            landlord_signed_at=timezone.now(),
+            tenant_signed_at=timezone.now(),
+            existing_document=existing_document,
+            **{key: value for key, value in data.items() if key in allowed_fields},
+        )
+        contract.full_clean()
+        contract.save()
+        unit.status = UnitStatus.OCCUPIED
+        unit.save(update_fields=["status", "updated_at"])
+        return contract
+
     # -------------------------------------------------------------------------
     # Create — landlord signs
     # -------------------------------------------------------------------------

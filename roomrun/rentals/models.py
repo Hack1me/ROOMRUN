@@ -309,6 +309,14 @@ class RentalContract(BaseModel):
         help_text=_("Digital signature of the tenant (SVG, base64 PNG, or hash)."),
     )
 
+    existing_document = models.FileField(
+        _("Existing signed contract"),
+        upload_to="contracts/existing/",
+        null=True,
+        blank=True,
+        help_text=_("Scanned copy of a contract signed outside the platform."),
+    )
+
     landlord_objects = LandlordRentalManager()
 
     # -------------------------------------------------------------------------

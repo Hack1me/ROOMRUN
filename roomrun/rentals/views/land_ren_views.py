@@ -19,6 +19,7 @@ from djmoney.money import Money
 from properties.mixins import LandlordRequiredMixin
 from rentals.forms import ContractExtensionApprovalForm
 from rentals.forms import DirectRentalContractForm
+from rentals.forms import ExistingRentalContractForm
 from rentals.forms import RentalContractForm
 from rentals.models import ContractExtensionRequest
 from rentals.models import RentalApplication
@@ -340,6 +341,36 @@ class LandlordRentalContractCreateView(LandlordRequiredMixin, FormView):
             ),
         )
         return redirect("rentals:landlord-rental-contract-create")
+
+
+class LandlordExistingRentalContractCreateView(LandlordRequiredMixin, FormView):
+    """Register a previously signed lease in the landlord's lease list."""
+
+    form_class = ExistingRentalContractForm
+    template_name = "dashboard/rentals/contracts/landlord/existing_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["landlord"] = self.get_landlord()
+        return kwargs
+
+    def form_valid(self, form):
+        try:
+            contract = RentalContractService.register_existing(
+                landlord=self.get_landlord(),
+                tenant=form.cleaned_data["tenant"],
+                unit=form.cleaned_data["unit"],
+                data=form.cleaned_data,
+                existing_document=form.cleaned_data["existing_document"],
+            )
+        except ValidationError as exc:
+            for error in exc.messages:
+                form.add_error(None, error)
+            return self.form_invalid(form)
+        messages.success(self.request, _("Existing lease registered successfully."))
+        return redirect(
+            "rentals:landlord-rental-contract-detail", pk=contract.slug
+        )
 
 
 class LandlordRentalContractListView(LandlordRequiredMixin, ListView):

@@ -5,6 +5,8 @@ import mimetypes
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
+from django.http import FileResponse
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -112,3 +114,19 @@ class LeasePDFView(LeaseDocumentAccessMixin, View):
             logger.exception("Unable to generate lease PDF | contract=%s", lease.pk)
             messages.error(request, _("The lease PDF could not be generated. Please try again."))
             return redirect("rentals:lease-document", pk=lease.slug)
+
+
+class ExistingLeaseFileView(LeaseDocumentAccessMixin, View):
+    """Serve the uploaded signed original only to a lease party."""
+
+    model = RentalContract
+
+    def get(self, request, pk):
+        lease = self.get_lease(pk)
+        if not lease.existing_document:
+            raise Http404
+        return FileResponse(
+            lease.existing_document.open("rb"),
+            as_attachment=True,
+            filename=lease.existing_document.name.rsplit("/", 1)[-1],
+        )

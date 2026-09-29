@@ -1,0 +1,25 @@
+{% extends "dashboard/layout.html" %}
+{% load i18n %}
+
+{% block sidebar %}{% include "dashboard/includes/role_sidebar.html" %}{% endblock sidebar %}
+
+{% block content %}
+<div class="mx-auto max-w-3xl p-6">
+  <a class="text-sm text-slate-600" href="{% url 'rentals:landlord-rental-contract-list' %}">← {% translate "Back to leases" %}</a>
+  <h1 class="mt-4 text-2xl font-semibold">{% translate "Register an existing lease" %}</h1>
+  <p class="mt-2 mb-6 text-sm text-slate-600">{% translate "Add a lease already signed by you and your tenant, then upload its signed copy." %}</p>
+  <form method="post" enctype="multipart/form-data" class="space-y-4 rounded-xl border border-border bg-white p-6">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="rounded bg-red-50 p-3 text-sm text-red-700">{{ form.non_field_errors }}</div>{% endif %}
+    {% for field in form %}
+      <div class="flex flex-col gap-1">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.help_text %}<small class="text-slate-500">{{ field.help_text }}</small>{% endif %}
+        {% for error in field.errors %}<small class="text-red-700">{{ error }}</small>{% endfor %}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">{% translate "Register lease" %}</button>
+  </form>
+</div>
+{% endblock content %}

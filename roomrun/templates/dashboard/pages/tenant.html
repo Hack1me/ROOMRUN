@@ -46,7 +46,7 @@
               <span class="stat-label">{% translate "Monthly rent" %}</span>
               <span class="stat-icon stat-icon--primary"><i class="ti ti-home-dollar"></i></span>
             </div>
-            <p class="stat-value">{% if active_contract %}{{ rent_amount|floatformat:0 }} {{ rent_amount.currency }}{% else %}—{% endif %}</p>
+            <p class="stat-value">{% if active_contract %}{{ rent_amount.amount|floatformat:0 }} {{ rent_amount.currency }}{% else %}—{% endif %}</p>
             <p class="stat-change neutral">{% if active_contract %}{% translate "Monthly rent" %}{% else %}{% translate "No active lease" %}{% endif %}</p>
           </article>
           {% with next_charge=upcoming_payments|first %}
@@ -176,7 +176,7 @@
                 </div>
                 <div class="detail">
                   <div class="detail-label">{% translate "Rent" %}</div>
-                  <div class="detail-value">{{ rent_amount|floatformat:0 }} {{ rent_amount.currency }}</div>
+                  <div class="detail-value">{{ rent_amount.amount|floatformat:0 }} {{ rent_amount.currency }}</div>
                 </div>
               </div>
             </div>
@@ -211,7 +211,7 @@
             <div class="contract-footer">
               <div>
                 <div class="contract-item-label">{% translate "Monthly rent" %}</div>
-                <div class="contract-price">{{ rent_amount|floatformat:0 }} {{ rent_amount.currency }}</div>
+                <div class="contract-price">{{ rent_amount.amount|floatformat:0 }} {{ rent_amount.currency }}</div>
               </div>
               <a class="outline-button" href="{% url 'rentals:tenant-lease-detail' %}">{% translate "View contract" %}</a>
             </div>

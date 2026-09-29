@@ -14,7 +14,7 @@
 {% block topbar_actions %}
   {% if is_landlord_notifications %}
     <a class="notification-wallet" href="{% url 'billing:landlord-wallet' %}">
-      <i class="ti ti-wallet"></i>{{ landlord_wallet_balance|floatformat:0 }} FCFA
+      <i class="ti ti-wallet"></i>{{ landlord_wallet_balance.amount|floatformat:0 }} FCFA
     </a>
   {% endif %}
   <a class="icon-button" href="{% url 'communications:notification-list' %}"

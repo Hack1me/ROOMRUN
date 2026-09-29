@@ -183,7 +183,7 @@
                     <div class="item-title">{{ payment.charge.get_charge_type_display }}</div>
                     <div class="item-meta">{{ payment.charge.contract.tenant.user.full_name }} · {{ payment.paid_at|date:"d M Y" }}</div>
                   </div>
-                  <div class="item-amount">{{ payment.amount|floatformat:0 }} FCFA</div>
+                  <div class="item-amount">{{ payment.amount.amount|floatformat:0 }} FCFA</div>
                 </a>
               {% empty %}
                 <p class="p-5 text-sm text-muted">{% translate "No payment has been recorded yet." %}</p>
@@ -228,7 +228,7 @@
                 <div class="activity-icon {% if activity.kind == 'payment' %}icon-green{% elif activity.kind == 'maintenance' %}icon-orange{% else %}icon-blue{% endif %}"><i class="ti {% if activity.kind == 'payment' %}ti-cash{% elif activity.kind == 'maintenance' %}ti-tool{% else %}ti-user-plus{% endif %}"></i></div>
                 <div class="activity-content">
                   {% if activity.url_pk %}<a class="activity-title" href="{% url activity.url_name activity.url_pk %}">{{ activity.title }}</a>{% else %}<a class="activity-title" href="{% url activity.url_name %}">{{ activity.title }}</a>{% endif %}
-                  <div class="activity-meta">{{ activity.subtitle }}{% if activity.amount %} · {{ activity.amount|floatformat:0 }} FCFA{% endif %}</div>
+                  <div class="activity-meta">{{ activity.subtitle }}{% if activity.amount %} · {{ activity.amount.amount|floatformat:0 }} FCFA{% endif %}</div>
                 </div>
                 <div class="activity-time">{% blocktranslate with days=activity.date|timesince %}{{ days }} ago{% endblocktranslate %}</div>
               </div>

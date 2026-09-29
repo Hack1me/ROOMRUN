@@ -14,7 +14,7 @@
   <a href="{% url 'billing:landlord-wallet' %}"
      class="landlord-wallet-link"
      aria-label="{% translate 'Available balance' %}: {{ landlord_wallet_balance }} FCFA">
-    <i class="ti ti-wallet" aria-hidden="true"></i><span>{% translate "Balance" %}</span><strong>{{ landlord_wallet_balance|floatformat:0 }} FCFA</strong>
+    <i class="ti ti-wallet" aria-hidden="true"></i><span>{% translate "Balance" %}</span><strong>{{ landlord_wallet_balance.amount|floatformat:0 }} FCFA</strong>
   </a>
   <a href="{% url 'communications:notification-list' %}"
      class="icon-button notification-link"

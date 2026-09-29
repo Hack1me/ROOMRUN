@@ -514,6 +514,69 @@ class DirectRentalContractForm(RentalContractForm):
         return self._invite_email is not None
 
 
+class ExistingRentalContractForm(forms.Form):
+    """Register a lease that was signed before the landlord joined ROOMRUN."""
+
+    tenant = forms.ModelChoiceField(
+        queryset=Tenant.objects.none(), label=_("Tenant"),
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+    unit = forms.ModelChoiceField(
+        queryset=Unit.objects.none(), label=_("Unit"),
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+    start_date = forms.DateField(
+        label=_("Start date"),
+        widget=forms.DateInput(attrs={"type": "date", "class": "form-input"}),
+    )
+    end_date = forms.DateField(
+        label=_("End date"), required=False,
+        widget=forms.DateInput(attrs={"type": "date", "class": "form-input"}),
+    )
+    monthly_rent = MoneyFormField(max_digits=12, decimal_places=2, label=_("Monthly rent"))
+    deposit = MoneyFormField(max_digits=12, decimal_places=2, label=_("Deposit"))
+    advance_rent_months = forms.IntegerField(
+        min_value=1, initial=1, label=_("Advance rent months"),
+        widget=forms.NumberInput(attrs={"min": 1, "class": "form-input"}),
+    )
+    existing_document = forms.FileField(
+        label=_("Signed contract document"),
+        help_text=_("Upload a PDF or image of the contract signed by both parties."),
+    )
+
+    def __init__(self, *args, landlord, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["tenant"].queryset = Tenant.objects.select_related("user").filter(
+            user__is_active=True
+        ).order_by("user__last_name", "user__first_name")
+        self.fields["unit"].queryset = Unit.objects.select_related(
+            "building", "building__property_ref"
+        ).filter(
+            building__property_ref__landlord=landlord,
+            status__in=(UnitStatus.AVAILABLE, UnitStatus.OCCUPIED),
+        ).order_by("building__building_number", "unit_number")
+
+    def clean(self):
+        cleaned = super().clean()
+        start_date, end_date = cleaned.get("start_date"), cleaned.get("end_date")
+        if start_date and end_date and end_date <= start_date:
+            self.add_error("end_date", _("End date must be after the start date."))
+        rent = cleaned.get("monthly_rent")
+        if rent and rent.amount <= 0:
+            self.add_error("monthly_rent", _("Monthly rent must be greater than zero."))
+        deposit = cleaned.get("deposit")
+        if deposit and deposit.amount < 0:
+            self.add_error("deposit", _("Deposit cannot be negative."))
+        document = cleaned.get("existing_document")
+        if document and document.name.rsplit(".", 1)[-1].lower() not in {
+            "pdf", "png", "jpg", "jpeg", "webp"
+        }:
+            self.add_error(
+                "existing_document", _("Upload the signed contract as a PDF or image.")
+            )
+        return cleaned
+
+
 class TenantContractSignatureForm(forms.ModelForm):
     """
     Form used by the tenant to sign a rental contract.

@@ -22,8 +22,8 @@
               <td class="px-5 py-4"><strong>{{ charge.contract.unit.building.property_ref.name }}</strong><small class="mt-1 block text-muted">{{ charge.contract.unit.building.name }} · {{ charge.contract.unit }}</small></td>
               <td class="px-5 py-4"><strong>{{ charge.get_charge_type_display }}</strong><small class="mt-1 block text-muted">{{ charge.charge_number }}</small></td>
               <td class="px-5 py-4">{{ charge.due_date|date:"d M Y" }}</td>
-              <td class="px-5 py-4">{{ charge.amount|floatformat:0 }} FCFA</td>
-              <td class="px-5 py-4">{{ charge.balance_due|floatformat:0 }} FCFA</td>
+              <td class="px-5 py-4">{{ charge.amount.amount|floatformat:0 }} FCFA</td>
+              <td class="px-5 py-4">{{ charge.balance_due.amount|floatformat:0 }} FCFA</td>
               <td class="px-5 py-4">{{ charge.get_status_display }}</td>
             </tr>
           {% empty %}

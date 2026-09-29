@@ -11,11 +11,11 @@
 
   <section class="tp-next" aria-label="{% translate 'Outstanding balance' %}">
     <div><span class="tp-overline">{% translate "Outstanding balance" %}</span><h3>{% if charges %}{% translate "Payments to complete" %}{% else %}{% translate "You are up to date" %}{% endif %}</h3><p>{% if charges %}{% translate "Pay an outstanding charge securely with Mobile Money." %}{% else %}{% translate "There are no outstanding charges on your active lease." %}{% endif %}</p></div>
-    <div class="tp-next-action"><strong>{{ outstanding_total|floatformat:0 }} FCFA</strong>{% if charges %}<a class="tp-button tp-button-light" href="{% url 'billing:tenant-payment-initiate' charges.0.slug %}">{% translate "Pay now" %}<i class="ti ti-arrow-up-right"></i></a>{% endif %}</div>
+    <div class="tp-next-action"><strong>{{ outstanding_total.amount|floatformat:0 }} FCFA</strong>{% if charges %}<a class="tp-button tp-button-light" href="{% url 'billing:tenant-payment-initiate' charges.0.slug %}">{% translate "Pay now" %}<i class="ti ti-arrow-up-right"></i></a>{% endif %}</div>
   </section>
 
   <section class="tp-stats">
-    <article><span>{% translate "Outstanding charges" %}</span><strong>{{ charges|length }}</strong><small>{{ outstanding_total|floatformat:0 }} FCFA</small></article>
+    <article><span>{% translate "Outstanding charges" %}</span><strong>{{ charges|length }}</strong><small>{{ outstanding_total.amount|floatformat:0 }} FCFA</small></article>
     <article><span>{% translate "Payments made" %}</span><strong>{{ completed_payment_count }}</strong><small>{% translate "Completed" %}</small></article>
     <article><span>{% translate "Payment activity" %}</span><strong>{{ payment_count }}</strong><small>{% translate "Latest 100 transactions" %}</small></article>
   </section>
@@ -28,7 +28,7 @@
       <article class="tp-charge">
         <div class="tp-charge-icon"><i class="ti ti-home-dollar"></i></div>
         <div class="tp-charge-info"><strong>{{ charge.get_charge_type_display }}</strong><span>{{ charge.contract.unit }} · {{ charge.charge_number }}</span><small>{% translate "Due" %} {{ charge.due_date|date:"d M Y" }}</small></div>
-        <strong class="tp-charge-amount">{{ charge.balance_due|floatformat:0 }} FCFA</strong>
+        <strong class="tp-charge-amount">{{ charge.balance_due.amount|floatformat:0 }} FCFA</strong>
         <a class="tp-button tp-button-primary" href="{% url 'billing:tenant-payment-initiate' charge.slug %}">{% translate "Pay" %}<i class="ti ti-arrow-right"></i></a>
       </article>
       {% endfor %}
@@ -45,7 +45,7 @@
         <article class="tp-row" data-status="{{ payment.status }}" data-search="{{ payment.payment_number }} {{ payment.charge.get_charge_type_display }} {{ payment.charge.contract.unit }} {{ payment.charge.contract.unit.building.property_ref.name }}">
           <div class="tp-reference"><span class="tp-icon"><i class="ti ti-credit-card"></i></span><span><strong>{{ payment.payment_number }}</strong><small>{{ payment.get_payment_method_display }}</small></span></div>
           <div class="tp-charge-label"><strong>{{ payment.charge.get_charge_type_display }}</strong><small>{{ payment.charge.contract.unit }}</small></div>
-          <strong class="tp-amount">{{ payment.amount|floatformat:0 }} FCFA</strong>
+          <strong class="tp-amount">{{ payment.amount.amount|floatformat:0 }} FCFA</strong>
           <span class="tp-status tp-status-{{ payment.status|lower }}">{{ payment.get_status_display }}</span>
           <time datetime="{{ payment.display_date|date:'c' }}">{{ payment.display_date|date:"d M Y" }}</time>
           <a class="tp-row-link" href="{% url 'billing:tenant-payment-sync' payment.slug %}" aria-label="{% translate 'View payment status' %}"><i class="ti ti-chevron-right"></i></a>

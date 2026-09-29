@@ -3,7 +3,7 @@
 
 {% block tenant_content %}
 <div class="rr-maintenance">
-  <div class="rr-page-head"><div><a class="rr-back" href="{% url 'billing:tenant-charge-list' %}">← {% translate "Payments" %}</a><h1>{% translate "Payment status" %}</h1><p>{{ payment.charge.get_charge_type_display }} · {{ payment.amount|floatformat:0 }} FCFA</p></div></div>
+  <div class="rr-page-head"><div><a class="rr-back" href="{% url 'billing:tenant-charge-list' %}">← {% translate "Payments" %}</a><h1>{% translate "Payment status" %}</h1><p>{{ payment.charge.get_charge_type_display }} · {{ payment.amount.amount|floatformat:0 }} FCFA</p></div></div>
   <section class="rr-card rr-request rr-payment-result">
     {% if payment.status == "COMPLETED" %}
       <span class="rr-payment-result__icon rr-payment-result__icon--success"><i class="ti ti-circle-check"></i></span>
