@@ -235,7 +235,7 @@
             <a href="{% url 'billing:tenant-charge-list' %}" class="view-link">{% translate "See all" %} →</a>
           </div>
           <div class="table-wrapper">
-            <table>
+            <table class="payment-history-table">
               <thead>
                 <tr>
                   <th>{% translate "DATE" %}</th>
@@ -248,11 +248,11 @@
               <tbody>
                 {% for payment in recent_payments %}
                   <tr>
-                    <td>{{ payment.paid_at|default:payment.created_at|date:"d M Y" }}</td>
-                    <td class="payment-reference">{{ payment.payment_number|default:payment.id }}</td>
-                    <td>{{ payment.charge.get_charge_type_display }}</td>
-                    <td class="payment-amount">{{ payment.amount }}</td>
-                    <td>
+                    <td data-label="{% translate 'Date' %}">{{ payment.paid_at|default:payment.created_at|date:"d M Y" }}</td>
+                    <td class="payment-reference" data-label="{% translate 'Reference' %}">{{ payment.payment_number|default:payment.id }}</td>
+                    <td data-label="{% translate 'Type' %}">{{ payment.charge.get_charge_type_display }}</td>
+                    <td class="payment-amount" data-label="{% translate 'Amount' %}">{{ payment.amount }}</td>
+                    <td data-label="{% translate 'Status' %}">
                       <span class="payment-status {% if payment.status != 'COMPLETED' %}payment-status--pending{% endif %}">
                         <i class="ti {% if payment.status == 'COMPLETED' %}ti-check{% else %}ti-clock{% endif %}"></i>
                         {{ payment.get_status_display }}
@@ -260,8 +260,8 @@
                     </td>
                   </tr>
                 {% empty %}
-                  <tr>
-                    <td colspan="5" class="text-center text-muted py-4">{% translate "No payment recorded yet." %}</td>
+                  <tr class="payment-history-empty">
+                    <td colspan="5" class="payment-empty text-center text-muted py-4">{% translate "No payment recorded yet." %}</td>
                   </tr>
                 {% endfor %}
               </tbody>
