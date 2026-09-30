@@ -329,6 +329,10 @@
   .input-group .input-icon {
     @apply transition-colors duration-200 text-muted;
   }
+  /* Keep placeholder and entered text clear of the leading icon. */
+  .input-group .form-input {
+    padding-left: 2.5rem;
+  }
   .input-group:focus-within .input-icon {
     @apply text-secondary;
   }
