@@ -1,37 +1,73 @@
 {% extends "dashboard/layout.html" %}
 {% load i18n %}
+{% block title %}{% translate "Create rental contract" %} — ROOMRUN{% endblock %}
 {% block sidebar %}{% include "dashboard/includes/role_sidebar.html" %}{% endblock sidebar %}
 {% block content %}
-  <h1>{% translate "Create rental contract" %}</h1>
-  <form method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}{{ form.non_field_errors }}{% for field in form %}<p>{{ field.label_tag }}{{ field }}{{ field.errors }}</p>{% endfor %}<button type="submit">{% translate "Create contract" %}</button></form>
+  <div class="contract-create">
+    <nav class="cc-breadcrumb"><a href="{% url 'rentals:landlord-rental-contract-list' %}">{% translate "Contracts" %}</a><i class="ti ti-chevron-right"></i><span>{% translate "New contract" %}</span></nav>
+    <header class="cc-heading"><div><h1>{% translate "Create a rental contract" %}</h1><p>{% translate "Set the rental terms, review the contract and sign it to send it to your tenant." %}</p></div><span class="cc-step"><i class="ti ti-file-pencil"></i>{% translate "Contract setup" %}</span></header>
+    <form method="post" enctype="multipart/form-data" novalidate class="cc-layout">{% csrf_token %}{{ form.tenant_id }}
+      <main class="cc-card">
+        <div class="cc-card-head"><h2>{% translate "Contract details" %}</h2><p>{% translate "Complete the rental information and add your signature." %}</p></div>
+        <div class="cc-card-body">
+          {% if form.non_field_errors %}<div class="cc-errors">{{ form.non_field_errors }}</div>{% endif %}
+          <section class="cc-section"><h3><i class="ti ti-users"></i>{% translate "Tenant and unit" %}</h3><div class="cc-grid">
+            {% for field in form %}{% if field.name == "tenant_search" or field.name == "unit" %}<div class="cc-field {% if field.name == 'tenant_search' %}cc-full{% endif %}"><label for="{{ field.id_for_label }}">{{ field.label }} <b>*</b></label>{{ field }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}{{ field.errors }}{% if field.name == "tenant_search" %}<ul id="tenant-results" class="cc-results" role="listbox"></ul><small>{% translate "Search an existing tenant, or enter an email address to invite them." %}</small>{% endif %}</div>{% endif %}{% endfor %}
+          </div></section>
+          <section class="cc-section"><h3><i class="ti ti-calendar-dollar"></i>{% translate "Rental terms" %}</h3><div class="cc-grid">
+            {% for field in form %}{% if field.name == "start_date" or field.name == "end_date" or field.name == "monthly_rent" or field.name == "deposit" or field.name == "advance_rent_months" %}<div class="cc-field"><label for="{{ field.id_for_label }}">{{ field.label }} <b>*</b></label>{{ field }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}{{ field.errors }}</div>{% endif %}{% endfor %}
+          </div></section>
+          <section class="cc-section cc-sign-section"><div><h3><i class="ti ti-signature"></i>{% translate "Your signature" %}</h3><p>{% translate "Sign below to approve these terms. The tenant will review and sign after you create the contract." %}</p></div>
+            <div class="cc-signature-wrap"><canvas id="landlordSignatureCanvas" aria-label="{% translate 'Signature area' %}"></canvas><div id="signatureHint" class="cc-signature-hint"><i class="ti ti-signature"></i><span>{% translate "Draw your signature here" %}</span></div></div>
+            <div class="cc-signature-actions"><small>{% translate "Use your mouse, touch screen or stylus." %}</small><button type="button" id="clearSignature" class="cc-clear"><i class="ti ti-eraser"></i>{% translate "Clear" %}</button></div>
+            <input type="hidden" name="landlord_signature" id="landlordSignatureInput" value="" />{% for error in form.landlord_signature.errors %}<span class="cc-error">{{ error }}</span>{% endfor %}
+          </section>
+          <footer class="cc-actions"><a href="{% url 'rentals:landlord-rental-contract-list' %}" class="cc-button cc-secondary">{% translate "Cancel" %}</a><button type="submit" class="cc-button cc-primary"><i class="ti ti-file-check"></i>{% translate "Create and send for signature" %}</button></footer>
+        </div>
+      </main>
+      <aside class="cc-aside"><article class="cc-card cc-summary"><div class="cc-summary-icon"><i class="ti ti-file-description"></i></div><h2>{% translate "Ready for signing" %}</h2><p>{% translate "Once created, your tenant can review the contract and add their signature from their ROOMRUN account." %}</p><div class="cc-flow"><div><span>1</span><p><strong>{% translate "You sign" %}</strong><small>{% translate "Confirm the rental terms above" %}</small></p></div><div><span>2</span><p><strong>{% translate "Tenant reviews" %}</strong><small>{% translate "The contract is sent to their account" %}</small></p></div><div><span>3</span><p><strong>{% translate "Tenant signs" %}</strong><small>{% translate "The lease is then ready to activate" %}</small></p></div></div></article><div class="cc-note"><i class="ti ti-shield-check"></i><p><strong>{% translate "Check before signing" %}</strong><br>{% translate "Make sure the tenant, unit, dates and amounts are correct." %}</p></div></aside>
+    </form>
+  </div>
+  <style>
+    .contract-create{--cc-border:#e6e8ec;--cc-text:#1e293b;--cc-muted:#657181;--cc-accent:#c1622d;color:var(--cc-text);max-width:1240px;margin:0 auto}.cc-breadcrumb{display:flex;align-items:center;gap:8px;margin:4px 0 20px;color:var(--cc-muted);font-size:12px}.cc-breadcrumb a:hover{color:var(--cc-text)}.cc-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}.cc-heading h1{font-size:23px;line-height:1.25;font-weight:650}.cc-heading p,.cc-card-head p{margin-top:5px;color:var(--cc-muted);font-size:13px}.cc-step{display:flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid var(--cc-border);border-radius:20px;color:#34445a;background:#fff;font-size:11px}.cc-layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:20px;align-items:start}.cc-card{overflow:hidden;border:1px solid var(--cc-border);border-radius:12px;background:#fff;box-shadow:0 1px 3px #0f172a08}.cc-card-head{padding:18px 21px;border-bottom:1px solid var(--cc-border)}.cc-card-head h2{font-size:15px;font-weight:600}.cc-card-body{padding:21px}.cc-section{margin-bottom:26px}.cc-section h3{display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:14px;font-weight:600}.cc-section h3 i{color:var(--cc-accent);font-size:17px}.cc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.cc-field{display:flex;flex-direction:column;gap:6px;min-width:0}.cc-full{grid-column:1/-1}.cc-field label{font-size:12px;font-weight:550}.cc-field label b{color:#d64545}.cc-field input,.cc-field select,.cc-field textarea{width:100%;height:41px;padding:0 11px;border:1px solid var(--cc-border);border-radius:8px;background:#fff;color:var(--cc-text);font-size:12px;outline:none}.cc-field input:focus,.cc-field select:focus{border-color:#1e3a5f;box-shadow:0 0 0 3px #1e3a5f12}.cc-field small,.cc-signature-actions small{color:var(--cc-muted);font-size:11px}.cc-field ul{margin:0;padding:0;list-style:none;color:#bd3f3f;font-size:11px}.cc-errors{margin-bottom:17px;padding:11px 13px;border:1px solid #efc8c8;border-radius:8px;background:#fcebec;color:#ae3030;font-size:12px}.cc-results:empty{display:none}.cc-results{max-height:180px;overflow:auto;border:1px solid var(--cc-border);border-radius:8px;background:#fff}.cc-results li+li{border-top:1px solid var(--cc-border)}.cc-results button{width:100%;padding:10px 12px;text-align:left;color:var(--cc-text);font-size:12px}.cc-results button:hover{background:#f5f7f9}.cc-sign-section{padding:17px;border:1px solid var(--cc-border);border-radius:9px;background:#fcfcfb}.cc-sign-section h3{margin-bottom:4px}.cc-sign-section>div:first-child p{margin-bottom:13px;color:var(--cc-muted);font-size:11px}.cc-signature-wrap{position:relative;height:150px;border:1px dashed #bfc8d3;border-radius:8px;background:#fff;touch-action:none}.cc-signature-wrap canvas{width:100%;height:100%;display:block;touch-action:none}.cc-signature-hint{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;color:#9aa4b1;font-size:11px;pointer-events:none}.cc-signature-hint i{font-size:23px}.cc-signature-hint.hidden{display:none}.cc-signature-actions{display:flex;justify-content:space-between;align-items:center;margin-top:7px}.cc-clear{display:flex;align-items:center;gap:5px;color:#596577;font-size:11px}.cc-error{color:#c33;font-size:11px}.cc-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;padding-top:19px;border-top:1px solid var(--cc-border)}.cc-button{height:40px;padding:0 15px;display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid transparent;border-radius:8px;font-size:12px;font-weight:550;cursor:pointer}.cc-secondary{border-color:var(--cc-border);background:#fff}.cc-secondary:hover{background:#f5f6f8}.cc-primary{background:var(--cc-accent);color:white}.cc-primary:hover{background:#a34f22}.cc-aside{display:flex;flex-direction:column;gap:14px}.cc-summary{padding:20px}.cc-summary-icon{width:40px;height:40px;display:grid;place-items:center;border-radius:10px;background:#f7eee8;color:var(--cc-accent);font-size:21px}.cc-summary h2{margin-top:14px;font-size:15px;font-weight:600}.cc-summary>p{margin-top:5px;color:var(--cc-muted);font-size:11px;line-height:1.6}.cc-flow{margin-top:19px}.cc-flow>div{display:flex;gap:10px;position:relative;padding-bottom:18px}.cc-flow>div:not(:last-child):after{position:absolute;content:"";width:1px;background:#e1e5e9;top:25px;bottom:1px;left:12px}.cc-flow>div>span{z-index:1;width:25px;height:25px;flex:none;display:grid;place-items:center;border-radius:50%;background:#f2f4f6;color:#374151;font-size:11px;font-weight:600}.cc-flow p{padding-top:1px}.cc-flow strong,.cc-flow small{display:block}.cc-flow strong{font-size:11px}.cc-flow small{margin-top:2px;color:var(--cc-muted);font-size:10px}.cc-note{display:flex;gap:10px;padding:13px;border:1px solid #dce6f2;border-radius:9px;background:#eaf2fb;color:#1e3a5f}.cc-note i{font-size:18px}.cc-note p{color:#536276;font-size:11px;line-height:1.55}.cc-note strong{color:#1e293b}@media(max-width:900px){.cc-layout{grid-template-columns:1fr 270px}}@media(max-width:700px){.cc-layout{grid-template-columns:1fr}.cc-aside{grid-row:1}.cc-heading{align-items:flex-start}.cc-step{display:none}}@media(max-width:480px){.cc-grid{grid-template-columns:1fr}.cc-full{grid-column:auto}.cc-card-body{padding:16px}.cc-actions{flex-direction:column-reverse}.cc-button{width:100%}}
+  </style>
   <script>
     (() => {
       const input = document.getElementById("tenant-search");
       const selected = document.getElementById("id_tenant_id");
-      if (!input || !selected) return;
-      const resultsList = document.createElement("ul");
-      input.after(resultsList);
-      input.addEventListener("input", async () => {
-        selected.value = "";
-        resultsList.replaceChildren();
-        if (input.value.trim().length < 2) return;
-        const response = await fetch("{% url 'rentals:landlord-tenant-search' %}?q=" + encodeURIComponent(input.value));
-        if (!response.ok) return;
-        const { results } = await response.json();
-        results.forEach((tenant) => {
-          const option = document.createElement("button");
-          option.type = "button";
-          option.textContent = `${tenant.name} (${tenant.email})`;
-          option.addEventListener("click", () => {
-            selected.value = tenant.id;
-            input.value = option.textContent;
-            resultsList.replaceChildren();
-          });
-          const item = document.createElement("li");
-          item.append(option);
-          resultsList.append(item);
+      const resultsList = document.getElementById("tenant-results");
+      if (input && selected && resultsList) {
+        let timer;
+        input.addEventListener("input", () => {
+          selected.value = ""; resultsList.replaceChildren(); clearTimeout(timer);
+          if (input.value.trim().length < 2) return;
+          timer = setTimeout(async () => {
+            try {
+              const response = await fetch("{% url 'rentals:landlord-tenant-search' %}?q=" + encodeURIComponent(input.value));
+              if (!response.ok) return;
+              const {results} = await response.json();
+              results.forEach((tenant) => {
+                const button = document.createElement("button"); button.type = "button"; button.textContent = `${tenant.name} (${tenant.email})`;
+                button.addEventListener("click", () => { selected.value = tenant.id; input.value = button.textContent; resultsList.replaceChildren(); });
+                const item = document.createElement("li"); item.append(button); resultsList.append(item);
+              });
+            } catch (_) { /* Keep the form usable if tenant search is unavailable. */ }
+          }, 180);
         });
-      });
+      }
+      const canvas = document.getElementById("landlordSignatureCanvas");
+      const signatureInput = document.getElementById("landlordSignatureInput");
+      const hint = document.getElementById("signatureHint");
+      if (!canvas || !signatureInput) return;
+      const ctx = canvas.getContext("2d"); let drawing = false; let signed = false;
+      const resize = () => { const rect = canvas.getBoundingClientRect(); const ratio = window.devicePixelRatio || 1; const old = signed ? canvas.toDataURL() : null; canvas.width = rect.width * ratio; canvas.height = rect.height * ratio; ctx.setTransform(ratio, 0, 0, ratio, 0, 0); ctx.lineWidth = 2.2; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.strokeStyle = "#172b45"; if (old) { const image = new Image(); image.onload = () => ctx.drawImage(image, 0, 0, rect.width, rect.height); image.src = old; } };
+      const point = (event) => { const rect = canvas.getBoundingClientRect(); return {x:event.clientX-rect.left,y:event.clientY-rect.top}; };
+      canvas.addEventListener("pointerdown", (event) => { drawing=true; canvas.setPointerCapture(event.pointerId); const p=point(event); ctx.beginPath(); ctx.moveTo(p.x,p.y); });
+      canvas.addEventListener("pointermove", (event) => { if(!drawing)return; const p=point(event); ctx.lineTo(p.x,p.y); ctx.stroke(); signed=true; hint.classList.add("hidden"); });
+      const stop = () => { if(!drawing)return; drawing=false; if(signed)signatureInput.value=canvas.toDataURL("image/png"); };
+      canvas.addEventListener("pointerup", stop); canvas.addEventListener("pointercancel", stop); window.addEventListener("resize", resize); resize();
+      document.getElementById("clearSignature").addEventListener("click", () => { ctx.clearRect(0,0,canvas.width,canvas.height); signed=false; signatureInput.value=""; hint.classList.remove("hidden"); });
+      canvas.closest("form").addEventListener("submit", (event) => { if(!signed){event.preventDefault(); canvas.closest(".cc-sign-section").scrollIntoView({behavior:"smooth",block:"center"}); hint.style.color="#bd3f3f";} else signatureInput.value=canvas.toDataURL("image/png"); });
     })();
   </script>
 {% endblock content %}

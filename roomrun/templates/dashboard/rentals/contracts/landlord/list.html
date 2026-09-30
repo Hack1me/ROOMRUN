@@ -133,9 +133,11 @@
             <select class="h-[37px] min-w-[125px] px-[9px] border border-border rounded-[7px] bg-white text-ink text-[10px] outline-none focus:border-primary" id="statusFilter">
               <option value="">{% translate "All statuses" %}</option>
               <option value="ACTIVE">{% translate "Active" %}</option>
-              <option value="EXPIRING">{% translate "Expiring soon" %}</option>
-              <option value="DRAFT">{% translate "Draft" %}</option>
-              <option value="ENDED">{% translate "Ended" %}</option>
+              <option value="SIGNING">{% translate "Awaiting signature" %}</option>
+              <option value="SIGNED">{% translate "Signed" %}</option>
+              <option value="COMPLETED">{% translate "Completed" %}</option>
+              <option value="TERMINATED">{% translate "Terminated" %}</option>
+              <option value="CANCELLED">{% translate "Cancelled" %}</option>
             </select>
             <button class="w-[37px] h-[37px] border border-border rounded-[7px] bg-white text-muted" id="resetFilters" title="{% translate 'Reset filters' %}">
               <i class="ti ti-refresh"></i>
@@ -158,7 +160,10 @@
               {% with tenant_user=contract.tenant.user unit=contract.unit property=unit.building.property_ref %}
                 <div class="lease-row grid grid-cols-[145px_minmax(170px,1fr)_minmax(150px,0.9fr)_110px_105px_30px] items-center gap-[15px] py-[15px] px-[7px] border-b border-border transition duration-100 hover:bg-slate-50 last:border-b-0 max-[1150px]:grid-cols-[130px_minmax(150px,1fr)_minmax(140px,0.9fr)_100px_100px_30px] max-[850px]:min-w-[780px]"
                      data-status="{{ contract.status|lower }}"
-                     data-property="{{ property.name|lower }}">
+                     data-property="{{ property.name|lower }}"
+                     data-detail-url="{% url 'rentals:landlord-rental-contract-detail' contract.slug %}"
+                     role="link" tabindex="0" aria-label="{% blocktranslate with number=contract.contract_number %}View contract {{ number }} details{% endblocktranslate %}"
+                     style="cursor:pointer">
                   <div>
                     <div class="text-[11px] font-semibold text-primary">{{ contract.contract_number }}</div>
                     <div class="mt-[5px] text-muted text-[9px]">
@@ -190,8 +195,8 @@
                   <div>
                     <span class="inline-flex items-center w-fit px-2 py-1 rounded-full text-[9px] font-medium
                       {% if contract.status == 'ACTIVE' %}bg-success-soft text-success
-                      {% elif contract.status == 'EXPIRING' %}bg-warning-soft text-warning
-                      {% elif contract.status == 'ENDED' %}bg-slate-100 text-gray-500
+                      {% elif contract.status == 'SIGNING' %}bg-warning-soft text-warning
+                      {% elif contract.status == 'COMPLETED' or contract.status == 'TERMINATED' or contract.status == 'CANCELLED' %}bg-slate-100 text-gray-500
                       {% else %}bg-bg text-muted{% endif %}">
                       {{ contract.get_status_display }}
                     </span>
@@ -302,6 +307,19 @@
       </div>
     </div>
   </div>
+  <script>
+    document.querySelectorAll(".lease-row[data-detail-url]").forEach((row) => {
+      row.addEventListener("click", (event) => {
+        if (event.target.closest("a,button,input,select")) return;
+        window.location.href = row.dataset.detailUrl;
+      });
+      row.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault(); window.location.href = row.dataset.detailUrl;
+        }
+      });
+    });
+  </script>
 {% endblock content %}
 
 {% block extra_css %}
@@ -313,24 +331,20 @@
     document.addEventListener('DOMContentLoaded', function () {
       const searchInput = document.getElementById('leaseSearch');
       const statusFilter = document.getElementById('statusFilter');
-      const propertyFilter = document.getElementById('propertyFilter');
       const leaseRows = document.querySelectorAll('.lease-row');
       const emptyState = document.getElementById('emptyState');
 
       function filterLeases() {
-        const query = searchInput.value.trim().toLowerCase();
-        const status = statusFilter.value;
-        const property = propertyFilter.value;
+        const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+        const status = statusFilter ? statusFilter.value : '';
         let visibleCount = 0;
 
         leaseRows.forEach(function (row) {
           const text = row.textContent.toLowerCase();
           const rowStatus = row.dataset.status || '';
-          const rowProperty = row.dataset.property || '';
           const matchesSearch = !query || text.includes(query);
           const matchesStatus = !status || rowStatus === status.toLowerCase();
-          const matchesProperty = !property || rowProperty === property.toLowerCase();
-          const visible = matchesSearch && matchesStatus && matchesProperty;
+          const visible = matchesSearch && matchesStatus;
           row.style.display = visible ? 'grid' : 'none';
           if (visible) visibleCount++;
         });
@@ -342,12 +356,10 @@
 
       if (searchInput) searchInput.addEventListener('input', filterLeases);
       if (statusFilter) statusFilter.addEventListener('change', filterLeases);
-      if (propertyFilter) propertyFilter.addEventListener('change', filterLeases);
-
-      document.getElementById('resetFilters').addEventListener('click', function () {
-        searchInput.value = '';
-        statusFilter.value = '';
-        propertyFilter.value = '';
+      const resetFilters = document.getElementById('resetFilters');
+      if (resetFilters) resetFilters.addEventListener('click', function () {
+        if (searchInput) searchInput.value = '';
+        if (statusFilter) statusFilter.value = '';
         filterLeases();
       });
 
