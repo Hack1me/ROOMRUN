@@ -804,6 +804,7 @@
     isolation: isolate;
     min-height: 46rem;
     overflow: clip;
+    contain: paint;
   }
   .hero > :not(.hero__visual) {
     position: relative;

@@ -9,6 +9,7 @@
    accidentally leave a hamburger visible on desktop. */
 @media (max-width: 1024px) {
   button#mobile-menu,
+  button#mobileMenu,
   button.menu-button,
   button.mobile-menu,
   button.payments-mobile-toggle {
@@ -113,6 +114,7 @@
 
 @media (min-width: 1025px) {
   button#mobile-menu,
+  button#mobileMenu,
   button.menu-button,
   button.mobile-menu,
   button.payments-mobile-toggle,
