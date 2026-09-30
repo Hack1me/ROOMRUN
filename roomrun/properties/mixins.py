@@ -28,7 +28,7 @@ class LandlordRequiredMixin(LoginRequiredMixin):
 
     # Set to "redirect" to redirect with a message, or "raise" for a 403.
     LANDLORD_DENIED_BEHAVIOR = "redirect"
-    LANDLORD_DENIED_REDIRECT_URL = "dashboard:entry"
+    LANDLORD_DENIED_REDIRECT_URL = "dashboard:dashboard"
 
     def get_landlord(self) -> Landlord:
         """Return the landlord profile or raise PermissionDenied."""
@@ -77,7 +77,7 @@ class PropertyImageAccessMixin(LoginRequiredMixin):
     """
 
     # Optional: redirect behavior when landlord profile is missing
-    LANDLORD_DENIED_REDIRECT_URL = "dashboard:entry"
+    LANDLORD_DENIED_REDIRECT_URL = "dashboard:dashboard"
 
     def get_landlord(self) -> Landlord:
         """
