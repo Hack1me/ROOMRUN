@@ -8,6 +8,7 @@ from .base import PaymentGatewayAuthError
 from .base import PaymentGatewayConnectionError
 from .base import PaymentGatewayError
 from .base import PaymentGatewayValidationError
+from .base import verify_hmac_signature
 from .campay import CamPayGateway
 from .digipay import DigiPayGateway
 
@@ -23,6 +24,7 @@ __all__ = [
     "PaymentGatewayValidationError",
     "get_default_gateway",
     "get_gateway",
+    "verify_webhook_signature",
 ]
 
 
@@ -57,3 +59,13 @@ def get_default_gateway() -> PaymentGateway:
     """
     default = getattr(settings, "DEFAULT_PAYMENT_PROVIDER", PaymentProvider.DIGIPAY)
     return get_gateway(default)
+
+
+def verify_webhook_signature(provider: str, payload: bytes, signature: str) -> bool:
+    """Verify provider signatures without initializing payment SDK clients."""
+    secrets = {
+        PaymentProvider.CAMPAY: getattr(settings, "CAMPAY_WEBHOOK_SECRET", ""),
+        PaymentProvider.DIGIPAY: getattr(settings, "DIGIPAY_WEBHOOK_SECRET", ""),
+    }
+    secret = secrets.get(provider)
+    return verify_hmac_signature(payload, signature, secret or "")

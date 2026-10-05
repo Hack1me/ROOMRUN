@@ -1,5 +1,7 @@
 # billing/services/gateways/base.py
 
+import hashlib
+import hmac
 from abc import ABC
 from abc import abstractmethod
 from dataclasses import dataclass
@@ -12,6 +14,7 @@ if TYPE_CHECKING:
 # =============================================================================
 # Exceptions
 # =============================================================================
+
 
 class PaymentGatewayError(Exception):
     """Base exception for all payment gateway errors."""
@@ -33,17 +36,20 @@ class PaymentGatewayAuthError(PaymentGatewayError):
 # Result dataclasses
 # =============================================================================
 
+
 @dataclass
 class GatewayInitResult:
     """Standard result for a payment initiation."""
-    transaction_id: str        # Provider's transaction ID
-    status: str                # Provider's raw status
-    raw: dict[str, Any]        # Full provider response
+
+    transaction_id: str  # Provider's transaction ID
+    status: str  # Provider's raw status
+    raw: dict[str, Any]  # Full provider response
 
 
 @dataclass
 class GatewayStatusResult:
     """Standard result for a status query."""
+
     transaction_id: str
     status: str
     amount: Decimal | None
@@ -54,12 +60,13 @@ class GatewayStatusResult:
 # Abstract base
 # =============================================================================
 
+
 class PaymentGateway(ABC):
     """
     Common interface for all payment gateways.
     """
 
-    provider: str = ""   # To be set by subclasses (e.g., "CAMPAY")
+    provider: str = ""  # To be set by subclasses (e.g., "CAMPAY")
 
     @abstractmethod
     def initiate_payment(
@@ -80,3 +87,12 @@ class PaymentGateway(ABC):
     @abstractmethod
     def verify_webhook_signature(self, payload: bytes, signature: str) -> bool:
         """Validate an incoming webhook."""
+
+
+def verify_hmac_signature(payload: bytes, signature: str, secret: str) -> bool:
+    """Verify a sha256 HMAC over the exact webhook request bytes."""
+    if not secret or not signature:
+        return False
+    supplied = signature.removeprefix("sha256=").strip()
+    expected = hmac.new(secret.encode(), payload, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(expected, supplied)

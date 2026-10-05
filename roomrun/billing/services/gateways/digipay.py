@@ -12,6 +12,7 @@ from .base import GatewayInitResult
 from .base import GatewayStatusResult
 from .base import PaymentGateway
 from .base import PaymentGatewayError
+from .base import verify_hmac_signature
 
 logger = logging.getLogger(__name__)
 
@@ -124,5 +125,7 @@ class DigiPayGateway(PaymentGateway):
     # -------------------------------------------------------------------------
 
     def verify_webhook_signature(self, payload: bytes, signature: str) -> bool:
-        """TODO: implement once DigiPay's signing method is known."""
-        return True
+        """Verify DigiPay's sha256 HMAC over the original request body."""
+        return verify_hmac_signature(
+            payload, signature, settings.DIGIPAY_WEBHOOK_SECRET
+        )

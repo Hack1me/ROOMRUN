@@ -12,6 +12,7 @@ from .base import GatewayInitResult
 from .base import GatewayStatusResult
 from .base import PaymentGateway
 from .base import PaymentGatewayError
+from .base import verify_hmac_signature
 
 logger = logging.getLogger(__name__)
 
@@ -57,22 +58,24 @@ class CamPayGateway(PaymentGateway):
 
         logger.info(
             "CamPay collect | ref=%s | phone=%s | amount=%s",
-            external_reference, phone_number, amount,
+            external_reference,
+            phone_number,
+            amount,
         )
 
         try:
             response = self.client.initCollect(payload)
         except Exception as exc:
-            logger.exception(
-                "CamPay initiate failed | ref=%s", external_reference
-            )
+            logger.exception("CamPay initiate failed | ref=%s", external_reference)
             message = "CamPay could not initiate the payment."
             raise PaymentGatewayError(message) from exc
 
         # CamPay returns {"status": "FAILED", "message": "..."} on error.
         if response.get("status") == "FAILED" or "reference" not in response:
             message = response.get("message", "Unknown CamPay error.")
-            logger.error("CamPay collect failed | ref=%s | %s", external_reference, message)  # noqa: E501
+            logger.error(
+                "CamPay collect failed | ref=%s | %s", external_reference, message
+            )
             raise PaymentGatewayError(message)
 
         reference = response.get("reference")
@@ -119,5 +122,5 @@ class CamPayGateway(PaymentGateway):
     # -------------------------------------------------------------------------
 
     def verify_webhook_signature(self, payload: bytes, signature: str) -> bool:
-        """TODO: implement once CamPay's signing method is known."""
-        return True
+        """Verify a hex HMAC-SHA256 over the original request body."""
+        return verify_hmac_signature(payload, signature, settings.CAMPAY_WEBHOOK_SECRET)

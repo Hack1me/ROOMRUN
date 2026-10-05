@@ -13,7 +13,10 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   # dependencies for building Python packages
   build-essential \
   # psycopg dependencies
-  libpq-dev
+  libpq-dev \
+  # compile Django translation catalogs
+  gettext \
+  && rm -rf /var/lib/apt/lists/*
 
 
 # Requirements are installed here to ensure they will be cached.
@@ -39,12 +42,17 @@ RUN addgroup --system django \
   && adduser --system --ingroup django --home /home/django django
 
 
-# Install required system dependencies
+# Install runtime system dependencies
 RUN apt-get update && apt-get install --no-install-recommends -y \
-  # psycopg dependencies
-  libpq-dev \
-  # Translations dependencies
-  gettext \
+  # psycopg runtime dependency
+  libpq5 \
+  # WeasyPrint runtime dependencies
+  libpango-1.0-0 \
+  libpangoft2-1.0-0 \
+  libharfbuzz-subset0 \
+  libgdk-pixbuf-2.0-0 \
+  shared-mime-info \
+  fonts-dejavu-core \
   # entrypoint
   wait-for-it \
   # cleaning up unused files

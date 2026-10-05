@@ -409,6 +409,7 @@ DIGIPAY_API_KEY = env("DIGIPAY_API_KEY", default="") or (
     else DIGIPAY_LIVE_API_KEY
 )
 DIGIPAY_WEBHOOK_URL = env("DIGIPAY_WEBHOOK_URL", default="")
+DIGIPAY_WEBHOOK_SECRET = env("DIGIPAY_WEBHOOK_SECRET", default="")
 
 # Default provider
 DEFAULT_PAYMENT_PROVIDER = env("DEFAULT_PAYMENT_PROVIDER", default="DIGIPAY").strip().upper()
