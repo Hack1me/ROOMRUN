@@ -1,9 +1,11 @@
+from communications.services.notification_ser import send_notification
+from core.utils.enums import NotificationType
+from core.utils.helpers import assign_reference_identifier
 from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
-from utils.helpers import assign_reference_identifier
 
 from .models import Announcement
 from .models import ConversationParticipant
@@ -39,6 +41,17 @@ def update_conversation_last_message_at(sender, instance, created, **kwargs):
         conversation = instance.conversation
         conversation.last_message_at = instance.created_at
         conversation.save(update_fields=["last_message_at", "updated_at"])
+        for participant in instance.conversation.participants.exclude(
+            pk=instance.sender_id
+        ):
+            send_notification(
+                recipient=participant,
+                title=_("New message from %(name)s")
+                % {"name": instance.sender.full_name},
+                message=instance.content[:240],
+                notification_type=NotificationType.MESSAGE,
+                related_object=instance.conversation,
+            )
 
 
 def validate_message_sender(sender, instance, **kwargs):

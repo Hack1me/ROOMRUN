@@ -1,6 +1,7 @@
 from django.urls import path
 from users.views.forgot_password_views import ForgotPasswordView
 from users.views.forgot_password_views import ResetPasswordView
+from users.views.invitation_views import InvitationAcceptView
 from users.views.login_views import SigninView
 from users.views.login_views import UserLogoutView
 from users.views.login_views import UserRedirectView
@@ -37,4 +38,5 @@ urlpatterns = [
         name="reset_password",
     ),
     path("~redirect/", UserRedirectView.as_view(), name="redirect"),
+    path("invitations/<str:token>/accept/", InvitationAcceptView.as_view(), name="invitation-accept"),
 ]

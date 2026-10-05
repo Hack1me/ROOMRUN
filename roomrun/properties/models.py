@@ -1,6 +1,11 @@
 from cities_light.models import City
 from cities_light.models import Region
 from core.models import BaseModel
+from core.utils.enums import PropertyStatus
+from core.utils.enums import PropertyType
+from core.utils.enums import UnitStatus
+from core.utils.enums import UnitType
+from core.utils.helpers import property_image_upload_path
 from core.validators import validate_image_extension
 from core.validators import validate_image_size
 from django.db import models
@@ -10,11 +15,6 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from smart_selects.db_fields import ChainedForeignKey
 from users.models import Landlord
-from utils.enums import PropertyStatus
-from utils.enums import PropertyType
-from utils.enums import UnitStatus
-from utils.enums import UnitType
-from utils.helpers import property_image_upload_path
 
 
 # PROPERTY
@@ -186,7 +186,7 @@ class Property(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the property detail page."""
-        return safe_reverse("properties:property-detail", kwargs={"pk": self.id})
+        return safe_reverse("properties:property-detail", kwargs={"pk": self.slug})
 
     # -------------------------------------------------------------------------
     # Computed Properties (Derived from Related Models)
@@ -314,7 +314,7 @@ class PropertyImage(BaseModel):
         Return the canonical URL for the image detail view.
         Note: In practice, images are often displayed as part of the property detail.
         """
-        return safe_reverse("properties:property-image-detail", kwargs={"pk": self.id})
+        return safe_reverse("properties:property-image-detail", kwargs={"pk": self.slug})
 
 # BUILDING
 class Building(BaseModel):
@@ -408,7 +408,7 @@ class Building(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the building detail page."""
-        return safe_reverse("properties:building-detail", kwargs={"pk": self.id})
+        return safe_reverse("properties:building-detail", kwargs={"pk": self.slug})
 
     # -------------------------------------------------------------------------
     # Computed Properties
@@ -548,4 +548,4 @@ class Unit(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the unit detail page."""
-        return safe_reverse("properties:unit-detail", kwargs={"pk": self.id})
+        return safe_reverse("properties:unit-detail", kwargs={"pk": self.slug})

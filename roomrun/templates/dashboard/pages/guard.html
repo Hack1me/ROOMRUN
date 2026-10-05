@@ -6,117 +6,9 @@
 {% block header %}{% endblock header %}
 {% block dashboard_body %}
   <div class="app guard-app">
-    <aside class="sidebar guard-sidebar overflow-y-auto" id="sidebar">
-      <div class="brand">
-        <div class="brand-mark"></div>
-        <div>
-          <div class="brand-name">ROOMRUN</div>
-          <div class="brand-subtitle">
-            {% translate "Property Management" %}
-          </div>
-        </div>
-      </div>
-      <div class="sidebar-content">
-        <div class="nav-section">
-          <div class="nav-title">{% translate "Main" %}</div>
-          <a href="{% url 'dashboard:guard' %}" class="nav-item active">
-            <i class="ti ti-layout-dashboard"></i>
-            <span>{% translate "Dashboard" %}</span>
-          </a>
-          <a href="#" class="nav-item">
-            <i class="ti ti-users"></i>
-            <span>{% translate "Visitors" %}</span>
-          </a>
-          <a href="#" class="nav-item">
-            <i class="ti ti-arrows-left-right"></i>
-            <span>{% translate "Entries / Exits" %}</span>
-          </a>
-          <a href="#" class="nav-item">
-            <i class="ti ti-alert-triangle"></i>
-            <span>{% translate "Incidents" %}</span>
-          </a>
-          <a href="#" class="nav-item">
-            <i class="ti ti-calendar"></i>
-            <span>{% translate "Schedule" %}</span>
-          </a>
-        </div>
-        <div class="nav-section">
-          <div class="nav-title">{% translate "Communication" %}</div>
-          <a href="#" class="nav-item">
-            <i class="ti ti-message"></i>
-            <span>{% translate "Messages" %}</span>
-            <span class="nav-badge">2</span>
-          </a>
-          <a href="#" class="nav-item">
-            <i class="ti ti-bell"></i>
-            <span>{% translate "Notifications" %}</span>
-            <span class="nav-badge">3</span>
-          </a>
-        </div>
-        <div class="nav-section">
-          <div class="nav-title">{% translate "System" %}</div>
-          <a href="#" class="nav-item">
-            <i class="ti ti-settings"></i>
-            <span>{% translate "Settings" %}</span>
-          </a>
-          <a href="#" class="nav-item">
-            <i class="ti ti-help-circle"></i>
-            <span>{% translate "Help" %}</span>
-          </a>
-          <a href="{% url 'users:logout' %}" class="nav-item">
-            <i class="ti ti-logout"></i>
-            <span>{% translate "Sign out" %}</span>
-          </a>
-        </div>
-      </div>
-      <div class="sidebar-user">
-        <div class="user-avatar">
-          {{ user.first_name|first }}{{ user.last_name|first }}
-        </div>
-        <div>
-          <div class="user-name">{{ user.full_name }}</div>
-          <div class="user-role">{% translate "Guard" %}</div>
-        </div>
-      </div>
-    </aside>
+    {% include "dashboard/includes/role_sidebar.html" %}
     <main class="main">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button type="button"
-                  class="menu-button"
-                  id="mobile-menu"
-                  aria-label="{% translate 'Open menu' %}">
-            <i class="ti ti-menu-2"></i>
-          </button>
-          <div class="page-heading">
-            <h1>{% translate "Dashboard" %}</h1>
-            <p>{% translate "Security activity overview" %}</p>
-          </div>
-        </div>
-        <div class="topbar-right">
-          <label class="topbar-search">
-            <i class="ti ti-search"></i>
-            <input type="search"
-                   placeholder="{% translate 'Search a visitor…' %}" />
-          </label>
-          <button type="button"
-                  class="icon-button"
-                  aria-label="{% translate 'Notifications' %}">
-            <i class="ti ti-bell"></i>
-          </button>
-          <a href="{% url 'users:profile' %}"
-             class="icon-button profile-button"
-             aria-label="{% translate 'Profile' %}">
-            {% if user.profile_picture %}
-              <img class="h-full w-full object-cover"
-                   src="{{ user.profile_picture.url }}"
-                   alt="" />
-            {% else %}
-              <i class="ti ti-user"></i>
-            {% endif %}
-          </a>
-        </div>
-      </header>
+      {% include "dashboard/topbars/guard.html" %}
       <div class="content">
         {% include "common/includes/messages.html" %}
 
@@ -161,44 +53,42 @@
           </article>
           <article class="stat-card">
             <div class="stat-top">
-              <span class="stat-label">{% translate "Incidents" %}</span>
-              <span class="stat-icon stat-icon--danger"><i class="ti ti-alert-triangle"></i></span>
+              <span class="stat-label">{% translate "Completed visits" %}</span>
+              <span class="stat-icon stat-icon--primary"><i class="ti ti-logout"></i></span>
             </div>
-            <p class="stat-value">1</p>
-            <p class="stat-change warning">{% translate "to process" %}</p>
+            <p class="stat-value">{{ completed_visitors }}</p>
+            <p class="stat-change neutral">{% translate "checked out today" %}</p>
           </article>
         </section>
 
         <!-- QUICK ACTIONS -->
-        <section class="section-card quick-actions">
+        <section class="section-card quick-actions" data-quick-actions-source>
           <div class="section-header">
             <h2 class="section-title">{% translate "Quick actions" %}</h2>
+            {% include "dashboard/includes/quick_actions_toggle.html" with panel_id="guard-quick-actions" %}
           </div>
-          <div class="actions-grid">
-            <button class="action">
+          <div class="actions-grid actions-grid--three quick-actions-panel" id="guard-quick-actions" data-quick-actions-panel>
+            <a href="{% url 'operations:guard-visitor-check-in' %}" class="action">
               <div class="action-icon icon-blue"><i class="ti ti-user-plus"></i></div>
               <div class="action-content">
-                <div class="action-title">{% translate "Register visitor" %}</div>
-                <div class="action-description">{% translate "Add a new visitor" %}</div>
+                <div class="action-title">{% translate "Check in visitor" %}</div>
               </div>
               <i class="ti ti-chevron-right action-arrow"></i>
-            </button>
-            <button class="action">
+            </a>
+            <a href="{% url 'operations:guard-visitors' %}" class="action">
               <div class="action-icon icon-green"><i class="ti ti-login"></i></div>
               <div class="action-content">
-                <div class="action-title">{% translate "Record entry" %}</div>
-                <div class="action-description">{% translate "Check in a visitor" %}</div>
+                <div class="action-title">{% translate "Active visits" %}</div>
               </div>
               <i class="ti ti-chevron-right action-arrow"></i>
-            </button>
-            <button class="action">
-              <div class="action-icon icon-orange"><i class="ti ti-alert-triangle"></i></div>
+            </a>
+            <a href="{% url 'operations:guard-visitor-history' %}" class="action">
+              <div class="action-icon icon-orange"><i class="ti ti-history"></i></div>
               <div class="action-content">
-                <div class="action-title">{% translate "Report incident" %}</div>
-                <div class="action-description">{% translate "Create a security report" %}</div>
+                <div class="action-title">{% translate "Visit history" %}</div>
               </div>
               <i class="ti ti-chevron-right action-arrow"></i>
-            </button>
+            </a>
           </div>
         </section>
 
@@ -210,7 +100,7 @@
                 <i class="ti ti-users"></i>
                 {% translate "Today's visitors" %}
               </div>
-              <a href="#" class="section-link">{% translate "See all" %}</a>
+              <a href="{% url 'operations:guard-visitors' %}" class="section-link">{% translate "See all" %}</a>
             </div>
             <div class="visitor-list">
               {% for visitor in recent_visitors %}
@@ -222,11 +112,11 @@
                     <div>
                       <div class="visitor-name">{{ visitor.visitor_name }}</div>
                       <div class="visitor-info">
-                        {% translate "Tenant" %} {{ visitor.tenant_name }} · {{ visitor.action }} {{ visitor.time|time:"H:i" }}
+                        {{ visitor.host|default:"—" }} · {% translate "Checked in" %} {{ visitor.checked_in_at|time:"H:i" }}
                       </div>
                     </div>
                   </div>
-                  <span class="badge badge-{% if visitor.status == 'ACTIVE' %}success{% else %}warning{% endif %}">
+                  <span class="badge badge-{% if visitor.status == 'CHECKED_IN' %}success{% else %}warning{% endif %}">
                     {{ visitor.get_status_display }}
                   </span>
                 </div>
@@ -241,16 +131,16 @@
                 <i class="ti ti-calendar-event"></i>
                 {% translate "Expected visitors" %}
               </div>
-              <a href="#" class="section-link">{% translate "See all" %}</a>
+              <a href="{% url 'operations:guard-visitors' %}" class="section-link">{% translate "See all" %}</a>
             </div>
             <div class="expected-list">
               {% for visit in expected_visits %}
                 <div class="expected">
                   <div>
                     <div class="expected-name">{{ visit.visitor_name }}</div>
-                    <div class="expected-host">{{ visit.tenant_name }}</div>
+                    <div class="expected-host">{{ visit.host|default:"—" }}</div>
                   </div>
-                  <div class="expected-time">{{ visit.expected_time|time:"H:i" }}</div>
+                  <div class="expected-time">{{ visit.expected_arrival|time:"H:i" }}</div>
                 </div>
               {% empty %}
                 <p class="p-5 text-sm text-muted">{% translate "No expected visitor for now." %}</p>
@@ -275,8 +165,8 @@
                     <i class="ti ti-login"></i>
                   </div>
                   <div>
-                    <div class="activity-text">{{ log.action }}</div>
-                    <div class="activity-time">{{ log.created_at|date:"d M, H:i" }}</div>
+                    <div class="activity-text">{{ log.visitor_name }} · {{ log.building }}</div>
+                    <div class="activity-time">{{ log.checked_in_at|date:"d M, H:i" }}</div>
                   </div>
                 </div>
               {% empty %}
@@ -290,17 +180,17 @@
                 <i class="ti ti-shield"></i>
                 {% translate "Security status" %}
               </div>
-              <span class="badge badge-warning">{% translate "1 open" %}</span>
+              <span class="badge badge-success">{{ active_visitors }} {% translate "present" %}</span>
             </div>
             <div class="incident-body">
               <div class="incident-empty">
                 <div class="incident-icon">
                   <i class="ti ti-alert-triangle"></i>
                 </div>
-                <strong>{% translate "One incident requires attention" %}</strong>
-                <p>{% translate "Report" %} #INC-2026-014 · {% translate "Gate entrance" %}</p>
+                <strong>{% translate "Visitor check-in is available" %}</strong>
+                <p>{% translate "Use the visitor register to review arrivals and departures." %}</p>
               </div>
-              <button class="incident-button">{% translate "Review incident" %}</button>
+              <a href="{% url 'operations:guard-visitors' %}" class="incident-button">{% translate "Open visitor register" %}</a>
             </div>
           </div>
         </section>

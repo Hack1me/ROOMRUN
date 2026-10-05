@@ -1,8 +1,8 @@
+from core.utils.enums import EmployeeStatus
+from core.utils.enums import UserRole
 from django.db.models import Q
 from django.db.models import QuerySet
 from users.models import Employee
-from utils.enums import EmployeeStatus
-from utils.enums import UserRole
 
 
 class EmployeeService:
@@ -43,6 +43,9 @@ class EmployeeService:
 
         # ---------------------------------------------------------
         # Search
+        queryset = queryset.filter(
+            Q(guard_profile__landlords=landlord) | Q(maintenance_agent_profile__landlords=landlord)
+        )
         # ---------------------------------------------------------
         search = search.strip()
         if search:

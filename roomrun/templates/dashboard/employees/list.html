@@ -13,7 +13,7 @@
 
 {% block body %}
   <div class="text-slate-800">
-    {% include "dashboard/includes/landlord_sidebar.html" %}
+    {% include "dashboard/includes/role_sidebar.html" %}
 
     <main class="main">
       <header class="flex items-center justify-between gap-4 border-b border-[#e6e8ec] bg-white px-4 py-3">
@@ -56,7 +56,7 @@
       </header>
 
       <div class="uto p-7">
-        {% include "commax-w-350 mx-amon/includes/messages.html" %}
+        {% include "common/includes/messages.html" %}
 
         <!-- PAGE HEADER -->
         <div class="flex items-end justify-between gap-5 mb-6">
@@ -65,10 +65,10 @@
             <p class="text-slate-500 text-xs">{% translate "Manage your guards and maintenance agents." %}</p>
           </div>
           <div class="flex items-center gap-2">
-            <button type="button" class="h-9.5 px-3.5 inline-flex items-center justify-center gap-1.75 rounded-md border border-transparent text-[11px] font-medium bg-(--secondary) text-white hover:bg-(--secondary-hover)" id="inviteButton">
+            <a href="{% url 'dashboard:invitation-list' %}" class="h-9.5 px-3.5 inline-flex items-center justify-center gap-1.75 rounded-md border border-transparent text-[11px] font-medium bg-(--secondary) text-white hover:bg-(--secondary-hover)">
               <i class="ti ti-user-plus"></i>
               {% translate "Invite user" %}
-            </button>
+            </a>
           </div>
         </div>
 
@@ -225,7 +225,7 @@
                 {% empty %}
                   <tr id="emptyRow">
                     <td colspan="6">
-                      <div class="hidden p-[60px_20px] text-center" id="emptyRowState" style="display:block;">
+                      <div class="block p-[60px_20px] text-center" id="emptyRowState">
                         <div class="w-11 h-11 mx-auto mb-3 grid place-items-center rounded-[10px] bg-(--bg) text-slate-500">
                           <i class="ti ti-users text-[21px]"></i>
                         </div>
@@ -287,7 +287,7 @@
 {% endblock body %}
 
 {% block inline_javascript %}
-  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
+
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const searchInput = document.getElementById('searchInput');
@@ -323,12 +323,6 @@
         });
       }
 
-      const mobileMenu = document.getElementById('mobileMenu');
-      const sidebar = document.getElementById('sidebar');
-
-      mobileMenu?.addEventListener('click', function () {
-        sidebar.classList.toggle('open');
-      });
     });
   </script>
 {% endblock inline_javascript %}

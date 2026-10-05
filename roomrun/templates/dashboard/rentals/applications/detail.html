@@ -90,8 +90,8 @@
           <article class="application-card">
             <header class="application-card__header"><h2>{% translate "Actions" %}</h2></header>
             <div class="application-card__body application-actions">
-              <a href="{% url 'properties:property-detail' rental_property.pk %}"><i class="ti ti-building"></i>{% translate "View property" %}</a>
-              <a href="{% url 'properties:unit-detail' unit.pk %}"><i class="ti ti-door"></i>{% translate "View unit" %}</a>
+              <a href="{% url 'properties:property-detail' rental_property.slug %}"><i class="ti ti-building"></i>{% translate "View property" %}</a>
+              <a href="{% url 'properties:unit-detail' unit.slug %}"><i class="ti ti-door"></i>{% translate "View unit" %}</a>
               <a href="{% url 'rentals:rental-application-list' %}"><i class="ti ti-list"></i>{% translate "All applications" %}</a>
             </div>
           </article>

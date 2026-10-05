@@ -1,24 +1,18 @@
-{% extends "base.html" %}
+{% extends "dashboard/layout.html" %}
 {% load i18n static %}
 
 {% block title %}{{ page_title }} — ROOMRUN{% endblock %}
-{% block extra_css %}
+{% block extra_css %}{{ block.super }}
   <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
 {% endblock %}
-{% block header %}{% endblock %}
-{% block footer %}{% endblock %}
+{% block app_class %}landlord-app building-form-page{% endblock %}
+{% block content %}
 
-{% block body %}
-  <div class="app landlord-app building-form-page">
-    {% include "dashboard/includes/landlord_sidebar.html" %}
-    <main class="main">
-      <section class="content">
-        {% include "common/includes/messages.html" %}
 
         <nav class="building-form-breadcrumb" aria-label="{% translate 'Breadcrumb' %}">
           <a href="{% url 'properties:property-list' %}">{% translate "Properties" %}</a>
           <i class="ti ti-chevron-right"></i>
-          <a href="{% url 'properties:property-detail' pk=property.pk %}">{{ property.name }}</a>
+          <a href="{% url 'properties:property-detail' pk=property.slug %}">{{ property.name }}</a>
           <i class="ti ti-chevron-right"></i>
           <span>{% if building %}{% translate "Edit building" %}{% else %}{% translate "Add building" %}{% endif %}</span>
         </nav>
@@ -70,7 +64,7 @@
                 <div class="building-next-step"><i class="ti ti-info-circle"></i><div><strong>{% translate "What happens next?" %}</strong><p>{% translate "After creating the building, you can add rental units from its details page. Monthly rent is configured for each unit." %}</p></div></div>
               </div>
               <footer class="building-form-actions">
-                <a href="{% if building %}{% url 'properties:building-detail' pk=building.pk %}{% else %}{% url 'properties:property-detail' pk=property.pk %}{% endif %}" class="building-form-cancel">{% translate "Cancel" %}</a>
+                <a href="{% if building %}{% url 'properties:building-detail' pk=building.slug %}{% else %}{% url 'properties:property-detail' pk=property.slug %}{% endif %}" class="building-form-cancel">{% translate "Cancel" %}</a>
                 <button type="submit" class="building-form-submit"><i class="ti ti-{% if building %}device-floppy{% else %}plus{% endif %}"></i>{% if building %}{% translate "Save changes" %}{% else %}{% translate "Create building" %}{% endif %}</button>
               </footer>
             </form>
@@ -84,9 +78,4 @@
             </div>
           </aside>
         </div>
-      </section>
-    </main>
-  </div>
-{% endblock %}
-
-{% block inline_javascript %}<script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>{% endblock %}
+{% endblock content %}

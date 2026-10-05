@@ -1,6 +1,6 @@
+from core.utils.helpers import assign_reference_identifier
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from utils.helpers import assign_reference_identifier
 
 from .models import Employee
 from .models import Guard

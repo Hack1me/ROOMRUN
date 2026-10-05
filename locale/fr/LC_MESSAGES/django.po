@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 15:43+0000\n"
+"POT-Creation-Date: 2026-09-25 13:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,3295 +18,6635 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: config/settings/base.py:35
 msgid "English"
 msgstr "Anglais"
 
-#: config/settings/base.py:36
 msgid "French"
 msgstr "Francais"
 
-#: roomrun/billing/models.py:34 roomrun/rentals/models.py:248
 msgid "Rental contract"
 msgstr "Contrat de Bail"
 
-#: roomrun/billing/models.py:35
 msgid "The rental contract this charge belongs to."
 msgstr "Le contrat de location auquel cette charge se rapporte."
 
-#: roomrun/billing/models.py:43
 msgid "Charge number"
 msgstr ""
 
-#: roomrun/billing/models.py:44
 msgid "Auto-generated unique identifier for the charge."
 msgstr ""
 
-#: roomrun/billing/models.py:51
 msgid "Charge type"
 msgstr ""
 
-#: roomrun/billing/models.py:52
 msgid "Type of charge (e.g., rent, utilities, maintenance)."
 msgstr ""
 
-#: roomrun/billing/models.py:59 roomrun/billing/models.py:185
 msgid "Amount"
 msgstr "Montant"
 
-#: roomrun/billing/models.py:60
 msgid "Charge amount in the local currency."
 msgstr ""
 
-#: roomrun/billing/models.py:64
-#: roomrun/templates/dashboard/pages/tenant.html:38
 msgid "Due date"
 msgstr ""
 
-#: roomrun/billing/models.py:65
 msgid "Date by which the charge must be paid."
 msgstr ""
 
-#: roomrun/billing/models.py:72 roomrun/billing/models.py:200
-#: roomrun/communications/models.py:82 roomrun/maintenance/models.py:79
-#: roomrun/maintenance/models.py:235 roomrun/operations/models.py:75
-#: roomrun/properties/models.py:91 roomrun/properties/models.py:282
-#: roomrun/properties/models.py:409 roomrun/rentals/models.py:66
-#: roomrun/rentals/models.py:237 roomrun/users/models.py:459
-#: roomrun/users/models.py:667
 msgid "Status"
 msgstr ""
 
-#: roomrun/billing/models.py:73
 msgid "Current payment status of the charge."
 msgstr ""
 
-#: roomrun/billing/models.py:78 roomrun/maintenance/models.py:62
-#: roomrun/maintenance/models.py:226 roomrun/operations/models.py:66
-#: roomrun/properties/models.py:63 roomrun/properties/models.py:265
 msgid "Description"
 msgstr ""
 
-#: roomrun/billing/models.py:79
 msgid "Optional details or notes about the charge."
 msgstr ""
 
-#: roomrun/billing/models.py:89 roomrun/billing/models.py:177
 msgid "Charge"
 msgstr ""
 
-#: roomrun/billing/models.py:90
 msgid "Charges"
 msgstr ""
 
-#: roomrun/billing/models.py:114
 msgid "Charge amount must be greater than zero."
 msgstr ""
 
-#: roomrun/billing/models.py:168
 msgid "Payment number"
 msgstr ""
 
-#: roomrun/billing/models.py:169
 msgid "Auto-generated unique identifier for the payment."
 msgstr ""
 
-#: roomrun/billing/models.py:178
 msgid "The financial charge this payment is for."
 msgstr ""
 
-#: roomrun/billing/models.py:186
 msgid "Payment amount in the local currency."
 msgstr ""
 
-#: roomrun/billing/models.py:192
+msgid "Payment provider"
+msgstr ""
+
+msgid "External payment provider used to process the payment."
+msgstr ""
+
+msgid "Operator"
+msgstr ""
+
+msgid "Mobile money operator used for the payment."
+msgstr ""
+
 msgid "Payment method"
 msgstr ""
 
-#: roomrun/billing/models.py:193
 msgid "Method used to make the payment (e.g., cash, momo)."
 msgstr ""
 
-#: roomrun/billing/models.py:201
 msgid "Current payment status."
 msgstr ""
 
-#: roomrun/billing/models.py:209
 msgid "Transaction reference"
 msgstr ""
 
-#: roomrun/billing/models.py:210
-msgid "External reference from the payment gateway."
+msgid "External transaction reference returned by the payment gateway."
 msgstr ""
 
-#: roomrun/billing/models.py:216
+msgid "External reference"
+msgstr ""
+
+msgid "Unique reference used to identify this payment externally."
+msgstr ""
+
 msgid "Paid at"
 msgstr ""
 
-#: roomrun/billing/models.py:217
 msgid "Date and time when the payment was successfully completed."
 msgstr ""
 
-#: roomrun/billing/models.py:222
 msgid "Notes"
 msgstr ""
 
-#: roomrun/billing/models.py:223
 msgid "Additional notes about the payment."
 msgstr ""
 
-#: roomrun/billing/models.py:233 roomrun/billing/models.py:328
-#: roomrun/utils/enums.py:227
 msgid "Payment"
 msgstr ""
 
-#: roomrun/billing/models.py:234
-#: roomrun/templates/dashboard/pages/dashboard.html:23
-#: roomrun/templates/dashboard/pages/landlord.html:15
-#: roomrun/templates/dashboard/pages/tenant.html:15
 msgid "Payments"
 msgstr ""
 
-#: roomrun/billing/models.py:264
 msgid "Payment amount must be greater than zero."
 msgstr ""
 
-#: roomrun/billing/models.py:267
 msgid "Payment and charge currencies must match."
 msgstr ""
 
-#: roomrun/billing/models.py:272
 msgid "Paid at date is required when status is COMPLETED."
 msgstr ""
 
-#: roomrun/billing/models.py:277
 msgid "Paid at date cannot be in the future."
 msgstr ""
 
-#: roomrun/billing/models.py:281
 msgid "Paid at date should only be set when status is COMPLETED."
 msgstr ""
 
-#: roomrun/billing/models.py:292
 msgid "A payment cannot exceed the remaining balance."
 msgstr ""
 
-#: roomrun/billing/models.py:319
 msgid "Receipt number"
 msgstr ""
 
-#: roomrun/billing/models.py:320
 msgid "Auto-generated unique identifier for the receipt."
 msgstr ""
 
-#: roomrun/billing/models.py:329
 msgid "The payment for which this receipt is issued."
 msgstr ""
 
-#: roomrun/billing/models.py:339
 msgid "Receipt"
 msgstr ""
 
-#: roomrun/billing/models.py:340
 msgid "Receipts"
 msgstr ""
 
-#: roomrun/billing/models.py:367
 msgid "Receipts can only be issued for completed payments."
 msgstr ""
 
-#: roomrun/communications/models.py:39
-msgid "Announcement number"
+msgid "Pending"
 msgstr ""
 
-#: roomrun/communications/models.py:40
-msgid "Auto-generated unique identifier for the announcement."
+msgid "Completed"
 msgstr ""
 
-#: roomrun/communications/models.py:48 roomrun/properties/models.py:40
-#: roomrun/templates/dashboard/pages/dashboard.html:45
-#: roomrun/templates/dashboard/pages/landlord.html:21
-#: roomrun/templates/dashboard/pages/tenant.html:37
-#: roomrun/templates/home/pages/auth/signup.html:83 roomrun/users/forms.py:60
-#: roomrun/users/models.py:324 roomrun/users/models.py:651
-msgid "Landlord"
+msgid "Rejected"
 msgstr ""
 
-#: roomrun/communications/models.py:49
-msgid "The landlord who published this announcement."
+msgid "The minimum withdrawal is 5,000 FCFA."
 msgstr ""
 
-#: roomrun/communications/models.py:54 roomrun/communications/models.py:275
-#: roomrun/maintenance/models.py:57 roomrun/maintenance/models.py:220
-msgid "Title"
+msgid "Only pending payments can be initiated."
 msgstr ""
 
-#: roomrun/communications/models.py:55
-msgid "The headline of the announcement."
+msgid "Payment external reference is required."
 msgstr ""
 
-#: roomrun/communications/models.py:59 roomrun/communications/models.py:369
+msgid "Payment provider is required."
+msgstr ""
+
+msgid "Unable to initiate the payment. Please try again."
+msgstr ""
+
+msgid "This transaction reference is already used."
+msgstr ""
+
+msgid "Payment has no provider transaction reference."
+msgstr ""
+
+msgid "Unable to verify the payment status. Please try again."
+msgstr ""
+
+msgid "Unknown payment status received from provider."
+msgstr ""
+
+msgid "Payment confirmed"
+msgstr ""
+
+#, python-format
+msgid ""
+"Your payment %(reference)s of %(amount)s FCFA was completed for %(property)s."
+msgstr ""
+
+msgid "Tenant payment received"
+msgstr ""
+
+#, python-format
+msgid "%(tenant)s paid %(amount)s FCFA for %(property)s."
+msgstr ""
+
+msgid "Mobile Money phone number"
+msgstr ""
+
+msgid "The initial payment for this contract is already complete."
+msgstr ""
+
+msgid "The configured payment provider is invalid."
+msgstr ""
+
+msgid "The requested amount exceeds your available balance."
+msgstr ""
+
+msgid "Your withdrawal request has been recorded."
+msgstr ""
+
+#, fuzzy
+#| msgid "Amount"
+msgid "Amount (FCFA)"
+msgstr "Montant"
+
+msgid "Mobile Money number"
+msgstr ""
+
+msgid "Enter a valid phone number."
+msgstr ""
+
+msgid "Context"
+msgstr ""
+
+msgid "Metadata"
+msgstr ""
+
+msgid "Participants"
+msgstr ""
+
 msgid "Content"
 msgstr ""
 
-#: roomrun/communications/models.py:60
+#, fuzzy
+#| msgid "Rental contract"
+msgid "Choose a contact"
+msgstr "Contrat de Bail"
+
+msgid "Contact"
+msgstr ""
+
+msgid "Announcement number"
+msgstr ""
+
+msgid "Auto-generated unique identifier for the announcement."
+msgstr ""
+
+msgid "Landlord"
+msgstr ""
+
+msgid "The landlord who published this announcement."
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "The headline of the announcement."
+msgstr ""
+
 msgid "The full content of the announcement."
 msgstr ""
 
-#: roomrun/communications/models.py:66
 msgid "Published at"
 msgstr ""
 
-#: roomrun/communications/models.py:67
 msgid "The date and time when the announcement was published."
 msgstr ""
 
-#: roomrun/communications/models.py:73 roomrun/users/models.py:673
 msgid "Expires at"
 msgstr ""
 
-#: roomrun/communications/models.py:74
 msgid "The date and time when the announcement will expire."
 msgstr ""
 
-#: roomrun/communications/models.py:83
 msgid "Current status of the announcement."
 msgstr ""
 
-#: roomrun/communications/models.py:90
 msgid "Target"
 msgstr ""
 
-#: roomrun/communications/models.py:91
 msgid "The intended audience for this announcement."
 msgstr ""
 
-#: roomrun/communications/models.py:100 roomrun/operations/models.py:41
-#: roomrun/properties/models.py:293 roomrun/properties/models.py:349
-#: roomrun/utils/enums.py:217
 msgid "Building"
 msgstr ""
 
-#: roomrun/communications/models.py:109 roomrun/maintenance/models.py:51
-#: roomrun/properties/models.py:423 roomrun/rentals/models.py:41
-#: roomrun/rentals/models.py:179
-#: roomrun/templates/dashboard/pages/tenant.html:37 roomrun/utils/enums.py:218
 msgid "Unit"
 msgstr ""
 
-#: roomrun/communications/models.py:114
 msgid "Attachment URL"
 msgstr ""
 
-#: roomrun/communications/models.py:115
 msgid "Optional URL to an external attachment (e.g., PDF, image)."
 msgstr ""
 
-#: roomrun/communications/models.py:125 roomrun/utils/enums.py:231
 msgid "Announcement"
 msgstr ""
 
-#: roomrun/communications/models.py:126
-#: roomrun/templates/dashboard/pages/home.html:33
-#: roomrun/templates/dashboard/pages/tenant.html:20
 msgid "Announcements"
 msgstr ""
 
-#: roomrun/communications/models.py:189
 msgid "Expires at must be after published at."
 msgstr ""
 
-#: roomrun/communications/models.py:194
 msgid "Published at is required when status is PUBLISHED."
 msgstr ""
 
-#: roomrun/communications/models.py:197
 msgid "Published at cannot be in the future."
 msgstr ""
 
-#: roomrun/communications/models.py:201
 msgid "Published at should not be set when status is DRAFT."
 msgstr ""
 
-#: roomrun/communications/models.py:210
 msgid "A general announcement cannot target a building or unit."
 msgstr ""
 
-#: roomrun/communications/models.py:213
 msgid "A building is required for this target."
 msgstr ""
 
-#: roomrun/communications/models.py:215
 msgid "A unit is required for this target."
 msgstr ""
 
-#: roomrun/communications/models.py:221
 msgid "The unit must belong to the selected building."
 msgstr ""
 
-#: roomrun/communications/models.py:261
 msgid "Notification number"
 msgstr ""
 
-#: roomrun/communications/models.py:262
 msgid "Auto-generated unique identifier for the notification."
 msgstr ""
 
-#: roomrun/communications/models.py:269 roomrun/communications/models.py:364
 msgid "Recipient"
 msgstr ""
 
-#: roomrun/communications/models.py:270
 msgid "The user who receives this notification."
 msgstr ""
 
-#: roomrun/communications/models.py:276
 msgid "Short headline of the notification."
 msgstr ""
 
-#: roomrun/communications/models.py:280 roomrun/communications/models.py:389
-#: roomrun/rentals/models.py:57
 msgid "Message"
 msgstr ""
 
-#: roomrun/communications/models.py:281
 msgid "The full content of the notification."
 msgstr ""
 
-#: roomrun/communications/models.py:287
 msgid "Notification type"
 msgstr ""
 
-#: roomrun/communications/models.py:288
 msgid "The category of this notification."
 msgstr ""
 
-#: roomrun/communications/models.py:308
 msgid "Notification"
 msgstr ""
 
-#: roomrun/communications/models.py:309
-#: roomrun/templates/dashboard/pages/dashboard.html:32
-#: roomrun/templates/dashboard/pages/landlord.html:20
-#: roomrun/templates/dashboard/pages/landlord.html:25
-#: roomrun/templates/dashboard/pages/tenant.html:20
-#: roomrun/templates/dashboard/pages/tenant.html:25
 msgid "Notifications"
 msgstr ""
 
-#: roomrun/communications/models.py:348
+msgid "Type"
+msgstr ""
+
+msgid "Direct conversation key"
+msgstr ""
+
+msgid "Unique key for a two-person conversation."
+msgstr ""
+
+msgid "Maintenance request"
+msgstr ""
+
+msgid "Last message at"
+msgstr ""
+
+msgid "Conversation"
+msgstr ""
+
+msgid "Conversations"
+msgstr ""
+
+msgid "Timestamp of the last message read by this user."
+msgstr ""
+
+msgid "Conversation participant"
+msgstr ""
+
+msgid "Conversation participants"
+msgstr ""
+
 msgid "Message number"
 msgstr ""
 
-#: roomrun/communications/models.py:349
-msgid "Auto-generated unique identifier for the message."
-msgstr ""
-
-#: roomrun/communications/models.py:356
 msgid "Sender"
 msgstr ""
 
-#: roomrun/communications/models.py:357
-msgid "The user who sent the message."
-msgstr ""
-
-#: roomrun/communications/models.py:365
-msgid "The user who received the message."
-msgstr ""
-
-#: roomrun/communications/models.py:370
-msgid "The actual content of the message."
-msgstr ""
-
-#: roomrun/communications/models.py:379
 msgid "Reply to"
 msgstr ""
 
-#: roomrun/communications/models.py:390
-#: roomrun/templates/dashboard/pages/dashboard.html:25
-#: roomrun/templates/dashboard/pages/landlord.html:17
-#: roomrun/templates/dashboard/pages/tenant.html:17
 msgid "Messages"
 msgstr ""
 
-#: roomrun/communications/models.py:426
-msgid "You cannot send a message to yourself."
+msgid "A conversation must have at least two participants."
 msgstr ""
 
-#: roomrun/core/models.py:42
+msgid "Invalid conversation type."
+msgstr ""
+
+msgid "Conversation not found or you are not a participant."
+msgstr ""
+
+msgid "Message content cannot be empty."
+msgstr ""
+
+msgid "The sender is not a participant of this conversation."
+msgstr ""
+
+msgid "The parent message belongs to another conversation."
+msgstr ""
+
+#, python-format
+msgid "New message from %(name)s"
+msgstr ""
+
+msgid "All notifications have been marked as read."
+msgstr ""
+
+msgid "Notification deleted."
+msgstr ""
+
+msgid "All notifications have been deleted."
+msgstr ""
+
+msgid "Choose a contact from your workspace."
+msgstr ""
+
+msgid "The conversation was deleted."
+msgstr ""
+
 msgid "ID"
 msgstr "ID"
 
-#: roomrun/core/models.py:51
 msgid "Created at"
 msgstr ""
 
-#: roomrun/core/models.py:56
 msgid "Updated at"
 msgstr ""
 
-#: roomrun/core/models.py:69
 msgid "Created by"
 msgstr ""
 
-#: roomrun/core/models.py:78
 msgid "Updated by"
 msgstr ""
 
-#: roomrun/core/models.py:88
 msgid "Is deleted"
 msgstr ""
 
-#: roomrun/core/models.py:89
 msgid "Indicates whether this record has been soft-deleted."
 msgstr ""
 
-#: roomrun/core/models.py:181
 msgid "Read"
 msgstr ""
 
-#: roomrun/core/models.py:182
 msgid "Read at"
 msgstr ""
 
-#: roomrun/core/models.py:191
 msgid "Read at must be set when the item is marked as read."
 msgstr ""
 
-#: roomrun/core/models.py:195
 msgid "Read at should be empty when the item is not read."
 msgstr ""
 
-#: roomrun/core/models.py:198
 msgid "Read at cannot be in the future."
 msgstr ""
 
-#: roomrun/core/validators.py:20
 msgid ""
 "Invalid phone number format. Use international format, e.g. +33123456789."
 msgstr ""
 
-#: roomrun/core/validators.py:29
 msgid "The phone number is not valid for the selected country."
 msgstr ""
 
-#: roomrun/core/validators.py:35
 msgid "The phone number is too long or too short."
 msgstr ""
 
-#: roomrun/core/validators.py:49
 #, python-format
 msgid "Invalid phone number for %(country)s."
 msgstr ""
 
-#: roomrun/core/validators.py:56
 #, python-format
 msgid "The phone number is not valid for %(country)s."
 msgstr ""
 
-#: roomrun/core/validators.py:71
 msgid "Invalid phone number format."
 msgstr ""
 
-#: roomrun/core/validators.py:76
 #, python-format
 msgid "The phone number must be from %(region)s."
 msgstr ""
 
-#: roomrun/core/validators.py:94
 #, python-format
 msgid "The image size must not exceed %(max_size)d MB."
 msgstr ""
 
-#: roomrun/core/validators.py:108
 msgid "Allowed image formats are: JPG, JPEG, PNG, and WEBP."
 msgstr ""
 
-#: roomrun/core/validators.py:126
 #, python-format
 msgid "Image must be at least %(width)d x %(height)d pixels."
 msgstr ""
 
-#: roomrun/maintenance/models.py:34
-msgid "Request number"
+msgid "Signature file must not exceed 500 KB."
 msgstr ""
 
-#: roomrun/maintenance/models.py:35
-msgid "Auto-generated unique identifier for the maintenance request."
+#, python-format
+msgid "Signature dimensions must not exceed %(width)d x %(height)d pixels."
 msgstr ""
 
-#: roomrun/maintenance/models.py:43 roomrun/rentals/models.py:33
-#: roomrun/rentals/models.py:171
-#: roomrun/templates/dashboard/pages/tenant.html:21
-#: roomrun/templates/home/pages/auth/signup.html:72 roomrun/users/forms.py:59
-msgid "Tenant"
+msgid "Invalid or corrupted signature image."
 msgstr ""
 
-#: roomrun/maintenance/models.py:44
-msgid "The tenant who submitted the maintenance request."
+msgid "You can attach at most 5 photos."
 msgstr ""
 
-#: roomrun/maintenance/models.py:52
-msgid "The unit where the maintenance issue is located."
+msgid "Each photo must be 5 MB or smaller."
 msgstr ""
 
-#: roomrun/maintenance/models.py:58
-msgid "Brief summary of the maintenance issue."
+msgid "Photos must be JPG, PNG or WebP files."
 msgstr ""
 
-#: roomrun/maintenance/models.py:63
-msgid "Detailed description of the maintenance issue."
+msgid "Photos"
 msgstr ""
 
-#: roomrun/maintenance/models.py:71
-msgid "Priority"
+msgid "Optional: up to 5 JPG, PNG or WebP photos (5 MB each)."
 msgstr ""
 
-#: roomrun/maintenance/models.py:72
-msgid "Priority level of the maintenance request."
-msgstr ""
-
-#: roomrun/maintenance/models.py:80
-msgid "Current status of the maintenance request."
-msgstr ""
-
-#: roomrun/maintenance/models.py:86
-msgid "Resolved at"
-msgstr ""
-
-#: roomrun/maintenance/models.py:87
-msgid "Timestamp when the request was resolved."
-msgstr ""
-
-#: roomrun/maintenance/models.py:97 roomrun/maintenance/models.py:165
-#: roomrun/maintenance/models.py:206
-msgid "Maintenance request"
-msgstr ""
-
-#: roomrun/maintenance/models.py:98
-#: roomrun/templates/dashboard/pages/tenant.html:42
-msgid "Maintenance requests"
-msgstr ""
-
-#: roomrun/maintenance/models.py:138
-msgid "A maintenance request can only concern the tenant's active unit."
-msgstr ""
-
-#: roomrun/maintenance/models.py:146
-msgid "Resolved at date is required when status is RESOLVED."
-msgstr ""
-
-#: roomrun/maintenance/models.py:149
-msgid "Resolved at date cannot be in the future."
-msgstr ""
-
-#: roomrun/maintenance/models.py:154
-msgid "Resolved at should only be set when status is RESOLVED."
-msgstr ""
-
-#: roomrun/maintenance/models.py:197
-msgid "Task number"
-msgstr ""
-
-#: roomrun/maintenance/models.py:198
-msgid "Auto-generated unique identifier for the task."
-msgstr ""
-
-#: roomrun/maintenance/models.py:207
-msgid "The maintenance request this task belongs to."
-msgstr ""
-
-#: roomrun/maintenance/models.py:214 roomrun/users/models.py:544
 msgid "Maintenance agent"
 msgstr ""
 
-#: roomrun/maintenance/models.py:215
+msgid "Start work"
+msgstr ""
+
+msgid "Mark as completed"
+msgstr ""
+
+msgid "Describe the work performed, parts used or next steps."
+msgstr ""
+
+msgid "Work notes"
+msgstr ""
+
+msgid "Request number"
+msgstr ""
+
+msgid "Auto-generated unique identifier for the maintenance request."
+msgstr ""
+
+msgid "Tenant"
+msgstr ""
+
+msgid "The tenant who submitted the maintenance request."
+msgstr ""
+
+msgid "The unit where the maintenance issue is located."
+msgstr ""
+
+msgid "Brief summary of the maintenance issue."
+msgstr ""
+
+msgid "Detailed description of the maintenance issue."
+msgstr ""
+
+msgid "Priority"
+msgstr ""
+
+msgid "Priority level of the maintenance request."
+msgstr ""
+
+msgid "Current status of the maintenance request."
+msgstr ""
+
+msgid "Resolved at"
+msgstr ""
+
+msgid "Timestamp when the request was resolved."
+msgstr ""
+
+msgid "Maintenance requests"
+msgstr ""
+
+msgid "A maintenance request can only concern the tenant's active unit."
+msgstr ""
+
+msgid "Resolved at date is required when status is RESOLVED."
+msgstr ""
+
+msgid "Resolved at date cannot be in the future."
+msgstr ""
+
+msgid "Resolved at should only be set when status is RESOLVED."
+msgstr ""
+
+msgid "Task number"
+msgstr ""
+
+msgid "Auto-generated unique identifier for the task."
+msgstr ""
+
+msgid "The maintenance request this task belongs to."
+msgstr ""
+
 msgid "The agent assigned to perform this task."
 msgstr ""
 
-#: roomrun/maintenance/models.py:221
 msgid "Brief summary of the task."
 msgstr ""
 
-#: roomrun/maintenance/models.py:227
 msgid "Detailed description of the work to be performed."
 msgstr ""
 
-#: roomrun/maintenance/models.py:236
 msgid "Current status of the task."
 msgstr ""
 
-#: roomrun/maintenance/models.py:242
 msgid "Scheduled at"
 msgstr ""
 
-#: roomrun/maintenance/models.py:243
 msgid "Date and time when the task is scheduled to start."
 msgstr ""
 
-#: roomrun/maintenance/models.py:249
 msgid "Started at"
 msgstr ""
 
-#: roomrun/maintenance/models.py:250
 msgid "Date and time when the task actually started."
 msgstr ""
 
-#: roomrun/maintenance/models.py:256
 msgid "Completed at"
 msgstr ""
 
-#: roomrun/maintenance/models.py:257
 msgid "Date and time when the task was completed."
 msgstr ""
 
-#: roomrun/maintenance/models.py:267
+msgid "Work carried out and useful handover information."
+msgstr ""
+
 msgid "Maintenance task"
 msgstr ""
 
-#: roomrun/maintenance/models.py:268
 msgid "Maintenance tasks"
 msgstr ""
 
-#: roomrun/maintenance/models.py:299
 msgid "Started at cannot be before scheduled at."
 msgstr ""
 
-#: roomrun/maintenance/models.py:303
 msgid "Completed at cannot be before started at."
 msgstr ""
 
-#: roomrun/maintenance/models.py:308
 msgid "Completed at is required when status is COMPLETED."
 msgstr ""
 
-#: roomrun/maintenance/models.py:313
 msgid "Started at is required when status is IN_PROGRESS."
 msgstr ""
 
-#: roomrun/maintenance/models.py:319
 msgid "Completed at should only be set when status is COMPLETED."
 msgstr ""
 
-#: roomrun/operations/models.py:32
+msgid "You need an active lease to report a maintenance issue."
+msgstr ""
+
+msgid "Maintenance is not enabled for this property."
+msgstr ""
+
+msgid "Select a unit with an active lease."
+msgstr ""
+
+msgid "Select a maintenance agent linked to your account."
+msgstr ""
+
+msgid "This request is no longer available."
+msgstr ""
+
+msgid "This request has already been assigned."
+msgstr ""
+
+msgid "Only an assigned task can be started."
+msgstr ""
+
+msgid "Start the task before marking it completed."
+msgstr ""
+
+msgid "Unsupported task action."
+msgstr ""
+
+msgid "Only a pending request can be cancelled."
+msgstr ""
+
+msgid "An assigned request cannot be cancelled."
+msgstr ""
+
+msgid "Maintenance task assigned"
+msgstr ""
+
+#, python-format
+msgid "You have been assigned '%(title)s' at %(property)s."
+msgstr ""
+
+msgid "New maintenance request"
+msgstr ""
+
+#, python-format
+msgid "%(tenant)s submitted a request: %(title)s."
+msgstr ""
+
+msgid "Maintenance request updated"
+msgstr ""
+
+#, python-format
+msgid "Request '%(title)s' is now %(status)s."
+msgstr ""
+
+#, python-format
+msgid "Your maintenance request %(number)s has been submitted."
+msgstr ""
+
+msgid "Maintenance request cancelled."
+msgstr ""
+
+msgid "Maintenance request created and assigned."
+msgstr ""
+
+msgid "The request is now assigned to you."
+msgstr ""
+
+msgid "Task updated successfully."
+msgstr ""
+
+msgid "Invitation details"
+msgstr ""
+
 msgid "Schedule number"
 msgstr ""
 
-#: roomrun/operations/models.py:33
 msgid "Auto-generated unique identifier for the cleaning schedule."
 msgstr ""
 
-#: roomrun/operations/models.py:42
 msgid "The building to be cleaned."
 msgstr ""
 
-#: roomrun/operations/models.py:46
 msgid "Scheduled date"
 msgstr ""
 
-#: roomrun/operations/models.py:47
 msgid "The date when the cleaning is scheduled."
 msgstr ""
 
-#: roomrun/operations/models.py:53
 msgid "Start time"
 msgstr ""
 
-#: roomrun/operations/models.py:54
 msgid "The time the cleaning is scheduled to start."
 msgstr ""
 
-#: roomrun/operations/models.py:60
 msgid "End time"
 msgstr ""
 
-#: roomrun/operations/models.py:61
 msgid "The time the cleaning is scheduled to end."
 msgstr ""
 
-#: roomrun/operations/models.py:67
 msgid "Optional details about the cleaning task."
 msgstr ""
 
-#: roomrun/operations/models.py:76
 msgid "Current status of the cleaning schedule."
 msgstr ""
 
-#: roomrun/operations/models.py:83
 msgid "Assigned employees"
 msgstr ""
 
-#: roomrun/operations/models.py:93
 msgid "Cleaning schedule"
 msgstr ""
 
-#: roomrun/operations/models.py:94
 msgid "Cleaning schedules"
 msgstr ""
 
-#: roomrun/operations/models.py:140
 msgid "End time must be after start time."
 msgstr ""
 
-#: roomrun/operations/models.py:144
 msgid "Scheduled date cannot be in the past."
 msgstr ""
 
-#: roomrun/properties/apps.py:13 roomrun/properties/models.py:103
-#: roomrun/templates/dashboard/pages/dashboard.html:21
-#: roomrun/templates/dashboard/pages/dashboard.html:88
-#: roomrun/templates/dashboard/pages/landlord.html:13
-#: roomrun/templates/dashboard/pages/landlord.html:30
+msgid "Visit number"
+msgstr ""
+
+msgid "Host"
+msgstr ""
+
+msgid "Visitor name"
+msgstr ""
+
+msgid "Visitor phone"
+msgstr ""
+
+msgid "Purpose"
+msgstr ""
+
+msgid "Expected arrival"
+msgstr ""
+
+msgid "Expected departure"
+msgstr ""
+
+msgid "Checked in at"
+msgstr ""
+
+msgid "Checked out at"
+msgstr ""
+
+msgid "Checked in by"
+msgstr ""
+
+msgid "Checked out by"
+msgstr ""
+
+msgid "Check-in note"
+msgstr ""
+
+msgid "Visitor visit"
+msgstr ""
+
+msgid "Visitor visits"
+msgstr ""
+
+msgid "Expected departure must be after arrival."
+msgstr ""
+
+msgid "Check-in time is required for an active visit."
+msgstr ""
+
+msgid "Check-out time is required for a completed visit."
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Email address of the invited person."
+msgstr ""
+
+msgid "Invited by"
+msgstr ""
+
+msgid "The user who sent the invitation."
+msgstr ""
+
+msgid "Role"
+msgstr ""
+
+msgid "The role being offered to the invited person."
+msgstr ""
+
+msgid "Invitation number"
+msgstr ""
+
+msgid "Auto-generated unique identifier (set via signals)."
+msgstr ""
+
+msgid "Token hash"
+msgstr ""
+
+msgid "SHA-256 (or similar) hash of the invitation token."
+msgstr ""
+
+msgid "Current status of the invitation."
+msgstr ""
+
+msgid "The date and time when the invitation expires."
+msgstr ""
+
+msgid "Accepted at"
+msgstr ""
+
+msgid "The date and time when the invitation was accepted."
+msgstr ""
+
+msgid "User invitation"
+msgstr ""
+
+msgid "User invitations"
+msgstr ""
+
+msgid "Cleaning scheduled"
+msgstr ""
+
+msgid "Cleaning schedule updated"
+msgstr ""
+
+msgid "Cleaning schedule cancelled"
+msgstr ""
+
+#, python-format
+msgid "Cleaning is planned for %(date)s at %(building)s."
+msgstr ""
+
+#, python-format
+msgid "The cleaning scheduled for %(date)s at %(building)s was cancelled."
+msgstr ""
+
+msgid "Your visitor has arrived"
+msgstr ""
+
+#, python-format
+msgid "%(visitor)s checked in at %(building)s."
+msgstr ""
+
+msgid "Invitation accepted"
+msgstr ""
+
+#, python-format
+msgid "%(email)s accepted your invitation to join ROOMRUN."
+msgstr ""
+
+msgid "Cleaning schedule created."
+msgstr ""
+
+msgid "Cleaning schedule updated."
+msgstr ""
+
+msgid "This cleaning is scheduled for a future date."
+msgstr ""
+
+msgid "This cleaning action is not allowed."
+msgstr ""
+
+msgid "Reason for the visit"
+msgstr ""
+
+msgid "Arrival must be in the future."
+msgstr ""
+
+msgid "Visitor invitation created."
+msgstr ""
+
+msgid "Visitor invitation cancelled."
+msgstr ""
+
+msgid "Visitor checked in successfully."
+msgstr ""
+
+msgid "This visitor action is not allowed."
+msgstr ""
+
+msgid "Visitor status updated."
+msgstr ""
+
 msgid "Properties"
 msgstr ""
 
-#: roomrun/properties/models.py:42
-msgid "The landlord who owns this property."
+msgid "Property name cannot be empty."
 msgstr ""
 
-#: roomrun/properties/models.py:50
-msgid "Property number"
+msgid "Image caption"
 msgstr ""
 
-#: roomrun/properties/models.py:51
-msgid "Auto-generated unique identifier for the property."
-msgstr ""
-
-#: roomrun/properties/models.py:57
-msgid "Property name"
-msgstr ""
-
-#: roomrun/properties/models.py:58
-msgid "The official name of the property (e.g., 'Sunset Tower')."
-msgstr ""
-
-#: roomrun/properties/models.py:65
-msgid "Additional details about the property, such as amenities or history."
-msgstr ""
-
-#: roomrun/properties/models.py:71
-#: roomrun/templates/dashboard/pages/tenant.html:37
-msgid "Address"
-msgstr ""
-
-#: roomrun/properties/models.py:72
-msgid "Street address of the property (e.g., '123 Main St')."
-msgstr ""
-
-#: roomrun/properties/models.py:77
-msgid "City"
-msgstr ""
-
-#: roomrun/properties/models.py:78
-msgid "City where the property is located."
-msgstr ""
-
-#: roomrun/properties/models.py:82
-msgid "Country"
-msgstr ""
-
-#: roomrun/properties/models.py:83
-msgid "Country where the property is located."
-msgstr ""
-
-#: roomrun/properties/models.py:92
-msgid "Current operational status of the property."
-msgstr ""
-
-#: roomrun/properties/models.py:102 roomrun/properties/models.py:159
-msgid "Property"
-msgstr ""
-
-#: roomrun/properties/models.py:160
-msgid "The property this image belongs to."
-msgstr ""
-
-#: roomrun/properties/models.py:164
 msgid "Image"
 msgstr ""
 
-#: roomrun/properties/models.py:167
+msgid "Caption"
+msgstr ""
+
+msgid "Set as primary image"
+msgstr ""
+
+msgid "Upload a JPG, PNG, or WebP image. Max size: 5 MB."
+msgstr ""
+
+msgid ""
+"Mark this image as the main image for the property. Only one image per "
+"property should be primary."
+msgstr ""
+
+msgid "Building name"
+msgstr ""
+
+msgid "Number of floors"
+msgstr ""
+
+msgid "The total number of floors in the building."
+msgstr ""
+
+msgid "Building name cannot be empty."
+msgstr ""
+
+msgid "A building must have at least one floor."
+msgstr ""
+
+msgid "Monthly rent"
+msgstr ""
+
+msgid "Unit number cannot be empty."
+msgstr ""
+
+msgid "Floor cannot be negative."
+msgstr ""
+
+msgid "Bedrooms cannot be negative."
+msgstr ""
+
+msgid "A unit must have at least one bathroom."
+msgstr ""
+
+msgid "Area must be greater than zero."
+msgstr ""
+
+msgid "Property status"
+msgstr ""
+
+msgid "Currency"
+msgstr ""
+
+msgid "Default monthly rent"
+msgstr ""
+
+msgid "Enable tenant management"
+msgstr ""
+
+msgid "Enable maintenance management"
+msgstr ""
+
+msgid "Default monthly rent cannot be negative."
+msgstr ""
+
+msgid "You do not have access to the landlord area."
+msgstr ""
+
+msgid "The landlord who owns this property."
+msgstr ""
+
+msgid "Property number"
+msgstr ""
+
+msgid "Auto-generated unique identifier for the property."
+msgstr ""
+
+msgid "Property name"
+msgstr ""
+
+msgid "The official name of the property (e.g., 'Sunset Tower')."
+msgstr ""
+
+msgid "Property type"
+msgstr ""
+
+msgid "The type of the property (e.g., Residential, Commercial)."
+msgstr ""
+
+msgid "Additional details about the property, such as amenities or history."
+msgstr ""
+
+msgid "Address"
+msgstr ""
+
+msgid "Street address of the property (e.g., '123 Main St')."
+msgstr ""
+
+msgid "City"
+msgstr ""
+
+msgid "City where the property is located."
+msgstr ""
+
+msgid "Country where the property is located."
+msgstr ""
+
+msgid "Country"
+msgstr ""
+
+msgid "Region where the property is located."
+msgstr ""
+
+msgid "Region"
+msgstr ""
+
+msgid "Current operational status of the property."
+msgstr ""
+
+msgid "Default currency"
+msgstr ""
+
+msgid "Default currency used for rent and charges in this property."
+msgstr ""
+
+msgid "Suggested monthly rent amount for new units in this property."
+msgstr ""
+
+msgid "Tenant management"
+msgstr ""
+
+msgid "Allow ROOMRUN to manage tenants and rental contracts for this property."
+msgstr ""
+
+msgid "Maintenance management"
+msgstr ""
+
+msgid "Allow maintenance requests to be associated with this property."
+msgstr ""
+
+msgid "Property"
+msgstr ""
+
+msgid "The property this image belongs to."
+msgstr ""
+
+#, fuzzy
+#| msgid "The rental contract this charge belongs to."
+msgid "The unit this image belongs to."
+msgstr "Le contrat de location auquel cette charge se rapporte."
+
 msgid ""
 "Upload a JPG, PNG, or WebP image. Recommended size: 1920*1080 pixels, max "
 "5MB."
 msgstr ""
 
-#: roomrun/properties/models.py:179
-msgid "Property Image"
+msgid "A short description of the image."
 msgstr ""
 
-#: roomrun/properties/models.py:180
-msgid "Setup caption caption of Property Image."
-msgstr ""
-
-#: roomrun/properties/models.py:185
 msgid "Primary image"
 msgstr ""
 
-#: roomrun/properties/models.py:187
 msgid ""
 "Mark this image as the main/cover image for the property. Only one image per "
 "property should be primary."
 msgstr ""
 
-#: roomrun/properties/models.py:196
 msgid "Property image"
 msgstr ""
 
-#: roomrun/properties/models.py:197
 msgid "Property images"
 msgstr ""
 
-#: roomrun/properties/models.py:244
 msgid "property"
 msgstr ""
 
-#: roomrun/properties/models.py:245
 msgid "The property that this building belongs to."
 msgstr ""
 
-#: roomrun/properties/models.py:253
 msgid "Building number"
 msgstr ""
 
-#: roomrun/properties/models.py:254
 msgid "Auto-generated unique identifier for the building."
 msgstr ""
 
-#: roomrun/properties/models.py:259
-msgid "Building name"
-msgstr ""
-
-#: roomrun/properties/models.py:260
 msgid "The official name of the building (e.g., 'Tower A')."
 msgstr ""
 
-#: roomrun/properties/models.py:267
 msgid ""
 "Additional details about the building, such as amenities or construction "
 "year."
 msgstr ""
 
-#: roomrun/properties/models.py:274
-msgid "Number of floors"
-msgstr ""
-
-#: roomrun/properties/models.py:275
 msgid "Total number of floors in the building."
 msgstr ""
 
-#: roomrun/properties/models.py:283
 msgid "Current operational status of the building."
 msgstr ""
 
-#: roomrun/properties/models.py:294
 msgid "Buildings"
 msgstr ""
 
-#: roomrun/properties/models.py:350
 msgid "The building that contains this unit."
 msgstr ""
 
-#: roomrun/properties/models.py:355
 msgid "Unit number"
 msgstr ""
 
-#: roomrun/properties/models.py:357
 msgid ""
 "Unique unit identifier within the building. Must be unique per building "
 "(enforced by a database constraint)."
 msgstr ""
 
-#: roomrun/properties/models.py:364
 msgid "Floor"
 msgstr ""
 
-#: roomrun/properties/models.py:365
 msgid "Floor number where the unit is located (0 = ground floor)."
 msgstr ""
 
-#: roomrun/properties/models.py:372
 msgid "Unit type"
 msgstr ""
 
-#: roomrun/properties/models.py:373
 msgid "Category of the unit (e.g., studio, apartment, office)."
 msgstr ""
 
-#: roomrun/properties/models.py:378
 msgid "Bedrooms"
 msgstr ""
 
-#: roomrun/properties/models.py:379
 msgid "Number of bedrooms in the unit."
 msgstr ""
 
-#: roomrun/properties/models.py:384
 msgid "Bathrooms"
 msgstr ""
 
-#: roomrun/properties/models.py:385
 msgid "Number of bathrooms in the unit."
 msgstr ""
 
-#: roomrun/properties/models.py:393
 msgid "Area"
 msgstr ""
 
-#: roomrun/properties/models.py:394
 msgid "Total area of the unit in square meters."
 msgstr ""
 
-#: roomrun/properties/models.py:401 roomrun/rentals/models.py:219
-#: roomrun/templates/dashboard/pages/tenant.html:30
-msgid "Monthly rent"
-msgstr ""
-
-#: roomrun/properties/models.py:402
 msgid "Monthly rental price in the local currency."
 msgstr ""
 
-#: roomrun/properties/models.py:410
 msgid "Current occupancy status of the unit."
 msgstr ""
 
-#: roomrun/properties/models.py:424
 msgid "Units"
 msgstr ""
 
-#: roomrun/rentals/models.py:34
-msgid "The tenant submitting the application."
+msgid "Create building"
 msgstr ""
 
-#: roomrun/rentals/models.py:42
-msgid "The unit being applied for."
+msgid "Building created successfully."
 msgstr ""
 
-#: roomrun/rentals/models.py:50
-msgid "Application number"
+msgid "Edit building"
 msgstr ""
 
-#: roomrun/rentals/models.py:51
-msgid "Auto-generated unique identifier for the application."
+msgid "Building updated successfully."
 msgstr ""
 
-#: roomrun/rentals/models.py:58
-msgid "Optional message provided by the tenant."
+msgid "Building deleted successfully."
 msgstr ""
 
-#: roomrun/rentals/models.py:67
-msgid "Current status of the rental application."
+msgid "Image added successfully."
 msgstr ""
 
-#: roomrun/rentals/models.py:72
-msgid "Applied at"
+msgid "Unable to update the primary image."
 msgstr ""
 
-#: roomrun/rentals/models.py:73
-msgid "Time at which the application was submitted."
+msgid "Primary image updated successfully."
 msgstr ""
 
-#: roomrun/rentals/models.py:79
-msgid "Reviewed at"
+msgid "Unable to delete the image."
 msgstr ""
 
-#: roomrun/rentals/models.py:80
-msgid "Time at which the application was reviewed."
+msgid "Image deleted successfully."
 msgstr ""
 
-#: roomrun/rentals/models.py:89
-msgid "Reviewed by"
+msgid "Image updated successfully."
 msgstr ""
 
-#: roomrun/rentals/models.py:99 roomrun/rentals/models.py:189
-msgid "Rental application"
+msgid "Create property"
 msgstr ""
 
-#: roomrun/rentals/models.py:100
-msgid "Rental applications"
+msgid "Property saved successfully."
 msgstr ""
 
-#: roomrun/rentals/models.py:144
-msgid "This tenant already has an approved application for this unit."
+msgid "Property created successfully."
 msgstr ""
 
-#: roomrun/rentals/models.py:149
-msgid "Reviewed at is required once an application is decided."
+msgid "Edit property"
 msgstr ""
 
-#: roomrun/rentals/models.py:172
-msgid "The tenant who signs this contract."
+msgid "Property information updated successfully."
 msgstr ""
 
-#: roomrun/rentals/models.py:180
-msgid "The unit being rented under this contract."
+msgid "Property updated successfully."
 msgstr ""
 
-#: roomrun/rentals/models.py:190
-msgid "Approved application that resulted in this contract."
+msgid "Property configuration"
 msgstr ""
 
-#: roomrun/rentals/models.py:198
-msgid "Contract number"
+msgid "Property configuration saved successfully."
 msgstr ""
 
-#: roomrun/rentals/models.py:199
-msgid "Auto-generated unique identifier for the contract."
+msgid "Property configuration updated successfully."
 msgstr ""
 
-#: roomrun/rentals/models.py:204
+#, python-format
+msgid "A property can have a maximum of %(count)s images."
+msgstr ""
+
+msgid "Property deleted successfully."
+msgstr ""
+
+msgid "Unit created successfully."
+msgstr ""
+
+msgid "Choose at least one image to upload."
+msgstr ""
+
+#, python-format
+msgid "A unit can have a maximum of %(count)s images."
+msgstr ""
+
+msgid "Unit image"
+msgstr ""
+
+msgid "Unit images uploaded successfully."
+msgstr ""
+
+msgid "Unit updated successfully."
+msgstr ""
+
+msgid "Unit deleted successfully."
+msgstr ""
+
+msgid "Submit a valid PNG or JPEG signature."
+msgstr ""
+
+msgid "Tell the landlord about your application..."
+msgstr ""
+
+msgid "Desired move-in date"
+msgstr ""
+
+msgid "Desired rental duration (months)"
+msgstr ""
+
+msgid "Number of occupants"
+msgstr ""
+
+msgid "The desired move-in date must be in the future."
+msgstr ""
+
+msgid "Rental duration must be at least 1 month."
+msgstr ""
+
+msgid "There must be at least one occupant."
+msgstr ""
+
+msgid "You already have a pending application for this unit."
+msgstr ""
+
+msgid "Deposit"
+msgstr ""
+
+msgid "Landlord signature"
+msgstr ""
+
+msgid "Upload your handwritten signature (PNG or JPEG)."
+msgstr ""
+
 msgid "Start date"
 msgstr ""
 
-#: roomrun/rentals/models.py:205
-msgid "The date when the contract becomes effective."
-msgstr ""
-
-#: roomrun/rentals/models.py:211
 msgid "End date"
 msgstr ""
 
-#: roomrun/rentals/models.py:212
+msgid "Advance rent months"
+msgstr ""
+
 msgid "Leave empty for an open-ended contract."
 msgstr ""
 
-#: roomrun/rentals/models.py:220
-msgid "Monthly rental amount in the local currency."
+msgid "Number of months paid in advance."
 msgstr ""
 
-#: roomrun/rentals/models.py:228
-msgid "Security deposit"
+msgid "Start date cannot be in the past."
 msgstr ""
 
-#: roomrun/rentals/models.py:229
-msgid "Security deposit required at contract signing."
+msgid "Monthly rent must be greater than zero."
 msgstr ""
 
-#: roomrun/rentals/models.py:238
-msgid "Current lifecycle status of the contract."
+msgid "Deposit cannot be negative."
 msgstr ""
 
-#: roomrun/rentals/models.py:249
-msgid "Rental contracts"
+msgid "Advance rent must be at least one month."
 msgstr ""
 
-#: roomrun/rentals/models.py:286
 msgid "End date must be after the start date."
 msgstr ""
 
-#: roomrun/rentals/models.py:294
-msgid "The linked application must concern the same tenant and unit."
+msgid "Search by name, email or tenant ID..."
 msgstr ""
 
-#: roomrun/rentals/models.py:303
+msgid "The selected tenant does not exist."
+msgstr ""
+
+msgid "Please select a tenant or provide an email to invite."
+msgstr ""
+
+msgid "No tenant found. To invite someone, enter their full email address."
+msgstr ""
+
+msgid "Please enter a valid email address."
+msgstr ""
+
+msgid ""
+"This email is already registered. Please search and select the existing "
+"tenant."
+msgstr ""
+
+msgid "Please select an existing tenant OR invite a new one, not both."
+msgstr ""
+
+msgid "You cannot create a contract for a unit that does not belong to you."
+msgstr ""
+
 msgid "This unit already has an active contract."
 msgstr ""
 
-#: roomrun/templates/base.html:15
+msgid "This unit is no longer available."
+msgstr ""
+
+msgid "This tenant already has an active rental contract."
+msgstr ""
+
+msgid "Tenant signature"
+msgstr ""
+
+msgid "Sign the contract using your handwritten signature (PNG or JPEG)."
+msgstr ""
+
+msgid "This contract is no longer awaiting your signature."
+msgstr ""
+
+msgid "The tenant submitting the application."
+msgstr ""
+
+msgid "The unit being applied for."
+msgstr ""
+
+msgid "Application number"
+msgstr ""
+
+msgid "Auto-generated unique identifier for the application."
+msgstr ""
+
+msgid "Optional message provided by the tenant."
+msgstr ""
+
+msgid "Desired duration"
+msgstr ""
+
+msgid "Desired rental duration in months."
+msgstr ""
+
+msgid "Current status of the rental application."
+msgstr ""
+
+msgid "Applied at"
+msgstr ""
+
+msgid "Time at which the application was submitted."
+msgstr ""
+
+msgid "Reviewed at"
+msgstr ""
+
+msgid "Time at which the application was reviewed."
+msgstr ""
+
+msgid "Reviewed by"
+msgstr ""
+
+msgid "Rental application"
+msgstr ""
+
+msgid "Rental applications"
+msgstr ""
+
+msgid "This tenant already has an approved application for this unit."
+msgstr ""
+
+msgid "Reviewed at is required once an application is decided."
+msgstr ""
+
+msgid "The tenant who signs this contract."
+msgstr ""
+
+msgid "The unit being rented under this contract."
+msgstr ""
+
+msgid "Approved application that resulted in this contract."
+msgstr ""
+
+msgid "Contract number"
+msgstr ""
+
+msgid "Auto-generated unique identifier for the contract."
+msgstr ""
+
+msgid "The date when the contract becomes effective."
+msgstr ""
+
+msgid "Advance rent (months)"
+msgstr ""
+
+msgid "Monthly rental amount in the local currency."
+msgstr ""
+
+msgid "Security deposit"
+msgstr ""
+
+msgid "Security deposit required at contract signing."
+msgstr ""
+
+msgid "Current lifecycle status of the contract."
+msgstr ""
+
+msgid "Landlord signed at"
+msgstr ""
+
+msgid "Timestamp when the landlord signed the contract."
+msgstr ""
+
+msgid "Tenant signed at"
+msgstr ""
+
+msgid "Timestamp when the tenant signed the contract."
+msgstr ""
+
+msgid "Digital signature of the landlord (SVG, base64 PNG, or hash)."
+msgstr ""
+
+msgid "Digital signature of the tenant (SVG, base64 PNG, or hash)."
+msgstr ""
+
+msgid "Rental contracts"
+msgstr ""
+
+msgid "The linked application must concern the same tenant and unit."
+msgstr ""
+
+msgid "Rental applications are not enabled for this property."
+msgstr ""
+
+msgid "This application has already been reviewed."
+msgstr ""
+
+msgid "Only pending applications can be cancelled."
+msgstr ""
+
+msgid "The landlord's signature is required."
+msgstr ""
+
+msgid "This unit already has a contract in progress."
+msgstr ""
+
+msgid "Only approved applications can create a contract."
+msgstr ""
+
+msgid "The application tenant does not match the contract tenant."
+msgstr ""
+
+msgid "The application unit does not match the contract unit."
+msgstr ""
+
+msgid "This application already has a contract."
+msgstr ""
+
+msgid "The tenant's signature is required."
+msgstr ""
+
+msgid "This contract is not awaiting the tenant's signature."
+msgstr ""
+
+msgid "Only contracts in signing can be cancelled this way."
+msgstr ""
+
+msgid "Only a signed contract can be activated."
+msgstr ""
+
+msgid "The landlord's signature is missing."
+msgstr ""
+
+msgid "The tenant's signature is missing."
+msgstr ""
+
+msgid ""
+"This contract cannot be activated until the initial payment is completed."
+msgstr ""
+
+#, python-format
+msgid "This unit is not available for activation (current status: %(status)s)."
+msgstr ""
+
+msgid "Advance rent months must be at least 1."
+msgstr ""
+
+msgid "Deposit and monthly rent must use the same currency."
+msgstr ""
+
+msgid "Invalid payment method."
+msgstr ""
+
+msgid "The initial payment can only be created for a signed contract."
+msgstr ""
+
+msgid "The initial payment amount must be greater than zero."
+msgstr ""
+
+#, python-format
+msgid "Initial payment for rental contract %(contract)s."
+msgstr ""
+
+msgid "New rental application"
+msgstr ""
+
+#, python-format
+msgid "%(tenant)s applied for unit %(unit)s at %(property)s."
+msgstr ""
+
+msgid "Rental application updated"
+msgstr ""
+
+#, python-format
+msgid "Your application for %(property)s is now %(status)s."
+msgstr ""
+
+#, fuzzy
+#| msgid "Rental contract"
+msgid "Rental contract ready"
+msgstr "Contrat de Bail"
+
+#, python-format
+msgid "A rental contract for %(property)s is ready for your review."
+msgstr ""
+
+#, fuzzy
+#| msgid "Rental contract"
+msgid "Rental contract updated"
+msgstr "Contrat de Bail"
+
+#, python-format
+msgid "Your contract for %(property)s is now %(status)s."
+msgstr ""
+
+#, python-format
+msgid "The contract with %(tenant)s for %(property)s is now %(status)s."
+msgstr ""
+
+msgid "The lease PDF could not be generated. Please try again."
+msgstr ""
+
+msgid "Rental application rejected successfully."
+msgstr ""
+
+msgid "This application can no longer create a contract."
+msgstr ""
+
+msgid ""
+"The application was approved and the rental contract is now awaiting the "
+"tenant's signature."
+msgstr ""
+
+msgid "Rental contract created successfully."
+msgstr ""
+
+msgid ""
+"The invitation was created. Create the contract after the tenant has "
+"activated their account."
+msgstr ""
+
+msgid "Your rental application has been submitted successfully."
+msgstr ""
+
+msgid "Rental contract signed successfully."
+msgstr ""
+
 msgid "Property management made simple."
 msgstr ""
 
-#: roomrun/templates/dashboard/includes/site_footer.html:6
-#: roomrun/templates/home/includes/site_footer.html:6
+msgid "Close"
+msgstr ""
+
+msgid "Open menu"
+msgstr ""
+
+msgid "Breadcrumb"
+msgstr ""
+
+msgid "Communication"
+msgstr ""
+
+msgid "Profile"
+msgstr ""
+
+msgid "Manage your conversations with tenants and employees."
+msgstr ""
+
+msgid "Search a conversation..."
+msgstr ""
+
+msgid "Search conversations"
+msgstr ""
+
+msgid "New conversation"
+msgstr ""
+
+msgid "New"
+msgstr ""
+
+msgid "No conversations yet."
+msgstr ""
+
+msgid "Connected"
+msgstr ""
+
+msgid "Connection unavailable"
+msgstr ""
+
+msgid "Someone is typing…"
+msgstr ""
+
+msgid "Connecting…"
+msgstr ""
+
+msgid "Delete conversation"
+msgstr ""
+
+msgid "Start the conversation."
+msgstr ""
+
+msgid "Write a message…"
+msgstr ""
+
+msgid "Send message"
+msgstr ""
+
+msgid "Conversation information"
+msgstr ""
+
+msgid "Only you are in this conversation."
+msgstr ""
+
+msgid "Quick actions"
+msgstr ""
+
+msgid "View conversation"
+msgstr ""
+
+msgid "Choose a conversation"
+msgstr ""
+
+msgid "Select a conversation to read and send messages."
+msgstr ""
+
+msgid "Start a conversation"
+msgstr ""
+
+msgid "Choose a tenant or employee from your workspace."
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Start chat"
+msgstr ""
+
+msgid "My home"
+msgstr ""
+
+msgid "Chat with your landlord and employees, and follow your requests."
+msgstr ""
+
+msgid "All"
+msgstr ""
+
+msgid "Employees"
+msgstr ""
+
+msgid "Occupied"
+msgstr ""
+
+msgid "Your landlord"
+msgstr ""
+
+msgid "View my lease"
+msgstr ""
+
+msgid "Report a problem"
+msgstr ""
+
+msgid "Choose your landlord or an employee."
+msgstr ""
+
+msgid "ROOMRUN updates"
+msgstr ""
+
+msgid "All notifications"
+msgstr ""
+
+msgid "Back to notifications"
+msgstr ""
+
+msgid "View payment"
+msgstr ""
+
+msgid "View payments"
+msgstr ""
+
+msgid "View application"
+msgstr ""
+
+msgid "Review application"
+msgstr ""
+
+#, fuzzy
+#| msgid "Rental contract"
+msgid "Review contract"
+msgstr "Contrat de Bail"
+
+msgid "View lease"
+msgstr ""
+
+#, fuzzy
+#| msgid "Rental contract"
+msgid "View contract"
+msgstr "Contrat de Bail"
+
+msgid "View request"
+msgstr ""
+
+msgid "View task"
+msgstr ""
+
+msgid "View schedule"
+msgstr ""
+
+msgid "View visitor invitations"
+msgstr ""
+
+msgid "View details"
+msgstr ""
+
+#, python-format
+msgid "%(count)s unread"
+msgstr ""
+
+msgid "ROOMRUN · ACTIVITY"
+msgstr ""
+
+msgid "Your notifications"
+msgstr ""
+
+msgid "Stay up to date on payments, maintenance and messages."
+msgstr ""
+
+msgid "Mark all as read"
+msgstr ""
+
+msgid "Delete all your notifications?"
+msgstr ""
+
+msgid "Clear notifications"
+msgstr ""
+
+msgid "Unread"
+msgstr ""
+
+msgid "ago"
+msgstr ""
+
+msgid "Mark as unread"
+msgstr ""
+
+msgid "Mark as read"
+msgstr ""
+
+msgid "Delete this notification?"
+msgstr ""
+
+msgid "Delete notification"
+msgstr ""
+
+msgid "You have no unread notifications"
+msgstr ""
+
+msgid "No notifications yet"
+msgstr ""
+
+msgid "Updates about your ROOMRUN account will appear here."
+msgstr ""
+
+msgid "Previous"
+msgstr ""
+
+#, python-format
+msgid "Page %(current)s of %(total)s"
+msgstr ""
+
+msgid "Next"
+msgstr ""
+
+msgid "Management"
+msgstr ""
+
+msgid "Track received payments and amounts due across your rentals."
+msgstr ""
+
+msgid "Export"
+msgstr ""
+
+msgid "Request a withdrawal"
+msgstr ""
+
+msgid "Payment summary"
+msgstr ""
+
+msgid "Collected this month"
+msgstr ""
+
+msgid "payment(s)"
+msgstr ""
+
+msgid "Payments pending"
+msgstr ""
+
+msgid "Failed payments"
+msgstr ""
+
+msgid "Available balance"
+msgstr ""
+
+msgid "Ready for withdrawal"
+msgstr ""
+
+msgid "Outstanding from tenants"
+msgstr ""
+
+msgid "Unpaid charges on signed and active leases"
+msgstr ""
+
+msgid "Withdraw funds"
+msgstr ""
+
+msgid "Filter payments"
+msgstr ""
+
+msgid "Search reference or tenant…"
+msgstr ""
+
+msgid "Filter by status"
+msgstr ""
+
+msgid "All statuses"
+msgstr ""
+
+msgid "Paid"
+msgstr ""
+
+msgid "Failed or cancelled"
+msgstr ""
+
+msgid "Refunded"
+msgstr ""
+
+msgid "Filter by charge type"
+msgstr ""
+
+msgid "All reasons"
+msgstr ""
+
+msgid "Filter by period"
+msgstr ""
+
+msgid "All periods"
+msgstr ""
+
+msgid "This month"
+msgstr ""
+
+msgid "Previous month"
+msgstr ""
+
+msgid "Older"
+msgstr ""
+
+msgid "Reset"
+msgstr ""
+
+msgid "Transactions"
+msgstr ""
+
+msgid "Reference"
+msgstr ""
+
+msgid "Property / unit"
+msgstr ""
+
+msgid "Reason"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "No payments recorded yet"
+msgstr ""
+
+msgid "Completed tenant payments will appear here."
+msgstr ""
+
+#, python-format
+msgid "Showing the %(shown)s most recent of %(total)s payments"
+msgstr ""
+
+#, python-format
+msgid "%(total)s payment in total"
+msgid_plural "%(total)s payments in total"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "payment(s) shown"
+msgstr ""
+
+msgid "Withdraw your balance"
+msgstr ""
+
+msgid "Request a Mobile Money payout to your preferred number."
+msgstr ""
+
 msgid ""
-"A calm workspace for residential management, designed for the people who "
-"live in a community and the people who keep it moving."
+"Minimum withdrawal: 5,000 FCFA. Pending requests are deducted from the "
+"available balance."
 msgstr ""
 
-#: roomrun/templates/dashboard/includes/site_footer.html:9
-#: roomrun/templates/home/includes/site_footer.html:9
-msgid "PLATFORM"
+msgid "Submit withdrawal request"
 msgstr ""
 
-#: roomrun/templates/dashboard/includes/site_footer.html:10
-#: roomrun/templates/dashboard/includes/site_header.html:12
-#: roomrun/templates/home/includes/site_footer.html:10
-#: roomrun/templates/home/includes/site_header.html:12
-msgid "Features"
+msgid "Withdrawal requests"
 msgstr ""
 
-#: roomrun/templates/dashboard/includes/site_footer.html:10
-#: roomrun/templates/dashboard/includes/site_header.html:13
-#: roomrun/templates/home/includes/site_footer.html:10
-#: roomrun/templates/home/includes/site_header.html:13
-msgid "Pricing"
+msgid "Recent requests and their status."
 msgstr ""
 
-#: roomrun/templates/dashboard/includes/site_footer.html:13
-#: roomrun/templates/home/includes/site_footer.html:13
-msgid "PROFILES"
+msgid "No withdrawal requests yet."
 msgstr ""
 
-#: roomrun/templates/dashboard/includes/site_footer.html:14
-#: roomrun/templates/home/includes/site_footer.html:14
-#: roomrun/users/models.py:325
-msgid "Landlords"
+msgid "My payments"
 msgstr ""
 
-#: roomrun/templates/dashboard/includes/site_footer.html:14
-#: roomrun/templates/dashboard/pages/dashboard.html:30
-#: roomrun/templates/dashboard/pages/landlord.html:20
-#: roomrun/templates/home/includes/site_footer.html:14
-msgid "Tenants"
+msgid "TENANT SPACE"
 msgstr ""
 
-#: roomrun/templates/dashboard/includes/site_footer.html:14
-#: roomrun/templates/home/includes/site_footer.html:14
-msgid "Maintenance teams"
+msgid "Review your rent, upcoming charges and payment history."
 msgstr ""
 
-#: roomrun/templates/dashboard/includes/site_footer.html:17
-#: roomrun/templates/home/includes/site_footer.html:17
-msgid "COMPANY"
+msgid "Outstanding balance"
 msgstr ""
 
-#: roomrun/templates/dashboard/includes/site_footer.html:18
-#: roomrun/templates/dashboard/includes/site_header.html:14
-#: roomrun/templates/dashboard/pages/about.html:4
-#: roomrun/templates/home/includes/site_footer.html:18
-#: roomrun/templates/home/includes/site_header.html:14
-msgid "About"
+msgid "Payments to complete"
 msgstr ""
 
-#: roomrun/templates/dashboard/includes/site_footer.html:18
-#: roomrun/templates/home/includes/site_footer.html:18
-msgid "Security"
+msgid "You are up to date"
 msgstr ""
 
-#: roomrun/templates/dashboard/includes/site_footer.html:18
-#: roomrun/templates/home/includes/site_footer.html:18
-msgid "Contact"
+msgid "Pay an outstanding charge securely with Mobile Money."
 msgstr ""
 
-#: roomrun/templates/dashboard/includes/site_header.html:3
-#: roomrun/templates/dashboard/pages/landlord.html:11
-#: roomrun/templates/home/includes/site_header.html:3
-msgid "Main navigation"
+msgid "There are no outstanding charges on your active lease."
 msgstr ""
 
-#: roomrun/templates/dashboard/includes/site_header.html:11
-#: roomrun/templates/home/includes/site_header.html:11
-msgid "Ecosystem"
+msgid "Pay now"
 msgstr ""
 
-#: roomrun/templates/dashboard/includes/site_header.html:18
-#: roomrun/templates/dashboard/pages/dashboard.html:4
-#: roomrun/templates/dashboard/pages/dashboard.html:20
-#: roomrun/templates/dashboard/pages/dashboard.html:57
-#: roomrun/templates/dashboard/pages/landlord.html:12
-#: roomrun/templates/dashboard/pages/landlord.html:25
-#: roomrun/templates/dashboard/pages/tenant.html:12
-#: roomrun/templates/dashboard/pages/tenant.html:25
-#: roomrun/templates/dashboard/pages/user.html:4 roomrun/users/services.py:346
+msgid "Outstanding charges"
+msgstr ""
+
+msgid "Payments made"
+msgstr ""
+
+msgid "Payment activity"
+msgstr ""
+
+msgid "Latest 100 transactions"
+msgstr ""
+
+msgid "Payments due"
+msgstr ""
+
+msgid "Select a charge to continue to secure payment."
+msgstr ""
+
+msgid "Due"
+msgstr ""
+
+#, fuzzy
+#| msgid "PayPal"
+msgid "Pay"
+msgstr "Paypal"
+
+msgid "Payment history"
+msgstr ""
+
+msgid "Track the status of your Mobile Money payments."
+msgstr ""
+
+msgid "Export CSV"
+msgstr ""
+
+msgid "Search reference, charge or property…"
+msgstr ""
+
+msgid "Failed"
+msgstr "Échoué"
+
+msgid "Cancelled"
+msgstr ""
+
+msgid "View payment status"
+msgstr ""
+
+msgid "No payment yet"
+msgstr ""
+
+msgid "Your payment history will appear here."
+msgstr ""
+
+msgid "No payment found"
+msgstr ""
+
+msgid "Try another search or status."
+msgstr ""
+
+msgid "payments"
+msgstr ""
+
+msgid "Showing up to 100 recent transactions"
+msgstr ""
+
+msgid "Pay charge"
+msgstr ""
+
+msgid "Confirm mobile payment"
+msgstr ""
+
+msgid "Payment status"
+msgstr ""
+
+msgid "Your payment has been received successfully."
+msgstr ""
+
+msgid "Payment not completed"
+msgstr ""
+
+msgid "The provider did not confirm this payment. You can try again."
+msgstr ""
+
+msgid "Try again"
+msgstr ""
+
+msgid "Waiting for confirmation"
+msgstr ""
+
+msgid ""
+"Approve the Mobile Money prompt on your phone, then check the payment status "
+"again."
+msgstr ""
+
+msgid "Check status"
+msgstr ""
+
+msgid "Back to property"
+msgstr ""
+
+msgid "Total units"
+msgstr ""
+
+msgid "occupancy"
+msgstr ""
+
+msgid "Available"
+msgstr ""
+
+msgid "Ready for rental"
+msgstr ""
+
+msgid "Floors"
+msgstr ""
+
+msgid "Building floors"
+msgstr ""
+
+msgid "Building information"
+msgstr ""
+
+msgid "Basic information about this building."
+msgstr ""
+
+msgid "floors"
+msgstr ""
+
+msgid "Manage the rental units in this building."
+msgstr ""
+
+msgid "Add unit"
+msgstr ""
+
+msgid "Rent / month"
+msgstr ""
+
+msgid "Actions"
+msgstr ""
+
+msgid "View"
+msgstr ""
+
+msgid "Units pagination"
+msgstr ""
+
+#, python-format
+msgid "%(count)s units"
+msgstr ""
+
+msgid "No units have been added to this building yet."
+msgstr ""
+
+msgid "Add the first unit"
+msgstr ""
+
+msgid "Total buildings"
+msgstr ""
+
+msgid "Created"
+msgstr ""
+
+msgid "View property"
+msgstr ""
+
+msgid "View maintenance"
+msgstr ""
+
+msgid "View documents"
+msgstr ""
+
+msgid "Add building"
+msgstr ""
+
+msgid "Update this building's information."
+msgstr ""
+
+msgid "Create a building within this property."
+msgstr ""
+
+msgid "Enter the basic information about this building."
+msgstr ""
+
+msgid "e.g. Building A"
+msgstr ""
+
+msgid "A name used to easily identify the building."
+msgstr ""
+
+msgid "Generated automatically"
+msgstr ""
+
+msgid "A unique identifier is generated when the building is created."
+msgstr ""
+
+msgid "Add a short description of this building..."
+msgstr ""
+
+msgid "What happens next?"
+msgstr ""
+
+msgid ""
+"After creating the building, you can add rental units from its details page. "
+"Monthly rent is configured for each unit."
+msgstr ""
+
+msgid "Save changes"
+msgstr ""
+
+msgid "Property summary"
+msgstr ""
+
+msgid "Manage your guards and maintenance agents."
+msgstr ""
+
+msgid "Search employees..."
+msgstr ""
+
+msgid "Invite user"
+msgstr ""
+
+msgid "Total employees"
+msgstr ""
+
+msgid "Across your workspace"
+msgstr ""
+
+msgid "Active employees"
+msgstr ""
+
+msgid "Currently active"
+msgstr ""
+
+msgid "Guards"
+msgstr ""
+
+msgid "Access & visitor management"
+msgstr ""
+
+msgid "Maintenance agents"
+msgstr ""
+
+msgid "Property maintenance"
+msgstr ""
+
+msgid "All roles"
+msgstr ""
+
+msgid "Guard"
+msgstr ""
+
+msgid "Maintenance Agent"
+msgstr ""
+
+msgid "Active"
+msgstr ""
+
+msgid "Inactive"
+msgstr ""
+
+msgid "Suspended"
+msgstr ""
+
+msgid "Employee"
+msgstr ""
+
+msgid "Employee number"
+msgstr ""
+
+msgid "Assigned properties"
+msgstr ""
+
+msgid "Security & access"
+msgstr ""
+
+msgid "Maintenance"
+msgstr ""
+
+msgid "1 property"
+msgstr ""
+
+msgid "Assigned to landlord"
+msgstr ""
+
+msgid "Multiple properties"
+msgstr ""
+
+msgid "See details"
+msgstr ""
+
+msgid "More options"
+msgstr ""
+
+msgid "No employees found"
+msgstr ""
+
+msgid "Try changing your search or filters."
+msgstr ""
+
+#, python-format
+msgid ""
+"\n"
+"                  Showing %(start)s–%(end)s of %(total)s employees\n"
+"                "
+msgstr ""
+
+msgid "Security desk"
+msgstr ""
+
+msgid "Main"
+msgstr ""
+
 msgid "Dashboard"
 msgstr ""
 
-#: roomrun/templates/dashboard/includes/site_header.html:20
-#: roomrun/templates/home/includes/site_header.html:17
-#: roomrun/templates/home/pages/auth/signin.html:4
-#: roomrun/templates/home/pages/auth/signin.html:23
-#: roomrun/templates/home/pages/auth/signin.html:110
-#: roomrun/templates/home/pages/auth/signup.html:248 roomrun/utils/enums.py:262
-msgid "Sign in"
+#, fuzzy
+#| msgid "Check"
+msgid "Check in"
+msgstr "Check"
+
+msgid "Active visits"
 msgstr ""
 
-#: roomrun/templates/dashboard/includes/site_header.html:21
-#: roomrun/templates/dashboard/pages/about.html:11
-#: roomrun/templates/dashboard/pages/home.html:15
-#: roomrun/templates/dashboard/pages/home.html:39
-#: roomrun/templates/home/includes/site_header.html:18
-#: roomrun/templates/home/pages/auth/signin.html:139
-#: roomrun/templates/home/pages/auth/signup.html:4
-msgid "Create an account"
+msgid "History"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/about.html:8
+msgid "System"
+msgstr ""
+
+msgid "Sign out"
+msgstr ""
+
+msgid "Property Management"
+msgstr ""
+
+msgid "Overview"
+msgstr ""
+
+msgid "Housing units"
+msgstr ""
+
+msgid "Tenants"
+msgstr ""
+
+msgid "Applications"
+msgstr ""
+
+msgid "Leases"
+msgstr ""
+
+msgid "Payments & balance"
+msgstr ""
+
+msgid "Invitations"
+msgstr ""
+
+msgid "Operations"
+msgstr ""
+
+msgid "Visitors"
+msgstr ""
+
+msgid "Coming soon"
+msgstr ""
+
+msgid "Requests"
+msgstr ""
+
+msgid "Profile & settings"
+msgstr ""
+
+msgid "Help"
+msgstr ""
+
+msgid "Work"
+msgstr ""
+
+msgid "My tasks"
+msgstr ""
+
+#, fuzzy
+#| msgid "Amount"
+msgid "Account"
+msgstr "Montant"
+
+msgid "Property creation progress"
+msgstr ""
+
+msgid "Property information"
+msgstr ""
+
+msgid "Configuration"
+msgstr ""
+
+msgid "Images"
+msgstr ""
+
+msgid "My lease"
+msgstr ""
+
+msgid "Rental"
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Workspace access"
+msgstr ""
+
+msgid "Invite people"
+msgstr ""
+
+msgid "Invite tenants, guards and maintenance agents to your workspace."
+msgstr ""
+
+msgid "Send invitation"
+msgstr ""
+
+msgid "Invitation history"
+msgstr ""
+
+msgid "Expires"
+msgstr ""
+
+msgid "No invitation has been sent yet."
+msgstr ""
+
+msgid "Maintenance queue"
+msgstr ""
+
+msgid "Pending requests available for you to take."
+msgstr ""
+
+msgid "photo(s) attached"
+msgstr ""
+
+msgid "Take request"
+msgstr ""
+
+msgid "Queue is clear"
+msgstr ""
+
+msgid "There are no pending maintenance requests."
+msgstr ""
+
+msgid "Request description"
+msgstr ""
+
+msgid "Download photo"
+msgstr ""
+
+msgid "Save update"
+msgstr ""
+
+msgid "My maintenance tasks"
+msgstr ""
+
+msgid "Only your assigned interventions are displayed."
+msgstr ""
+
+msgid "View queue"
+msgstr ""
+
+msgid "No assigned task"
+msgstr ""
+
+msgid "Interventions"
+msgstr ""
+
+msgid "Waiting for an agent to take this request."
+msgstr ""
+
+msgid "Create and assign a request"
+msgstr ""
+
+msgid "The selected agent receives the intervention immediately."
+msgstr ""
+
+msgid "Create and assign"
+msgstr ""
+
+msgid "Requests across your properties."
+msgstr ""
+
+msgid "Create request"
+msgstr ""
+
+msgid "No maintenance request"
+msgstr ""
+
+msgid "Home"
+msgstr ""
+
+msgid "Resolved on"
+msgstr ""
+
+msgid "Cancel this request"
+msgstr ""
+
+msgid "Report a maintenance issue"
+msgstr ""
+
+msgid "Your request is linked automatically to your active rental."
+msgstr ""
+
+msgid "Include the location of the issue and any relevant details."
+msgstr ""
+
+msgid "For immediate danger, contact local emergency services first."
+msgstr ""
+
+msgid "Submit request"
+msgstr ""
+
+msgid "Report a problem and follow its resolution."
+msgstr ""
+
+msgid ""
+"If something needs attention in your home, let the maintenance team know."
+msgstr ""
+
+msgid "Check in visitor"
+msgstr ""
+
+msgid "Check in a visitor"
+msgstr ""
+
+msgid "Register a walk-in visitor for one of your assigned residences."
+msgstr ""
+
+msgid "Visit history"
+msgstr ""
+
+msgid "Completed, denied and cancelled visits for your assigned residences."
+msgstr ""
+
+msgid "Register walk-in"
+msgstr ""
+
+msgid "Visitor"
+msgstr ""
+
+msgid "Residence"
+msgstr ""
+
+msgid "Check out / action"
+msgstr ""
+
+msgid "No completed visitor record."
+msgstr ""
+
+msgid "Pagination"
+msgstr ""
+
+#, python-format
+msgid "Page %(page)s of %(pages)s"
+msgstr ""
+
+msgid "Visitor register"
+msgstr ""
+
+msgid "Only invitations for residences assigned to you are shown."
+msgstr ""
+
+msgid "Search visitors, hosts or residences…"
+msgstr ""
+
+msgid "Search visitors"
+msgstr ""
+
+msgid "Search"
+msgstr ""
+
+msgid "Expected"
+msgstr ""
+
+msgid "Action"
+msgstr ""
+
+msgid "Deny"
+msgstr ""
+
+#, fuzzy
+#| msgid "Check"
+msgid "Check out"
+msgstr "Check"
+
+msgid "No expected or active visitor."
+msgstr ""
+
+msgid "Instructions"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Start cleaning"
+msgstr ""
+
+msgid "Mark completed"
+msgstr ""
+
+msgid "Edit cleaning schedule"
+msgstr ""
+
+msgid "New cleaning schedule"
+msgstr ""
+
+msgid "Residents in this building will see this schedule."
+msgstr ""
+
+msgid "Save schedule"
+msgstr ""
+
+msgid "Plan and track cleaning for your buildings."
+msgstr ""
+
+msgid "New schedule"
+msgstr ""
+
+msgid "No cleaning scheduled"
+msgstr ""
+
+msgid "Create a schedule"
+msgstr ""
+
+msgid "Cleaning planned for your building."
+msgstr ""
+
+msgid "New cleaning information will appear here."
+msgstr ""
+
+msgid "Visitor invitations"
+msgstr ""
+
+msgid "Access management"
+msgstr ""
+
+msgid "Invite a visitor"
+msgstr ""
+
+msgid "The guard will see this invitation and can register the arrival."
+msgstr ""
+
+msgid "Create invitation"
+msgstr ""
+
+msgid "My visitor invitations"
+msgstr ""
+
+msgid "No visitor invitation yet."
+msgstr ""
+
+msgid "About"
+msgstr ""
+
 msgid "ABOUT ROOMRUN"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/about.html:9
 msgid "A calmer way to manage residential communities."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/about.html:10
 msgid ""
 "ROOMRUN brings everyone involved in a community onto the same reliable "
 "source of truth: landlords, tenants, maintenance teams and guards."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/about.html:10
 msgid ""
 "We believe property management should feel clear, considerate and accountable"
 "—not like another spreadsheet or message thread to chase."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:18
-#: roomrun/templates/dashboard/pages/landlord.html:10
-#: roomrun/templates/dashboard/pages/tenant.html:10
-msgid "Main"
+msgid "Create an account"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:22
-#: roomrun/templates/dashboard/pages/landlord.html:14
-msgid "Leases"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/dashboard.html:24
-#: roomrun/templates/dashboard/pages/dashboard.html:115
-#: roomrun/templates/dashboard/pages/dashboard.html:211
-#: roomrun/templates/dashboard/pages/landlord.html:16
-#: roomrun/templates/dashboard/pages/landlord.html:33
-#: roomrun/templates/dashboard/pages/landlord.html:40
-#: roomrun/templates/dashboard/pages/tenant.html:16
-#: roomrun/templates/dashboard/pages/tenant.html:33 roomrun/utils/enums.py:229
-msgid "Maintenance"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/dashboard.html:28
-#: roomrun/templates/dashboard/pages/landlord.html:19
-msgid "Management"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/dashboard.html:31
-#: roomrun/templates/dashboard/pages/landlord.html:20
-msgid "Calendar"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/dashboard.html:37
-#: roomrun/templates/dashboard/pages/landlord.html:21
-#: roomrun/templates/dashboard/pages/tenant.html:21
-msgid "Settings"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/dashboard.html:38
-#: roomrun/templates/dashboard/pages/landlord.html:21
-#: roomrun/templates/dashboard/pages/tenant.html:21
-msgid "Help"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/dashboard.html:58
-#: roomrun/templates/dashboard/pages/landlord.html:25
 msgid "Overview of your activity"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:64
-#: roomrun/templates/dashboard/pages/landlord.html:25
 msgid "Search a property, a tenant…"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:77
 msgid "Hello, Sahit"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:80
 msgid "Here is what is happening with your properties."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:82
 msgid "Friday, September 4, 2026"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:92
 msgid "+2 this month"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:97
 msgid "Rented units"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:101
-#: roomrun/templates/dashboard/pages/landlord.html:31
 msgid "occupied"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:106
-#: roomrun/templates/dashboard/pages/landlord.html:32
 msgid "Monthly revenue"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:119
-#: roomrun/templates/dashboard/pages/landlord.html:33
 msgid "To process"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:127
 msgid "Recent rentals"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:128
-#: roomrun/templates/dashboard/pages/dashboard.html:188
-#: roomrun/templates/dashboard/pages/dashboard.html:212
-#: roomrun/templates/dashboard/pages/landlord.html:36
-#: roomrun/templates/dashboard/pages/landlord.html:39
-#: roomrun/templates/dashboard/pages/landlord.html:40
-#: roomrun/templates/dashboard/pages/tenant.html:42
-#: roomrun/templates/dashboard/pages/tenant.html:43
 msgid "See all"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:134
 msgid "Apartment T2 — Bonamoussadi"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:135
-msgid "Résidence Les Palmiers · Door A12"
+msgid "The Palms Residence · Door A12"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:137
-#: roomrun/templates/dashboard/pages/dashboard.html:147
-#: roomrun/templates/dashboard/pages/dashboard.html:167
-#: roomrun/templates/dashboard/pages/tenant.html:32
-#: roomrun/templates/dashboard/pages/tenant.html:40 roomrun/utils/enums.py:13
-#: roomrun/utils/enums.py:35 roomrun/utils/enums.py:85
-msgid "Active"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/dashboard.html:138
-#: roomrun/templates/dashboard/pages/dashboard.html:148
-#: roomrun/templates/dashboard/pages/dashboard.html:158
-#: roomrun/templates/dashboard/pages/dashboard.html:168
-#: roomrun/templates/dashboard/pages/home.html:37
 msgid "month"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:144
 msgid "Studio — Deido"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:145
-msgid "Résidence La Paix · Door B04"
+msgid "La Paix Residence · Door B04"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:154
 msgid "Apartment T3 — Akwa"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:155
 msgid "Central Building · Door C08"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:157
 msgid "Arrears"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:164
 msgid "Studio — Makepe"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:165
-msgid "Résidence Horizon · Door A07"
+msgid "Horizon Residence · Door A07"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:174
-#: roomrun/templates/dashboard/pages/landlord.html:37
-msgid "Quick actions"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/dashboard.html:176
-#: roomrun/templates/dashboard/pages/landlord.html:37
 msgid "Add a property"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:177
-#: roomrun/templates/dashboard/pages/landlord.html:37
 msgid "New lease"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:178
-#: roomrun/templates/dashboard/pages/landlord.html:37
 msgid "Add a charge"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:179
-#: roomrun/templates/dashboard/pages/landlord.html:37
 msgid "New message"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:187
-#: roomrun/templates/dashboard/pages/landlord.html:39
-#: roomrun/templates/dashboard/pages/tenant.html:43
 msgid "Recent payments"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:193
 msgid "Rent — Apartment T2"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:193
 msgid "Today"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:198
 msgid "Rent — Studio Deido"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:198
-#: roomrun/templates/dashboard/pages/dashboard.html:236
 msgid "September 2"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:203
 msgid "Electricity — Door C08"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:203
 msgid "September 1"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:218
 msgid "Water leak"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:219
 msgid "Apartment T3 · Akwa"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:220
 msgid "2 hours ago"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:226
 msgid "Electrical issue"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:227
 msgid "Studio · Makepe"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:228
 msgid "Yesterday"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:234
 msgid "Lock to replace"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/dashboard.html:235
 msgid "Apartment T2 · Bonamoussadi"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/guard.html:4
 msgid "Guard dashboard"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/guard.html:7
-msgid "SECURITY"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/guard.html:7
-#: roomrun/templates/dashboard/pages/landlord.html:28
-#: roomrun/templates/dashboard/pages/maintenance.html:7
-#: roomrun/templates/dashboard/pages/tenant.html:28
 #, python-format
-msgid "Hello, %(name)s"
+msgid ""
+"\n"
+"                Hello, %(name)s <i class=\"ti ti-sparkles\" aria-"
+"hidden=\"true\"></i>\n"
+"              "
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/guard.html:7
-msgid "Overview of today's access activity."
+msgid "Here is the security activity for your residence."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/guard.html:7
-#: roomrun/templates/dashboard/pages/maintenance.html:7
-msgid "Switch dashboard"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/guard.html:8
-#: roomrun/templates/dashboard/pages/guard.html:9 roomrun/users/models.py:593
-msgid "Shift"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/guard.html:8
-msgid "Today's entries"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/guard.html:8
-msgid "Active visitors"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/guard.html:8
 msgid "Expected visitors"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/guard.html:9
-msgid "Recent entry logs"
+msgid "expected today"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/guard.html:9
-msgid "total"
+msgid "Present"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/guard.html:9
+msgid "currently present"
+msgstr ""
+
+msgid "Today's entries"
+msgstr ""
+
+msgid "entries recorded"
+msgstr ""
+
+msgid "Completed visits"
+msgstr ""
+
+msgid "checked out today"
+msgstr ""
+
+msgid "Today's visitors"
+msgstr ""
+
+#, fuzzy
+#| msgid "Check"
+msgid "Checked in"
+msgstr "Check"
+
+msgid "No visitor recorded yet."
+msgstr ""
+
+msgid "No expected visitor for now."
+msgstr ""
+
+msgid "Recent activity"
+msgstr ""
+
 msgid "No access log has been recorded yet."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/guard.html:9
-msgid "Current shift"
+msgid "Security status"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/guard.html:9
-msgid "Date"
+msgid "present"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/guard.html:9
-msgid "Current time"
+msgid "Visitor check-in is available"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:4
-msgid "Property management made simple"
+msgid "Use the visitor register to review arrivals and departures."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:12
-msgid "Already supporting residential communities across Central Africa"
+msgid "Open visitor register"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:13
+msgid "Your community, clearly managed"
+msgstr ""
+
+msgid "Main navigation"
+msgstr ""
+
+msgid "Ecosystem"
+msgstr ""
+
+msgid "Features"
+msgstr ""
+
+msgid "Results"
+msgstr ""
+
+msgid "Pricing"
+msgstr ""
+
+msgid "Sign in"
+msgstr ""
+
+msgid "Page sections"
+msgstr ""
+
 msgid "Property management,"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:13
-msgid "made finally simple."
+msgid "finally made clear."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:14
 msgid ""
-"ROOMRUN brings landlords, tenants, maintenance teams and guards together in "
-"one calm workspace for homes, leases, payments, charges and maintenance."
+"Applications, leases, payments, maintenance and visitors — all brought "
+"together in one shared workspace for landlords, tenants, staff and security "
+"teams."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:15
 msgid "Explore the platform"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:19
-msgid "OVERVIEW"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:20
-msgid "Occupancy"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:20
-msgid "Rent received"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:20
-msgid "Open requests"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:20
-msgid "Monthly rent collection"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:20
-msgid "LAST 6 MONTHS"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:22
-msgid "Request #2841 assigned"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:22
-msgid "Agent confirmed Thursday, 14:00"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:25
-msgid "Active communities"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:25
-msgid "From one home to a multi-community portfolio."
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:25
-msgid "Rent on time"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:25
-msgid "Automatic reminders and simple payments."
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:25
-msgid "Homes managed"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:25
-msgid "Clear, consolidated information."
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:25
-msgid "days"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:25
-msgid "Average resolution"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:25
-msgid "From report to confirmed repair."
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:29
-msgid "ECOSYSTEM"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:29
-msgid "Three perspectives. One shared truth."
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:29
 msgid ""
-"ROOMRUN models the relationship itself: a payment, charge or maintenance "
-"request is the same event, viewed by the people who need it."
+"LIVE — 27 active communities · 340+ homes tracked · synced 4 minutes ago"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:30
-msgid "LANDLORDS"
+msgid "GET STARTED"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:30
-msgid "See the whole community breathe"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:30
-msgid ""
-"Occupancy, revenue, delays and renewals, consolidated and always current."
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:30
-msgid "Reports by community"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:30
-msgid "Rent and arrears tracking"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:30
-msgid "Document vault"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:30
-msgid "OPERATIONS"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:30
-msgid "Operations without reminders"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:30
-msgid ""
-"Leases, charges, inspections and maintenance in one visible, prioritised "
-"queue."
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:30
-msgid "Unified operations queue"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:30
-msgid "Fair charge allocation"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:30
-msgid "Complete request history"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:30
-msgid "TENANTS"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:30
-msgid "A clear home, not another maze."
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:30
-msgid "Payments, messages and requests are simple to find and easy to act on."
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:33
-msgid "FEATURES"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:33
-msgid "The repetitive work, handled with care."
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:33
-msgid ""
-"Every obligation becomes planned, visible and followed through to completion."
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:33
-msgid "Leases that renew without friction"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:33
-msgid ""
-"Deadlines, notices and renewals are tracked automatically before they become "
-"urgent."
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:33
-msgid "Average signature"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:33
-msgid "Missed renewals"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:33
-msgid "Fair charges"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:33
-msgid ""
-"Water, electricity and shared charges allocated according to your rules."
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:33
-msgid "Maintenance with memory"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:33
-msgid "Every request keeps its photos, agent and cost history."
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:33
-msgid "Reach a community or a building with read receipts."
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:33
-msgid "Calm notifications"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:33
-msgid "Grouped and prioritised. Urgent reaches you; the rest can wait."
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:33
-msgid "A reliable audit trail"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:33
-msgid ""
-"An immutable history for each lease, payment and decision, exportable when "
-"needed."
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:35
-msgid "THE JOURNEY"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:35
-msgid "Three steps to publish your first home."
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:35
-#: roomrun/templates/home/pages/auth/signup.html:23
 msgid "Create your account"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:35
-msgid "Start as a landlord and add your first community."
+msgid "List your homes"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:35
-msgid "Publish your homes"
+msgid "Manage everything from your dashboard"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:35
-msgid "Add your units, equipment and rent details."
+msgid "THE ECOSYSTEM"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:35
-msgid "Manage from one dashboard"
+msgid "Five roles, one shared record."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:35
-msgid "Follow requests, tenants and payments in one place."
+msgid ""
+"Most tools focus on just one side. ROOMRUN records the relationship itself: "
+"a payment, a charge or a request is one event, seen from five different "
+"perspectives."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:37
-msgid "Free to start, Pro when you need more."
+msgid "Manage communities, homes and income from one dashboard."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:37
-msgid "Change plans at any time, without commitment."
+msgid "Find a home, pay rent and follow up on requests in a few clicks."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:37
+msgid "Maintenance staff"
+msgstr ""
+
+msgid "Receive and resolve requests across one or more communities."
+msgstr ""
+
+msgid "Security guard"
+msgstr ""
+
+msgid "Log every visitor in seconds, without a paper register."
+msgstr ""
+
+msgid "Administrator"
+msgstr ""
+
+msgid "Oversee the platform and verify new landlords."
+msgstr ""
+
+msgid "ONE COMMUNITY. ONE CLEAR VIEW."
+msgstr ""
+
+#, fuzzy
+#| msgid "Rental contract"
+msgid "Residential property,<br>"
+msgstr "Contrat de Bail"
+
+msgid "managed with clarity."
+msgstr ""
+
+msgid ""
+"ROOMRUN does more than manage homes. It makes every community easier to "
+"understand, coordinate and run."
+msgstr ""
+
+msgid "The Palms"
+msgstr ""
+
+msgid ""
+"A living property portfolio: occupancy, payments, requests, documents and "
+"the resident experience come together in one place."
+msgstr ""
+
+msgid "homes"
+msgstr ""
+
+#, python-format
+msgid "%% occupied"
+msgstr ""
+
+#, fuzzy
+#| msgid "Urgent"
+msgid "active requests"
+msgstr "Urgent"
+
+msgid "See how ROOMRUN brings property management together"
+msgstr ""
+
+msgid "Editorial view of The Palms residence"
+msgstr ""
+
+msgid "Contemporary interior at The Palms residence"
+msgstr ""
+
+msgid "THE PALMS / 2026"
+msgstr ""
+
+msgid "HOMES"
+msgstr ""
+
+msgid "Placeholder image — replace with photos of your properties."
+msgstr ""
+
+msgid "FEATURES"
+msgstr ""
+
+msgid "Six everyday needs, handled one by one."
+msgstr ""
+
+msgid ""
+"Each module solves a practical need without adding unnecessary complexity."
+msgstr ""
+
+msgid "Online payments"
+msgstr ""
+
+msgid ""
+"Rent, deposits and charges paid by Mobile Money or card, with fees deducted "
+"automatically before payout."
+msgstr ""
+
+msgid "Built-in messaging"
+msgstr ""
+
+msgid "Tenants and landlords can communicate without leaving the platform."
+msgstr ""
+
+msgid "Tracked maintenance"
+msgstr ""
+
+msgid ""
+"Prioritize requests, assign them to staff and track them through resolution."
+msgstr ""
+
+msgid "Visitor log"
+msgstr ""
+
+msgid ""
+"Security staff can record every arrival and departure, including walk-in "
+"visitors."
+msgstr ""
+
+msgid "Centralized documents"
+msgstr ""
+
+msgid ""
+"Keep identity documents, supporting files and signed leases together in one "
+"place."
+msgstr ""
+
+msgid "Verified reviews"
+msgstr ""
+
+msgid "Tenants and landlords can review each other at the end of a lease."
+msgstr ""
+
+msgid "RESULTS"
+msgstr ""
+
+msgid "What landlords measure."
+msgstr ""
+
+msgid "Homes managed"
+msgstr ""
+
+msgid "Rent collected on time"
+msgstr ""
+
+msgid "Less administrative work"
+msgstr ""
+
+msgid "Average resolution time"
+msgstr ""
+
+msgid "1.6 days"
+msgstr ""
+
+msgid ""
+"We manage four communities and more than sixty homes. ROOMRUN is the first "
+"place where our tenants, staff and our team can finally see the same picture."
+msgstr ""
+
+msgid "Landlord, The Palms Residence"
+msgstr ""
+
+msgid "PRICING"
+msgstr ""
+
+msgid "Two plans, no long-term commitment."
+msgstr ""
+
 msgid "Free"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:37
-msgid "Up to 2 communities"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:37
-msgid "Up to 10 homes"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:37
-msgid "Basic statistics"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:37
-msgid "Start for free"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:37
-msgid "Recommended"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/home.html:37
 msgid "Pro"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:37
-msgid "Unlimited communities and homes"
+msgid "Communities"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:37
-msgid "Advanced reports"
+msgid "Up to 2"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:37
-msgid "Reduced commission"
+msgid "Unlimited"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:37
-msgid "Choose Pro"
+msgid "Homes"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:39
-msgid "Give your community"
+msgid "Up to 10"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:39
-msgid "calm management at last."
+msgid "Analytics"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/home.html:39
+msgid "Basic"
+msgstr ""
+
+msgid "Advanced"
+msgstr ""
+
+msgid "Listing visibility"
+msgstr ""
+
+msgid "Standard"
+msgstr ""
+
+msgid "Featured"
+msgstr ""
+
+msgid "Transaction fee"
+msgstr ""
+
+msgid "Reduced"
+msgstr ""
+
+msgid "Price"
+msgstr ""
+
+msgid "Start for free"
+msgstr ""
+
+msgid "Upgrade to Pro"
+msgstr ""
+
+msgid "QUESTIONS"
+msgstr ""
+
+msgid "How do online payments work?"
+msgstr ""
+
 msgid ""
-"Create your account in minutes. Add homes, tenants and leases — we will "
-"guide you through the rest."
+"Tenants pay rent, deposits and charges in the app using Mobile Money or a "
+"bank card. The platform deducts its fee before paying the remaining balance "
+"to the landlord."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/landlord.html:4
+msgid "Who can create a maintenance or security staff account?"
+msgstr ""
+
+msgid ""
+"Only a landlord can create these accounts. If the person already uses "
+"ROOMRUN, link their account to your community instead of creating a "
+"duplicate."
+msgstr ""
+
+msgid "How is my landlord account verified?"
+msgstr ""
+
+msgid ""
+"After you sign up, our team verifies your identity document before "
+"activating your account. This usually takes less than 24 hours."
+msgstr ""
+
+msgid "Can I manage more than one community?"
+msgstr ""
+
+msgid ""
+"Yes. The free plan includes up to two communities. Pro removes this limit "
+"and provides combined analytics across your portfolio."
+msgstr ""
+
+msgid "Is ROOMRUN available in French?"
+msgstr ""
+
+msgid ""
+"ROOMRUN is available in English and French, with more languages planned. You "
+"can change your language at any time in your account settings."
+msgstr ""
+
+msgid "Ready to keep your community in sync?"
+msgstr ""
+
+msgid "Sign-up takes just a few minutes. We will guide you through every step."
+msgstr ""
+
+#, fuzzy
+#| msgid "Rental contract"
+msgid "or contact us"
+msgstr "Contrat de Bail"
+
 msgid "Landlord dashboard"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/landlord.html:21
-#: roomrun/templates/dashboard/pages/tenant.html:21
-#: roomrun/templates/dashboard/pages/user.html:7
-msgid "Sign out"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/landlord.html:25
-#: roomrun/templates/dashboard/pages/tenant.html:25
-msgid "Open menu"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/landlord.html:25
-#: roomrun/templates/dashboard/pages/users/user_detail.html:4
-#: roomrun/templates/home/pages/auth/signup.html:37
-msgid "Profile"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/landlord.html:28
 msgid "Here is what is happening across your properties."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/landlord.html:30
 msgid "active"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/landlord.html:31
 msgid "Occupied units"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/landlord.html:32
+msgid "Expected monthly rent"
+msgstr ""
+
 msgid "tenant(s)"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/landlord.html:36
+msgid "Add property"
+msgstr ""
+
+msgid "Wallet"
+msgstr ""
+
+msgid "Revenue evolution"
+msgstr ""
+
+msgid "Confirmed payments for the last 6 months"
+msgstr ""
+
+msgid "Last 6 months"
+msgstr ""
+
+msgid "Housing occupancy"
+msgstr ""
+
+msgid "Current housing status"
+msgstr ""
+
+msgid "Requests evolution over the last 4 months"
+msgstr ""
+
 msgid "Recent properties"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/landlord.html:36
-msgid "unit(s)"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/landlord.html:36
 msgid "No property has been added yet."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/landlord.html:39
 msgid "No payment has been recorded yet."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/landlord.html:40
-#: roomrun/templates/dashboard/pages/tenant.html:42
 msgid "No maintenance request yet."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/maintenance.html:4
+msgid "Recent activities"
+msgstr ""
+
+msgid "See notifications"
+msgstr ""
+
+#, python-format
+msgid "%(days)s ago"
+msgstr ""
+
+msgid "Your payments, applications and maintenance updates will appear here."
+msgstr ""
+
 msgid "Maintenance dashboard"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/maintenance.html:7
-msgid "MAINTENANCE"
+msgid "Here is the status of your interventions and pending tasks."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/maintenance.html:7
-msgid "Your tasks and assigned maintenance requests."
+msgid "To do"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/maintenance.html:8
-msgid "Total tasks"
+msgid "assigned interventions"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/maintenance.html:8
-#: roomrun/utils/enums.py:73 roomrun/utils/enums.py:114
-#: roomrun/utils/enums.py:140 roomrun/utils/enums.py:165
-#: roomrun/utils/enums.py:178 roomrun/utils/enums.py:272
-msgid "Pending"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/maintenance.html:8
-#: roomrun/utils/enums.py:166 roomrun/utils/enums.py:180
-#: roomrun/utils/enums.py:192
 msgid "In progress"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/maintenance.html:8
-msgid "Completion rate"
+msgid "currently ongoing"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/maintenance.html:8
-msgid "urgent request(s)"
+msgid "this month"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/tenant.html:4
-msgid "Tenant dashboard"
+msgid "Urgent"
+msgstr "Urgent"
+
+msgid "need your attention"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/tenant.html:11
-msgid "Tenant navigation"
+msgid "No intervention assigned yet."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/tenant.html:13
-#: roomrun/templates/dashboard/pages/tenant.html:37
-msgid "My home"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/tenant.html:14
-#: roomrun/templates/dashboard/pages/tenant.html:40
-msgid "My lease"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/tenant.html:19
-msgid "Community"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/tenant.html:20
-msgid "Visitors"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/tenant.html:25
-msgid "Your rental at a glance"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/tenant.html:25
-msgid "Search…"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/tenant.html:28
-msgid "Here is an overview of your rental."
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/tenant.html:31
-msgid "Next due date"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/tenant.html:31
-msgid "Upcoming"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/tenant.html:31
-msgid "No payment due"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/tenant.html:32
-msgid "Lease status"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/tenant.html:32
-msgid "Lease"
-msgstr ""
-
-#: roomrun/templates/dashboard/pages/tenant.html:33
 msgid "Recent requests"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/tenant.html:37
-msgid "You do not currently have an active lease."
+msgid "No recent request."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/tenant.html:38
-msgid "Next payment"
+msgid "Today's schedule"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/tenant.html:38
-msgid "Pay now"
+msgid "Calendar"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/tenant.html:38
-msgid "No payment is due in the next 30 days."
+msgid "No scheduled task for today."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/tenant.html:40
-msgid "Rental agreement"
+msgid "Task completed"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/tenant.html:40
-msgid "Start"
+msgid "No recent activity to display."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/tenant.html:40
-msgid "End"
+#, fuzzy
+#| msgid "Urgent"
+msgid "Urgent request"
+msgstr "Urgent"
+
+msgid "Water leak — bathroom"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/tenant.html:40 roomrun/utils/enums.py:96
+msgid "10 min ago"
+msgstr ""
+
+msgid "From Jean Dupont"
+msgstr ""
+
+msgid "30 min ago"
+msgstr ""
+
+msgid "Schedule update"
+msgstr ""
+
+msgid "Task rescheduled to 14:00"
+msgstr ""
+
+msgid "1h ago"
+msgstr ""
+
+msgid "My profile"
+msgstr ""
+
+msgid "Manage your personal information and account security."
+msgstr ""
+
+msgid "Change profile picture"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "Edit profile"
+msgstr ""
+
+msgid "Personal information"
+msgstr ""
+
+msgid "Your basic information"
+msgstr ""
+
+msgid "First name"
+msgstr ""
+
+msgid "Last name"
+msgstr ""
+
+msgid "Email address"
+msgstr ""
+
+msgid "Phone number"
+msgstr ""
+
+msgid "Not provided"
+msgstr ""
+
+msgid "Member since"
+msgstr ""
+
+msgid "Security"
+msgstr ""
+
+msgid "Protect your account"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Use a strong, unique password."
+msgstr ""
+
+msgid "Change"
+msgstr ""
+
+msgid "Email verified"
+msgstr ""
+
+msgid "Email not verified"
+msgstr ""
+
+msgid "ROOMRUN profile"
+msgstr ""
+
+msgid "Your role on the platform"
+msgstr ""
+
+msgid "Your role determines the services available in ROOMRUN."
+msgstr ""
+
+msgid "Sensitive area"
+msgstr ""
+
+msgid "Irreversible actions concerning your account"
+msgstr ""
+
+msgid "Deactivate my account"
+msgstr ""
+
+msgid "This action is not available from this page yet."
+msgstr ""
+
+msgid "Logout"
+msgstr ""
+
+msgid "Deactivate account"
+msgstr ""
+
+msgid "Edit my profile"
+msgstr ""
+
+msgid "Tenant dashboard"
+msgstr ""
+
+#, python-format
+msgid ""
+"\n"
+"                Hello, %(name)s <i class=\"ti ti-hand-finger\" aria-"
+"hidden=\"true\"></i>\n"
+"              "
+msgstr ""
+
+msgid "Here is an overview of your rental."
+msgstr ""
+
+msgid "Your contract is ready"
+msgstr ""
+
+msgid "Review and sign your rental contract to activate your lease."
+msgstr ""
+
+#, fuzzy
+#| msgid "Rental contract"
+msgid "Sign contract"
+msgstr "Contrat de Bail"
+
+msgid "Next due date"
+msgstr ""
+
+msgid "Upcoming"
+msgstr ""
+
+msgid "No payment due"
+msgstr ""
+
+msgid "Lease status"
+msgstr ""
+
+msgid "Lease"
+msgstr ""
+
+msgid "Pay rent"
+msgstr ""
+
+msgid "Report issue"
+msgstr ""
+
+msgid "My expenses"
+msgstr ""
+
+msgid "Breakdown of your monthly expenses"
+msgstr ""
+
+msgid "September"
+msgstr ""
+
+msgid "August"
+msgstr ""
+
+msgid "July"
+msgstr ""
+
+msgid "My maintenance requests"
+msgstr ""
+
+msgid "Status of your requests"
+msgstr ""
+
+msgid "Apartment"
+msgstr ""
+
+msgid "bedrooms"
+msgstr ""
+
 msgid "Rent"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/tenant.html:40
-msgid "No lease is available."
+#, fuzzy
+#| msgid "Rental contract"
+msgid "Residential rental"
+msgstr "Contrat de Bail"
+
+msgid "DATE"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/tenant.html:42
-msgid "Created"
+msgid "REFERENCE"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/tenant.html:42
-msgid "New request"
+msgid "TYPE"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/tenant.html:43
+msgid "AMOUNT"
+msgstr ""
+
+msgid "STATUS"
+msgstr ""
+
 msgid "No payment recorded yet."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/user.html:7
+msgid "To watch"
+msgstr ""
+
+msgid "Rent of"
+msgstr ""
+
+msgid "Maintenance pending"
+msgstr ""
+
 #, python-format
-msgid "Welcome, %(name)s"
+msgid "%(month)s"
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/user.html:7
+msgid "Payment made"
+msgstr ""
+
+msgid "Intervention completed"
+msgstr ""
+
+msgid "Request created"
+msgstr ""
+
+msgid "New announcement"
+msgstr ""
+
+msgid "Building A works"
+msgstr ""
+
+msgid "8 days ago"
+msgstr ""
+
+msgid "Electricity"
+msgstr ""
+
+msgid "Water"
+msgstr ""
+
+msgid "Internet"
+msgstr ""
+
+msgid "Gas"
+msgstr ""
+
+msgid "Property Configuration"
+msgstr ""
+
+msgid "Back to property information"
+msgstr ""
+
+msgid "Configure the management settings for this property."
+msgstr ""
+
+msgid "Set up the management settings for this property."
+msgstr ""
+
+msgid "Property is ready to be managed and rented."
+msgstr ""
+
+msgid "Property is temporarily unavailable."
+msgstr ""
+
+msgid "Property is not currently managed."
+msgstr ""
+
+msgid "Management settings"
+msgstr ""
+
+msgid "These settings can be changed later from the property settings."
+msgstr ""
+
+msgid "Allow tenants to submit maintenance requests."
+msgstr ""
+
+msgid "Tenant notifications"
+msgstr ""
+
+msgid "Send important property updates to tenants."
+msgstr ""
+
+msgid "No image yet"
+msgstr ""
+
+msgid "Location not specified"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "To be added"
+msgstr ""
+
+msgid "What's next?"
+msgstr ""
+
 msgid ""
-"Your dashboard is being prepared. Once a role is assigned to your account, "
-"its workspace will appear here."
+"In the next step, you will be able to upload the property's main images. "
+"Buildings and units can then be added from the property details page."
 msgstr ""
 
-#: roomrun/templates/dashboard/pages/users/user_detail.html:9
-msgid "PROFILE"
+msgid "Back"
 msgstr ""
 
-#: roomrun/templates/emails/otp/verify.html:6
-#: roomrun/templates/emails/otp/verify.html:77 roomrun/users/tasks.py:19
+msgid "Save"
+msgstr ""
+
+msgid "Continue to images"
+msgstr ""
+
+msgid "Property Details"
+msgstr ""
+
+msgid "Back to properties"
+msgstr ""
+
+msgid "General information about this property."
+msgstr ""
+
+msgid "District / Area"
+msgstr ""
+
+msgid "Manage the buildings and their units."
+msgstr ""
+
+msgid "No buildings yet"
+msgstr ""
+
+msgid ""
+"Add your first building to start creating and managing your rental units."
+msgstr ""
+
+msgid "Property overview"
+msgstr ""
+
+msgid "Manage images"
+msgstr ""
+
+msgid "View all units"
+msgstr ""
+
+msgid "Update the property's basic information."
+msgstr ""
+
+msgid "Create a new property and configure its basic information."
+msgstr ""
+
+msgid "Tell us about the property (name, type, location, etc.)."
+msgstr ""
+
+msgid "e.g. Résidence Les Palmiers"
+msgstr ""
+
+msgid "Select property type"
+msgstr ""
+
+msgid "Select country"
+msgstr ""
+
+msgid "Full address"
+msgstr ""
+
+msgid "e.g. Rue des Palmiers, Bastos"
+msgstr ""
+
+msgid "Select status"
+msgstr ""
+
+msgid "Describe the property, its features, and any specific information..."
+msgstr ""
+
+msgid ""
+"Update the details of this property, then continue managing its buildings "
+"and units."
+msgstr ""
+
+msgid ""
+"Once created, you'll be able to add buildings, units and manage everything "
+"from your dashboard."
+msgstr ""
+
+msgid "Manage multiple buildings"
+msgstr ""
+
+msgid "Track occupancy"
+msgstr ""
+
+msgid "Handle maintenance requests"
+msgstr ""
+
+msgid "Work with multiple landlords"
+msgstr ""
+
+msgid "Continue to configuration"
+msgstr ""
+
+msgid "Back to configuration"
+msgstr ""
+
+msgid "Add photos to help identify and present the property."
+msgstr ""
+
+msgid "Primary"
+msgstr ""
+
+msgid "Remove primary image"
+msgstr ""
+
+msgid "Drag and drop images here"
+msgstr ""
+
+msgid "or"
+msgstr ""
+
+msgid "Choose images"
+msgstr ""
+
+msgid "PNG, JPG or WEBP · Maximum 8 images"
+msgstr ""
+
+msgid "Selected images"
+msgstr ""
+
+msgid "Remove image"
+msgstr ""
+
+msgid "Add more"
+msgstr ""
+
+msgid ""
+"You can add buildings and units once the property is created. Monthly rent "
+"is configured at the unit level."
+msgstr ""
+
+msgid "Step 3 of 3"
+msgstr ""
+
+msgid "Finish setup"
+msgstr ""
+
+msgid "Manage your properties and track their occupancy."
+msgstr ""
+
+msgid "Search properties…"
+msgstr ""
+
+msgid "Under construction"
+msgstr ""
+
+msgid "Sort by"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Rent: High to low"
+msgstr ""
+
+msgid "Rent: Low to high"
+msgstr ""
+
+msgid "buildings"
+msgstr ""
+
+msgid "units"
+msgstr ""
+
+msgid "Monthly rent (avg.)"
+msgstr ""
+
+msgid "No properties found"
+msgstr ""
+
+msgid "Page"
+msgstr ""
+
+msgid "of"
+msgstr ""
+
+#, python-format
+msgid "Unit %(number)s"
+msgstr ""
+
+msgid "Edit unit"
+msgstr ""
+
+msgid "Per month"
+msgstr ""
+
+msgid "Surface"
+msgstr ""
+
+msgid "Living area"
+msgstr ""
+
+msgid "Unit information"
+msgstr ""
+
+msgid "Basic information about this rental unit."
+msgstr ""
+
+msgid "Unit images"
+msgstr ""
+
+msgid "Photos associated with this unit."
+msgstr ""
+
+msgid "No images added yet."
+msgstr ""
+
+msgid "Add images"
+msgstr ""
+
+#, fuzzy
+#| msgid "Rental contract"
+msgid "Rental information"
+msgstr "Contrat de Bail"
+
+msgid "Occupancy"
+msgstr ""
+
+msgid "Current tenant"
+msgstr ""
+
+msgid "View building"
+msgstr ""
+
+msgid "Update the information and rental details for this unit."
+msgstr ""
+
+msgid "Create a rental unit within this building."
+msgstr ""
+
+msgid "Enter the information and rental details for this unit."
+msgstr ""
+
+msgid "e.g. A01"
+msgstr ""
+
+msgid "The unit number must be unique within this building."
+msgstr ""
+
+msgid "e.g. 85"
+msgstr ""
+
+msgid "Surface area in square meters."
+msgstr ""
+
+msgid "Currency is inherited from the property."
+msgstr ""
+
+msgid "Unit rental information"
+msgstr ""
+
+msgid ""
+"The monthly rent is configured at unit level. The currency is inherited from "
+"the property and cannot be changed here."
+msgstr ""
+
+msgid "Create unit"
+msgstr ""
+
+msgid "Building summary"
+msgstr ""
+
+msgid "Existing units"
+msgstr ""
+
+msgid "Back to unit"
+msgstr ""
+
+msgid "Add photos to help identify and present this rental unit."
+msgstr ""
+
+msgid "Add up to 8 JPG, PNG, or WebP images."
+msgstr ""
+
+msgid "Set primary"
+msgstr ""
+
+msgid "Unit summary"
+msgstr ""
+
+msgid "Save images"
+msgstr ""
+
+msgid "Portfolio"
+msgstr ""
+
+msgid "Manage and track all units across your properties."
+msgstr ""
+
+msgid "Add a unit"
+msgstr ""
+
+msgid "Under maintenance"
+msgstr ""
+
+msgid "Search units, buildings or properties"
+msgstr ""
+
+msgid "All properties"
+msgstr ""
+
+msgid "Filter"
+msgstr ""
+
+msgid "Property / building"
+msgstr ""
+
+#, python-format
+msgid "Floor %(floor)s"
+msgstr ""
+
+msgid "per month"
+msgstr ""
+
+#, python-format
+msgid "View unit %(unit)s"
+msgstr ""
+
+msgid "No matching units"
+msgstr ""
+
+msgid "No housing units yet"
+msgstr ""
+
+msgid "Add a property and a building to start creating rental units."
+msgstr ""
+
+msgid "View properties"
+msgstr ""
+
+msgid "Previous page"
+msgstr ""
+
+msgid "Next page"
+msgstr ""
+
+#, python-format
+msgid "Submitted %(date)s"
+msgstr ""
+
+#, fuzzy
+#| msgid "Rental contract"
+msgid "Rental unit"
+msgstr "Contrat de Bail"
+
+msgid "Application information"
+msgstr ""
+
+msgid "Application date"
+msgstr ""
+
+msgid "Desired start date"
+msgstr ""
+
+#, python-format
+msgid "%(months)s month"
+msgid_plural "%(months)s months"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Occupants"
+msgstr ""
+
+msgid "Message to landlord"
+msgstr ""
+
+msgid "Application timeline"
+msgstr ""
+
+msgid "Application submitted"
+msgstr ""
+
+msgid "Your rental application was successfully sent to the landlord."
+msgstr ""
+
+msgid "Under review"
+msgstr ""
+
+msgid "Current status"
+msgstr ""
+
+msgid "The landlord is currently reviewing your application."
+msgstr ""
+
+msgid "Decision"
+msgstr ""
+
+msgid "Waiting for landlord response"
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "Application"
+msgstr ""
+
+msgid "Desired start"
+msgstr ""
+
+msgid "View unit"
+msgstr ""
+
+msgid "All applications"
+msgstr ""
+
+msgid ""
+"Your application is being reviewed. You will be notified once the landlord "
+"makes a decision."
+msgstr ""
+
+msgid ""
+"Your application has been approved. The landlord will contact you about the "
+"rental contract."
+msgstr ""
+
+msgid ""
+"This application has been reviewed. You can explore other available "
+"properties at any time."
+msgstr ""
+
+msgid "Apply for a unit"
+msgstr ""
+
+msgid "Submit your rental application to the landlord."
+msgstr ""
+
+msgid "Provide the information required for your application."
+msgstr ""
+
+msgid "When would you like to start your tenancy?"
+msgstr ""
+
+msgid "Enter the number of months you would like to rent."
+msgstr ""
+
+msgid "Include everyone who will live in the unit."
+msgstr ""
+
+msgid "Optional. Keep your message concise and relevant."
+msgstr ""
+
+msgid "Applicant information"
+msgstr ""
+
+msgid "Full name"
+msgstr ""
+
+msgid "Phone"
+msgstr ""
+
+msgid "Need to update your information?"
+msgstr ""
+
+msgid ""
+"You can update your personal information from your profile before submitting "
+"this application."
+msgstr ""
+
+msgid "No payment is required"
+msgstr ""
+
+msgid ""
+"Submitting this application does not create a rental contract or require "
+"payment. The landlord must review it first."
+msgstr ""
+
+msgid "Submit application"
+msgstr ""
+
+msgid "Choose an available unit"
+msgstr ""
+
+msgid "Select a unit in the form to submit your application."
+msgstr ""
+
+msgid "Selected unit"
+msgstr ""
+
+msgid "No unit selected"
+msgstr ""
+
+msgid "Application type"
+msgstr ""
+
+msgid "Status after submission"
+msgstr ""
+
+msgid "Pending review"
+msgstr ""
+
+msgid "Response"
+msgstr ""
+
+msgid "From the landlord"
+msgstr ""
+
+msgid "Before you submit"
+msgstr ""
+
+msgid "Confirm your move-in date."
+msgstr ""
+
+msgid "Make sure your contact information is up to date."
+msgstr ""
+
+msgid "The landlord will review your request."
+msgstr ""
+
+#, fuzzy
+#| msgid "Rental contract"
+msgid "Create Rental Contract"
+msgstr "Contrat de Bail"
+
+#, fuzzy
+#| msgid "Rental contract"
+msgid "Create rental contract"
+msgstr "Contrat de Bail"
+
+msgid ""
+"Create the rental contract for the approved tenant and define the "
+"contractual terms before activating the lease."
+msgstr ""
+
+msgid "From approved application"
+msgstr ""
+
+#, fuzzy
+#| msgid "Rental contract"
+msgid "Rental context"
+msgstr "Contrat de Bail"
+
+msgid "Information inherited from the approved application."
+msgstr ""
+
+msgid "Contract dates"
+msgstr ""
+
+msgid "Define when the rental agreement starts and ends."
+msgstr ""
+
+msgid "Requested start date from the application."
+msgstr ""
+
+msgid "Financial terms"
+msgstr ""
+
+msgid "Define the amounts that will be recorded on the contract."
+msgstr ""
+
+msgid "Sign below to send this contract to the tenant for signature."
+msgstr ""
+
+msgid "Clear signature"
+msgstr ""
+
+msgid "Approve and create contract"
+msgstr ""
+
+msgid "Contract summary"
+msgstr ""
+
+msgid "Contract status"
+msgstr ""
+
+msgid "Status after creation"
+msgstr ""
+
+msgid ""
+"Once created, the contract will be active and the unit will be associated "
+"with this rental."
+msgstr ""
+
+msgid "Approve application"
+msgstr ""
+
+msgid "Reject application"
+msgstr ""
+
+msgid "Applicant"
+msgstr ""
+
+msgid "Personal and contact information"
+msgstr ""
+
+msgid "Prospective tenant"
+msgstr ""
+
+msgid "Requested unit"
+msgstr ""
+
+msgid "Property selected by the applicant"
+msgstr ""
+
+msgid "Application details"
+msgstr ""
+
+msgid "Rental conditions requested by the tenant"
+msgstr ""
+
+msgid "months"
+msgstr ""
+
+msgid "Message from applicant"
+msgstr ""
+
+msgid "Message submitted with the application"
+msgstr ""
+
+msgid "History of this rental request"
+msgstr ""
+
+msgid "Waiting for landlord review"
+msgstr ""
+
+msgid "Application status"
+msgstr ""
+
+msgid "Approved"
+msgstr ""
+
+msgid "This application is waiting for your decision."
+msgstr ""
+
+msgid "This application has been approved."
+msgstr ""
+
+msgid "This application has been rejected."
+msgstr ""
+
+msgid "This application has been reviewed."
+msgstr ""
+
+msgid "Duration"
+msgstr ""
+
+msgid "After approval"
+msgstr ""
+
+msgid ""
+"Once this application is approved, the next step is to create a rental "
+"contract for the applicant and unit."
+msgstr ""
+
+msgid "View tenant profile"
+msgstr ""
+
+msgid "Review and manage rental requests from prospective tenants."
+msgstr ""
+
+#, python-format
+msgid "%(count)s application requires your review"
+msgid_plural "%(count)s applications require your review"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Search applications..."
+msgstr ""
+
+msgid "No applications found."
+msgstr ""
+
+msgid "Desired move-in"
+msgstr ""
+
+msgid "Applications received from prospective tenants will appear here."
+msgstr ""
+
+msgid "Rental Applications"
+msgstr ""
+
+msgid "Track your rental requests and application status."
+msgstr ""
+
+msgid "Find a property"
+msgstr ""
+
+msgid "Total applications"
+msgstr ""
+
+msgid "All submitted applications"
+msgstr ""
+
+msgid "Applications accepted"
+msgstr ""
+
+msgid "Applications declined"
+msgstr ""
+
+msgid "Search application, property or unit..."
+msgstr ""
+
+msgid "Most recent"
+msgstr ""
+
+msgid "Oldest"
+msgstr ""
+
+msgid "Reset filters"
+msgstr ""
+
+msgid "My applications"
+msgstr ""
+
+msgid "Property / Unit"
+msgstr ""
+
+msgid "Applied on"
+msgstr ""
+
+msgid "Submitted"
+msgstr ""
+
+msgid "No applications found"
+msgstr ""
+
+msgid "Showing"
+msgstr ""
+
+msgid "applications"
+msgstr ""
+
+msgid "Preview lease"
+msgstr ""
+
+msgid "Download PDF"
+msgstr ""
+
+msgid "Period"
+msgstr ""
+
+#, fuzzy
+#| msgid "Rental contract"
+msgid "Create contract"
+msgstr "Contrat de Bail"
+
+msgid "Balance"
+msgstr ""
+
+msgid "Manage your rental agreements, lease periods and tenant occupancy."
+msgstr ""
+
+msgid "Active leases"
+msgstr ""
+
+msgid "Currently active rental agreements"
+msgstr ""
+
+msgid "Expiring soon"
+msgstr ""
+
+msgid "Ending within the next 60 days"
+msgstr ""
+
+msgid "XAF across active leases"
+msgstr ""
+
+msgid "Units currently occupied"
+msgstr ""
+
+msgid "Search lease, tenant, property or unit..."
+msgstr ""
+
+msgid "Draft"
+msgstr ""
+
+msgid "Ended"
+msgstr ""
+
+msgid "Not started"
+msgstr ""
+
+msgid "Monthly"
+msgstr ""
+
+msgid "No leases found"
+msgstr ""
+
+#, python-format
+msgid ""
+"\n"
+"                  Showing %(start)s–%(end)s of %(total)s leases\n"
+"                "
+msgstr ""
+
+msgid "Expiring leases"
+msgstr ""
+
+msgid "Paul Nguema"
+msgstr ""
+
+msgid "Horizon"
+msgstr ""
+
+msgid "Alice Martin"
+msgstr ""
+
+msgid "Les Palmiers"
+msgstr ""
+
+msgid "Sarah Kamga"
+msgstr ""
+
+msgid "Create new lease"
+msgstr ""
+
+msgid "View tenants"
+msgstr ""
+
+msgid "View available units"
+msgstr ""
+
+msgid "View rent payments"
+msgstr ""
+
+#, fuzzy
+#| msgid "Rental contract"
+msgid "Sign rental contract"
+msgstr "Contrat de Bail"
+
+msgid "Verify the contract information then add your signature."
+msgstr ""
+
+msgid "Signature"
+msgstr ""
+
+#, fuzzy
+#| msgid "Rental contract"
+msgid "Contract"
+msgstr "Contrat de Bail"
+
+msgid "Preview lease document"
+msgstr ""
+
+#, python-format
+msgid "Unit %(unit_number)s · %(building)s"
+msgstr ""
+
+msgid "Open-ended"
+msgstr ""
+
+msgid "Your signature"
+msgstr ""
+
+msgid "Sign in the designated area below."
+msgstr ""
+
+msgid "Electronic signature"
+msgstr ""
+
+msgid "Draw your signature here"
+msgstr ""
+
+msgid "Use your mouse or finger on mobile."
+msgstr ""
+
+msgid "Clear"
+msgstr ""
+
+msgid "Before signing"
+msgstr ""
+
+msgid ""
+"By signing, you confirm that you have reviewed the information in this "
+"contract."
+msgstr ""
+
+msgid "Advance rent"
+msgstr ""
+
+msgid "Payment after signature"
+msgstr ""
+
+msgid "After signing, you will be able to complete the initial payment."
+msgstr ""
+
+msgid "Next step"
+msgstr ""
+
+msgid "Contract created"
+msgstr ""
+
+msgid "Action required"
+msgstr ""
+
+msgid "After signature"
+msgstr ""
+
+msgid "Secure validation"
+msgstr ""
+
+msgid ""
+"Your signature will be saved with your contract and used to validate this "
+"step."
+msgstr ""
+
+#, python-format
+msgid "My Lease — %(number)s"
+msgstr ""
+
+msgid "View your rental agreement and manage your lease."
+msgstr ""
+
+msgid "Rental lease"
+msgstr ""
+
+msgid "Your lease is waiting for activation."
+msgstr ""
+
+msgid "Your contract is signed and awaiting activation."
+msgstr ""
+
+msgid "Your lease is active."
+msgstr ""
+
+msgid "Your lease is currently inactive."
+msgstr ""
+
+msgid "Review & Pay"
+msgstr ""
+
+msgid "Refundable deposit"
+msgstr ""
+
+msgid "Fixed-term lease"
+msgstr ""
+
+msgid "Your lease is awaiting signature"
+msgstr ""
+
+msgid "Your lease is awaiting activation"
+msgstr ""
+
+msgid "Your lease is inactive"
+msgstr ""
+
+msgid ""
+"Your landlord has created your rental contract. Review the contract and "
+"complete the required steps to activate your lease."
+msgstr ""
+
+#, fuzzy
+#| msgid "Amount"
+msgid "Amount to pay"
+msgstr "Montant"
+
+msgid "Lease details"
+msgstr ""
+
+msgid "Lease number"
+msgstr ""
+
+msgid "My rental"
+msgstr ""
+
+msgid "Manage your tenants, their homes and rental contracts."
+msgstr ""
+
+msgid "Invite tenant"
+msgstr ""
+
+msgid "Total tenants"
+msgstr ""
+
+msgid "Current tenant accounts"
+msgstr ""
+
+#, fuzzy
+#| msgid "Rental contract"
+msgid "Active contracts"
+msgstr "Contrat de Bail"
+
+msgid "Currently renting"
+msgstr ""
+
+msgid "Within the next 60 days"
+msgstr ""
+
+msgid "Across your properties"
+msgstr ""
+
+msgid "Search tenants, contracts or units..."
+msgstr ""
+
+msgid "All verification"
+msgstr ""
+
+msgid "Verified"
+msgstr ""
+
+msgid "Not verified"
+msgstr ""
+
+#, python-format
+msgid "%(floor)s floor"
+msgid_plural "%(floor)s floors"
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "Ends %(date)s"
+msgstr ""
+
+#, fuzzy
+#| msgid "Rental contract"
+msgid "No contract"
+msgstr "Contrat de Bail"
+
+msgid "No tenants found"
+msgstr ""
+
+#, python-format
+msgid ""
+"\n"
+"                  Showing %(start)s–%(end)s of %(total)s tenants\n"
+"                "
+msgstr ""
+
+msgid "Security activity overview"
+msgstr ""
+
+msgid "Search a visitor…"
+msgstr ""
+
+msgid "Search a property…"
+msgstr ""
+
+msgid "Search properties"
+msgstr ""
+
+msgid "Overview of your interventions"
+msgstr ""
+
+msgid "Search an intervention…"
+msgstr ""
+
+msgid "Your rental at a glance"
+msgstr ""
+
+msgid "Search…"
+msgstr ""
+
+msgid "You are invited to ROOMRUN"
+msgstr ""
+
+#, python-format
+msgid "%(landlord)s invited you to join their ROOMRUN workspace."
+msgstr ""
+
+msgid "Accept invitation"
+msgstr ""
+
+msgid "This invitation expires on"
+msgstr ""
+
 msgid "Your ROOMRUN verification code"
 msgstr ""
 
-#: roomrun/templates/emails/otp/verify.html:38
-#: roomrun/templates/home/includes/brand_panel.html:13
 msgid "Simplified property management"
 msgstr ""
 
-#: roomrun/templates/emails/otp/verify.html:88
 #, python-format
 msgid "Hello %(name)s,"
 msgstr ""
 
-#: roomrun/templates/emails/otp/verify.html:90
 msgid "Use the following verification code to continue:"
 msgstr ""
 
-#: roomrun/templates/emails/otp/verify.html:111
 msgid "Your verification code"
 msgstr ""
 
-#: roomrun/templates/emails/otp/verify.html:141
 msgid "Important:"
 msgstr ""
 
-#: roomrun/templates/emails/otp/verify.html:142
 #, python-format
 msgid "This code expires in %(minutes)s minutes."
 msgstr ""
 
-#: roomrun/templates/emails/otp/verify.html:155
 msgid ""
 "If you did not request this code, you can safely ignore this email. No "
 "modification will be made to your account."
 msgstr ""
 
-#: roomrun/templates/emails/otp/verify.html:175
-#: roomrun/templates/home/includes/brand_panel.html:21
 msgid "All rights reserved."
 msgstr ""
 
-#: roomrun/templates/emails/otp/verify.html:183
 msgid "This email was sent automatically."
 msgstr ""
 
-#: roomrun/templates/errors/400.html:4 roomrun/templates/errors/400.html:7
 msgid "Bad request"
 msgstr ""
 
-#: roomrun/templates/errors/400.html:8
 msgid "The request could not be processed. Please try again."
 msgstr ""
 
-#: roomrun/templates/errors/base.html:9
+msgid "Forbidden (403)"
+msgstr ""
+
+msgid "You're not allowed to access this page."
+msgstr ""
+
+msgid "Page not found"
+msgstr ""
+
+msgid "This is not the page you were looking for."
+msgstr ""
+
+msgid "Server Error"
+msgstr ""
+
+msgid "Oops! Error 500"
+msgstr ""
+
+msgid "Looks like something went wrong."
+msgstr ""
+
+msgid ""
+"We track these errors automatically, but if the problem persists, contact "
+"us. In the meantime, try refreshing the page."
+msgstr ""
+
 msgid "Back to home"
 msgstr ""
 
-#: roomrun/templates/home/includes/brand_panel.html:14
 msgid "Manage your properties."
 msgstr ""
 
-#: roomrun/templates/home/includes/brand_panel.html:14
 msgid "Simplify your day-to-day."
 msgstr ""
 
-#: roomrun/templates/home/includes/brand_panel.html:16
 msgid "Property management"
 msgstr ""
 
-#: roomrun/templates/home/includes/brand_panel.html:17
 msgid "Payment tracking"
 msgstr ""
 
-#: roomrun/templates/home/includes/brand_panel.html:18
-msgid "Maintenance management"
+msgid "A calm workspace for residential management in Central Africa."
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/forgot_password.html:4
+msgid "Platform"
+msgstr ""
+
+msgid "Profiles"
+msgstr ""
+
+msgid "Landlords"
+msgstr ""
+
+msgid "Maintenance staff and guards"
+msgstr ""
+
+msgid "Company"
+msgstr ""
+
+msgid "Back to RoomRun"
+msgstr ""
+
+msgid ""
+"A calm workspace for residential management, designed for the people who "
+"live in a community and the people who keep it moving."
+msgstr ""
+
+msgid "PLATFORM"
+msgstr ""
+
+msgid "PROFILES"
+msgstr ""
+
+msgid "Maintenance teams"
+msgstr ""
+
+msgid "COMPANY"
+msgstr ""
+
+msgid "Cookies Policy"
+msgstr ""
+
+msgid "Legal"
+msgstr ""
+
+msgid ""
+"ROOMRUN uses cookies to improve your experience, analyze site traffic, and "
+"personalize content."
+msgstr ""
+
+msgid "Last updated"
+msgstr ""
+
+msgid "On this page"
+msgstr ""
+
+msgid "What are cookies"
+msgstr ""
+
+msgid "How we use them"
+msgstr ""
+
+msgid "Managing cookies"
+msgstr ""
+
+msgid ""
+"Cookies are small text files stored on your device that help us provide, "
+"protect, and improve our services."
+msgstr ""
+
+msgid ""
+"We use cookies to maintain your session, secure your account, remember "
+"certain preferences, and improve platform performance."
+msgstr ""
+
+msgid ""
+"You can manage your cookie preferences through your browser settings. "
+"Disabling certain cookies may affect the functionality of the platform."
+msgstr ""
+
+msgid "Contact us"
+msgstr ""
+
+msgid "For questions about cookies or your data, contact the RoomRun team."
+msgstr ""
+
+msgid "For questions about cookies or your data."
+msgstr ""
+
+msgid "License"
+msgstr ""
+
+msgid ""
+"ROOMRUN is licensed to users for use under the terms and conditions set "
+"forth in this agreement."
+msgstr ""
+
+msgid "License grant"
+msgstr ""
+
+msgid "Restrictions"
+msgstr ""
+
+msgid ""
+"All content, features, and functionality of the platform are owned by "
+"ROOMRUN and are protected by international copyright, trademark, and other "
+"intellectual property laws."
+msgstr ""
+
+msgid ""
+"Unauthorized use of this platform may violate these laws and result in legal "
+"consequences."
+msgstr ""
+
+msgid "For licensing questions, contact the RoomRun team."
+msgstr ""
+
+msgid "Contact for licensing and legal questions."
+msgstr ""
+
+msgid "ROOMRUN processes payments securely through trusted payment providers."
+msgstr ""
+
+msgid "Payment processing"
+msgstr ""
+
+msgid "Refunds and disputes"
+msgstr ""
+
+msgid ""
+"All transactions are encrypted and handled in compliance with applicable "
+"financial regulations."
+msgstr ""
+
+msgid ""
+"Refunds, cancellations, and billing disputes are subject to the payment "
+"terms outlined in your rental agreement and our general terms of service."
+msgstr ""
+
+msgid "For billing inquiries, please contact our support team."
+msgstr ""
+
+msgid "For billing and payment-related questions."
+msgstr ""
+
+msgid "Privacy Policy"
+msgstr ""
+
+msgid "Privacy"
+msgstr ""
+
+msgid ""
+"We explain here how RoomRun collects, uses, protects, and retains your "
+"personal data."
+msgstr ""
+
+msgid "Introduction"
+msgstr ""
+
+msgid "Data collected"
+msgstr ""
+
+msgid "Use of data"
+msgstr ""
+
+msgid "Data sharing"
+msgstr ""
+
+msgid "Retention"
+msgstr ""
+
+msgid "Your rights"
+msgstr ""
+
+msgid "Cookies"
+msgstr ""
+
+msgid "Third-party services"
+msgstr ""
+
+msgid "Changes"
+msgstr ""
+
+msgid "About RoomRun"
+msgstr ""
+
+msgid ""
+"RoomRun is a rental management platform that allows property owners, "
+"tenants, and other authorized users to manage their homes, rental contracts, "
+"payments, maintenance requests, and communications."
+msgstr ""
+
+msgid "Data we collect"
+msgstr ""
+
+msgid ""
+"Depending on how you use RoomRun, we may collect different categories of "
+"data."
+msgstr ""
+
+msgid "Identification information"
+msgstr ""
+
+msgid "First and last name"
+msgstr ""
+
+msgid "Country of residence"
+msgstr ""
+
+msgid "Information necessary to identify the tenant"
+msgstr ""
+
+msgid "Rental-related information"
+msgstr ""
+
+msgid "Start and end dates of tenancy"
+msgstr ""
+
+msgid "Rent and deposit amounts"
+msgstr ""
+
+msgid "Charges and payments related to the contract"
+msgstr ""
+
+msgid "Technical information"
+msgstr ""
+
+msgid "IP address"
+msgstr ""
+
+msgid "Device type"
+msgstr ""
+
+msgid "Operating system"
+msgstr ""
+
+msgid "Browser"
+msgstr ""
+
+msgid "Date and time of connection"
+msgstr ""
+
+msgid "Use of your data"
+msgstr ""
+
+msgid "We use your data to provide, secure, and improve RoomRun services."
+msgstr ""
+
+msgid "Manage your account"
+msgstr ""
+
+msgid "Manage rental applications"
+msgstr ""
+
+msgid "Prepare and manage contracts"
+msgstr ""
+
+msgid "Process payments"
+msgstr ""
+
+msgid "Send important notifications"
+msgstr ""
+
+msgid "Improve platform security"
+msgstr ""
+
+msgid ""
+"Your data may only be accessible to people or services that need it to "
+"operate RoomRun."
+msgstr ""
+
+msgid "Concerned users"
+msgstr ""
+
+msgid ""
+"Property owners, tenants, and authorized users within the scope of their "
+"rental relationship."
+msgstr ""
+
+msgid "Technical providers"
+msgstr ""
+
+msgid ""
+"Services required for hosting, email, payments, and technical operation of "
+"the platform."
+msgstr ""
+
+msgid "Competent authorities"
+msgstr ""
+
+msgid "When data disclosure is required by applicable law."
+msgstr ""
+
+msgid "RoomRun does not sell your personal data for commercial purposes."
+msgstr ""
+
+msgid ""
+"RoomRun implements technical and organizational measures to protect personal "
+"data against unauthorized access, modification, loss, or fraudulent use."
+msgstr ""
+
+msgid ""
+"Access to sensitive information is restricted to individuals and services "
+"that need it for their functions."
+msgstr ""
+
+msgid "No computer system or online service can guarantee absolute security."
+msgstr ""
+
+msgid "Data retention"
+msgstr ""
+
+msgid ""
+"We retain personal data for as long as necessary to fulfill the purposes for "
+"which it was collected."
+msgstr ""
+
+msgid ""
+"Certain data may be retained longer when necessary to comply with a legal "
+"obligation, manage a dispute, establish or defend our rights, or ensure "
+"transaction traceability."
+msgstr ""
+
+msgid "Depending on applicable law, you may have the following rights:"
+msgstr ""
+
+msgid "Right to access your data"
+msgstr ""
+
+msgid "Right to rectification"
+msgstr ""
+
+msgid "Right to request deletion"
+msgstr ""
+
+msgid "Right to restrict processing"
+msgstr ""
+
+msgid "Right to object"
+msgstr ""
+
+msgid "Right to withdraw consent"
+msgstr ""
+
+msgid ""
+"RoomRun may use cookies or similar technologies to maintain your session, "
+"secure your account, remember preferences, and improve platform performance."
+msgstr ""
+
+msgid ""
+"Some RoomRun features may rely on external services for payments, email, "
+"hosting, or other technical operations."
+msgstr ""
+
+msgid "Policy updates"
+msgstr ""
+
+msgid ""
+"This policy may be updated to reflect changes to RoomRun, its features, or "
+"applicable legal requirements."
+msgstr ""
+
+msgid ""
+"For any questions about this privacy policy or the use of your personal "
+"data, contact the RoomRun team."
+msgstr ""
+
+msgid "Terms and Conditions"
+msgstr ""
+
+msgid ""
+"By accessing or using ROOMRUN, you agree to be bound by these terms and "
+"conditions."
+msgstr ""
+
+msgid "License purpose"
+msgstr ""
+
+msgid "Attribution"
+msgstr ""
+
+msgid "Granted rights"
+msgstr ""
+
+msgid "Intellectual property"
+msgstr ""
+
+msgid "Data and content"
+msgstr ""
+
+msgid "Availability"
+msgstr ""
+
+msgid "Account security"
+msgstr ""
+
+msgid "Suspension and termination"
+msgstr ""
+
+msgid "Liability"
+msgstr ""
+
+msgid "Modifications"
+msgstr ""
+
+msgid "Applicable law"
+msgstr ""
+
+msgid ""
+"This document presents the general terms of use of the RoomRun platform. It "
+"is a functional model to be adapted to the legal information of the entity "
+"that actually operates the service and to the law applicable to it."
+msgstr ""
+
+msgid ""
+"RoomRun is a digital platform designed to facilitate the management of real "
+"estate, housing, rentals, contracts, payments, maintenance requests, and "
+"communications between the different users of the service."
+msgstr ""
+
+msgid ""
+"This contract defines the conditions under which RoomRun grants the user a "
+"right of access and use of the platform."
+msgstr ""
+
+msgid "License attribution"
+msgstr ""
+
+msgid ""
+"Subject to compliance with this contract, RoomRun grants the user a limited, "
+"non-exclusive, non-transferable and revocable license to use the platform."
+msgstr ""
+
+msgid ""
+"This license only allows the use of RoomRun in accordance with the features "
+"made available and the role assigned to the user account."
+msgstr ""
+
+msgid ""
+"The license to use does not constitute a sale of the software, its source "
+"code or its intellectual property elements."
+msgstr ""
+
+msgid "Rights granted to the user"
+msgstr ""
+
+msgid ""
+"Depending on their role and available features, the user may in particular:"
+msgstr ""
+
+msgid "access their personal space;"
+msgstr ""
+
+msgid "use the features associated with their role;"
+msgstr ""
+
+msgid "create and manage information authorized by the platform;"
+msgstr ""
+
+msgid "consult their contracts and available documents;"
+msgstr ""
+
+msgid "perform or track operations offered by RoomRun;"
+msgstr ""
+
+msgid "exchange with other users when this feature is available."
+msgstr ""
+
+msgid "Usage restrictions"
+msgstr ""
+
+msgid ""
+"The user agrees to use RoomRun in accordance with applicable laws and these "
+"terms."
+msgstr ""
+
+msgid "Unless expressly authorized, it is in particular prohibited to:"
+msgstr ""
+
+msgid "copy, reproduce or redistribute the software;"
+msgstr ""
+
+msgid "resell or sublicense access to RoomRun;"
+msgstr ""
+
+msgid "attempt to obtain the source code of the platform;"
+msgstr ""
+
+msgid "circumvent security mechanisms;"
+msgstr ""
+
+msgid "use automated means likely to disrupt the service;"
+msgstr ""
+
+msgid "introduce malware intentionally;"
+msgstr ""
+
+msgid "use the platform for fraudulent or illegal purposes."
+msgstr ""
+
+msgid ""
+"Unless otherwise indicated, RoomRun and its licensors retain their rights "
+"over the software, code, architecture, interface, graphic elements, "
+"trademarks, logos, texts and features that make up the platform."
+msgstr ""
+
+msgid ""
+"The use of RoomRun does not transfer to the user any ownership rights over "
+"these elements."
+msgstr ""
+
+msgid "Software"
+msgstr ""
+
+msgid ""
+"The code and technical components necessary for the operation of RoomRun."
+msgstr ""
+
+msgid "Interface"
+msgstr ""
+
+msgid ""
+"The screens, visual components and interaction elements offered by the "
+"platform."
+msgstr ""
+
+msgid "User data and content"
+msgstr ""
+
+msgid ""
+"The user retains the rights they legally hold over the information and "
+"content they transmit to RoomRun."
+msgstr ""
+
+msgid ""
+"However, the user authorizes RoomRun to process this information to the "
+"extent necessary for the operation, security and improvement of the service, "
+"in accordance with applicable data protection documents."
+msgstr ""
+
+msgid ""
+"The user remains responsible for the accuracy, legality and relevance of the "
+"information they provide."
+msgstr ""
+
+msgid ""
+"Some RoomRun features may rely on services provided by third-party "
+"providers, particularly for payments, sending emails, hosting, "
+"authentication or other technical features."
+msgstr ""
+
+msgid ""
+"These services may be subject to their own terms of use and privacy policies."
+msgstr ""
+
+msgid ""
+"RoomRun does not necessarily become a party to contracts concluded directly "
+"between the user and a third-party provider."
+msgstr ""
+
+msgid "Service availability"
+msgstr ""
+
+msgid ""
+"RoomRun is designed to be continuously accessible, but absolute availability "
+"cannot be guaranteed in all circumstances."
+msgstr ""
+
+msgid "Interruptions may in particular occur for:"
+msgstr ""
+
+msgid "maintenance operations;"
+msgstr ""
+
+msgid "technical updates;"
+msgstr ""
+
+msgid "infrastructure incidents;"
+msgstr ""
+
+msgid "events affecting third-party providers;"
+msgstr ""
+
+msgid "measures necessary for service security."
+msgstr ""
+
+msgid ""
+"The user is responsible for the confidentiality of their credentials and "
+"information allowing access to their account."
+msgstr ""
+
+msgid ""
+"They must take reasonable measures to protect their account and inform "
+"RoomRun as soon as possible if they suspect unauthorized use."
+msgstr ""
+
+msgid "do not share your password;"
+msgstr ""
+
+msgid "use a sufficiently strong password;"
+msgstr ""
+
+msgid "log out on shared devices;"
+msgstr ""
+
+msgid "report any unusual activity."
+msgstr ""
+
+msgid ""
+"Access to RoomRun may be suspended or terminated when necessary, "
+"particularly in case of violation of these terms, fraudulent use, security "
+"risk or when required by law."
+msgstr ""
+
+msgid ""
+"Where appropriate and possible, the user may be informed of the measure "
+"taken and its reason."
+msgstr ""
+
+msgid ""
+"The end of access to the platform may result in the inability to use certain "
+"features or access certain information."
+msgstr ""
+
+msgid ""
+"The user is responsible for the use they make of their account and the "
+"operations they carry out from it."
+msgstr ""
+
+msgid ""
+"RoomRun is a tool designed to facilitate property management. The user "
+"remains responsible for the decisions made and the obligations that apply to "
+"them in the context of their relationships with other parties."
+msgstr ""
+
+msgid ""
+"Applicable liability limitations must be interpreted in accordance with the "
+"mandatory rules of applicable law."
+msgstr ""
+
+msgid "Service and contract modifications"
+msgstr ""
+
+msgid ""
+"RoomRun may evolve its features, interface, architecture or certain services "
+"offered to improve the platform, correct problems or respond to technical "
+"and regulatory constraints."
+msgstr ""
+
+msgid ""
+"Significant changes to these terms will be brought to the attention of users "
+"by appropriate means."
+msgstr ""
+
+msgid "License duration"
+msgstr ""
+
+msgid ""
+"The license to use begins upon account activation or authorization to access "
+"RoomRun."
+msgstr ""
+
+msgid ""
+"It remains applicable for the entire period during which the user is "
+"authorized to access the service."
+msgstr ""
+
+msgid ""
+"It ends when the user's access is permanently deleted or when the applicable "
+"contractual relationship ends."
+msgstr ""
+
+msgid ""
+"This contract must be adapted to the law applicable to the legal entity that "
+"operates RoomRun as well as its place of establishment."
+msgstr ""
+
+msgid ""
+"Mandatory provisions applicable to users cannot be set aside by this "
+"contract when the law does not permit it."
+msgstr ""
+
+msgid ""
+"This section must be finalized with the company's actual legal information "
+"before the service goes into production."
+msgstr ""
+
+msgid ""
+"For any questions regarding this contract, the license to use or the "
+"conditions of access to RoomRun, the user can contact the team responsible "
+"for the service."
+msgstr ""
+
+msgid "RoomRun Legal Team"
+msgstr ""
+
+msgid "For requests related to terms of use and license."
+msgstr ""
+
 msgid "Reset password"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/forgot_password.html:23
 msgid "PASSWORD RECOVERY"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/forgot_password.html:26
 msgid "Forgot your password?"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/forgot_password.html:29
 msgid ""
 "Enter the email address associated with your ROOMRUN account and we'll send "
 "you a code to reset your password."
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/forgot_password.html:49
-#: roomrun/templates/home/pages/auth/signin.html:46
-#: roomrun/templates/home/pages/auth/signup.html:143 roomrun/users/forms.py:32
-#: roomrun/users/forms.py:196
-msgid "Email address"
-msgstr ""
-
-#: roomrun/templates/home/pages/auth/forgot_password.html:72
 msgid "Send reset code"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/forgot_password.html:80
-#: roomrun/templates/home/pages/auth/reset_password.html:105
 msgid "Back to sign in"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/forgot_password.html:87
 msgid ""
 "For your security, we never reveal whether an email address is registered "
 "with ROOMRUN."
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/reset_password.html:4
-#: roomrun/templates/home/pages/auth/reset_password.html:23
+msgid "ROOMRUN invitation"
+msgstr ""
+
+#, python-format
+msgid "You were invited as %(role)s at %(email)s."
+msgstr ""
+
 msgid "Set a new password"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/reset_password.html:20
 msgid "PASSWORD RESET"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/reset_password.html:26
 msgid "Choose a new password to secure your account."
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/reset_password.html:49
-#: roomrun/users/forms.py:216
 msgid "New password"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/reset_password.html:65
-#: roomrun/templates/home/pages/auth/signin.html:82
-#: roomrun/templates/home/pages/auth/signin.html:84
-#: roomrun/templates/home/pages/auth/signup.html:182
 msgid "Show password"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/reset_password.html:69
 msgid "Minimum 8 characters."
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/reset_password.html:76
 msgid "Confirm new password"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/reset_password.html:96
 msgid "Update password"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signin.html:20
 msgid "WELCOME BACK"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signin.html:26
 msgid "Sign in to your ROOMRUN workspace."
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signin.html:66
-#: roomrun/templates/home/pages/auth/signup.html:164 roomrun/users/forms.py:34
-#: roomrun/users/forms.py:72
-msgid "Password"
-msgstr ""
-
-#: roomrun/templates/home/pages/auth/signin.html:83
 msgid "Hide password"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signin.html:99
 msgid "Remember me"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signin.html:102
 msgid "Forgot password?"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signin.html:132
 msgid "Continue with Google"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signin.html:137
 msgid "Don't have an account yet?"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signin.html:146
 msgid "Secure and protected connection"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signup.html:20
 msgid "WELCOME TO ROOMRUN"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signup.html:26
 msgid "Join ROOMRUN in a few steps."
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signup.html:42
 msgid "Information"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signup.html:61
 msgid "Your profile"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signup.html:62
 msgid "Select the account type that fits your usage."
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signup.html:73
 msgid "Manage your rental, payments, and requests."
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signup.html:84
 msgid "Manage your properties, rentals, and tenants."
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signup.html:92
 msgid "Continue"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signup.html:112
 msgid "John"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signup.html:131
 msgid "Doe"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signup.html:166
-msgid "8 characters minimum"
-msgstr ""
-
-#: roomrun/templates/home/pages/auth/signup.html:192
 msgid "Confirm password"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signup.html:217
 msgid "I accept the"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signup.html:219
 msgid "terms of use"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signup.html:221
 msgid "and the"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signup.html:223
 msgid "privacy policy"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signup.html:233
-msgid "Back"
-msgstr ""
-
-#: roomrun/templates/home/pages/auth/signup.html:237
 msgid "Create my account"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/signup.html:246
 msgid "Already have an account?"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/verify_otp.html:4
-#: roomrun/users/views/otp_views.py:61
+msgid "USER PROFILE"
+msgstr ""
+
+msgid "My Info"
+msgstr ""
+
+msgid "E-Mail"
+msgstr ""
+
+msgid "MFA"
+msgstr ""
+
 msgid "Verify your account"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/verify_otp.html:25
 msgid "VERIFICATION"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/verify_otp.html:29
 msgid "Verify your email"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/verify_otp.html:31
 msgid "Verify your login"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/verify_otp.html:33
-#: roomrun/users/views/otp_views.py:65
 msgid "Verify the reset code"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/verify_otp.html:38
 msgid ""
 "We've sent a verification code to your email address. Enter it below to "
 "activate your account."
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/verify_otp.html:40
 msgid "We've sent a verification code to your email. Enter it to continue."
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/verify_otp.html:42
 msgid "We've sent a code to your email. Enter it to create a new password."
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/verify_otp.html:52
 msgid "Please enter all 6 digits"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/verify_otp.html:73
 #, python-format
 msgid "Digit %(forloop.counter)s"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/verify_otp.html:88
 msgid "Code expires in"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/verify_otp.html:98
 msgid "Verify code"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/verify_otp.html:109
 msgid "Didn't receive the code?"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/verify_otp.html:117
 msgid "Resend code"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/verify_otp.html:126
 msgid "Wrong email?"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/verify_otp.html:128
 msgid "Change email address"
 msgstr ""
 
-#: roomrun/templates/home/pages/auth/verify_otp.html:136
 msgid "Your verification is secure"
 msgstr ""
 
-#: roomrun/users/admin.py:25
+#, fuzzy
+#| msgid "Rental contract"
+msgid "Rental agreement"
+msgstr "Contrat de Bail"
+
+msgid "Print / PDF"
+msgstr ""
+
+msgid "RENTAL AGREEMENT"
+msgstr ""
+
+#, fuzzy
+#| msgid "Rental contract"
+msgid "For residential use"
+msgstr "Contrat de Bail"
+
+msgid "Agreement no."
+msgstr ""
+
+msgid "Between the following parties"
+msgstr ""
+
+msgid "LANDLORD"
+msgstr ""
+
+msgid "reference"
+msgstr ""
+
+msgid "residing at"
+msgstr ""
+
+msgid "phone"
+msgstr ""
+
+msgid "TENANT"
+msgstr ""
+
+msgid "nationality"
+msgstr ""
+
+msgid "hereinafter referred to as the Tenant."
+msgstr ""
+
+msgid ""
+"The parties enter into this rental agreement for the property described "
+"below and freely agree to its rental terms, subject to applicable laws and "
+"regulations."
+msgstr ""
+
+msgid "Purpose of the agreement"
+msgstr ""
+
+msgid ""
+"The Landlord rents to the Tenant, who accepts, the residential property at"
+msgstr ""
+
+msgid ""
+"The Tenant agrees to use the premises for their intended purpose and to "
+"follow the building rules and the terms agreed with the Landlord."
+msgstr ""
+
+msgid "Term and financial conditions"
+msgstr ""
+
+msgid "This agreement begins on"
+msgstr ""
+
+msgid "and ends on"
+msgstr ""
+
+msgid "and has no fixed end date"
+msgstr ""
+
+msgid "The monthly rent is"
+msgstr ""
+
+msgid "The Tenant also pays a security deposit of"
+msgstr ""
+
+msgid "and advance rent for"
+msgstr ""
+
+msgid "months, totaling"
+msgstr ""
+
+msgid "Initial total"
+msgstr ""
+
+msgid "Responsibilities of the parties"
+msgstr ""
+
+msgid ""
+"The Landlord will provide the Tenant with peaceful use of the property and "
+"fulfil the Landlord's obligations. The Tenant will pay rent and agreed "
+"charges on time, take care of the property, report damage or issues, and "
+"follow the residence rules. Utility costs, including water, electricity, gas "
+"and internet, will be paid as agreed by the parties."
+msgstr ""
+
+msgid "Condition and return of the property"
+msgstr ""
+
+msgid ""
+"A property condition report may be prepared at move-in and move-out. At the "
+"end of the agreement, the Tenant will return the property in a condition "
+"consistent with normal use, subject to ordinary wear and the parties' "
+"respective obligations."
+msgstr ""
+
+msgid "Termination and disputes"
+msgstr ""
+
+msgid ""
+"This agreement may be terminated in accordance with the terms agreed by the "
+"parties and applicable law. If a dispute arises over the interpretation or "
+"performance of this agreement, the parties will first try to resolve it "
+"amicably before bringing it before a competent court."
+msgstr ""
+
+msgid "Final provisions"
+msgstr ""
+
+msgid ""
+"The parties confirm that they have read, understood and accepted this "
+"agreement. Any amendment must be recorded in accordance with applicable "
+"requirements."
+msgstr ""
+
+#, fuzzy
+#| msgid "Rental contract"
+msgid "Signed at"
+msgstr "Contrat de Bail"
+
+msgid "on"
+msgstr ""
+
+msgid "The parties confirm that they have read and accepted this agreement."
+msgstr ""
+
+msgid "Electronically signed on"
+msgstr ""
+
+msgid "Read and approved"
+msgstr ""
+
+msgid "Generated electronically on"
+msgstr ""
+
 msgid "Personal info"
 msgstr ""
 
-#: roomrun/users/admin.py:37
 msgid "Verification"
 msgstr ""
 
-#: roomrun/users/admin.py:41
 msgid "Permissions"
 msgstr ""
 
-#: roomrun/users/admin.py:52
 msgid "Important dates"
 msgstr ""
 
-#: roomrun/users/apps.py:8
 msgid "Users"
 msgstr ""
 
-#: roomrun/users/forms.py:27
 msgid "This email has already been taken."
 msgstr ""
 
-#: roomrun/users/forms.py:38
 msgid "Keep me signed in"
 msgstr ""
 
-#: roomrun/users/forms.py:51
 msgid "Incorrect email address or password."
 msgstr ""
 
-#: roomrun/users/forms.py:53
 msgid "This account is disabled."
 msgstr ""
 
-#: roomrun/users/forms.py:63
 msgid "Profile type"
 msgstr ""
 
-#: roomrun/users/forms.py:88 roomrun/users/forms.py:219
+msgid "Use at least 8 characters and avoid common or numeric-only passwords."
+msgstr ""
+
 msgid "Password confirmation"
 msgstr ""
 
-#: roomrun/users/forms.py:104
 msgid "I accept the terms and conditions"
 msgstr ""
 
-#: roomrun/users/forms.py:134
 msgid "Sahit"
 msgstr ""
 
-#: roomrun/users/forms.py:146
 msgid "Heufeu"
 msgstr ""
 
-#: roomrun/users/forms.py:158
 msgid "you@example.com"
 msgstr ""
 
-#: roomrun/users/forms.py:168 roomrun/users/views/register_views.py:38
 msgid "An account already exists with this email address."
 msgstr ""
 
-#: roomrun/users/forms.py:177 roomrun/users/forms.py:227
-msgid "The passwords do not match."
-msgstr ""
-
-#: roomrun/users/forms.py:204
 msgid "Verification code"
 msgstr ""
 
-#: roomrun/users/forms.py:209
 msgid "Enter the six-digit code sent by email."
 msgstr ""
 
-#: roomrun/users/models.py:85
-msgid "email address"
+msgid "+33123456789"
 msgstr ""
 
-#: roomrun/users/models.py:87
-msgid "The primary email address used for login and communication."
+msgid "Profile picture"
 msgstr ""
 
-#: roomrun/users/models.py:91
-msgid "phone number"
-msgstr ""
-
-#: roomrun/users/models.py:96
 msgid "International format, e.g. +33123456789."
 msgstr ""
 
-#: roomrun/users/models.py:100
+msgid "An account already exists with this email."
+msgstr ""
+
+msgid "At least 8 characters, not entirely numeric, and not a common password."
+msgstr ""
+
+msgid "First name cannot be empty."
+msgstr ""
+
+msgid "Last name cannot be empty."
+msgstr ""
+
+msgid "Passwords do not match."
+msgstr ""
+
+msgid "The passwords do not match."
+msgstr ""
+
+msgid "Access denied."
+msgstr ""
+
+msgid "email address"
+msgstr ""
+
+msgid "The primary email address used for login and communication."
+msgstr ""
+
+msgid "phone number"
+msgstr ""
+
 msgid "country"
 msgstr ""
 
-#: roomrun/users/models.py:103
 msgid "Country of residence or origin."
 msgstr ""
 
-#: roomrun/users/models.py:107
 msgid "profile picture"
 msgstr ""
 
-#: roomrun/users/models.py:111
 msgid "Upload a profile picture (optional)."
 msgstr ""
 
-#: roomrun/users/models.py:119
 msgid "user status"
 msgstr ""
 
-#: roomrun/users/models.py:126
 msgid "email verified"
 msgstr ""
 
-#: roomrun/users/models.py:128
 msgid "Indicates if the user has confirmed their email address."
 msgstr ""
 
-#: roomrun/users/models.py:132
 msgid "phone verified"
 msgstr ""
 
-#: roomrun/users/models.py:134
 msgid "Indicates if the user has confirmed their phone number."
 msgstr ""
 
-#: roomrun/users/models.py:142
 msgid "last login IP"
 msgstr ""
 
-#: roomrun/users/models.py:145
 msgid "The IP address used during the last successful login."
 msgstr ""
 
-#: roomrun/users/models.py:149
 msgid "is landlord"
 msgstr ""
 
-#: roomrun/users/models.py:151
 msgid "Indicates if the user is a landlord."
 msgstr ""
 
-#: roomrun/users/models.py:154
 msgid "is tenant"
 msgstr ""
 
-#: roomrun/users/models.py:156
 msgid "Indicates if the user is a tenant."
 msgstr ""
 
-#: roomrun/users/models.py:165 roomrun/users/models.py:209
 msgid "user"
 msgstr ""
 
-#: roomrun/users/models.py:166
 msgid "users"
 msgstr ""
 
-#: roomrun/users/models.py:210
 msgid "The user associated with this OTP."
 msgstr ""
 
-#: roomrun/users/models.py:214
 msgid "purpose"
 msgstr ""
 
-#: roomrun/users/models.py:217
 msgid "The purpose for which this OTP was generated."
 msgstr ""
 
-#: roomrun/users/models.py:221
 msgid "code hash"
 msgstr ""
 
-#: roomrun/users/models.py:223
 msgid "Hashed representation of the OTP code."
 msgstr ""
 
-#: roomrun/users/models.py:227
 msgid "expires at"
 msgstr ""
 
-#: roomrun/users/models.py:228
 msgid "The date and time after which this OTP is no longer valid."
 msgstr ""
 
-#: roomrun/users/models.py:232
 msgid "attempts"
 msgstr ""
 
-#: roomrun/users/models.py:234
 msgid "The number of verification attempts made with this OTP."
 msgstr ""
 
-#: roomrun/users/models.py:238
 msgid "used"
 msgstr ""
 
-#: roomrun/users/models.py:240
 msgid "Whether this OTP has been used for verification."
 msgstr ""
 
-#: roomrun/users/models.py:246
 msgid "OTP"
 msgstr ""
 
-#: roomrun/users/models.py:247
 msgid "OTPs"
 msgstr ""
 
-#: roomrun/users/models.py:301 roomrun/users/models.py:361
-#: roomrun/users/models.py:434 roomrun/users/models.py:688
-msgid "User"
-msgstr ""
-
-#: roomrun/users/models.py:302
 msgid "The user account associated with this landlord."
 msgstr ""
 
-#: roomrun/users/models.py:310
 msgid "Landlord number"
 msgstr ""
 
-#: roomrun/users/models.py:311
 msgid "Auto-generated unique identifier for the landlord."
 msgstr ""
 
-#: roomrun/users/models.py:317 roomrun/users/models.py:391
-msgid "Verified"
-msgstr ""
-
-#: roomrun/users/models.py:318
 msgid "Indicates if the landlord's identity has been verified."
 msgstr ""
 
-#: roomrun/users/models.py:362
 msgid "The user account associated with this tenant."
 msgstr ""
 
-#: roomrun/users/models.py:370
 msgid "Tenant number"
 msgstr ""
 
-#: roomrun/users/models.py:371
 msgid "Auto-generated unique identifier for the tenant."
 msgstr ""
 
-#: roomrun/users/models.py:378
 msgid "Nationality"
 msgstr ""
 
-#: roomrun/users/models.py:379
 msgid "The tenant's country of nationality."
 msgstr ""
 
-#: roomrun/users/models.py:385
 msgid "Occupation"
 msgstr ""
 
-#: roomrun/users/models.py:386
 msgid "The tenant's current occupation or profession."
 msgstr ""
 
-#: roomrun/users/models.py:392
 msgid "Indicates if the tenant's identity has been verified."
 msgstr ""
 
-#: roomrun/users/models.py:398
 msgid "tenant"
 msgstr ""
 
-#: roomrun/users/models.py:399
 msgid "tenants"
 msgstr ""
 
-#: roomrun/users/models.py:435
 msgid "The user account associated with this employee."
 msgstr ""
 
-#: roomrun/users/models.py:443
-msgid "Employee number"
-msgstr ""
-
-#: roomrun/users/models.py:444
 msgid "Auto-generated unique identifier for the employee."
 msgstr ""
 
-#: roomrun/users/models.py:451
 msgid "Job title"
 msgstr ""
 
-#: roomrun/users/models.py:452
 msgid "The employee's current job title or position."
 msgstr ""
 
-#: roomrun/users/models.py:460
 msgid "Current employment status of the employee."
 msgstr ""
 
-#: roomrun/users/models.py:466
 msgid "Hire date"
 msgstr ""
 
-#: roomrun/users/models.py:467
 msgid "The date the employee was hired."
 msgstr ""
 
-#: roomrun/users/models.py:473 roomrun/users/models.py:520
-#: roomrun/users/models.py:575 roomrun/users/models.py:698
-msgid "Employee"
-msgstr ""
-
-#: roomrun/users/models.py:474
-msgid "Employees"
-msgstr ""
-
-#: roomrun/users/models.py:521
 msgid "The employee record for this maintenance agent."
 msgstr ""
 
-#: roomrun/users/models.py:529
 msgid "Agent number"
 msgstr ""
 
-#: roomrun/users/models.py:530
 msgid "Auto-generated unique identifier for the maintenance agent."
 msgstr ""
 
-#: roomrun/users/models.py:537
 msgid "Speciality"
 msgstr ""
 
-#: roomrun/users/models.py:538
 msgid "Technical speciality of the maintenance agent."
 msgstr ""
 
-#: roomrun/users/models.py:545
-msgid "Maintenance agents"
+msgid "Landlords who can assign this maintenance agent."
 msgstr ""
 
-#: roomrun/users/models.py:576
 msgid "The employee record for this security guard."
 msgstr ""
 
-#: roomrun/users/models.py:584
 msgid "Guard number"
 msgstr ""
 
-#: roomrun/users/models.py:585
 msgid "Auto-generated unique identifier for the guard."
 msgstr ""
 
-#: roomrun/users/models.py:594
+msgid "Shift"
+msgstr ""
+
 msgid "The guard's assigned work shift."
 msgstr ""
 
-#: roomrun/users/models.py:600 roomrun/utils/enums.py:285
-msgid "Guard"
+msgid "Landlords whose residences this guard can secure."
 msgstr ""
 
-#: roomrun/users/models.py:601
-msgid "Guards"
-msgstr ""
-
-#: roomrun/users/models.py:635
-msgid "Email"
-msgstr ""
-
-#: roomrun/users/models.py:636
-msgid "Email address of the invited person."
-msgstr ""
-
-#: roomrun/users/models.py:643
 msgid "Token"
 msgstr ""
 
-#: roomrun/users/models.py:644
 msgid "Unique token for the invitation link."
 msgstr ""
 
-#: roomrun/users/models.py:652
 msgid "The landlord who sent the invitation."
 msgstr ""
 
-#: roomrun/users/models.py:658
-msgid "Role"
-msgstr ""
-
-#: roomrun/users/models.py:659
 msgid "The role being offered: Maintenance Agent or Guard."
 msgstr ""
 
-#: roomrun/users/models.py:668
-msgid "Current status of the invitation."
-msgstr ""
-
-#: roomrun/users/models.py:674
 msgid "The invitation expires after this date."
 msgstr ""
 
-#: roomrun/users/models.py:689
 msgid "Existing user if they are already registered."
 msgstr ""
 
-#: roomrun/users/models.py:699
 msgid "Existing employee profile if they already have one."
 msgstr ""
 
-#: roomrun/users/models.py:709
-msgid "Accepted at"
-msgstr ""
-
-#: roomrun/users/models.py:710
 msgid "When the invitation was accepted."
 msgstr ""
 
-#: roomrun/users/models.py:716
 msgid "Invitation"
 msgstr ""
 
-#: roomrun/users/models.py:717
-msgid "Invitations"
-msgstr ""
-
-#: roomrun/users/services.py:47
-msgid "Please wait before requesting another code."
-msgstr ""
-
-#: roomrun/users/services.py:109
-msgid "This verification code could not be found."
-msgstr ""
-
-#: roomrun/users/services.py:118
-msgid "This code has expired. Request a new one."
-msgstr ""
-
-#: roomrun/users/services.py:121
-msgid "Too many attempts. Request a new code."
-msgstr ""
-
-#: roomrun/users/services.py:125
-msgid "The code you entered is incorrect."
-msgstr ""
-
-#: roomrun/users/services.py:192
 msgid "Landlord Dashboard"
 msgstr ""
 
-#: roomrun/users/services.py:193
 msgid "Tenant Dashboard"
 msgstr ""
 
-#: roomrun/users/services.py:198
 msgid "Guard Dashboard"
 msgstr ""
 
-#: roomrun/users/services.py:199
 msgid "Maintenance Dashboard"
 msgstr ""
 
-#: roomrun/users/services.py:408
 msgid "User does not have a landlord profile."
 msgstr ""
 
-#: roomrun/users/services.py:591
+msgid "Available / reserved"
+msgstr ""
+
 msgid "User does not have a tenant profile."
 msgstr ""
 
-#: roomrun/users/services.py:717 roomrun/users/services.py:822
 msgid "User does not have an employee profile."
 msgstr ""
 
-#: roomrun/users/services.py:723
 msgid "Employee is not a maintenance agent."
 msgstr ""
 
-#: roomrun/users/services.py:828
 msgid "Employee is not a security guard."
 msgstr ""
 
-#: roomrun/users/views/dashboard.py:42
+msgid "This invitation is invalid."
+msgstr ""
+
+msgid "This invitation has expired."
+msgstr ""
+
+msgid "This invitation is no longer valid."
+msgstr ""
+
+msgid "Only pending invitations can be cancelled."
+msgstr ""
+
+msgid "Unsupported role for invitation."
+msgstr ""
+
+msgid "Please wait before requesting another code."
+msgstr ""
+
+msgid "This verification code could not be found."
+msgstr ""
+
+msgid "This code has expired. Request a new one."
+msgstr ""
+
+msgid "Too many attempts. Request a new code."
+msgstr ""
+
+msgid "The code you entered is incorrect."
+msgstr ""
+
 msgid "Your dashboard is being prepared. Redirecting to the main dashboard."
 msgstr ""
 
-#: roomrun/users/views/dashboard.py:56
 msgid "You do not have access to the landlord dashboard."
 msgstr ""
 
-#: roomrun/users/views/dashboard.py:76
 msgid "You do not have access to the tenant dashboard."
 msgstr ""
 
-#: roomrun/users/views/dashboard.py:97
 msgid "You do not have access to the maintenance dashboard."
 msgstr ""
 
-#: roomrun/users/views/dashboard.py:118
 msgid "You do not have access to the guard dashboard."
 msgstr ""
 
-#: roomrun/users/views/forgot_password_views.py:35
-#: roomrun/users/views/forgot_password_views.py:44
 msgid "If this address exists, a reset code has been sent."
 msgstr ""
 
-#: roomrun/users/views/forgot_password_views.py:40
 msgid "A reset code has been sent to you."
 msgstr ""
 
-#: roomrun/users/views/forgot_password_views.py:49
 msgid "Enter a valid email address."
 msgstr ""
 
-#: roomrun/users/views/forgot_password_views.py:60
-#: roomrun/users/views/forgot_password_views.py:72
 msgid "This password reset request has expired."
 msgstr ""
 
-#: roomrun/users/views/forgot_password_views.py:81
 msgid "Your password has been updated. You can now sign in."
 msgstr ""
 
-#: roomrun/users/views/forgot_password_views.py:86
 msgid "Please correct the new password."
 msgstr ""
 
-#: roomrun/users/views/login_views.py:39
+msgid "Invitation sent successfully."
+msgstr ""
+
+msgid "Invitation created, but the email could not be delivered."
+msgstr ""
+
+msgid "Invitation cancelled."
+msgstr ""
+
+msgid "Your account is ready."
+msgstr ""
+
 msgid "A verification code has been sent to you."
 msgstr ""
 
-#: roomrun/users/views/login_views.py:45
 msgid "You are now signed in."
 msgstr ""
 
-#: roomrun/users/views/login_views.py:49
 msgid "Please correct the sign-in details."
 msgstr ""
 
-#: roomrun/users/views/otp_views.py:44
 msgid "This verification is not available."
 msgstr ""
 
-#: roomrun/users/views/otp_views.py:50 roomrun/users/views/otp_views.py:119
 msgid "Your verification session has expired. Please request a new code."
 msgstr ""
 
-#: roomrun/users/views/otp_views.py:62
 msgid "Enter the six-digit code sent to your email address."
 msgstr ""
 
-#: roomrun/users/views/otp_views.py:66
 msgid "Enter the code sent to create a new password."
 msgstr ""
 
-#: roomrun/users/views/otp_views.py:91
 msgid "Code verified. You can now create a new password."
 msgstr ""
 
-#: roomrun/users/views/otp_views.py:96
 msgid "Your account is now verified."
 msgstr ""
 
-#: roomrun/users/views/otp_views.py:100
 msgid "Please check the verification code."
 msgstr ""
 
-#: roomrun/users/views/otp_views.py:136
-#: roomrun/users/views/register_views.py:53
 msgid "Server Error. Request a new code on the next page."
 msgstr ""
 
-#: roomrun/users/views/otp_views.py:138
 msgid "A new verification code has been sent."
 msgstr ""
 
-#: roomrun/users/views/register_views.py:40
-#: roomrun/users/views/register_views.py:66
+msgid "An error occurred while updating your profile."
+msgstr ""
+
+msgid "Your profile has been updated successfully."
+msgstr ""
+
 msgid "Please correct the sign-up details."
 msgstr ""
 
-#: roomrun/users/views/register_views.py:60
 msgid ""
 "Your account has been created. Enter the code sent by email to activate it."
 msgstr ""
 
-#: roomrun/utils/enums.py:14 roomrun/utils/enums.py:36
-#: roomrun/utils/enums.py:50
-msgid "Inactive"
+msgid "CSV delimiter must contain exactly one character."
 msgstr ""
 
-#: roomrun/utils/enums.py:15
-msgid "Suspended"
+msgid "CSV quotechar must contain exactly one character."
 msgstr ""
 
-#: roomrun/utils/enums.py:24
+#, python-format
+msgid ""
+"Invalid quoting mode: %(quoting)s. Must be one of csv.QUOTE_* constants."
+msgstr ""
+
+msgid "Encoding cannot be empty."
+msgstr ""
+
+#, python-format
+msgid "Unknown encoding: %(encoding)s"
+msgstr ""
+
+msgid "Line terminator cannot be empty."
+msgstr ""
+
+msgid "Filename cannot be empty."
+msgstr ""
+
+msgid "Filename must not contain path separators."
+msgstr ""
+
+msgid "Filename must not contain relative path segments."
+msgstr ""
+
+msgid "Filename must end with '.csv'."
+msgstr ""
+
+msgid "CSV document requires at least one header."
+msgstr ""
+
+msgid "CSV headers must be unique."
+msgstr ""
+
+msgid "CSV headers cannot be empty."
+msgstr ""
+
+#, python-format
+msgid ""
+"Row %(index)s has unsupported type (%(type_name)s). Expected a sequence or "
+"mapping."
+msgstr ""
+
+#, python-format
+msgid "missing keys: %(keys)s"
+msgstr ""
+
+#, python-format
+msgid "unexpected keys: %(keys)s"
+msgstr ""
+
+#, python-format
+msgid "Row %(index)s keys do not match headers (%(parts)s)."
+msgstr ""
+
+#, python-format
+msgid ""
+"Row %(index)s has %(row_count)s values, but %(expected)s headers were "
+"declared."
+msgstr ""
+
+#, python-format
+msgid "Failed to render row %(index)s."
+msgstr ""
+
+msgid "Unable to generate CSV file."
+msgstr ""
+
+#, python-format
+msgid "Unable to save CSV: %(path)s"
+msgstr ""
+
+#, python-format
+msgid "Unable to save CSV to field: %(filename)s"
+msgstr ""
+
+#, python-format
+msgid "CSV exceeds maximum allowed size (%(max_size)s bytes)."
+msgstr ""
+
+msgid "Storage path cannot be empty."
+msgstr ""
+
+msgid "Storage path must be relative."
+msgstr ""
+
+msgid "Storage path must not contain '..'."
+msgstr ""
+
+msgid "Filename contains invalid characters."
+msgstr ""
+
+msgid "csv_file must support seek(0)."
+msgstr ""
+
+msgid "Invalid filename: path separators are not allowed."
+msgstr ""
+
+msgid "Invalid filename: only letters, digits, '.', '-', '_' are allowed."
+msgstr ""
+
+#, fuzzy
+#| msgid "Check"
+msgid "Checked out"
+msgstr "Check"
+
+msgid "Denied"
+msgstr ""
+
 msgid "Day"
 msgstr ""
 
-#: roomrun/utils/enums.py:25
 msgid "Night"
 msgstr ""
 
-#: roomrun/utils/enums.py:26
 msgid "Rotating"
 msgstr ""
 
-#: roomrun/utils/enums.py:37
-msgid "Under construction"
+msgid "Residential"
 msgstr ""
 
-#: roomrun/utils/enums.py:46
-msgid "Available"
+msgid "Commercial"
 msgstr ""
 
-#: roomrun/utils/enums.py:47
-msgid "Occupied"
+msgid "Mixed use"
 msgstr ""
 
-#: roomrun/utils/enums.py:48
 msgid "Reserved"
 msgstr ""
 
-#: roomrun/utils/enums.py:49
-msgid "Under maintenance"
-msgstr ""
-
-#: roomrun/utils/enums.py:59
 msgid "Studio"
 msgstr ""
 
-#: roomrun/utils/enums.py:60
-msgid "Apartment"
-msgstr ""
-
-#: roomrun/utils/enums.py:61
 msgid "Office"
 msgstr ""
 
-#: roomrun/utils/enums.py:62
 msgid "Retail"
 msgstr ""
 
-#: roomrun/utils/enums.py:63
 msgid "Warehouse"
 msgstr ""
 
-#: roomrun/utils/enums.py:64
 msgid "Penthouse"
 msgstr ""
 
-#: roomrun/utils/enums.py:74
-msgid "Approved"
+msgid "Signing"
 msgstr ""
 
-#: roomrun/utils/enums.py:75 roomrun/utils/enums.py:275
-msgid "Rejected"
+msgid "Signed"
 msgstr ""
 
-#: roomrun/utils/enums.py:76 roomrun/utils/enums.py:88
-#: roomrun/utils/enums.py:118 roomrun/utils/enums.py:144
-#: roomrun/utils/enums.py:168 roomrun/utils/enums.py:182
-#: roomrun/utils/enums.py:194
-msgid "Cancelled"
-msgstr ""
-
-#: roomrun/utils/enums.py:86 roomrun/utils/enums.py:141
-#: roomrun/utils/enums.py:181 roomrun/utils/enums.py:193
-msgid "Completed"
-msgstr ""
-
-#: roomrun/utils/enums.py:87
 msgid "Terminated"
 msgstr ""
 
-#: roomrun/utils/enums.py:97
-msgid "Electricity"
+msgid "Initial payment"
 msgstr ""
 
-#: roomrun/utils/enums.py:98
-msgid "Water"
-msgstr ""
-
-#: roomrun/utils/enums.py:99
-msgid "Gas"
-msgstr ""
-
-#: roomrun/utils/enums.py:100
-msgid "Internet"
-msgstr ""
-
-#: roomrun/utils/enums.py:101
 msgid "Maintenance fee"
 msgstr ""
 
-#: roomrun/utils/enums.py:102
 msgid "Trash collection"
 msgstr ""
 
-#: roomrun/utils/enums.py:103
 msgid "Parking"
 msgstr ""
 
-#: roomrun/utils/enums.py:104
 msgid "Late fee"
 msgstr ""
 
-#: roomrun/utils/enums.py:105 roomrun/utils/enums.py:132
 msgid "Other"
 msgstr ""
 
-#: roomrun/utils/enums.py:115
 msgid "Partially paid"
 msgstr ""
 
-#: roomrun/utils/enums.py:116
-msgid "Paid"
-msgstr ""
-
-#: roomrun/utils/enums.py:117
 msgid "Overdue"
 msgstr ""
 
-#: roomrun/utils/enums.py:126
 msgid "Cash"
 msgstr ""
 
-#: roomrun/utils/enums.py:127
 msgid "Mobile Money"
 msgstr ""
 
-#: roomrun/utils/enums.py:128
 msgid "Bank transfer"
 msgstr ""
 
-#: roomrun/utils/enums.py:129
 msgid "Credit card"
 msgstr "Carte Banquaire"
 
-#: roomrun/utils/enums.py:130
 msgid "PayPal"
 msgstr "Paypal"
 
-#: roomrun/utils/enums.py:131
 msgid "Check"
 msgstr "Check"
 
-#: roomrun/utils/enums.py:142
-msgid "Failed"
-msgstr "Échoué"
-
-#: roomrun/utils/enums.py:143
-msgid "Refunded"
+msgid "CamPay"
 msgstr ""
 
-#: roomrun/utils/enums.py:153
+msgid "DigiPay"
+msgstr ""
+
 msgid "Low"
 msgstr "Basse"
 
-#: roomrun/utils/enums.py:154
 msgid "Medium"
 msgstr "Moyenne"
 
-#: roomrun/utils/enums.py:155
 msgid "High"
 msgstr "Elevé"
 
-#: roomrun/utils/enums.py:156
-msgid "Urgent"
-msgstr "Urgent"
-
-#: roomrun/utils/enums.py:167
 msgid "Resolved"
 msgstr ""
 
-#: roomrun/utils/enums.py:179
 msgid "Assigned"
 msgstr ""
 
-#: roomrun/utils/enums.py:191 roomrun/utils/enums.py:206
 msgid "Scheduled"
 msgstr ""
 
-#: roomrun/utils/enums.py:203
 msgid "Archived"
 msgstr ""
 
-#: roomrun/utils/enums.py:204 roomrun/utils/enums.py:274
 msgid "Expired"
 msgstr ""
 
-#: roomrun/utils/enums.py:205
-msgid "Draft"
-msgstr ""
-
-#: roomrun/utils/enums.py:207
 msgid "Published"
 msgstr ""
 
-#: roomrun/utils/enums.py:216
 msgid "All tenants"
 msgstr ""
 
-#: roomrun/utils/enums.py:228
+msgid "Landlord ↔ Tenant"
+msgstr ""
+
+msgid "Landlord ↔ Staff"
+msgstr ""
+
+msgid "Support"
+msgstr ""
+
 msgid "Rent reminder"
 msgstr ""
 
-#: roomrun/utils/enums.py:230
 msgid "Task"
 msgstr ""
 
-#: roomrun/utils/enums.py:232
-msgid "System"
-msgstr ""
-
-#: roomrun/utils/enums.py:241
 msgid "Actif"
 msgstr ""
 
-#: roomrun/utils/enums.py:242
 msgid "Inactif"
 msgstr ""
 
-#: roomrun/utils/enums.py:243
 msgid "Suspendu"
 msgstr ""
 
-#: roomrun/utils/enums.py:261
 msgid "Sign up"
 msgstr ""
 
-#: roomrun/utils/enums.py:263
 msgid "Password reset"
 msgstr ""
 
-#: roomrun/utils/enums.py:273
 msgid "Accepted"
 msgstr ""
 
-#: roomrun/utils/enums.py:284
-msgid "Maintenance Agent"
-msgstr ""
-
-#: roomrun/utils/otp.py:146
 msgid "The verification code has expired."
 msgstr ""
 
-#: roomrun/utils/otp.py:148 roomrun/utils/otp.py:152
 msgid "The verification link is invalid."
 msgstr ""
 
-#: roomrun/utils/otp.py:156
 msgid "This code does not match the requested operation."
 msgstr ""
 

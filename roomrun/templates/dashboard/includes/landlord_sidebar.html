@@ -1,103 +1,113 @@
 {% load i18n %}
+
 {% with current_url=request.resolver_match.url_name %}
-<style>
-  .landlord-sidebar .nav-item--disabled {
-    cursor: not-allowed;
-    opacity: .45;
-    pointer-events: none;
-  }
-</style>
-<aside class="sidebar landlord-sidebar overflow-y-auto" id="sidebar">
-  <div class="brand">
-    <div class="brand-mark"></div>
-    <div>
-      <div class="brand-name">ROOMRUN</div>
-      <div class="brand-subtitle">{% translate "Property Management" %}</div>
+  <aside class="sidebar landlord-sidebar overflow-y-auto" id="sidebar">
+    {% translate "Property Management" as brand_subtitle %}
+    {% url 'dashboard:landlord' as brand_url %}
+    {% include "dashboard/includes/sidebar_brand.html" with brand_url=brand_url brand_subtitle=brand_subtitle %}
+    <div class="sidebar-content">
+      <div class="nav-section">
+        <div class="nav-title">{% translate "Overview" %}</div>
+        <a href="{% url 'dashboard:landlord' %}"
+           class="nav-item{% if current_url == 'landlord' %} active{% endif %}">
+          <i class="ti ti-layout-dashboard"></i>
+          <span>{% translate "Dashboard" %}</span>
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-title">{% translate "Management" %}</div>
+        <a href="{% url 'properties:property-list' %}"
+           class="nav-item{% if request.resolver_match.namespace == 'properties' %} active{% endif %}"><i class="ti ti-building"></i>
+          <span>{% translate "Properties" %}</span>
+        </a>
+        <a href="{% url 'properties:landlord-unit-list' %}"
+           class="nav-item{% if current_url == 'landlord-unit-list' or current_url == 'unit-list' %} active{% endif %}">
+          <i class="ti ti-home"></i>
+          <span>{% translate "Housing units" %}</span>
+        </a>
+        <a href="{% url 'dashboard:tenant-list' %}"
+           class="nav-item{% if current_url == 'tenant-list' %} active{% endif %}">
+          <i class="ti ti-users"></i>
+          <span>{% translate "Tenants" %}</span>
+        </a>
+        <a href="{% url 'dashboard:employee-list' %}"
+           class="nav-item{% if current_url == 'employee-list' %} active{% endif %}">
+          <i class="ti ti-user-plus"></i>
+          <span>{% translate "Employees" %}</span>
+        </a>
+        <a href="{% url 'rentals:landlord-rental-application-list' %}"
+           class="nav-item{% if current_url == 'landlord-rental-application-list' or current_url == 'landlord-rental-application-detail' %} active{% endif %}">
+          <i class="ti ti-inbox"></i>
+          <span>{% translate "Applications" %}</span>
+        </a>
+        <a href="{% url 'rentals:landlord-rental-contract-list' %}"
+           class="nav-item{% if current_url == 'landlord-rental-contract-list' or current_url == 'landlord-rental-contract-create' or current_url == 'landlord-existing-rental-contract-create' or current_url == 'landlord-rental-contract-detail' %} active{% endif %}">
+          <i class="ti ti-file-text"></i><span>{% translate "Leases" %}</span>
+        </a>
+        <a href="{% url 'billing:landlord-wallet' %}"
+           class="nav-item{% if request.resolver_match.url_name == 'landlord-wallet' %} active{% endif %}">
+          <i class="ti ti-wallet"></i><span>{% translate "Payments & balance" %}</span>
+        </a>
+        <a href="{% url 'billing:landlord-charge-list' %}"
+           class="nav-item{% if request.resolver_match.url_name == 'landlord-charge-list' or request.resolver_match.url_name == 'landlord-charge-create' %} active{% endif %}">
+          <i class="ti ti-receipt"></i><span>{% translate "Tenant charges" %}</span>
+        </a>
+        <a href="{% url 'maintenance:landlord-request-list' %}"
+           class="nav-item{% if request.resolver_match.namespace == 'maintenance' %} active{% endif %}">
+          <i class="ti ti-tool"></i><span>{% translate "Maintenance" %}</span>
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-title">{% translate "Communication" %}</div>
+        <a href="{% url 'communications:conversation-list' %}"
+           class="nav-item{% if request.resolver_match.namespace == 'communications' %} active{% endif %}">
+          <i class="ti ti-message"></i><span>{% translate "Messages" %}</span>
+        </a>
+        <a href="{% url 'communications:notification-list' %}"
+           class="nav-item{% if current_url == 'notification-list' or current_url == 'notification-detail' %} active{% endif %}">
+          <i class="ti ti-bell"></i><span>{% translate "Notifications" %}</span>
+          {% if unread_notification_count %}<span class="nav-badge">{{ unread_notification_count }}</span>{% endif %}
+        </a>
+        <a href="{% url 'dashboard:invitation-list' %}"
+           class="nav-item{% if current_url == 'invitation-list' %} active{% endif %}">
+          <i class="ti ti-mail-forward"></i>
+          <span>{% translate "Invitations" %}</span>
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-title">{% translate "Operations" %}</div>
+        <a href="{% url 'operations:cleaning-list' %}"
+           class="nav-item{% if request.resolver_match.namespace == 'operations' %} active{% endif %}">
+          <i class="ti ti-calendar"></i><span>{% translate "Cleaning schedule" %}</span>
+        </a>
+        <a href="{% url 'operations:visitor-invitations' %}"
+           class="nav-item{% if request.resolver_match.url_name == 'visitor-invitations' %} active{% endif %}">
+          <i class="ti ti-door-enter"></i><span>{% translate "Visitors" %}</span>
+        </a>
+        <span class="nav-item pointer-events-none cursor-not-allowed opacity-50"
+              aria-disabled="true"
+              title="{% translate 'Coming soon' %}">
+          <i class="ti ti-clipboard-list"></i><span>{% translate "Requests" %}</span>
+        </span>
+      </div>
+      <div class="nav-section">
+        <div class="nav-title">{% translate "System" %}</div>
+        <a href="{% url 'users:profile' %}"
+           class="nav-item{% if current_url == 'profile' %} active{% endif %}">
+          <i class="ti ti-settings"></i>
+          <span>{% translate "Profile & settings" %}</span>
+        </a>
+        <span class="nav-item pointer-events-none cursor-not-allowed opacity-50"
+              aria-disabled="true"
+              title="{% translate 'Coming soon' %}">
+          <i class="ti ti-help-circle"></i><span>{% translate "Help" %}</span>
+        </span>
+        <a href="{% url 'users:logout' %}" class="nav-item">
+          <i class="ti ti-logout"></i><span>{% translate "Sign out" %}</span>
+        </a>
+      </div>
     </div>
-  </div>
-  <div class="sidebar-content">
-    <div class="nav-section">
-      <div class="nav-title">{% translate "Overview" %}</div>
-      <a href="{% url 'dashboard:landlord' %}" class="nav-item{% if current_url == 'landlord' %} active{% endif %}">
-        <i class="ti ti-layout-dashboard"></i>
-        <span>{% translate "Dashboard" %}</span>
-      </a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-title">{% translate "Management" %}</div>
-      <a href="{% url 'properties:property-list' %}" class="nav-item{% if request.resolver_match.namespace == 'properties' %} active{% endif %}"
-        ><i class="ti ti-building"></i>
-        <span>{% translate "Properties" %}</span>
-      </a>
-      <span class="nav-item nav-item--disabled" aria-disabled="true" title="{% translate 'Coming soon' %}">
-        <i class="ti ti-home"></i>
-        <span>{% translate "Housing units" %}</span>
-      </span>
-      <a href="{% url 'dashboard:tenant-list' %}" class="nav-item{% if current_url == 'tenant-list' %} active{% endif %}">
-        <i class="ti ti-users"></i>
-        <span>{% translate "Tenants" %}</span>
-      </a>
-      <a href="{% url 'dashboard:employee-list' %}" class="nav-item{% if current_url == 'employee-list' %} active{% endif %}">
-        <i class="ti ti-user-plus"></i>
-        <span>{% translate "Employees" %}</span>
-      </a>
-      <a href="{% url 'rentals:landlord-rental-application-list' %}" class="nav-item{% if current_url == 'landlord-rental-application-list' or current_url == 'landlord-rental-application-detail' %} active{% endif %}">
-        <i class="ti ti-inbox"></i>
-        <span>{% translate "Applications" %}</span>
-      </a>
-      <a href="{% url 'rentals:landlord-rental-contract-list' %}" class="nav-item{% if current_url == 'landlord-rental-contract-list' or current_url == 'landlord-rental-contract-create' or current_url == 'landlord-rental-contract-detail' %} active{% endif %}">
-        <i class="ti ti-file-text"></i><span>{% translate "Leases" %}</span>
-      </a>
-      <span class="nav-item nav-item--disabled" aria-disabled="true" title="{% translate 'Coming soon' %}">
-        <i class="ti ti-credit-card"></i><span>{% translate "Payments" %}</span>
-      </span>
-      <a href="{% url 'maintenance:landlord-request-list' %}" class="nav-item{% if request.resolver_match.namespace == 'maintenance' %} active{% endif %}">
-        <i class="ti ti-tool"></i><span>{% translate "Maintenance" %}</span>
-      </a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-title">{% translate "Communication" %}</div>
-      <a href="{% url 'communications:conversation-list' %}" class="nav-item{% if request.resolver_match.namespace == 'communications' %} active{% endif %}">
-        <i class="ti ti-message"></i><span>{% translate "Messages" %}</span>
-      </a>
-      <span class="nav-item nav-item--disabled" aria-disabled="true" title="{% translate 'Coming soon' %}">
-        <i class="ti ti-bell"></i><span>{% translate "Notifications" %}</span>
-      </span>
-    </div>
-    <div class="nav-section">
-      <div class="nav-title">{% translate "Operations" %}</div>
-      <a href="{% url 'operations:cleaning-list' %}" class="nav-item{% if request.resolver_match.namespace == 'operations' %} active{% endif %}">
-        <i class="ti ti-calendar"></i><span>{% translate "Cleaning schedule" %}</span>
-      </a>
-      <span class="nav-item nav-item--disabled" aria-disabled="true" title="{% translate 'Coming soon' %}">
-        <i class="ti ti-door-enter"></i><span>{% translate "Visitors" %}</span>
-      </span>
-      <span class="nav-item nav-item--disabled" aria-disabled="true" title="{% translate 'Coming soon' %}">
-        <i class="ti ti-clipboard-list"></i><span>{% translate "Requests" %}</span>
-      </span>
-    </div>
-    <div class="nav-section">
-      <div class="nav-title">{% translate "System" %}</div>
-      <a href="{% url 'users:profile' %}" class="nav-item{% if current_url == 'profile' %} active{% endif %}">
-        <i class="ti ti-settings"></i>
-        <span>{% translate "Profile & settings" %}</span>
-      </a>
-      <span class="nav-item nav-item--disabled" aria-disabled="true" title="{% translate 'Coming soon' %}">
-        <i class="ti ti-help-circle"></i><span>{% translate "Help" %}</span>
-      </span>
-      <a href="{% url 'users:logout' %}" class="nav-item">
-        <i class="ti ti-logout"></i><span>{% translate "Sign out" %}</span>
-      </a>
-    </div>
-  </div>
-  <div class="sidebar-user">
-    <div class="user-avatar">
-      {{ user.first_name|first }}{{ user.last_name|first }}
-    </div>
-    <div>
-      <div class="user-name">{{ user.full_name }}</div>
-      <div class="user-role">{% translate "Landlord" %}</div>
-    </div>
-  </div>
-</aside>
+    {% translate "Landlord" as sidebar_role %}
+    {% include "dashboard/includes/sidebar_user.html" with sidebar_role=sidebar_role %}
+  </aside>
 {% endwith %}

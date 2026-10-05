@@ -18,19 +18,19 @@ class UnitImageCreateView(UnitImageAccessMixin, ServiceFormMixin, View):
 
         if not form.is_valid():
             self.add_form_errors_as_messages(form)
-            return redirect("properties:unit-images", pk=unit.pk)
+            return redirect("properties:unit-images", pk=unit.slug)
 
         try:
             PropertyImageService.create(unit=unit, data=form.cleaned_data)
         except ValidationError as exc:
             self.handle_service_errors(form, exc)
             self.add_form_errors_as_messages(form)
-            return redirect("properties:unit-images", pk=unit.pk)
+            return redirect("properties:unit-images", pk=unit.slug)
 
         return self.service_success(
             _("Image added successfully."),
             "properties:unit-images",
-            pk=unit.pk,
+            pk=unit.slug,
         )
 
 

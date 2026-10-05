@@ -1,1 +1,28 @@
-{% extends "dashboard/pages/tenant.html" %}{% load i18n %}{% block tenant_content %}<div class="rr-maintenance"><div class="rr-page-head"><div><a class="rr-back" href="{% url 'billing:tenant-charge-list' %}">← {% translate "Payments" %}</a><h1>{% translate "Pay charge" %}</h1><p>{{ charge.get_charge_type_display }} · {{ charge.balance_due }}</p></div></div><form method="post" class="rr-card rr-form">{% csrf_token %}{% if form.non_field_errors %}<div class="rr-errors">{{ form.non_field_errors }}</div>{% endif %}<div class="rr-field"><label for="{{ form.phone_number.id_for_label }}">{{ form.phone_number.label }}</label>{{ form.phone_number }}{% for error in form.phone_number.errors %}<small class="rr-error">{{ error }}</small>{% endfor %}</div><div class="rr-actions"><button class="rr-btn rr-btn-primary" type="submit">{% translate "Confirm mobile payment" %}</button></div></form></div>{% endblock %}{% block extra_css %}{{ block.super }}{% include "dashboard/maintenance/includes/styles.html" %}{% endblock %}
+{% extends "dashboard/pages/tenant.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Pay charge" %} — ROOMRUN{% endblock %}
+
+{% block tenant_content %}
+  <div class="tenant-payment-page">
+    <a class="tp-back" href="{% url 'billing:tenant-charge-list' %}"><i class="ti ti-arrow-left"></i>{% translate "Back to payments" %}</a>
+    <section class="tp-card">
+      <div class="tp-icon"><i class="ti ti-device-mobile"></i></div>
+      <h1>{% translate "Pay with Mobile Money" %}</h1>
+      <p class="tp-intro">{% translate "Enter the phone number linked to your Mobile Money account." %}</p>
+      <div class="tp-amount"><span>{% translate "Amount due" %}</span><strong>{{ charge.balance_due.amount|floatformat:0 }} <small>{{ charge.balance_due.currency }}</small></strong><span>{{ charge.get_charge_type_display }} · {{ charge.charge_number }}</span></div>
+      <form method="post" novalidate>{% csrf_token %}
+        {% if form.non_field_errors %}<div class="tp-errors">{{ form.non_field_errors }}</div>{% endif %}
+        <label for="{{ form.phone_number.id_for_label }}">{{ form.phone_number.label }}</label>
+        {{ form.phone_number }}
+        {% for error in form.phone_number.errors %}<small class="tp-error">{{ error }}</small>{% endfor %}
+        <small class="tp-hint">{% translate "We will send a payment request to this number. Approve it on your phone to complete payment." %}</small>
+        <button type="submit" class="tp-submit">{% translate "Continue" %}<i class="ti ti-arrow-right"></i></button>
+      </form>
+      <div class="tp-security"><i class="ti ti-shield-lock"></i><span>{% translate "Never share your Mobile Money PIN. Enter it only in your operator's secure prompt." %}</span></div>
+    </section>
+  </div>
+  <style>
+    .tenant-payment-page{--tp-border:#e3e7ec;--tp-ink:#1e293b;--tp-muted:#687486;--tp-primary:#16283f;max-width:760px;margin:0 auto;padding:8px 0 34px;color:var(--tp-ink)}.tenant-payment-page *{box-sizing:border-box}.tp-back{display:inline-flex;align-items:center;gap:7px;margin:0 0 18px;color:#536276;font-size:12px}.tp-card{width:100%;max-width:510px;margin:0 auto;padding:30px;border:1px solid var(--tp-border);border-radius:12px;background:#fff;box-shadow:0 2px 10px #172b4508}.tp-icon{width:42px;height:42px;display:grid;place-items:center;margin:0 auto 14px;border-radius:10px;background:#f1f4f7;color:var(--tp-primary);font-size:21px}.tp-card h1{text-align:center;font-size:20px;font-weight:650}.tp-intro{margin:6px 0 20px;text-align:center;color:var(--tp-muted);font-size:12px;line-height:1.5}.tp-amount{display:flex;flex-direction:column;align-items:center;gap:5px;padding:15px;border:1px solid #edf0f3;border-radius:9px;background:#fafbfc;text-align:center}.tp-amount>span:first-child{color:var(--tp-muted);font-size:10px}.tp-amount strong{font-size:25px;letter-spacing:-.02em}.tp-amount strong small{font-size:12px}.tp-amount>span:last-child{color:var(--tp-muted);font-size:10px}.tp-card form{display:flex;flex-direction:column;gap:8px;margin-top:20px}.tp-card form label{font-size:11px;font-weight:600}.tp-card form input{width:100%;height:43px;padding:0 12px;border:1px solid var(--tp-border);border-radius:7px;background:white;color:var(--tp-ink);font:inherit;font-size:13px;outline:0}.tp-card form input:focus{border-color:#415b78;box-shadow:0 0 0 3px #1e3a5f12}.tp-hint,.tp-error{font-size:10px;line-height:1.5}.tp-hint{color:var(--tp-muted)}.tp-error,.tp-errors{color:#bb3939}.tp-errors{padding:9px 11px;border:1px solid #f0caca;border-radius:7px;background:#fff4f4;font-size:11px}.tp-submit{height:42px;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:7px;border:0;border-radius:7px;background:var(--tp-primary);color:white;font-size:12px;font-weight:600;cursor:pointer}.tp-submit:hover{background:#243d5e}.tp-security{display:flex;gap:8px;align-items:flex-start;margin-top:17px;color:var(--tp-muted);font-size:10px;line-height:1.5}.tp-security i{flex:none;color:#39815b;font-size:15px}@media(max-width:520px){.tenant-payment-page{padding-top:0}.tp-card{padding:22px 18px}.tp-card h1{font-size:18px}}
+  </style>
+{% endblock tenant_content %}

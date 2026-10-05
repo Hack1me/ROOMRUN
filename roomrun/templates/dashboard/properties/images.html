@@ -1,21 +1,16 @@
-{% extends "base.html" %}
+{% extends "dashboard/layout.html" %}
 {% load i18n static %}
 
 {% block title %}{% translate "Property images" %} — ROOMRUN{% endblock %}
-{% block extra_css %}
+{% block extra_css %}{{ block.super }}
   <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
 {% endblock %}
-{% block header %}{% endblock %}
-{% block footer %}{% endblock %}
+{% block app_class %}landlord-app{% endblock %}
+{% block content %}
+  <div class="images-page" data-images-page data-existing-images="{{ images|length }}">
 
-{% block body %}
-<div class="app landlord-app">
-  {% include "dashboard/includes/landlord_sidebar.html" %}
-  <main class="main">
-    <div class="content images-page" data-images-page data-existing-images="{{ images|length }}">
-      {% include "common/includes/messages.html" %}
 
-      <a href="{% url 'properties:property-configure' pk=property.pk %}" class="back-link">
+      <a href="{% url 'properties:property-configure' pk=property.slug %}" class="back-link">
         <i class="ti ti-arrow-left"></i> {% translate "Back to configuration" %}
       </a>
 
@@ -45,7 +40,7 @@
                 {% if images.first.is_primary %}
                   <span class="primary-badge">{% translate "Primary" %}</span>
                 {% endif %}
-                <button type="button" class="remove-image" data-delete-image-id="{{ images.first.pk }}" data-delete-url="{% url 'properties:property-image-delete' image_id=images.first.pk %}" aria-label="{% translate 'Remove primary image' %}">
+                <button type="button" class="remove-image" data-delete-image-id="{{ images.first.pk }}" data-delete-url="{% url 'properties:property-image-delete' image_id=images.first.slug %}" aria-label="{% translate 'Remove primary image' %}">
                   <i class="ti ti-x"></i>
                 </button>
               </div>
@@ -72,7 +67,7 @@
                   {% if image.is_primary %}
                     <span class="primary-badge-small">{% translate "Primary" %}</span>
                   {% endif %}
-                  <button type="button" class="remove-image" data-delete-image-id="{{ image.pk }}" data-delete-url="{% url 'properties:property-image-delete' image_id=image.pk %}" aria-label="{% translate 'Remove image' %}">
+                  <button type="button" class="remove-image" data-delete-image-id="{{ image.pk }}" data-delete-url="{% url 'properties:property-image-delete' image_id=image.slug %}" aria-label="{% translate 'Remove image' %}">
                     <i class="ti ti-x"></i>
                   </button>
                 </div>
@@ -108,18 +103,16 @@
       </div>
 
       <div class="images-actions">
-        <a class="btn" href="{% url 'properties:property-configure' pk=property.pk %}"><i class="ti ti-arrow-left"></i>{% translate "Back" %}</a>
+        <a class="btn" href="{% url 'properties:property-configure' pk=property.slug %}"><i class="ti ti-arrow-left"></i>{% translate "Back" %}</a>
         <div class="action-right">
           <span class="step-count">{% translate "Step 3 of 3" %}</span>
           <button class="btn btn-primary" form="imagesForm" type="submit">{% translate "Finish setup" %}<i class="ti ti-arrow-right"></i></button>
         </div>
       </div>
-    </div>
-  </main>
-</div>
-{% endblock %}
+  </div>
+{% endblock content %}
 
 {% block inline_javascript %}
-  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
+
   <script defer src="{% static 'js/property-images.js' %}"></script>
 {% endblock %}

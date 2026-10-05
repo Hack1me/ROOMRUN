@@ -1,0 +1,11 @@
+{% if sidebar_template %}
+  {% include sidebar_template %}
+{% elif user.landlord_profile %}
+  {% include "dashboard/includes/landlord_sidebar.html" %}
+{% elif user.tenant_profile %}
+  {% include "dashboard/includes/tenant_sidebar.html" %}
+{% elif user.employee_profile.guard_profile %}
+  {% include "dashboard/includes/guard_sidebar.html" %}
+{% elif user.employee_profile.maintenance_agent_profile %}
+  {% include "dashboard/includes/maintenance_sidebar.html" %}
+{% endif %}

@@ -1,0 +1,54 @@
+{% extends "dashboard/layout.html" %}
+{% load i18n static %}
+{% block title %}{% translate "Scan visitor QR" %} — ROOMRUN{% endblock %}
+{% block content %}
+<main class="mx-auto max-w-3xl space-y-6">
+  <div>
+    <p class="rr-eyebrow">{% translate "Security desk" %}</p>
+    <h1 class="mt-3 font-display text-3xl text-primary">{% translate "Scan visitor QR" %}</h1>
+    <p class="mt-2 text-sm text-muted">{% translate "Scan the host's visitor code to check the visitor in or out. The first scan checks in; the next scan checks out." %}</p>
+  </div>
+  {% include "common/includes/messages.html" %}
+  <section class="rr-card space-y-4 p-6">
+    <video id="qr-video" class="aspect-video w-full rounded-lg bg-black object-cover" playsinline></video>
+    <p id="scan-status" role="status" class="text-sm text-muted">{% translate "Starting camera…" %}</p>
+    <p id="scan-error" class="hidden text-sm text-danger">{% translate "Camera scanning is unavailable on this device. Enter the code manually." %}</p>
+    <form id="qr-form" method="post" action="{% url 'operations:guard-visitor-qr-scan' %}" class="space-y-3">
+      {% csrf_token %}
+      <label class="rr-form-label" for="qr-token">{% translate "QR code content" %}</label>
+      <textarea id="qr-token" name="token" class="rr-input w-full" rows="3" required autocomplete="off"></textarea>
+      <div class="flex gap-3">
+        <button class="rr-btn-primary" type="submit">{% translate "Confirm check-in / check-out" %}</button>
+        <a href="{% url 'operations:guard-visitors' %}" class="rr-btn-outline">{% translate "Cancel" %}</a>
+      </div>
+    </form>
+  </section>
+</main>
+<script src="{% static 'js/vendor/qr-scanner.umd.min.js' %}"></script>
+<script>
+(() => {
+  const video = document.getElementById("qr-video");
+  const token = document.getElementById("qr-token");
+  const status = document.getElementById("scan-status");
+  const error = document.getElementById("scan-error");
+  const detectedMessage = "{% filter escapejs %}{% translate 'QR code detected. Confirm to record the visit.' %}{% endfilter %}";
+  if (!window.QrScanner) {
+    error.classList.remove("hidden");
+    status.classList.add("hidden");
+    return;
+  }
+  QrScanner.WORKER_PATH = "{% static 'js/vendor/qr-scanner-worker.min.js' %}";
+  const scanner = new QrScanner(video, result => {
+    token.value = result.data;
+    status.textContent = detectedMessage;
+    scanner.stop();
+    token.focus();
+  }, {preferredCamera: "environment", highlightScanRegion: true, returnDetailedScanResult: true});
+  scanner.start().catch(() => {
+    error.classList.remove("hidden");
+    status.classList.add("hidden");
+  });
+  window.addEventListener("pagehide", () => scanner.destroy());
+})();
+</script>
+{% endblock content %}

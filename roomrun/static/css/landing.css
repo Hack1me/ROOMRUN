@@ -87,6 +87,15 @@
     gap: 0.5rem;
     font: 600 1.05rem var(--font-display);
   }
+  .nav__logo {
+    width: 34px;
+    height: 34px;
+    padding: 2px;
+    border: 1px solid rgba(22, 40, 63, 0.08);
+    border-radius: 8px;
+    background: #fff;
+    object-fit: contain;
+  }
   .nav__dot {
     width: 8px;
     height: 8px;
@@ -804,6 +813,7 @@
     isolation: isolate;
     min-height: 46rem;
     overflow: clip;
+    contain: paint;
   }
   .hero > :not(.hero__visual) {
     position: relative;

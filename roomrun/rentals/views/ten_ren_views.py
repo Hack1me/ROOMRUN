@@ -1,23 +1,34 @@
+from datetime import timedelta
+
+from billing.models import Charge
+from communications.services.notification_ser import send_notification
+from core.utils.enums import ContractStatus
+from core.utils.enums import NotificationType
+from core.utils.enums import PaymentMethod
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.views import View
 from django.views.generic import CreateView
 from django.views.generic import DetailView
 from django.views.generic import FormView
 from django.views.generic import ListView
+from rentals.forms import ContractExtensionRequestForm
 from rentals.forms import RentalApplicationForm
 from rentals.forms import TenantContractSignatureForm
 from rentals.mixins import TenantApplicationQuerysetMixin
 from rentals.mixins import TenantRequiredMixin
 from rentals.models import RentalApplication
 from rentals.models import RentalContract
+from rentals.services import ContractExtensionService
 from rentals.services import RentalApplicationService
 from rentals.services import RentalContractService
-from utils.enums import ContractStatus
 
 
 class RentalApplicationListView(TenantApplicationQuerysetMixin, ListView):
@@ -94,13 +105,17 @@ class TenantRentalContractSignView(TenantRequiredMixin, FormView):
                 contract=self.contract,
                 tenant_signature=form.cleaned_data["tenant_signature"],
             )
+            RentalContractService.create_initial_payment(
+                contract=self.contract,
+                payment_method=PaymentMethod.MOBILE_MONEY,
+            )
         except ValidationError as exc:
             for error in exc.messages:
                 form.add_error(None, error)
             return self.form_invalid(form)
 
         messages.success(self.request, _("Rental contract signed successfully."))
-        return redirect("dashboard:tenant")
+        return redirect("billing:tenant-charge-list")
 
 
 class TenantLeaseDetailView(LoginRequiredMixin, DetailView):
@@ -114,6 +129,33 @@ class TenantLeaseDetailView(LoginRequiredMixin, DetailView):
     template_name = "dashboard/rentals/leases/tenant/detail.html"
     context_object_name = "contract"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        contract = context["contract"]
+        initial_charge = contract.charges.filter(charge_type="INITIAL_PAYMENT").first()
+        if initial_charge:
+            context["initial_payment_due"] = initial_charge.balance_due
+        else:
+            context["initial_payment_due"] = (
+                RentalContractService.calculate_initial_payment(contract=contract)
+            )
+        extensions = list(contract.extension_requests.all())
+        charges = {
+            charge.pk: charge
+            for charge in Charge.objects.filter(
+                pk__in=[
+                    item.payment_charge_id
+                    for item in extensions
+                    if item.payment_charge_id
+                ]
+            )
+        }
+        for extension in extensions:
+            extension.payment_charge = charges.get(extension.payment_charge_id)
+        context["extension_requests"] = extensions
+        context["extension_min_date"] = timezone.localdate() + timedelta(days=1)
+        return context
+
     def get_queryset(self):
         return (
             RentalContract.objects
@@ -123,6 +165,7 @@ class TenantLeaseDetailView(LoginRequiredMixin, DetailView):
                     ContractStatus.SIGNING,
                     ContractStatus.SIGNED,
                     ContractStatus.ACTIVE,
+                    ContractStatus.TERMINATED,
                 ],
             )
             .select_related(
@@ -149,6 +192,7 @@ class TenantLeaseDetailView(LoginRequiredMixin, DetailView):
             ContractStatus.ACTIVE: 0,
             ContractStatus.SIGNED: 1,
             ContractStatus.SIGNING: 2,
+            ContractStatus.TERMINATED: 3,
         }
 
         contracts = list(queryset)
@@ -158,3 +202,100 @@ class TenantLeaseDetailView(LoginRequiredMixin, DetailView):
 
         contracts.sort(key=lambda c: priority.get(c.status, 99))
         return contracts[0]
+
+
+class RentalContractTerminateView(LoginRequiredMixin, View):
+    """Allow either party to terminate an active lease with a recorded reason."""
+
+    def post(self, request, pk):
+        contract = get_object_or_404(
+            RentalContract.objects.select_related(
+                "tenant__user", "unit__building__property_ref__landlord__user",
+            ).filter(
+                Q(tenant__user=request.user)
+                | Q(unit__building__property_ref__landlord__user=request.user)
+            ),
+            pk=pk,
+        )
+        reason = request.POST.get("reason", "")
+        try:
+            RentalContractService.terminate(
+                contract=contract, actor=request.user, reason=reason,
+            )
+        except ValidationError as exc:
+            for error in exc.messages:
+                messages.error(request, error)
+        else:
+            landlord = contract.unit.building.property_ref.landlord
+            counterparty = (
+                landlord.user if request.user.pk == contract.tenant.user_id
+                else contract.tenant.user
+            )
+            send_notification(
+                recipient=counterparty,
+                title=_("Rental contract terminated"),
+                message=(
+                    _(
+                        "Contract %(number)s was terminated by %(name)s. "
+                        "Reason: %(reason)s"
+                    )
+                    % {
+                        "number": contract.contract_number,
+                        "name": request.user.full_name,
+                        "reason": reason.strip(),
+                    }
+                ),
+                notification_type=NotificationType.SYSTEM,
+                related_object=contract,
+            )
+            messages.success(request, _("The rental contract has been terminated."))
+
+        if request.user.pk == contract.tenant.user_id:
+            return redirect("rentals:tenant-lease-detail")
+        return redirect("rentals:landlord-rental-contract-detail", pk=contract.slug)
+
+
+class TenantContractExtensionRequestView(TenantRequiredMixin, View):
+    def post(self, request, pk):
+        contract = get_object_or_404(
+            RentalContract.objects.select_related(
+                "unit__building__property_ref__landlord__user"
+            ),
+            pk=pk,
+            tenant=self.get_tenant(),
+        )
+        form = ContractExtensionRequestForm(request.POST)
+        if not form.is_valid():
+            for errors in form.errors.values():
+                for error in errors:
+                    messages.error(request, error)
+            return redirect("rentals:tenant-lease-detail")
+        try:
+            extension = ContractExtensionService.request_extension(
+                contract=contract,
+                tenant=self.get_tenant(),
+                requested_end_date=form.cleaned_data["requested_end_date"],
+            )
+        except ValidationError as exc:
+            for error in exc.messages:
+                messages.error(request, error)
+            return redirect("rentals:tenant-lease-detail")
+        send_notification(
+            recipient=contract.unit.building.property_ref.landlord.user,
+            title=_("Contract extension requested"),
+            message=(
+                _(
+                    "%(tenant)s requested to extend contract %(contract)s "
+                    "until %(date)s."
+                )
+            )
+            % {
+                "tenant": request.user.full_name,
+                "contract": contract.contract_number,
+                "date": extension.requested_end_date,
+            },
+            notification_type=NotificationType.SYSTEM,
+            related_object=extension,
+        )
+        messages.success(request, _("Your extension request was sent to the landlord."))
+        return redirect("rentals:tenant-lease-detail")

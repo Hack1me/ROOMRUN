@@ -6,6 +6,8 @@ from users.views.dashboard import LandlordDashboardView
 from users.views.dashboard import MaintenanceDashboardView
 from users.views.dashboard import TenantDashboardView
 from users.views.emp_views import EmployeeListView
+from users.views.invitation_views import LandlordInvitationCancelView
+from users.views.invitation_views import LandlordInvitationListView
 from users.views.ten_views import TenantListView
 
 app_name = "dashboard"
@@ -18,6 +20,8 @@ urlpatterns = [
     path("landlord/employees/", EmployeeListView.as_view(), name="employee-list"),
     path("maintenance/", MaintenanceDashboardView.as_view(), name="maintenance"),
     path("guard/", GuardDashboardView.as_view(), name="guard"),
+    path("landlord/invitations/", LandlordInvitationListView.as_view(), name="invitation-list"),
+    path("landlord/invitations/<slug:pk>/cancel/", LandlordInvitationCancelView.as_view(), name="invitation-cancel"),
     path(
         "user/",
         TemplateView.as_view(template_name="dashboard/pages/user.html"),

@@ -1,0 +1,38 @@
+{% load i18n %}
+
+<!-- ============================== FOOTER ============================== -->
+<footer class="footer">
+  <div class="footer__top">
+    <div class="footer__brand">
+      <p class="nav__word nav__word--light"><span class="nav__dot"></span>ROOMRUN</p>
+      <p>{% translate "A calm workspace for residential management in Central Africa." %}</p>
+    </div>
+
+    <div class="footer__col">
+      <h4>{% translate "Platform" %}</h4>
+      <a href="{% url 'users:signup' %}">{% translate "Applications" %}</a>
+      <a href="{% url 'users:signup' %}">{% translate "Leases" %}</a>
+      <a href="{% url 'users:signup' %}">{% translate "Payments" %}</a>
+      <a href="{% url 'users:signup' %}">{% translate "Maintenance" %}</a>
+    </div>
+
+    <div class="footer__col">
+      <h4>{% translate "Profiles" %}</h4>
+      <a href="{% url 'users:signup' %}">{% translate "Landlords" %}</a>
+      <a href="{% url 'users:signup' %}">{% translate "Tenants" %}</a>
+      <a href="{% url 'users:signup' %}">{% translate "Maintenance staff and guards" %}</a>
+    </div>
+
+    <div class="footer__col">
+      <h4>{% translate "Company" %}</h4>
+      <a href="{% url 'about' %}">{% translate "About" %}</a>
+      <a href="{% url 'users:signup' %}">{% translate "Security" %}</a>
+      <a href="mailto:support@room-run.com">{% translate "Contact" %}</a>
+    </div>
+  </div>
+
+  <div class="footer__bottom">
+    <p>© 2026 ROOMRUN</p>
+    <p class="footer__cities">DOUALA · YAOUNDÉ · LIBREVILLE</p>
+  </div>
+</footer>

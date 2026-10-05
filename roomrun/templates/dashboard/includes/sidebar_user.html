@@ -1,0 +1,7 @@
+<div class="sidebar-user">
+  <div class="user-avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>
+  <div class="min-w-0">
+    <div class="user-name truncate">{{ user.full_name|default:user.email }}</div>
+    <div class="user-role">{{ sidebar_role }}</div>
+  </div>
+</div>

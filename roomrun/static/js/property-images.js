@@ -44,7 +44,7 @@
           const removeButton = document.createElement('button');
           removeButton.type = 'button';
           removeButton.className = 'remove-image';
-          removeButton.setAttribute('aria-label', 'Remove image');
+          removeButton.setAttribute('aria-label', gettext('Remove image'));
           removeButton.innerHTML = '<i class="ti ti-x"></i>';
           removeButton.addEventListener('click', function () {
             selectedFilesList.splice(index, 1);
@@ -109,12 +109,12 @@
           window.location.reload();
         } else {
           return response.json().then(function (data) {
-            alert(data.message || 'Unable to delete the image.');
+            alert(data.message || gettext('Unable to delete the image.'));
           });
         }
       })
       .catch(function () {
-        alert('Unable to delete the image.');
+        alert(gettext('Unable to delete the image.'));
       });
     }
 
@@ -122,7 +122,7 @@
       button.addEventListener('click', function () {
         var imageId = button.getAttribute('data-delete-image-id');
         var url = button.getAttribute('data-delete-url');
-        if (confirm('Are you sure you want to remove this image?')) {
+        if (confirm(gettext('Are you sure you want to remove this image?'))) {
           deleteImage(imageId, url);
         }
       });

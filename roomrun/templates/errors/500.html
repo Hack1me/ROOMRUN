@@ -1,10 +1,11 @@
 {% extends "errors/base.html" %}
+{% load i18n %}
 
-{% block title %}Server Error{% endblock title %}
+{% block title %}{% translate "Server Error" %}{% endblock title %}
 {% block content %}
-  <h1 class="rr-display text-3xl">Ooops!!! 500</h1>
-  <h3 class="mt-3 font-display text-xl text-primary">Looks like something went wrong!</h3>
+  <h1 class="rr-display text-3xl">{% translate "Oops! Error 500" %}</h1>
+  <h3 class="mt-3 font-display text-xl text-primary">{% translate "Looks like something went wrong." %}</h3>
   <p class="mt-4 leading-7 text-muted">
-    We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.
+    {% translate "We track these errors automatically, but if the problem persists, contact us. In the meantime, try refreshing the page." %}
   </p>
 {% endblock content %}

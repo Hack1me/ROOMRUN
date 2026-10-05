@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.conf.urls.i18n import i18n_patterns
+from django.conf.urls.i18n import set_language
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -7,6 +8,7 @@ from django.urls import include
 from django.urls import path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
+from roomrun.core.views import LegalView
 from django.views.i18n import JavaScriptCatalog
 from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
@@ -19,40 +21,42 @@ handler500 = "core.error_views.server_error"
 
 urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
+    path("i18n/setlang/", set_language, name="set_language"),
 ]
 urlpatterns += i18n_patterns(
-    path("",
+    path(
+        "",
         TemplateView.as_view(template_name="dashboard/pages/home.html"),
         name="home",
-        ),
+    ),
     path(
         "about/",
         TemplateView.as_view(template_name="dashboard/pages/about.html"),
         name="about",
     ),
     path(
-        "Privacy-policy/",
-        TemplateView.as_view(template_name="home/legal/privacy.html"),
+        "privacy/",
+        LegalView.as_view(template_name="home/legal/privacy.html"),
         name="privacy",
     ),
     path(
-        "Legal-Notice/",
-        TemplateView.as_view(template_name="home/legal/terms.html"),
+        "terms/",
+        LegalView.as_view(template_name="home/legal/terms.html"),
         name="terms",
     ),
     path(
         "license/",
-        TemplateView.as_view(template_name="home/legal/license.html"),
+        LegalView.as_view(template_name="home/legal/license.html"),
         name="license",
     ),
     path(
         "payments/",
-        TemplateView.as_view(template_name="home/legal/payments.html"),
+        LegalView.as_view(template_name="home/legal/payments.html"),
         name="payments",
     ),
     path(
         "cookies/",
-        TemplateView.as_view(template_name="home/legal/cookies.html"),
+        LegalView.as_view(template_name="home/legal/cookies.html"),
         name="cookies",
     ),
     path(

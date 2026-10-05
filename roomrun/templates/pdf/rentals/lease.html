@@ -1,0 +1,99 @@
+{% load i18n %}
+{% get_current_language as current_language %}
+{% translate "Not provided" as not_provided %}
+<!DOCTYPE html>
+<html lang="{{ current_language|default:'en' }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROOMRUN — {% translate "Rental agreement" %} {{ lease.contract_number }}</title>
+  <style>
+    *{box-sizing:border-box}:root{--ink:#171717;--muted:#555;--line:#bdbdbd;--paper:#fff;--background:#e8e8e8}
+    html{font-size:16px}body{margin:0;background:var(--background);color:var(--ink);font-family:Georgia,"Times New Roman",serif}
+    .toolbar{height:58px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;background:#fff;border-bottom:1px solid #d5d5d5;font-family:Arial,sans-serif}
+    .toolbar-title{font-size:13px;font-weight:600}.toolbar-reference{margin-top:3px;font-size:11px;color:#777}
+    .toolbar-actions{display:flex;align-items:center;gap:9px}.print-button,.download-button{padding:8px 15px;border:1px solid #222;background:#fff;color:#222;font:600 12px Arial,sans-serif;cursor:pointer;text-decoration:none}
+    .print-button:hover,.download-button:hover{background:#222;color:#fff}
+    .document{width:210mm;min-height:297mm;margin:35px auto;padding:22mm 24mm 20mm;background:var(--paper);box-shadow:0 4px 22px #0000001a}
+    .header{text-align:center;margin-bottom:38px}.brand{margin-bottom:24px;font:700 15px Arial,sans-serif;letter-spacing:4px}
+    .title{margin:0;font-size:18px;letter-spacing:.3px}.subtitle{margin-top:7px;font-size:12px;font-style:italic;color:#444}
+    .reference{margin-top:20px;font:11px Arial,sans-serif;color:#444}.document p{margin:0 0 17px;font-size:12.5px;line-height:1.8;text-align:justify}
+    .section-title{margin:28px 0 10px;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.25px}
+    .parties{margin-top:25px}.party{margin-bottom:18px}.party-label{margin-bottom:5px;font-size:11.5px;font-weight:700}.party p{margin-bottom:4px;font-size:12px;line-height:1.55}
+    .financial-table{width:100%;margin:14px 0 22px;border-collapse:collapse;font-size:11.5px}.financial-table td{padding:8px 9px;border:1px solid var(--line)}
+    .financial-table td:first-child{width:55%;font-weight:600}.financial-table td:last-child{text-align:right}
+    .signature-section{margin-top:45px;break-inside:avoid}.signature-introduction{margin-bottom:32px!important}
+    .signatures{display:grid;grid-template-columns:1fr 1fr;gap:50px}.signature{text-align:center}.signature-title{margin-bottom:7px;font-size:11.5px;font-weight:700}
+    .signature-note{font-size:10.5px;font-style:italic}.signature-space{height:90px;margin-top:10px;border-bottom:1px solid #222;display:flex;align-items:flex-end;justify-content:center}.signature-image{max-width:100%;max-height:78px;object-fit:contain;display:block}.signature-name{margin-top:8px;font-size:11px}
+    .footer{margin-top:42px;padding-top:9px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;font:8.5px Arial,sans-serif;color:#666}
+    @page{size:A4;margin:0}
+    @media screen and (max-width:850px){.toolbar{padding:0 14px}.document{width:calc(100% - 24px);margin:12px;padding:38px 25px}.signatures{grid-template-columns:1fr;gap:35px}}
+    @media print{body{background:#fff}.toolbar{display:none}.document{width:210mm;min-height:297mm;margin:0;padding:20mm 23mm;box-shadow:none}}
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <div><div class="toolbar-title">{% translate "Rental agreement" %}</div><div class="toolbar-reference">{{ lease.contract_number }}</div></div>
+    <div class="toolbar-actions">
+      <button class="print-button" type="button" onclick="window.print()">{% translate "Print / PDF" %}</button>
+      <a class="download-button" href="{% url 'rentals:lease-pdf' lease.slug %}">{% translate "Download PDF" %}</a>
+    </div>
+  </div>
+
+  <main class="document">
+    <header class="header">
+      <div class="brand">ROOMRUN</div><h1 class="title">{% translate "RENTAL AGREEMENT" %}</h1>
+      <div class="subtitle">{% translate "For residential use" %}</div>
+      <div class="reference">{% translate "Agreement no." %} <strong>{{ lease.contract_number }}</strong></div>
+    </header>
+
+    <section class="parties">
+      <div class="section-title">{% translate "Between the following parties" %}</div>
+      <div class="party">
+        <div class="party-label">{% translate "LANDLORD" %}</div>
+        <p><strong>{{ lease.unit.building.property_ref.landlord.user.full_name|default:lease.unit.building.property_ref.landlord.user.email }}</strong>, {% translate "reference" %} {{ lease.unit.building.property_ref.landlord.landlord_number }}, {% translate "residing at" %} {{ lease.unit.building.property_ref.address }}{% if lease.unit.building.property_ref.city %}, {{ lease.unit.building.property_ref.city }}{% endif %}{% if lease.unit.building.property_ref.country %}, {{ lease.unit.building.property_ref.country.name }}{% endif %}, {% translate "phone" %} {{ lease.unit.building.property_ref.landlord.user.phone|default:not_provided }}.</p>
+      </div>
+      <div class="party">
+        <div class="party-label">{% translate "TENANT" %}</div>
+        <p><strong>{{ lease.tenant.user.full_name|default:lease.tenant.user.email }}</strong>, {% translate "reference" %} {{ lease.tenant.tenant_number }}, {% translate "phone" %} {{ lease.tenant.user.phone|default:not_provided }}{% if lease.tenant.nationality %}, {% translate "nationality" %} {{ lease.tenant.nationality }}{% endif %}, {% translate "hereinafter referred to as the Tenant." %}</p>
+      </div>
+    </section>
+
+    <p>{% translate "The parties enter into this rental agreement for the property described below and freely agree to its rental terms, subject to applicable laws and regulations." %}</p>
+
+    <div class="section-title">{% translate "Purpose of the agreement" %}</div>
+    <p>{% translate "The Landlord rents to the Tenant, who accepts, the residential property at" %} <strong>{{ lease.unit.building.property_ref.name }}</strong>, <strong>{{ lease.unit.building.name }}</strong>, <strong>{% translate "Unit" %} {{ lease.unit.unit_number }}</strong>. {% translate "The Tenant agrees to use the premises for their intended purpose and to follow the building rules and the terms agreed with the Landlord." %}</p>
+
+    <div class="section-title">{% translate "Term and financial conditions" %}</div>
+    <p>{% translate "This agreement begins on" %} <strong>{{ lease.start_date|date:"DATE_FORMAT" }}</strong>{% if lease.end_date %} {% translate "and ends on" %} <strong>{{ lease.end_date|date:"DATE_FORMAT" }}</strong>{% else %} {% translate "and has no fixed end date" %}{% endif %}. {% translate "The monthly rent is" %} <strong>{{ lease.monthly_rent.amount|floatformat:0 }} {{ lease.monthly_rent.currency }}</strong>. {% translate "The Tenant also pays a security deposit of" %} <strong>{{ lease.deposit.amount|floatformat:0 }} {{ lease.deposit.currency }}</strong> {% translate "and advance rent for" %} {{ lease.advance_rent_months }} {% translate "months, totaling" %} <strong>{{ advance_total.amount|floatformat:0 }} {{ advance_total.currency }}</strong>.</p>
+
+    <table class="financial-table">
+      <tr><td>{% translate "Monthly rent" %}</td><td>{{ lease.monthly_rent.amount|floatformat:0 }} {{ lease.monthly_rent.currency }}</td></tr>
+      <tr><td>{% translate "Security deposit" %}</td><td>{{ lease.deposit.amount|floatformat:0 }} {{ lease.deposit.currency }}</td></tr>
+      <tr><td>{% translate "Advance rent" %} ({{ lease.advance_rent_months }} {% translate "months" %})</td><td>{{ advance_total.amount|floatformat:0 }} {{ advance_total.currency }}</td></tr>
+      <tr><td>{% translate "Initial total" %}</td><td><strong>{{ lease.initial_payment.amount|floatformat:0 }} {{ lease.initial_payment.currency }}</strong></td></tr>
+    </table>
+
+    <div class="section-title">{% translate "Responsibilities of the parties" %}</div>
+    <p>{% translate "The Landlord will provide the Tenant with peaceful use of the property and fulfil the Landlord's obligations. The Tenant will pay rent and agreed charges on time, take care of the property, report damage or issues, and follow the residence rules. Utility costs, including water, electricity, gas and internet, will be paid as agreed by the parties." %}</p>
+
+    <div class="section-title">{% translate "Condition and return of the property" %}</div>
+    <p>{% translate "A property condition report may be prepared at move-in and move-out. At the end of the agreement, the Tenant will return the property in a condition consistent with normal use, subject to ordinary wear and the parties' respective obligations." %}</p>
+
+    <div class="section-title">{% translate "Termination and disputes" %}</div>
+    <p>{% translate "This agreement may be terminated in accordance with the terms agreed by the parties and applicable law. If a dispute arises over the interpretation or performance of this agreement, the parties will first try to resolve it amicably before bringing it before a competent court." %}</p>
+
+    <div class="section-title">{% translate "Final provisions" %}</div>
+    <p>{% translate "The parties confirm that they have read, understood and accepted this agreement. Any amendment must be recorded in accordance with applicable requirements." %}</p>
+
+    <section class="signature-section">
+      <p class="signature-introduction">{% translate "Signed at" %} ________________________________, {% translate "on" %} ________________________________.<br><br>{% translate "The parties confirm that they have read and accepted this agreement." %}</p>
+      <div class="signatures">
+        <div class="signature"><div class="signature-title">{% translate "LANDLORD" %}</div><div class="signature-note">{% if landlord_signature_src %}{% translate "Electronically signed on" %} {{ lease.landlord_signed_at|date:"DATETIME_FORMAT" }}{% else %}{% translate "Read and approved" %}{% endif %}</div><div class="signature-space">{% if landlord_signature_src %}<img class="signature-image" src="{{ landlord_signature_src }}" alt="{% translate 'Landlord signature' %}">{% endif %}</div><div class="signature-name">{{ lease.unit.building.property_ref.landlord.user.full_name|default:lease.unit.building.property_ref.landlord.user.email }}</div></div>
+        <div class="signature"><div class="signature-title">{% translate "TENANT" %}</div><div class="signature-note">{% if tenant_signature_src %}{% translate "Electronically signed on" %} {{ lease.tenant_signed_at|date:"DATETIME_FORMAT" }}{% else %}{% translate "Read and approved" %}{% endif %}</div><div class="signature-space">{% if tenant_signature_src %}<img class="signature-image" src="{{ tenant_signature_src }}" alt="{% translate 'Tenant signature' %}">{% endif %}</div><div class="signature-name">{{ lease.tenant.user.full_name|default:lease.tenant.user.email }}</div></div>
+      </div>
+    </section>
+    <footer class="footer"><span>ROOMRUN</span><span>{% translate "Agreement no." %} {{ lease.contract_number }}</span><span>{% translate "Generated electronically on" %} {{ document_date|date:"DATE_FORMAT" }}</span></footer>
+  </main>
+</body>
+</html>

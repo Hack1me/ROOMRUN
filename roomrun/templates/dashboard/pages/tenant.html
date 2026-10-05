@@ -3,47 +3,15 @@
 {% load i18n static %}
 
 {% block title %}{% translate "Tenant dashboard" %} — ROOMRUN{% endblock title %}
+{% block css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
+{% endblock css %}
 {% block header %}{% endblock header %}
 {% block dashboard_body %}
-  {% include "dashboard/includes/tenant_sidebar.html" %}
+  {% include "dashboard/includes/role_sidebar.html" %}
     <main class="main">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button type="button"
-                  class="icon-button mobile-menu"
-                  id="mobile-menu"
-                  aria-label="{% translate 'Open menu' %}">
-            <i class="ti ti-menu-2"></i>
-          </button>
-          <div class="page-heading">
-            <h1>{% translate "Dashboard" %}</h1>
-            <p>{% translate "Your rental at a glance" %}</p>
-          </div>
-        </div>
-        <label class="topbar-search">
-          <i class="ti ti-search"></i>
-          <input type="search"
-                 placeholder="{% translate 'Search…' %}" />
-        </label>
-        <div class="topbar-actions">
-          <button type="button"
-                  class="icon-button"
-                  aria-label="{% translate 'Notifications' %}">
-            <i class="ti ti-bell"></i>
-          </button>
-          <a href="{% url 'users:profile' %}"
-             class="topbar-avatar overflow-hidden"
-             aria-label="{% translate 'Profile' %}">
-            {% if user.profile_picture %}
-              <img class="h-full w-full object-cover"
-                   src="{{ user.profile_picture.url }}"
-                   alt="" />
-            {% else %}
-              {{ user.first_name|first }}{{ user.last_name|first }}
-            {% endif %}
-          </a>
-        </div>
-      </header>
+      {% include "dashboard/topbars/tenant.html" %}
       <div class="content tenant-content">
         {% include "common/includes/messages.html" %}
 
@@ -71,7 +39,7 @@
               <h2>{% translate "Your contract is ready" %}</h2>
               <p>{% translate "Review and sign your rental contract to activate your lease." %}</p>
             </div>
-            <a href="{% url 'rentals:tenant-rental-contract-sign' signing_contract.pk %}" class="btn btn-primary">{% translate "Sign contract" %}</a>
+            <a href="{% url 'rentals:tenant-rental-contract-sign' signing_contract.slug %}" class="btn btn-primary">{% translate "Sign contract" %}</a>
           </section>
         {% endif %}
 
@@ -82,8 +50,8 @@
               <span class="stat-label">{% translate "Monthly rent" %}</span>
               <span class="stat-icon stat-icon--primary"><i class="ti ti-home-dollar"></i></span>
             </div>
-            <p class="stat-value">{{ rent_amount|floatformat:0 }} FCFA</p>
-            <p class="stat-change neutral">{% translate "Monthly rent" %}</p>
+            <p class="stat-value">{% if active_contract %}{{ rent_amount.amount|floatformat:0 }} {{ rent_amount.currency }}{% else %}—{% endif %}</p>
+            <p class="stat-change neutral">{% if active_contract %}{% translate "Monthly rent" %}{% else %}{% translate "No active lease" %}{% endif %}</p>
           </article>
           {% with next_charge=upcoming_payments|first %}
             <article class="stat-card">
@@ -96,7 +64,7 @@
               </p>
               <p class="stat-change warning">
                 <i class="ti ti-clock"></i>
-                {% if next_charge %}{% translate "Upcoming" %}{% else %}{% translate "No payment due" %}{% endif %}
+                {% if next_charge %}{% if next_charge.status == "OVERDUE" %}{% translate "Overdue" %}{% else %}{% translate "Upcoming" %}{% endif %}{% else %}{% translate "No payment due" %}{% endif %}
               </p>
             </article>
           {% endwith %}
@@ -105,57 +73,54 @@
               <span class="stat-label">{% translate "Lease status" %}</span>
               <span class="stat-icon stat-icon--success"><i class="ti ti-circle-check"></i></span>
             </div>
-            <p class="stat-value tenant-date">{% if active_contract %}{% translate "Active" %}{% else %}—{% endif %}</p>
-            <p class="stat-change positive"><i class="ti ti-file-description"></i>{% translate "Lease" %}</p>
+            <p class="stat-value tenant-date">{% if active_contract %}{% translate "Active" %}{% elif signing_contract %}{% translate "Pending" %}{% else %}—{% endif %}</p>
+            <p class="stat-change {% if active_contract %}positive{% else %}neutral{% endif %}"><i class="ti ti-file-description"></i>{% if signing_contract %}{% translate "Awaiting signature" %}{% else %}{% translate "Lease" %}{% endif %}</p>
           </article>
           <article class="stat-card">
             <div class="stat-top">
               <span class="stat-label">{% translate "Maintenance" %}</span>
               <span class="stat-icon stat-icon--warning"><i class="ti ti-tool"></i></span>
             </div>
-            <p class="stat-value">{{ recent_maintenance_requests|length }}</p>
-            <p class="stat-change neutral">{% translate "Recent requests" %}</p>
+            <p class="stat-value">{{ open_maintenance_count }}</p>
+            <p class="stat-change neutral">{% translate "Open requests" %}</p>
           </article>
         </section>
 
         <!-- QUICK ACTIONS -->
-        <section class="card quick-actions">
+        <section class="card quick-actions" data-quick-actions-source>
           <div class="section-head">
             <h2 class="section-title">{% translate "Quick actions" %}</h2>
+            {% include "dashboard/includes/quick_actions_toggle.html" with panel_id="tenant-quick-actions" %}
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 quick-actions-panel" id="tenant-quick-actions" data-quick-actions-panel>
             <a href="{% url 'billing:tenant-charge-list' %}" class="action-btn">
               <div class="action-icon green"><i class="ti ti-credit-card"></i></div>
               <div>
-                <div class="action-name">{% translate "Pay my rent" %}</div>
-                <div class="action-description">{% translate "Make a payment" %}</div>
+                <div class="action-name">{% translate "Pay rent" %}</div>
               </div>
               <i class="ti ti-chevron-right"></i>
             </a>
             <a href="{% url 'maintenance:request-create' %}" class="action-btn">
               <div class="action-icon orange"><i class="ti ti-tool"></i></div>
               <div>
-                <div class="action-name">{% translate "Report a problem" %}</div>
-                <div class="action-description">{% translate "Create a request" %}</div>
+                <div class="action-name">{% translate "Report issue" %}</div>
               </div>
               <i class="ti ti-chevron-right"></i>
             </a>
-            <button class="action-btn">
+            <a href="{% url 'rentals:tenant-lease-detail' %}" class="action-btn">
               <div class="action-icon blue"><i class="ti ti-file-description"></i></div>
               <div>
-                <div class="action-name">{% translate "View my lease" %}</div>
-                <div class="action-description">{% translate "View details" %}</div>
+                <div class="action-name">{% translate "My lease" %}</div>
               </div>
               <i class="ti ti-chevron-right"></i>
-            </button>
-            <button class="action-btn">
+            </a>
+            <a href="{% url 'communications:conversation-list' %}" class="action-btn">
               <div class="action-icon purple"><i class="ti ti-message"></i></div>
               <div>
-                <div class="action-name">{% translate "Contact landlord" %}</div>
-                <div class="action-description">{% translate "Send a message" %}</div>
+                <div class="action-name">{% translate "Messages" %}</div>
               </div>
               <i class="ti ti-chevron-right"></i>
-            </button>
+            </a>
           </div>
         </section>
 
@@ -165,13 +130,9 @@
             <div class="chart-head">
               <div>
                 <div class="chart-title">{% translate "My expenses" %}</div>
-                <div class="chart-description">{% translate "Breakdown of your monthly expenses" %}</div>
+                <div class="chart-description">{% translate "Payments over the last six months" %}</div>
               </div>
-              <select class="chart-select">
-                <option>{% translate "September" %}</option>
-                <option>{% translate "August" %}</option>
-                <option>{% translate "July" %}</option>
-              </select>
+              <span class="chart-period">{% translate "Last 6 months" %}</span>
             </div>
             <div class="chart-container">
               <canvas id="expensesChart"></canvas>
@@ -211,7 +172,7 @@
               <div class="housing-details">
                 <div class="detail">
                   <div class="detail-label">{% translate "Type" %}</div>
-                  <div class="detail-value">{% translate "Apartment" %}</div>
+                  <div class="detail-value">{{ unit.get_unit_type_display }}</div>
                 </div>
                 <div class="detail">
                   <div class="detail-label">{% translate "Bedrooms" %}</div>
@@ -219,7 +180,7 @@
                 </div>
                 <div class="detail">
                   <div class="detail-label">{% translate "Rent" %}</div>
-                  <div class="detail-value">{{ rent_amount|floatformat:0 }} FCFA</div>
+                  <div class="detail-value">{{ rent_amount.amount|floatformat:0 }} {{ rent_amount.currency }}</div>
                 </div>
               </div>
             </div>
@@ -254,9 +215,18 @@
             <div class="contract-footer">
               <div>
                 <div class="contract-item-label">{% translate "Monthly rent" %}</div>
-                <div class="contract-price">{{ rent_amount|floatformat:0 }} FCFA</div>
+                <div class="contract-price">{{ rent_amount.amount|floatformat:0 }} {{ rent_amount.currency }}</div>
               </div>
-              <button class="outline-button">{% translate "View contract" %}</button>
+              <a class="outline-button" href="{% url 'rentals:tenant-lease-detail' %}">{% translate "View contract" %}</a>
+            </div>
+          </div>
+          {% elif not signing_contract %}
+          <div class="card no-lease-card">
+            <div class="list-icon blue"><i class="ti ti-home-search"></i></div>
+            <div>
+              <h2 class="section-title">{% translate "No active lease yet" %}</h2>
+              <p class="text-muted">{% translate "Your lease, payment schedule and property details will appear here once your rental is confirmed." %}</p>
+              <a class="btn btn-primary mt-3" href="{% url 'rentals:rental-application-list' %}">{% translate "View my applications" %}</a>
             </div>
           </div>
           {% endif %}
@@ -266,10 +236,10 @@
         <section class="card payment-card">
           <div class="card-header">
             <h2 class="section-title">{% translate "Payment history" %}</h2>
-            <a href="#" class="view-link">{% translate "See all" %} →</a>
+            <a href="{% url 'billing:tenant-charge-list' %}" class="view-link">{% translate "See all" %} →</a>
           </div>
           <div class="table-wrapper">
-            <table>
+            <table class="payment-history-table">
               <thead>
                 <tr>
                   <th>{% translate "DATE" %}</th>
@@ -282,20 +252,20 @@
               <tbody>
                 {% for payment in recent_payments %}
                   <tr>
-                    <td>{{ payment.paid_at|date:"d M Y" }}</td>
-                    <td class="payment-reference">PAY-{{ payment.id|stringformat:"06d" }}</td>
-                    <td>{{ payment.charge.get_charge_type_display }}</td>
-                    <td class="payment-amount">{{ payment.amount }} FCFA</td>
-                    <td>
-                      <span class="payment-status">
-                        <i class="ti ti-check"></i>
-                        {% translate "Paid" %}
+                    <td data-label="{% translate 'Date' %}">{{ payment.paid_at|default:payment.created_at|date:"d M Y" }}</td>
+                    <td class="payment-reference" data-label="{% translate 'Reference' %}">{{ payment.payment_number|default:payment.id }}</td>
+                    <td data-label="{% translate 'Type' %}">{{ payment.charge.get_charge_type_display }}</td>
+                    <td class="payment-amount" data-label="{% translate 'Amount' %}">{{ payment.amount }}</td>
+                    <td data-label="{% translate 'Status' %}">
+                      <span class="payment-status {% if payment.status != 'COMPLETED' %}payment-status--pending{% endif %}">
+                        <i class="ti {% if payment.status == 'COMPLETED' %}ti-check{% else %}ti-clock{% endif %}"></i>
+                        {{ payment.get_status_display }}
                       </span>
                     </td>
                   </tr>
                 {% empty %}
-                  <tr>
-                    <td colspan="5" class="text-center text-muted py-4">{% translate "No payment recorded yet." %}</td>
+                  <tr class="payment-history-empty">
+                    <td colspan="5" class="payment-empty text-center text-muted py-4">{% translate "No payment recorded yet." %}</td>
                   </tr>
                 {% endfor %}
               </tbody>
@@ -308,20 +278,8 @@
           <div class="card list-card">
             <div class="card-header">
               <h2 class="section-title">{% translate "To watch" %}</h2>
-              <a href="#" class="view-link">{% translate "See all" %} →</a>
+              <a href="{% url 'maintenance:request-list' %}" class="view-link">{% translate "See all" %} →</a>
             </div>
-            {% with next_charge=upcoming_payments|first %}
-              {% if next_charge %}
-              <div class="list-item">
-                <div class="list-icon orange"><i class="ti ti-calendar-event"></i></div>
-                <div class="list-content">
-                  <div class="list-title">{% translate "Next due date" %}</div>
-                  <div class="list-meta">{% translate "Rent of" %} {{ next_charge.due_date|date:"F Y" }} · {{ rent_amount|floatformat:0 }} FCFA</div>
-                </div>
-                <span class="status status-active">{{ next_charge.due_date|date:"d M" }}</span>
-              </div>
-              {% endif %}
-            {% endwith %}
             {% if recent_maintenance_requests %}
               <div class="list-item">
                 <div class="list-icon orange"><i class="ti ti-tool"></i></div>
@@ -346,12 +304,12 @@
               <div class="list-item">
                 <div class="list-icon blue"><i class="ti ti-home"></i></div>
                 <div class="list-content">
-                  <div class="list-title">{% translate "Rent" %} — {% blocktranslate with month=next_charge.due_date|date:"F Y" %}{{ month }}{% endblocktranslate %}</div>
+                  <div class="list-title">{{ next_charge.get_charge_type_display }}</div>
                   <div class="list-meta">{% translate "Apartment" %} {{ unit.unit_number }} · {% translate "Due" %} {{ next_charge.due_date|date:"d F" }}</div>
                 </div>
-                <div style="text-align:right">
-                  <div class="list-title">{{ rent_amount|floatformat:0 }} FCFA</div>
-                  <button class="outline-button" style="margin-top:5px">{% translate "Pay" %}</button>
+                <div class="text-right">
+                  <div class="list-title">{{ next_charge.balance_due }}</div>
+                  <a class="outline-button mt-1" href="{% url 'billing:tenant-payment-initiate' next_charge.slug %}">{% translate "Pay" %}</a>
                 </div>
               </div>
             </div>
@@ -363,7 +321,7 @@
         <section class="card activity-card">
           <div class="card-header">
             <h2 class="section-title">{% translate "Recent activities" %}</h2>
-            <a href="#" class="view-link">{% translate "See all" %} →</a>
+            <a href="{% url 'communications:notification-list' %}" class="view-link">{% translate "See all" %} →</a>
           </div>
           <div class="activities">
             {% with last_payment=recent_payments|first %}
@@ -371,11 +329,11 @@
               <div class="activity">
                 <div class="activity-icon green"><i class="ti ti-credit-card"></i></div>
                 <div class="activity-content">
-                  <div class="activity-title">{% translate "Payment made" %}</div>
-                  <div class="activity-meta">{{ last_payment.amount }} FCFA</div>
+                  <div class="activity-title">{% if last_payment.status == "COMPLETED" %}{% translate "Payment completed" %}{% else %}{{ last_payment.get_status_display }}{% endif %}</div>
+                  <div class="activity-meta">{{ last_payment.amount }}</div>
                 </div>
                 <div class="activity-time">
-                  {% blocktranslate with days=last_payment.paid_at|timesince %}{{ days }} ago{% endblocktranslate %}
+                  {% blocktranslate with days=last_payment.paid_at|default:last_payment.created_at|timesince %}{{ days }} ago{% endblocktranslate %}
                 </div>
               </div>
               {% endif %}
@@ -396,14 +354,7 @@
                 </div>
               </div>
             {% endfor %}
-            <div class="activity">
-              <div class="activity-icon purple"><i class="ti ti-speakerphone"></i></div>
-              <div class="activity-content">
-                <div class="activity-title">{% translate "New announcement" %}</div>
-                <div class="activity-meta">{% translate "Building A works" %}</div>
-              </div>
-              <div class="activity-time">{% translate "8 days ago" %}</div>
-            </div>
+            {% if not recent_payments and not recent_maintenance_requests %}<p class="empty-state">{% translate "Your recent activity will appear here." %}</p>{% endif %}
           </div>
         </section>
 
@@ -415,20 +366,7 @@
 
   {% block inline_javascript %}
     <script src="{% static 'vendor/chartjs/chart.umd.min.js' %}"></script>
-    <script>
-      window.TENANT_DASHBOARD = {
-        expenses: {
-          labels: ["{% translate 'Rent' %}", "{% translate 'Electricity' %}", "{% translate 'Water' %}", "{% translate 'Internet' %}", "{% translate 'Gas' %}"],
-          data: [{{ rent_amount|floatformat:0 }}, 35000, 15000, 10000, 8000],
-          backgroundColor: ["#1E3A5F", "#4A90D9", "#7C3AED", "#2E9E5B", "#B9770E"]
-        },
-        maintenance: {
-          labels: ["{% translate 'Completed' %}", "{% translate 'In progress' %}", "{% translate 'Pending' %}"],
-          data: [5, 2, 1],
-          backgroundColor: ["#2E9E5B", "#4A90D9", "#B9770E"]
-        }
-      };
-    </script>
+    {{ tenant_chart_data|json_script:"tenant-dashboard-data" }}
     <script defer src="{% static 'js/tenant-dashboard.js' %}"></script>
   {% endblock inline_javascript %}
 {% endblock dashboard_body %}

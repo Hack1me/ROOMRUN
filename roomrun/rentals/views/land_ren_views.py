@@ -1,3 +1,7 @@
+from communications.services.notification_ser import send_notification
+from core.utils.enums import ApplicationStatus
+from core.utils.enums import NotificationType
+from core.utils.enums import UserRole
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -16,16 +20,18 @@ from django.views.generic import ListView
 from django_ratelimit.decorators import ratelimit
 from djmoney.money import Money
 from properties.mixins import LandlordRequiredMixin
+from rentals.forms import ContractExtensionApprovalForm
 from rentals.forms import DirectRentalContractForm
+from rentals.forms import ExistingRentalContractForm
 from rentals.forms import RentalContractForm
+from rentals.models import ContractExtensionRequest
 from rentals.models import RentalApplication
 from rentals.models import RentalContract
+from rentals.services import ContractExtensionService
 from rentals.services import RentalApplicationService
 from rentals.services import RentalContractService
 from users.models import Tenant
 from users.services import UserInvitationService
-from utils.enums import ApplicationStatus
-from utils.enums import UserRole
 
 
 class LandlordRentalApplicationListView(LandlordRequiredMixin, ListView):
@@ -108,13 +114,13 @@ class BaseRentalApplicationReviewView(LandlordRequiredMixin, View):
                 messages.error(request, message)
             return redirect(
                 "rentals:landlord-rental-application-detail",
-                pk=application.pk,
+                pk=application.slug,
             )
 
         messages.success(request, self.success_message)
         return redirect(
             "rentals:landlord-rental-application-detail",
-            pk=application.pk,
+            pk=application.slug,
         )
 
 
@@ -162,7 +168,7 @@ class RentalApplicationApproveView(LandlordRequiredMixin, FormView):
             )
             return redirect(
                 "rentals:landlord-rental-application-detail",
-                pk=self.application.pk,
+                pk=self.application.slug,
             )
 
         return super().dispatch(request, *args, **kwargs)
@@ -213,7 +219,7 @@ class RentalApplicationApproveView(LandlordRequiredMixin, FormView):
                         reviewer=self.request.user,
                     )
                 elif application.status != ApplicationStatus.APPROVED:
-                    raise ValidationError(
+                    raise ValidationError(  # noqa: TRY301
                         _("This application can no longer create a contract.")
                     )
 
@@ -248,7 +254,7 @@ class RentalApplicationApproveView(LandlordRequiredMixin, FormView):
                 "is now awaiting the tenant's signature."
             ),
         )
-        return redirect("rentals:landlord-rental-contract-detail", pk=contract.pk)
+        return redirect("rentals:landlord-rental-contract-detail", pk=contract.slug)
 
 class LandlordRentalContractCreateView(LandlordRequiredMixin, FormView):
     """
@@ -307,7 +313,7 @@ class LandlordRentalContractCreateView(LandlordRequiredMixin, FormView):
             )
             return redirect(
                 "rentals:landlord-rental-contract-detail",
-                pk=contract.pk,
+                pk=contract.slug,
             )
 
         # -------------------------------------------------------------
@@ -337,6 +343,36 @@ class LandlordRentalContractCreateView(LandlordRequiredMixin, FormView):
         return redirect("rentals:landlord-rental-contract-create")
 
 
+class LandlordExistingRentalContractCreateView(LandlordRequiredMixin, FormView):
+    """Register a previously signed lease in the landlord's lease list."""
+
+    form_class = ExistingRentalContractForm
+    template_name = "dashboard/rentals/contracts/landlord/existing_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["landlord"] = self.get_landlord()
+        return kwargs
+
+    def form_valid(self, form):
+        try:
+            contract = RentalContractService.register_existing(
+                landlord=self.get_landlord(),
+                tenant=form.cleaned_data["tenant"],
+                unit=form.cleaned_data["unit"],
+                data=form.cleaned_data,
+                existing_document=form.cleaned_data["existing_document"],
+            )
+        except ValidationError as exc:
+            for error in exc.messages:
+                form.add_error(None, error)
+            return self.form_invalid(form)
+        messages.success(self.request, _("Existing lease registered successfully."))
+        return redirect(
+            "rentals:landlord-rental-contract-detail", pk=contract.slug
+        )
+
+
 class LandlordRentalContractListView(LandlordRequiredMixin, ListView):
     """List the authenticated landlord's rental contracts."""
 
@@ -362,7 +398,83 @@ class LandlordRentalContractDetailView(LandlordRequiredMixin, DetailView):
         return RentalContract.landlord_objects.for_landlord(
             self.get_landlord()
         ).select_related(
-            "tenant__user", "unit", "unit__building", "application"
+            "tenant__user", "unit", "unit__building", "application", "terminated_by"
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["extension_requests"] = context["contract"].extension_requests.all()
+        return context
+
+
+class LandlordContractExtensionDecisionView(LandlordRequiredMixin, View):
+    """Approve with a fee or reject a tenant's requested extension date."""
+
+    def get_extension(self, pk):
+        return get_object_or_404(
+            ContractExtensionRequest.objects.select_related(
+                "contract__tenant__user", "contract__unit__building__property_ref"
+            ).filter(
+                contract__unit__building__property_ref__landlord=self.get_landlord()
+            ),
+            pk=pk,
+        )
+
+    def post(self, request, pk):
+        extension = self.get_extension(pk)
+        try:
+            if request.POST.get("action") == "approve":
+                form = ContractExtensionApprovalForm(request.POST)
+                if not form.is_valid():
+                    for errors in form.errors.values():
+                        for error in errors:
+                            messages.error(request, error)
+                    return redirect(
+                        "rentals:landlord-rental-contract-detail",
+                        pk=extension.contract.slug,
+                    )
+                extension = ContractExtensionService.approve(
+                    extension=extension,
+                    landlord=self.get_landlord(),
+                    amount=form.cleaned_data["amount"],
+                )
+                message = _("Extension approved. The tenant can now pay the fee.")
+                notice = _(
+                    "Your extension request until %(date)s was approved. "
+                    "Pay the fee to confirm it."
+                ) % {"date": extension.requested_end_date}
+            elif request.POST.get("action") == "reject":
+                extension = ContractExtensionService.reject(
+                    extension=extension, landlord=self.get_landlord(),
+                )
+                message = _("Extension request rejected.")
+                notice = _("Your extension request until %(date)s was rejected.") % {
+                    "date": extension.requested_end_date
+                }
+            else:
+                messages.error(request, _("Unknown extension decision."))
+                return redirect(
+                    "rentals:landlord-rental-contract-detail",
+                    pk=extension.contract.slug,
+                )
+        except ValidationError as exc:
+            for error in exc.messages:
+                messages.error(request, error)
+            return redirect(
+                "rentals:landlord-rental-contract-detail",
+                pk=extension.contract.slug,
+            )
+
+        send_notification(
+            recipient=extension.contract.tenant.user,
+            title=_("Contract extension updated"),
+            message=notice,
+            notification_type=NotificationType.SYSTEM,
+            related_object=extension,
+        )
+        messages.success(request, message)
+        return redirect(
+            "rentals:landlord-rental-contract-detail", pk=extension.contract.slug,
         )
 
 

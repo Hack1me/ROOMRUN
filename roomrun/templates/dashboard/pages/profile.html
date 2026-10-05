@@ -9,9 +9,13 @@
 <link rel="stylesheet" href="{% static 'vendor/django_countries/countries.css' %}">
 {% endblock %}
 {% block dashboard_body %}
+  <div class="app">
+    {% include "dashboard/includes/role_sidebar.html" %}
+    <div class="dashboard-main">
   <div class="profile-page">
     <main class="profile-main">
       <header class="profile-topbar">
+        <button type="button" class="icon-button mobile-menu" id="mobile-menu" aria-label="{% translate 'Open menu' %}"><i class="ti ti-menu-2" aria-hidden="true"></i></button>
         <div class="profile-breadcrumb">
           <a href="{% url 'dashboard:dashboard' %}" class="back-link">
             <i class="ti ti-arrow-left"></i>
@@ -271,9 +275,12 @@
       </form>
     </div>
   </div>
+    </div>
+  </div>
 {% endblock dashboard_body %}
 {% block footer %}
 {% endblock footer %}
 {% block inline_javascript %}
+
   <script defer src="{% static 'js/auth/profile.js' %}"></script>
 {% endblock %}

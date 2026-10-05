@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from celery import shared_task
+from core.utils.email import EmailUtil
 from django.utils import translation
 from django.utils.translation import gettext_lazy as _
-from utils.email import EmailUtil
 
 
 @shared_task()

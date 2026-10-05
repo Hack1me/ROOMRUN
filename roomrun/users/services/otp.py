@@ -3,6 +3,13 @@ from __future__ import annotations
 import datetime
 import uuid
 
+from core.utils.enums import OtpPurpose
+from core.utils.otp import check_cooldown
+from core.utils.otp import create_otp_token
+from core.utils.otp import generate_otp_code
+from core.utils.otp import hash_otp_code
+from core.utils.otp import set_cooldown
+from core.utils.otp import validate_otp_token
 from django.conf import settings
 from django.core.cache import cache
 from django.db import transaction
@@ -10,13 +17,6 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from users.models import Otp
 from users.tasks import send_otp_email_task
-from utils.enums import OtpPurpose
-from utils.otp import check_cooldown
-from utils.otp import create_otp_token
-from utils.otp import generate_otp_code
-from utils.otp import hash_otp_code
-from utils.otp import set_cooldown
-from utils.otp import validate_otp_token
 
 
 class OtpRateLimitError(ValueError):

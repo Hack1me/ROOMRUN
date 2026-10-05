@@ -1,22 +1,26 @@
-import uuid
-from datetime import date, timedelta
-from io import BytesIO
-from unittest import mock
+from datetime import date
+from datetime import timedelta
 
+from core.utils.enums import ApplicationStatus
+from core.utils.enums import ContractStatus
+from core.utils.enums import UnitStatus
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from django.urls import reverse
 from djmoney.money import Money
-
-from properties.models import Property, Building, Unit
-from rentals.forms import RentalApplicationForm, RentalContractForm
-from rentals.managers import LandlordRentalQuerySet
-from rentals.models import RentalApplication, RentalContract
-from rentals.services import RentalApplicationService, RentalContractService
-from users.models import User, Landlord, Tenant
-from utils.enums import ApplicationStatus, ContractStatus, UnitStatus
-
+from properties.models import Building
+from properties.models import Property
+from properties.models import Unit
+from rentals.forms import RentalApplicationForm
+from rentals.forms import RentalContractForm
+from rentals.models import RentalApplication
+from rentals.models import RentalContract
+from rentals.services import RentalApplicationService
+from rentals.services import RentalContractService
+from users.models import Landlord
+from users.models import Tenant
+from users.models import User
 
 # =====================================================================
 # FIXTURE HELPERS
@@ -124,8 +128,8 @@ class RentalApplicationModelTests(RentalTestCase):
 
         application = self._create_rental_application(tenant=tenant, unit=unit)
 
-        self.assertIsNotNone(application.application_number)
-        self.assertIn("APP", application.application_number)
+        assert application.application_number is not None
+        assert "APP" in application.application_number
 
     def test_str_returns_application_number(self):
         """__str__ should return the application_number."""

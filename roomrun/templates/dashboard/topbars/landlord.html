@@ -1,0 +1,30 @@
+{% extends "dashboard/topbars/base.html" %}
+{% load i18n %}
+
+{% block topbar_title %}{% translate "Dashboard" %}{% endblock %}
+{% block topbar_subtitle %}<p>{% translate "Overview of your activity" %}</p>{% endblock %}
+{% block topbar_search %}
+  <form class="topbar-search" method="get" action="{% url 'properties:property-list' %}">
+    <i class="ti ti-search" aria-hidden="true"></i>
+    <input type="search" name="search" placeholder="{% translate 'Search a property…' %}" />
+    <button class="sr-only" type="submit">{% translate "Search properties" %}</button>
+  </form>
+{% endblock %}
+{% block topbar_actions %}
+  <a href="{% url 'billing:landlord-wallet' %}"
+     class="landlord-wallet-link"
+     aria-label="{% translate 'Available balance' %}: {{ landlord_wallet_balance }} FCFA">
+    <i class="ti ti-wallet" aria-hidden="true"></i><span>{% translate "Balance" %}</span><strong>{{ landlord_wallet_balance.amount|floatformat:0 }} FCFA</strong>
+  </a>
+  <a href="{% url 'communications:notification-list' %}"
+     class="icon-button notification-link"
+     aria-label="{% translate 'Notifications' %}">
+    <i class="ti ti-bell" aria-hidden="true"></i>
+    {% if unread_notification_count %}<span class="notification-badge"></span>{% endif %}
+  </a>
+  <a href="{% url 'users:profile' %}"
+     class="icon-button profile-button"
+     aria-label="{% translate 'Profile' %}">
+    {% if user.profile_picture %}<img class="h-full w-full object-cover" src="{{ user.profile_picture.url }}" alt="" />{% else %}<i class="ti ti-user" aria-hidden="true"></i>{% endif %}
+  </a>
+{% endblock %}

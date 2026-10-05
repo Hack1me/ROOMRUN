@@ -1,11 +1,11 @@
+from core.utils.enums import EmployeeStatus
+from core.utils.enums import Priority
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from maintenance.models import MaintenanceRequest
 from properties.models import Unit
 from users.models import MaintenanceAgent
-from utils.enums import EmployeeStatus
-from utils.enums import Priority
 
 
 class MultipleImageInput(forms.ClearableFileInput):

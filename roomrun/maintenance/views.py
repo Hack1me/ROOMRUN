@@ -1,3 +1,4 @@
+from core.utils.enums import RequestStatus
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
@@ -21,7 +22,6 @@ from maintenance.models import Task
 from maintenance.services import MaintenanceWorkflowService
 from properties.mixins import LandlordRequiredMixin
 from rentals.mixins import TenantRequiredMixin
-from utils.enums import RequestStatus
 
 
 class MaintenanceAgentRequiredMixin(LoginRequiredMixin):
@@ -85,7 +85,7 @@ class TenantRequestDetailView(TenantRequiredMixin, DetailView):
 class TenantRequestCancelView(TenantRequiredMixin, View):
     def post(self, request, pk):
         try:
-            MaintenanceWorkflowService.cancel_request(
+            maintenance_request = MaintenanceWorkflowService.cancel_request(
                 request_id=pk, tenant=self.get_tenant(), user=request.user
             )
             messages.success(request, _("Maintenance request cancelled."))
@@ -93,7 +93,12 @@ class TenantRequestCancelView(TenantRequiredMixin, View):
             raise Http404 from None
         except ValidationError as exc:
             messages.error(request, "; ".join(exc.messages))
-        return redirect("maintenance:request-detail", pk=pk)
+            maintenance_request = get_object_or_404(
+                MaintenanceRequest, pk=pk, tenant=self.get_tenant()
+            )
+        return redirect(
+            "maintenance:request-detail", pk=maintenance_request.slug
+        )
 
 
 class LandlordRequestCreateView(LandlordRequiredMixin, CreateView):
@@ -118,7 +123,7 @@ class LandlordRequestCreateView(LandlordRequiredMixin, CreateView):
             return self.form_invalid(form)
         messages.success(self.request, _("Maintenance request created and assigned."))
         return redirect(
-            "maintenance:landlord-request-detail", pk=maintenance_request.pk
+            "maintenance:landlord-request-detail", pk=maintenance_request.slug
         )
 
 
@@ -179,7 +184,7 @@ class AgentClaimRequestView(MaintenanceAgentRequiredMixin, View):
             messages.error(request, "; ".join(exc.messages))
             return redirect("maintenance:agent-queue")
         messages.success(request, _("The request is now assigned to you."))
-        return redirect("maintenance:task-detail", pk=task.pk)
+        return redirect("maintenance:task-detail", pk=task.slug)
 
 
 class AgentTaskListView(MaintenanceAgentRequiredMixin, ListView):
@@ -232,7 +237,7 @@ class AgentTaskDetailView(MaintenanceAgentRequiredMixin, FormView):
             form.add_error(None, exc)
             return self.form_invalid(form)
         messages.success(self.request, _("Task updated successfully."))
-        return redirect("maintenance:task-detail", pk=self.task.pk)
+        return redirect("maintenance:task-detail", pk=self.task.slug)
 
 
 class AttachmentDownloadView(LoginRequiredMixin, View):

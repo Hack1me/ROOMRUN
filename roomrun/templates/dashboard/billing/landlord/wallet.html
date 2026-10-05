@@ -1,0 +1,152 @@
+{% extends "dashboard/layout.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Payments" %} — ROOMRUN{% endblock %}
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+{% block sidebar %}{% include "dashboard/includes/role_sidebar.html" %}{% endblock %}
+{% block topbar %}
+  <header class="payments-topbar">
+    <div class="payments-topbar__left">
+      <button class="payments-mobile-toggle" type="button" id="mobile-menu" aria-label="{% translate 'Open menu' %}"><i class="ti ti-menu-2"></i></button>
+      <div class="payments-breadcrumb">{% translate "Management" %}<span>/</span><strong>{% translate "Payments" %}</strong></div>
+    </div>
+    <a class="payments-topbar__balance" href="#withdrawal-form"><i class="ti ti-wallet"></i><span>{{ balance.amount|floatformat:0 }} FCFA</span></a>
+  </header>
+{% endblock %}
+
+{% block content %}
+<div class="rr-payments">
+  <div class="payments-heading">
+    <div><h1>{% translate "Payments" %}</h1><p>{% translate "Track received payments and amounts due across your rentals." %}</p></div>
+    <div class="payments-heading__actions">
+      <a class="pay-btn" href="{% url 'billing:landlord-charge-list' %}"><i class="ti ti-receipt"></i>{% translate "Manage charges" %}</a>
+      <a class="pay-btn pay-btn--primary" href="{% url 'billing:landlord-charge-create' %}"><i class="ti ti-plus"></i>{% translate "Create a charge" %}</a>
+      <button class="pay-btn" type="button" id="exportBtn"><i class="ti ti-download"></i>{% translate "Export" %}</button>
+      <a class="pay-btn pay-btn--primary" href="#withdrawal-form"><i class="ti ti-arrow-up-right"></i>{% translate "Request a withdrawal" %}</a>
+    </div>
+  </div>
+
+  <section class="payments-summary" aria-label="{% translate 'Payment summary' %}">
+    <article class="summary-card"><div class="summary-card__top"><span>{% translate "Collected this month" %}</span><i class="ti ti-cash"></i></div><strong>{{ month_income.amount|floatformat:0 }} FCFA</strong><small class="positive">{{ month_payment_count }} {% translate "payment(s)" %}</small></article>
+    <article class="summary-card"><div class="summary-card__top"><span>{% translate "Payments pending" %}</span><i class="ti ti-clock"></i></div><strong>{{ pending_amount.amount|floatformat:0 }} FCFA</strong><small class="warning">{{ pending_count }} {% translate "payment(s)" %}</small></article>
+    <article class="summary-card"><div class="summary-card__top"><span>{% translate "Failed payments" %}</span><i class="ti ti-alert-circle"></i></div><strong>{{ failed_amount.amount|floatformat:0 }} FCFA</strong><small class="danger">{{ failed_count }} {% translate "payment(s)" %}</small></article>
+    <article class="summary-card"><div class="summary-card__top"><span>{% translate "Available balance" %}</span><i class="ti ti-wallet"></i></div><strong>{{ balance.amount|floatformat:0 }} FCFA</strong><small>{% translate "Ready for withdrawal" %}</small></article>
+  </section>
+
+  <section class="payments-balance-strip">
+    <div><span>{% translate "Outstanding from tenants" %}</span><strong>{{ amount_due.amount|floatformat:0 }} FCFA</strong><small>{% translate "Unpaid charges on signed and active leases" %}</small></div>
+    <a class="pay-btn pay-btn--primary" href="#withdrawal-form">{% translate "Withdraw funds" %}<i class="ti ti-arrow-right"></i></a>
+  </section>
+
+  <section class="payments-filters" aria-label="{% translate 'Filter payments' %}">
+    <label class="payment-search"><i class="ti ti-search"></i><input type="search" id="searchInput" placeholder="{% translate 'Search reference or tenant…' %}"></label>
+    <select id="statusFilter" aria-label="{% translate 'Filter by status' %}"><option value="">{% translate "All statuses" %}</option><option value="paid">{% translate "Paid" %}</option><option value="pending">{% translate "Pending" %}</option><option value="failed">{% translate "Failed or cancelled" %}</option><option value="refunded">{% translate "Refunded" %}</option></select>
+    <select id="typeFilter" aria-label="{% translate 'Filter by charge type' %}"><option value="">{% translate "All reasons" %}</option>{% for value,label in charge_types %}<option value="{{ value|lower }}">{{ label }}</option>{% endfor %}</select>
+    <select id="periodFilter" aria-label="{% translate 'Filter by period' %}"><option value="">{% translate "All periods" %}</option><option value="current">{% translate "This month" %}</option><option value="previous">{% translate "Previous month" %}</option><option value="older">{% translate "Older" %}</option></select>
+    <button type="button" class="filter-reset" id="resetFilters">{% translate "Reset" %}</button>
+  </section>
+
+  <section class="payments-table-card">
+    <div class="payments-table-heading"><strong>{% translate "Transactions" %}</strong><span id="resultsCount">{{ payments|length }} {% translate "payment(s)" %}</span></div>
+    <div class="payments-table-scroll">
+      <table class="payments-table">
+        <thead><tr><th>{% translate "Reference" %}</th><th>{% translate "Tenant" %}</th><th>{% translate "Property / unit" %}</th><th>{% translate "Reason" %}</th><th>{% translate "Amount" %}</th><th>{% translate "Date" %}</th><th>{% translate "Status" %}</th></tr></thead>
+        <tbody id="paymentsTable">
+          {% for payment in payments %}
+            <tr data-status="{{ payment.ui_status }}" data-type="{{ payment.charge.charge_type|lower }}" data-period="{{ payment.ui_period }}" data-search="{{ payment.payment_number }} {{ payment.charge.contract.tenant.user.full_name }} {{ payment.charge.contract.tenant.user.email }}">
+              <td><span class="payment-ref">{{ payment.payment_number }}</span></td>
+              <td><div class="tenant-cell"><span class="tenant-avatar">{{ payment.charge.contract.tenant.user.first_name|first }}{{ payment.charge.contract.tenant.user.last_name|first }}</span><span><strong>{{ payment.charge.contract.tenant.user.full_name|default:payment.charge.contract.tenant.user.email }}</strong><small>{{ payment.charge.contract.tenant.user.email }}</small></span></div></td>
+              <td><strong>{{ payment.charge.contract.unit.building.property_ref.name }}</strong><small>{{ payment.charge.contract.unit.building.name }} · {% translate "Unit" %} {{ payment.charge.contract.unit.unit_number }}</small></td>
+              <td>{{ payment.charge.get_charge_type_display }}</td>
+              <td><strong class="amount">{{ payment.amount.amount|floatformat:0 }} FCFA</strong></td>
+              <td class="payment-date">{{ payment.display_date|date:"d/m/Y H:i" }}</td>
+              <td><span class="payment-status payment-status--{{ payment.ui_status }}">{{ payment.get_status_display }}</span></td>
+            </tr>
+          {% empty %}
+            <tr class="payments-empty"><td colspan="7"><i class="ti ti-receipt"></i><strong>{% translate "No payments recorded yet" %}</strong><span>{% translate "Completed tenant payments will appear here." %}</span></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="payments-table-footer"><span>{% if total_payment_count > payments|length %}{% blocktranslate with shown=payments|length total=total_payment_count %}Showing the {{ shown }} most recent of {{ total }} payments{% endblocktranslate %}{% else %}{% blocktranslate count total=total_payment_count %}{{ total }} payment in total{% plural %}{{ total }} payments in total{% endblocktranslate %}{% endif %}</span><span id="paginationInfo">{{ payments|length }} {% translate "payment(s) shown" %}</span></div>
+  </section>
+
+  <div class="payments-bottom-grid">
+    <section class="payments-withdrawal-card" id="withdrawal-form">
+      <div class="payments-section-heading"><div><h2>{% translate "Withdraw your balance" %}</h2><p>{% translate "Request a Mobile Money payout to your preferred number." %}</p></div><strong>{{ balance.amount|floatformat:0 }} FCFA</strong></div>
+      <form method="post" class="withdrawal-form">{% csrf_token %}
+        {% if form.non_field_errors %}<div class="withdrawal-errors">{{ form.non_field_errors }}</div>{% endif %}
+        <div class="withdrawal-fields">
+          <div><label for="{{ form.amount.id_for_label }}">{{ form.amount.label }}</label>{{ form.amount }}{% for error in form.amount.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>
+          <div><label for="{{ form.phone_number.id_for_label }}">{{ form.phone_number.label }}</label>{{ form.phone_number }}{% for error in form.phone_number.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>
+        </div>
+        <p class="withdrawal-help">{% translate "Minimum withdrawal: 5,000 FCFA. Pending requests are deducted from the available balance." %}</p>
+        <button class="pay-btn pay-btn--primary" type="submit"><i class="ti ti-send"></i>{% translate "Submit withdrawal request" %}</button>
+      </form>
+    </section>
+    <section class="payments-withdrawals-card">
+      <div class="payments-section-heading"><div><h2>{% translate "Withdrawal requests" %}</h2><p>{% translate "Recent requests and their status." %}</p></div></div>
+      <div class="withdrawal-list">{% for withdrawal in withdrawals %}<article><div><strong>{{ withdrawal.amount.amount|floatformat:0 }} FCFA</strong><small>{{ withdrawal.phone_number }} · {{ withdrawal.created_at|date:"d/m/Y H:i" }}</small></div><span class="withdrawal-status withdrawal-status--{{ withdrawal.status|lower }}">{{ withdrawal.get_status_display }}</span></article>{% empty %}<p class="withdrawal-empty">{% translate "No withdrawal requests yet." %}</p>{% endfor %}</div>
+    </section>
+  </div>
+</div>
+
+<style>
+  .payments-topbar{height:72px;padding:0 32px;background:#fcfcfb;border-bottom:1px solid #e7e9ed;display:flex;align-items:center;justify-content:space-between}
+  .payments-topbar__left{display:flex;align-items:center;gap:14px}.payments-breadcrumb{font-size:12px;color:#5b6675}.payments-breadcrumb span{margin:0 8px}.payments-breadcrumb strong{color:#1e293b}
+  .payments-mobile-toggle{display:none;width:36px;height:36px;border:1px solid #e7e9ed;border-radius:8px;background:white;color:#5b6675}
+  .payments-topbar__balance{display:inline-flex;align-items:center;gap:8px;padding:9px 13px;border:1px solid #e7e9ed;border-radius:9px;color:#16283f;text-decoration:none;font-size:12px;font-weight:700;background:#fff}
+  .rr-payments{--p-primary:#16283f;--p-hover:#1e3a5f;--p-bg:#f5f6f8;--p-surface:#fcfcfb;--p-card:#fff;--p-muted:#5b6675;--p-border:#e7e9ed;--p-success:#2e9e5b;--p-warning:#b9770e;--p-danger:#d64545;color:#1e293b;padding:28px 32px 48px;max-width:1500px;margin:auto}
+  .rr-payments *{box-sizing:border-box}.payments-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:22px}.payments-heading h1{margin:0 0 6px;font-size:25px;line-height:1.2;font-weight:700;letter-spacing:-.025em}.payments-heading p{color:var(--p-muted);font-size:13px}
+  .payments-heading__actions{display:flex;gap:9px}.pay-btn{min-height:38px;padding:0 14px;border:1px solid var(--p-border);border-radius:8px;background:#fff;color:#1e293b;text-decoration:none;font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:7px;cursor:pointer}.pay-btn:hover{border-color:#cfd4dc;background:#fafafa}.pay-btn--primary{background:var(--p-primary);border-color:var(--p-primary);color:white}.pay-btn--primary:hover{background:var(--p-hover);border-color:var(--p-hover)}
+  .payments-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:15px}.summary-card{padding:18px 19px;background:white;border:1px solid var(--p-border);border-radius:12px}.summary-card__top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:13px;color:var(--p-muted);font-size:11px}.summary-card__top i{width:30px;height:30px;border-radius:8px;background:#f1f3f6;color:var(--p-primary);display:grid;place-items:center;font-size:15px}.summary-card>strong{display:block;font-size:21px;letter-spacing:-.02em}.summary-card small{display:block;margin-top:6px;color:var(--p-muted);font-size:10px}.summary-card small.positive{color:var(--p-success)}.summary-card small.warning{color:var(--p-warning)}.summary-card small.danger{color:var(--p-danger)}
+  .payments-balance-strip{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:15px 19px;margin-bottom:16px;border:1px solid var(--p-border);border-radius:12px;background:#fff}.payments-balance-strip>div{display:grid;grid-template-columns:auto auto;align-items:center;column-gap:12px}.payments-balance-strip span{font-size:11px;color:var(--p-muted)}.payments-balance-strip strong{font-size:15px}.payments-balance-strip small{grid-column:1/-1;margin-top:4px;font-size:10px;color:var(--p-muted)}
+  .payments-filters{display:grid;grid-template-columns:minmax(220px,1.5fr) repeat(3,minmax(130px,170px)) auto;gap:9px;align-items:center;padding:14px;margin-bottom:14px;border:1px solid var(--p-border);border-radius:12px;background:#fff}.payments-filters select,.payment-search input{width:100%;height:38px;border:1px solid var(--p-border);border-radius:8px;background:#fff;color:#1e293b;outline:none;font-size:12px}.payments-filters select{padding:0 10px}.payment-search{position:relative}.payment-search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#8a94a3}.payment-search input{padding:0 12px 0 34px}.payments-filters select:focus,.payment-search input:focus{border-color:var(--p-primary)}.filter-reset{height:38px;padding:0 8px;border:0;background:transparent;color:var(--p-muted);font-size:11px;font-weight:600;cursor:pointer}.filter-reset:hover{color:var(--p-primary)}
+  .payments-table-card{background:#fff;border:1px solid var(--p-border);border-radius:12px;overflow:hidden}.payments-table-heading,.payments-table-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 19px}.payments-table-heading{border-bottom:1px solid var(--p-border)}.payments-table-heading strong{font-size:13px}.payments-table-heading span,.payments-table-footer{font-size:10px;color:var(--p-muted)}.payments-table-scroll{overflow-x:auto}.payments-table{width:100%;border-collapse:collapse;min-width:850px}.payments-table th{padding:11px 16px;background:#fafbfc;border-bottom:1px solid var(--p-border);color:var(--p-muted);font-size:10px;font-weight:700;text-align:left;text-transform:uppercase;white-space:nowrap}.payments-table td{padding:13px 16px;border-bottom:1px solid #eef0f3;font-size:11px;vertical-align:middle}.payments-table tbody tr:hover{background:#fafbfc}.payment-ref{color:var(--p-primary);font-weight:700;white-space:nowrap}.tenant-cell{display:flex;align-items:center;gap:8px;min-width:150px}.tenant-avatar{width:30px;height:30px;flex:0 0 30px;border-radius:50%;display:grid;place-items:center;background:#edf1f5;color:var(--p-primary);font-size:9px;font-weight:700}.tenant-cell strong,.payments-table td>strong{display:block;font-size:11px}.tenant-cell small,.payments-table td>small{display:block;margin-top:3px;color:var(--p-muted);font-size:9px}.amount{white-space:nowrap}.payment-date{color:var(--p-muted);white-space:nowrap}.payment-status,.withdrawal-status{display:inline-flex;padding:5px 8px;border-radius:20px;font-size:9px;font-weight:650;white-space:nowrap}.payment-status--paid,.withdrawal-status--completed{background:#edf8f1;color:var(--p-success)}.payment-status--pending,.withdrawal-status--pending{background:#fff7e8;color:var(--p-warning)}.payment-status--failed,.withdrawal-status--rejected{background:#fff0f0;color:var(--p-danger)}.payment-status--refunded{background:#f1f3f5;color:var(--p-muted)}.payments-empty td{text-align:center!important;padding:42px!important;color:var(--p-muted)}.payments-empty i,.payments-empty strong,.payments-empty span{display:block;margin:5px auto}.payments-empty i{font-size:23px}.payments-empty strong{color:#1e293b;font-size:13px}.payments-table-footer{border-top:1px solid var(--p-border)}
+  .payments-bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}.payments-withdrawal-card,.payments-withdrawals-card{padding:19px;background:#fff;border:1px solid var(--p-border);border-radius:12px}.payments-section-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}.payments-section-heading h2{margin:0 0 5px;font-size:14px}.payments-section-heading p,.payments-section-heading>strong{color:var(--p-muted);font-size:11px}.payments-section-heading>strong{color:var(--p-primary);white-space:nowrap}.withdrawal-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.withdrawal-fields label{display:block;margin-bottom:6px;font-size:11px;font-weight:600}.withdrawal-fields input{width:100%;height:39px;padding:0 10px;border:1px solid var(--p-border);border-radius:8px;font-size:12px}.withdrawal-help{margin:10px 0 14px;color:var(--p-muted);font-size:10px}.field-error,.withdrawal-errors{display:block;margin-top:5px;color:var(--p-danger);font-size:10px}.withdrawal-form .pay-btn{width:100%}.withdrawal-list article{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-top:1px solid #eef0f3}.withdrawal-list article strong,.withdrawal-list article small{display:block}.withdrawal-list article strong{font-size:12px}.withdrawal-list article small{margin-top:4px;color:var(--p-muted);font-size:10px}.withdrawal-empty{padding:14px 0;color:var(--p-muted);font-size:11px}
+  @media(max-width:1100px){.payments-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.payments-filters{grid-template-columns:1fr 1fr}}
+  @media(max-width:1024px){.payments-topbar{padding:0 18px}.payments-mobile-toggle{display:grid;place-items:center}.rr-payments{padding:24px 18px 38px}.payments-heading{flex-direction:column}.payments-heading__actions{width:100%}.payments-heading__actions .pay-btn{flex:1}.payments-bottom-grid{grid-template-columns:1fr}}
+  @media(max-width:600px){.payments-summary{grid-template-columns:1fr}.payments-filters{grid-template-columns:1fr}.payments-balance-strip{align-items:flex-start;flex-direction:column}.payments-balance-strip>.pay-btn{width:100%}.withdrawal-fields{grid-template-columns:1fr}.payments-table-footer{align-items:flex-start;flex-direction:column}}
+</style>
+<script>
+  (() => {
+    const rows = [...document.querySelectorAll('#paymentsTable tr[data-status]')];
+    const search = document.getElementById('searchInput');
+    const status = document.getElementById('statusFilter');
+    const type = document.getElementById('typeFilter');
+    const period = document.getElementById('periodFilter');
+    const resultCount = document.getElementById('resultsCount');
+    const paginationInfo = document.getElementById('paginationInfo');
+    const applyFilters = () => {
+      const term = search.value.trim().toLowerCase();
+      let shown = 0;
+      rows.forEach((row) => {
+        const visible = (!term || row.dataset.search.toLowerCase().includes(term))
+          && (!status.value || row.dataset.status === status.value)
+          && (!type.value || row.dataset.type === type.value)
+          && (!period.value || row.dataset.period === period.value);
+        row.hidden = !visible;
+        if (visible) shown += 1;
+      });
+      resultCount.textContent = `${shown} paiement${shown === 1 ? '' : 's'}`;
+      paginationInfo.textContent = `${shown} paiement${shown === 1 ? '' : 's'} affiché${shown === 1 ? '' : 's'}`;
+    };
+    [search, status, type, period].forEach((control) => control.addEventListener(control === search ? 'input' : 'change', applyFilters));
+    document.getElementById('resetFilters').addEventListener('click', () => {
+      search.value = ''; status.value = ''; type.value = ''; period.value = ''; applyFilters();
+    });
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      const csvRows = [['Référence', 'Locataire', 'Email', 'Logement', 'Motif', 'Montant', 'Date', 'Statut']];
+      rows.filter((row) => !row.hidden).forEach((row) => {
+        const cells = row.querySelectorAll('td');
+        csvRows.push([cells[0].innerText, cells[1].querySelector('strong').innerText, cells[1].querySelector('small').innerText, cells[2].innerText.replace(/\n/g, ' '), cells[3].innerText, cells[4].innerText, cells[5].innerText, cells[6].innerText]);
+      });
+      const csv = csvRows.map((row) => row.map((cell) => `"${cell.trim().replace(/"/g, '""')}"`).join(',')).join('\n');
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(new Blob(['\ufeff' + csv], {type: 'text/csv;charset=utf-8;'}));
+      link.download = 'roomrun-paiements.csv'; link.click(); URL.revokeObjectURL(link.href);
+    });
+  })();
+</script>
+{% endblock content %}

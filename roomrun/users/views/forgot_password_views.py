@@ -1,3 +1,4 @@
+from core.utils.enums import OtpPurpose
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -11,7 +12,6 @@ from users.mixins import OtpSessionKeyMixin
 from users.services import OtpRateLimitError
 from users.services import OtpService
 from users.services import PasswordResetTokenService
-from utils.enums import OtpPurpose
 
 User = get_user_model()
 

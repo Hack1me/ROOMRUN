@@ -4,6 +4,8 @@ import hashlib
 import secrets
 from datetime import timedelta
 
+from core.utils.enums import InvitationStatus
+from core.utils.enums import UserRole
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
@@ -12,8 +14,6 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from operations.models import UserInvitation
 from users.models import User
-from utils.enums import InvitationStatus
-from utils.enums import UserRole
 
 
 class UserInvitationService:
@@ -128,14 +128,16 @@ class InvitationAcceptanceService:
         except IntegrityError:
             raise ValidationError(_("An account already exists with this email."))
 
-        InvitationAcceptanceService._create_profile_for_role(user, invitation.role)
+        InvitationAcceptanceService._create_profile_for_role(
+            user, invitation.role, invitation.invited_by
+        )
 
         UserInvitationService.accept(invitation)
 
         return user
 
     @staticmethod
-    def _create_profile_for_role(user: User, role: str) -> None:
+    def _create_profile_for_role(user: User, role: str, invited_by=None) -> None:
         if role == UserRole.LANDLORD:
             from users.models import Landlord
             Landlord.objects.create(user=user)
@@ -148,7 +150,10 @@ class InvitationAcceptanceService:
             from users.models import Employee
             from users.models import Guard
             employee = Employee.objects.create(user=user)
-            Guard.objects.create(employee=employee)
+            guard = Guard.objects.create(employee=employee)
+            landlord = getattr(invited_by, "landlord_profile", None)
+            if landlord is not None:
+                guard.landlords.add(landlord)
 
         elif role == UserRole.MAINTENANCE:
             from users.models import Employee

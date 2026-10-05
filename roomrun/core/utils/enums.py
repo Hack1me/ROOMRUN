@@ -4,6 +4,15 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
+class VisitorStatus(models.TextChoices):
+    EXPECTED = "EXPECTED", _("Expected")
+    CHECKED_IN = "CHECKED_IN", _("Checked in")
+    CHECKED_OUT = "CHECKED_OUT", _("Checked out")
+    CANCELLED = "CANCELLED", _("Cancelled")
+    DENIED = "DENIED", _("Denied")
+
+
+
 class EmployeeStatus(models.TextChoices):
     """
     Defines the possible employment statuses for an employee.
@@ -107,6 +116,7 @@ class ChargeType(models.TextChoices):
 
     RENT = "RENT", _("Rent")
     INITIAL_PAYMENT = "INITIAL_PAYMENT", _("Initial payment")
+    CONTRACT_EXTENSION = "CONTRACT_EXTENSION", _("Contract extension")
     ELECTRICITY = "ELECTRICITY", _("Electricity")
     WATER = "WATER", _("Water")
     GAS = "GAS", _("Gas")
@@ -116,6 +126,13 @@ class ChargeType(models.TextChoices):
     PARKING = "PARKING", _("Parking")
     LATE_FEE = "LATE_FEE", _("Late fee")
     OTHER = "OTHER", _("Other")
+
+
+class ExtensionRequestStatus(models.TextChoices):
+    PENDING = "PENDING", _("Pending")
+    APPROVED = "APPROVED", _("Approved, awaiting payment")
+    PAID = "PAID", _("Paid")
+    REJECTED = "REJECTED", _("Rejected")
 
 
 class ChargeStatus(models.TextChoices):
@@ -158,6 +175,7 @@ class PaymentStatus(models.TextChoices):
 
 class PaymentProvider(models.TextChoices):
     CAMPAY = "CAMPAY", _("CamPay")
+    DIGIPAY = "DIGIPAY", _("DigiPay")
 
 class Priority(models.TextChoices):
     """
@@ -249,6 +267,7 @@ class NotificationType(models.TextChoices):
     RENT_REMINDER = "RENT_REMINDER", _("Rent reminder")
     MAINTENANCE = "MAINTENANCE", _("Maintenance")
     TASK = "TASK", _("Task")
+    MESSAGE = "MESSAGE", _("Message")
     ANNOUNCEMENT = "ANNOUNCEMENT", _("Announcement")
     SYSTEM = "SYSTEM", _("System")
 

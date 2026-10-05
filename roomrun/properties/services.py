@@ -136,6 +136,7 @@ class PropertyService:
         """
         property_obj.delete()
 
+
 # Property Image Service
 class PropertyImageService:
     """
@@ -149,6 +150,18 @@ class PropertyImageService:
         "caption",
         "is_primary",
     }
+
+    @staticmethod
+    def _siblings(*, image=None, property_obj=None, unit=None):
+        """Return images sharing one property or unit parent."""
+        if image is not None:
+            property_obj = image.property
+            unit = image.unit
+        if property_obj is not None:
+            return PropertyImage.objects.filter(property=property_obj)
+        if unit is not None:
+            return PropertyImage.objects.filter(unit=unit)
+        return PropertyImage.objects.none()
 
     @staticmethod
     @transaction.atomic
@@ -166,9 +179,7 @@ class PropertyImageService:
         """
         if (property_obj is None) == (unit is None):
             msg = "An image must belong to exactly one property or unit."
-            raise ValidationError(
-                msg
-            )
+            raise ValidationError(msg)
 
         image_data = data.copy()
         image_data.pop("property", None)
@@ -182,9 +193,7 @@ class PropertyImageService:
 
         # The first uploaded image becomes primary unless a caller explicitly
         # chooses otherwise. This keeps every owner easy to identify in lists.
-        siblings = PropertyImage.objects.filter(
-            property=property_obj,
-        ) if property_obj else PropertyImage.objects.filter(unit=unit)
+        siblings = PropertyImageService._siblings(property_obj=property_obj, unit=unit)
         if image.is_primary or not siblings.filter(is_primary=True).exists():
             siblings.update(is_primary=False)
             image.is_primary = True
@@ -203,10 +212,7 @@ class PropertyImageService:
         If `is_primary` becomes True, other primary images are unset.
         """
         if data.get("is_primary"):
-            if image.property_id:
-                siblings = PropertyImage.objects.filter(property_id=image.property_id)
-            else:
-                siblings = PropertyImage.objects.filter(unit_id=image.unit_id)
+            siblings = PropertyImageService._siblings(image=image)
             siblings.exclude(pk=image.pk).update(is_primary=False)
 
         BaseService._apply_changes(image, data)  # noqa: SLF001
@@ -221,13 +227,7 @@ class PropertyImageService:
 
         Works for both property-level and unit-level images.
         """
-        # Determine the parent filter (property or unit)
-        if image.property_id:
-            siblings = PropertyImage.objects.filter(property_id=image.property_id)
-        elif image.unit_id:
-            siblings = PropertyImage.objects.filter(unit_id=image.unit_id)
-        else:
-            siblings = PropertyImage.objects.none()
+        siblings = PropertyImageService._siblings(image=image)
 
         # Unset primary on all siblings
         siblings.exclude(pk=image.pk).update(is_primary=False)
@@ -253,10 +253,7 @@ class PropertyImageService:
         """
 
         was_primary = image.is_primary
-        if image.property_id:
-            siblings = PropertyImage.objects.filter(property_id=image.property_id)
-        else:
-            siblings = PropertyImage.objects.filter(unit_id=image.unit_id)
+        siblings = PropertyImageService._siblings(image=image)
 
         image.delete()
 
@@ -265,6 +262,7 @@ class PropertyImageService:
             if next_image:
                 next_image.is_primary = True
                 next_image.save(update_fields=["is_primary"])
+
 
 # Building Service
 class BuildingService:

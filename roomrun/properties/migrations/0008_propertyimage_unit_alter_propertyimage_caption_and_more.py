@@ -2,7 +2,7 @@
 
 import core.validators
 import django.db.models.deletion
-import utils.helpers
+import core.utils.helpers
 from django.conf import settings
 from django.db import migrations, models
 
@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='propertyimage',
             name='image',
-            field=models.ImageField(help_text='Upload a JPG, PNG, or WebP image. Recommended size: 1920*1080 pixels, max 5MB.', upload_to=utils.helpers.property_image_upload_path, validators=[core.validators.validate_image_size, core.validators.validate_image_extension], verbose_name='Image'),
+            field=models.ImageField(help_text='Upload a JPG, PNG, or WebP image. Recommended size: 1920*1080 pixels, max 5MB.', upload_to=core.utils.helpers.property_image_upload_path, validators=[core.validators.validate_image_size, core.validators.validate_image_extension], verbose_name='Image'),
         ),
         migrations.AlterField(
             model_name='propertyimage',

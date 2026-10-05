@@ -1,5 +1,8 @@
 from core.models import BaseModel
 from core.utils import safe_reverse
+from core.utils.enums import ApplicationStatus
+from core.utils.enums import ContractStatus
+from core.utils.enums import ExtensionRequestStatus
 from core.validators import validate_signature
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -9,8 +12,6 @@ from djmoney.models.fields import MoneyField
 from properties.models import Unit
 from rentals.managers import LandlordRentalManager
 from users.models import Tenant
-from utils.enums import ApplicationStatus
-from utils.enums import ContractStatus
 
 
 # RENTAL APPLICATION
@@ -146,7 +147,7 @@ class RentalApplication(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the application detail view."""
-        return safe_reverse("rentals:rental-application-detail", kwargs={"pk": self.id})
+        return safe_reverse("rentals:rental-application-detail", kwargs={"pk": self.slug})
 
     def clean(self):
         """
@@ -265,6 +266,13 @@ class RentalContract(BaseModel):
         help_text=_("Current lifecycle status of the contract."),
     )
 
+    terminated_at = models.DateTimeField(_("Terminated at"), null=True, blank=True)
+    terminated_by = models.ForeignKey(
+        "users.User", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="terminated_rental_contracts", verbose_name=_("Terminated by"),
+    )
+    termination_reason = models.TextField(_("Termination reason"), blank=True)
+
     landlord_signed_at = models.DateTimeField(
         _("Landlord signed at"),
         null=True,
@@ -299,6 +307,14 @@ class RentalContract(BaseModel):
         null=True,
         blank=True,
         help_text=_("Digital signature of the tenant (SVG, base64 PNG, or hash)."),
+    )
+
+    existing_document = models.FileField(
+        _("Existing signed contract"),
+        upload_to="contracts/existing/",
+        null=True,
+        blank=True,
+        help_text=_("Scanned copy of a contract signed outside the platform."),
     )
 
     landlord_objects = LandlordRentalManager()
@@ -343,7 +359,7 @@ class RentalContract(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the contract detail view."""
-        return safe_reverse("rentals:rental-contract-detail", kwargs={"pk": self.id})
+        return safe_reverse("rentals:rental-contract-detail", kwargs={"pk": self.slug})
 
     def clean(self):
         """
@@ -351,7 +367,11 @@ class RentalContract(BaseModel):
         1. End date must be after start date (if provided).
         2. A tenant cannot have another active contract for the same unit.
         """
-        if self.end_date and self.end_date <= self.start_date:
+        # ``clean()`` can run on an incomplete instance (for example, when
+        # another required field is missing during ``full_clean()``). Avoid
+        # comparing a date to ``None`` and let field validation report the
+        # missing start date.
+        if self.start_date and self.end_date and self.end_date <= self.start_date:
             raise ValidationError(_("End date must be after the start date."))
 
         super().clean()
@@ -370,3 +390,39 @@ class RentalContract(BaseModel):
             ).exclude(pk=self.pk)
             if existing.exists():
                 raise ValidationError(_("This unit already has an active contract."))
+
+
+class ContractExtensionRequest(BaseModel):
+    """A tenant's request to extend a fixed-term contract."""
+
+    contract = models.ForeignKey(
+        RentalContract, on_delete=models.PROTECT, related_name="extension_requests",
+        verbose_name=_("Rental contract"),
+    )
+    requested_end_date = models.DateField(_("Requested end date"))
+    status = models.CharField(
+        max_length=20, choices=ExtensionRequestStatus.choices,
+        default=ExtensionRequestStatus.PENDING, db_index=True,
+    )
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    reviewed_by = models.ForeignKey(
+        "users.User", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="reviewed_contract_extensions",
+    )
+    approved_amount = MoneyField(
+        max_digits=12, decimal_places=2, default_currency="XAF",
+        null=True, blank=True, verbose_name=_("Approved extension amount"),
+    )
+    payment_charge_id = models.UUIDField(null=True, blank=True, unique=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["contract"], condition=models.Q(status="PENDING"),
+                name="one_pending_extension_per_contract",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.contract.contract_number} → {self.requested_end_date}"

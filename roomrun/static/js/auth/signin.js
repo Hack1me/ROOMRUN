@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const showLabel = toggleButton.dataset.i18nShow || gettext('Show password');
       const hideLabel = toggleButton.dataset.i18nHide || gettext('Hide password');
       toggleButton.setAttribute('aria-label', isPassword ? hideLabel : showLabel);
+      toggleButton.setAttribute('aria-pressed', String(isPassword));
     });
   }
 });

@@ -1,5 +1,8 @@
 from core.models import BaseModel
 from core.utils import safe_reverse
+from core.utils.enums import Priority
+from core.utils.enums import RequestStatus
+from core.utils.enums import TaskStatus
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
@@ -7,9 +10,6 @@ from django.utils.translation import gettext_lazy as _
 from properties.models import Unit
 from users.models import MaintenanceAgent
 from users.models import Tenant
-from utils.enums import Priority
-from utils.enums import RequestStatus
-from utils.enums import TaskStatus
 
 
 # MAINTENANCE REQUEST
@@ -114,7 +114,7 @@ class MaintenanceRequest(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the maintenance request detail view."""
-        return safe_reverse("maintenance:request-detail", kwargs={"pk": self.id})
+        return safe_reverse("maintenance:request-detail", kwargs={"pk": self.slug})
 
     def clean(self):
         """
@@ -124,8 +124,8 @@ class MaintenanceRequest(BaseModel):
         """
         super().clean()
         if self.tenant_id and self.unit_id:
+            from core.utils.enums import ContractStatus  # noqa: PLC0415
             from rentals.models import RentalContract  # noqa: PLC0415
-            from utils.enums import ContractStatus  # noqa: PLC0415
 
             is_occupant = RentalContract.objects.filter(
                 tenant_id=self.tenant_id,
@@ -290,7 +290,7 @@ class Task(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the task detail view."""
-        return safe_reverse("maintenance:task-detail", kwargs={"pk": self.id})
+        return safe_reverse("maintenance:task-detail", kwargs={"pk": self.slug})
 
     def clean(self):
         """

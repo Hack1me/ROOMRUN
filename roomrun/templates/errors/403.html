@@ -1,13 +1,14 @@
 {% extends "errors/base.html" %}
+{% load i18n %}
 
-{% block title %}Forbidden (403){% endblock title %}
+{% block title %}{% translate "Forbidden (403)" %}{% endblock title %}
 {% block content %}
-  <h1 class="rr-display text-3xl">Forbidden (403)</h1>
+  <h1 class="rr-display text-3xl">{% translate "Forbidden (403)" %}</h1>
   <p class="mt-4 leading-7 text-muted">
     {% if exception %}
       {{ exception }}
     {% else %}
-      You're not allowed to access this page.
+      {% translate "You're not allowed to access this page." %}
     {% endif %}
   </p>
 {% endblock content %}

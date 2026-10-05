@@ -1,0 +1,44 @@
+{% extends "dashboard/layout.html" %}
+{% load i18n %}
+{% block title %}{% translate "Tenant charges" %} — ROOMRUN{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-7xl space-y-6">
+  <header class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wider text-muted">{% translate "Billing" %}</p>
+      <h1 class="mt-2 text-3xl font-semibold text-primary">{% translate "Tenant charges" %}</h1>
+      <p class="mt-2 text-sm text-muted">{% translate "Create and track bills for active rental contracts." %}</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'billing:landlord-charge-create' %}"><i class="ti ti-plus"></i> {% translate "Create a charge" %}</a>
+  </header>
+  <section class="overflow-hidden rounded-xl border border-line bg-white">
+    <div class="overflow-x-auto">
+      <table class="w-full min-w-190 text-left text-sm">
+        <thead class="bg-bg text-xs uppercase text-muted"><tr><th class="px-5 py-3">{% translate "Tenant" %}</th><th class="px-5 py-3">{% translate "Property / unit" %}</th><th class="px-5 py-3">{% translate "Charge" %}</th><th class="px-5 py-3">{% translate "Due date" %}</th><th class="px-5 py-3">{% translate "Amount" %}</th><th class="px-5 py-3">{% translate "Balance due" %}</th><th class="px-5 py-3">{% translate "Status" %}</th></tr></thead>
+        <tbody class="divide-y divide-line">
+          {% for charge in charges %}
+            <tr>
+              <td class="px-5 py-4"><strong>{{ charge.contract.tenant.user.full_name }}</strong><small class="mt-1 block text-muted">{{ charge.contract.tenant.user.email }}</small></td>
+              <td class="px-5 py-4"><strong>{{ charge.contract.unit.building.property_ref.name }}</strong><small class="mt-1 block text-muted">{{ charge.contract.unit.building.name }} · {{ charge.contract.unit }}</small></td>
+              <td class="px-5 py-4"><strong>{{ charge.get_charge_type_display }}</strong><small class="mt-1 block text-muted">{{ charge.charge_number }}</small></td>
+              <td class="px-5 py-4">{{ charge.due_date|date:"d M Y" }}</td>
+              <td class="px-5 py-4">{{ charge.amount.amount|floatformat:0 }} FCFA</td>
+              <td class="px-5 py-4">{{ charge.balance_due.amount|floatformat:0 }} FCFA</td>
+              <td class="px-5 py-4">{{ charge.get_status_display }}</td>
+            </tr>
+          {% empty %}
+            <tr><td class="px-5 py-12 text-center text-muted" colspan="7"><i class="ti ti-receipt text-2xl"></i><p class="mt-2">{% translate "No charges yet. Create one for an active tenant contract." %}</p></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+  {% if is_paginated %}
+    <nav class="flex items-center justify-between" aria-label="{% translate 'Pagination' %}">
+      {% if page_obj.has_previous %}<a class="btn btn-secondary" href="?page={{ page_obj.previous_page_number }}">{% translate "Previous" %}</a>{% else %}<span></span>{% endif %}
+      <span class="text-sm text-muted">{% blocktranslate with page=page_obj.number pages=page_obj.paginator.num_pages %}Page {{ page }} of {{ pages }}{% endblocktranslate %}</span>
+      {% if page_obj.has_next %}<a class="btn btn-secondary" href="?page={{ page_obj.next_page_number }}">{% translate "Next" %}</a>{% else %}<span></span>{% endif %}
+    </nav>
+  {% endif %}
+</div>
+{% endblock content %}

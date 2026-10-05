@@ -18,6 +18,13 @@ from typing import ClassVar
 # Core imports
 from core.models import BaseModel
 from core.utils import safe_reverse
+from core.utils.enums import EmployeeStatus
+from core.utils.enums import GuardShift
+from core.utils.enums import InvitationRole
+from core.utils.enums import InvitationStatus
+from core.utils.enums import OtpPurpose
+from core.utils.enums import UserStatus
+from core.utils.otp import verify_otp_code
 from core.validators import validate_phone_number_for_country
 
 # Django & third-party
@@ -32,13 +39,6 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 # Project imports
 from users.managers import UserManager
-from utils.enums import EmployeeStatus
-from utils.enums import GuardShift
-from utils.enums import InvitationRole
-from utils.enums import InvitationStatus
-from utils.enums import OtpPurpose
-from utils.enums import UserStatus
-from utils.otp import verify_otp_code
 
 MAX_OTP_ATTEMPTS = 5
 
@@ -196,7 +196,7 @@ class User(BaseModel, AbstractUser):
 
     def get_absolute_url(self) -> str:
         """URL to the user detail page (for admin or frontend)."""
-        return safe_reverse("users:detail", kwargs={"pk": self.id})
+        return safe_reverse("users:detail", kwargs={"pk": self.slug})
 
 
 class Otp(BaseModel):
@@ -334,7 +334,7 @@ class Landlord(BaseModel):
         return str(self.user)
 
     def get_absolute_url(self) -> str:
-        return safe_reverse("users:landlord-detail", kwargs={"pk": self.id})
+        return safe_reverse("users:landlord-detail", kwargs={"pk": self.slug})
 
 
 # =====================================================================
@@ -407,7 +407,7 @@ class Tenant(BaseModel):
         return str(self.user)
 
     def get_absolute_url(self) -> str:
-        return safe_reverse("users:tenant-detail", kwargs={"pk": self.id})
+        return safe_reverse("users:tenant-detail", kwargs={"pk": self.slug})
 
 
 # =====================================================================
@@ -421,7 +421,7 @@ class Employee(BaseModel):
     - Linked to a User via OneToOneField.
     - Has a unique, auto-generated employee_number.
     - Stores job title, employment status, hire date.
-    - Status uses EmployeeStatus enum from utils.enums.
+    - Status uses EmployeeStatus enum from core.utils.enums.
     """
 
     reference_field = "employee_number"
@@ -494,7 +494,7 @@ class Employee(BaseModel):
         return str(self.user)
 
     def get_absolute_url(self) -> str:
-        return safe_reverse("users:employee-detail", kwargs={"pk": self.id})
+        return safe_reverse("users:employee-detail", kwargs={"pk": self.slug})
 
 
 # =====================================================================
@@ -557,7 +557,7 @@ class MaintenanceAgent(BaseModel):
 
     def get_absolute_url(self) -> str:
         # Using the 'users' namespace for consistency with other profiles.
-        return safe_reverse("users:maintenance-agent-detail", kwargs={"pk": self.id})
+        return safe_reverse("users:maintenance-agent-detail", kwargs={"pk": self.slug})
 
 
 # =====================================================================
@@ -602,6 +602,11 @@ class Guard(BaseModel):
         help_text=_("The guard's assigned work shift."),
     )
 
+    landlords = models.ManyToManyField(
+        "Landlord", blank=True, related_name="guards",
+        verbose_name=_("Landlords"),
+        help_text=_("Landlords whose residences this guard can secure."),
+    )
     class Meta:
         db_table = "guards"
         ordering = ["-created_at"]
@@ -618,7 +623,7 @@ class Guard(BaseModel):
 
     def get_absolute_url(self) -> str:
         # Using the 'users' namespace for consistency.
-        return safe_reverse("users:guard-detail", kwargs={"pk": self.id})
+        return safe_reverse("users:guard-detail", kwargs={"pk": self.slug})
 
 
 # =====================================================================

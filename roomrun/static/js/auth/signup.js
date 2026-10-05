@@ -10,6 +10,7 @@ document.querySelectorAll("[data-password-toggle]").forEach((button) => {
     const showLabel = button.dataset.i18nShow || gettext("Show password");
     const hideLabel = button.dataset.i18nHide || gettext("Hide password");
     button.setAttribute("aria-label", visible ? hideLabel : showLabel);
+    button.setAttribute("aria-pressed", String(visible));
   });
 });
 
@@ -24,6 +25,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const roleCards = document.querySelectorAll(".role-card");
 
   function updateStepIndicator(activeStep) {
+    step1Indicator?.toggleAttribute("aria-current", activeStep === 1);
+    step2Indicator?.toggleAttribute("aria-current", activeStep === 2);
     if (activeStep === 1) {
       if (step1Indicator) {
         step1Indicator.querySelector('span:first-child').className = 'flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs font-semibold text-white';

@@ -1,4 +1,4 @@
-# communications/services/__init__.py
+"""Public services exposed by the communications application."""
 
 from .chat_ser import ConversationService
 

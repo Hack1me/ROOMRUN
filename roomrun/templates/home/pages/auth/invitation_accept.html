@@ -1,0 +1,16 @@
+{% extends "home/pages/auth/layout.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Accept invitation" %} — ROOMRUN{% endblock %}
+{% block content %}
+<section class="w-full max-w-md rounded-card border border-line bg-card p-6 shadow-sm">
+  <p class="rr-eyebrow">{% translate "ROOMRUN invitation" %}</p>
+  <h1 class="mt-3 font-display text-3xl text-primary">{% translate "Create your account" %}</h1>
+  <p class="mt-2 text-sm text-muted">{% blocktranslate with role=invitation.get_role_display email=invitation.email %}You were invited as {{ role }} at {{ email }}.{% endblocktranslate %}</p>
+  <form method="post" class="mt-6 space-y-4">{% csrf_token %}
+    {% for field in form %}<div><label class="rr-form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<p class="mt-1 text-xs text-danger">{{ error }}</p>{% endfor %}</div>{% endfor %}
+    {% for error in form.non_field_errors %}<p class="text-xs text-danger">{{ error }}</p>{% endfor %}
+    <button class="rr-btn-primary w-full" type="submit">{% translate "Accept invitation" %}</button>
+  </form>
+</section>
+{% endblock content %}

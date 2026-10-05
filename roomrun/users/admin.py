@@ -9,6 +9,7 @@ from .models import Guard
 from .models import Invitation
 from .models import Landlord
 from .models import MaintenanceAgent
+from .models import Otp
 from .models import Tenant
 from .models import User
 
@@ -65,6 +66,26 @@ class UserAdmin(auth_admin.UserAdmin):
     list_filter = ("status", "email_verified", "is_staff", "is_superuser")
     search_fields = ("email", "first_name", "last_name")
     ordering = ("email",)
+
+
+@admin.register(Otp)
+class OtpAdmin(admin.ModelAdmin):
+    list_display = ("user", "purpose", "expiration_at", "attempts", "is_used")
+    list_filter = ("purpose", "is_used", "expiration_at")
+    search_fields = ("user__email",)
+    fields = (
+        "user",
+        "purpose",
+        "expiration_at",
+        "attempts",
+        "is_used",
+        "created_at",
+        "updated_at",
+    )
+    readonly_fields = fields
+
+    def has_add_permission(self, request):
+        return False
 
 
 admin.site.register([Landlord, Tenant, Employee, MaintenanceAgent, Guard, Invitation])

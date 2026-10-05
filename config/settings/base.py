@@ -179,6 +179,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "core.middleware.SlugToPrimaryKeyMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -228,6 +229,8 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
+                "billing.context_processors.landlord_wallet",
+                "communications.context_processors.notification_context",
             ],
         },
     },
@@ -380,11 +383,33 @@ LOGIN_REDIRECT_URL = os.getenv("LOGIN_REDIRECT_URL", LOGIN_REDIRECT_URL)
 INVITATION_EXPIRATION_HOURS = env.int("INVITATION_EXPIRATION_HOURS", 48)
 
 
-# CAMPAY GATEWAY
-CAMPAY_USERNAME = env("CAMPAY_USERNAME")
-CAMPAY_PASSWORD = env("CAMPAY_PASSWORD")
+# CamPay
+CAMPAY_USERNAME = env("CAMPAY_USERNAME", default="")
+CAMPAY_PASSWORD = env("CAMPAY_PASSWORD", default="")
+CAMPAY_ENVIRONMENT = env("CAMPAY_ENVIRONMENT", default="DEV")
 CAMPAY_WEBHOOK_SECRET = env("CAMPAY_WEBHOOK_SECRET", default="")
-CAMPAY_ENVIRONMENT = env(
-    "CAMPAY_ENVIRONMENT",
-    default="DEV",
+CAMPAY_WEBHOOK_URL = env("CAMPAY_WEBHOOK_URL", default="")
+
+# DigiPay
+DIGIPAY_LIVE_API_KEY = env("DIGIPAY_LIVE_API_KEY", default="")
+DIGIPAY_TEST_API_KEY = env("DIGIPAY_TEST_API_KEY", default="")
+DIGIPAY_ENVIRONMENT = env(
+    "DIGIPAY_ENVIRONMENT",
+    default="production" if DIGIPAY_LIVE_API_KEY else "sandbox",
+).strip().lower()
+DIGIPAY_ENVIRONMENT = {
+    "live": "production",
+    "prod": "production",
+    "test": "sandbox",
+    "dev": "sandbox",
+}.get(DIGIPAY_ENVIRONMENT, DIGIPAY_ENVIRONMENT)
+DIGIPAY_API_KEY = env("DIGIPAY_API_KEY", default="") or (
+    DIGIPAY_TEST_API_KEY
+    if DIGIPAY_ENVIRONMENT == "sandbox"
+    else DIGIPAY_LIVE_API_KEY
 )
+DIGIPAY_WEBHOOK_URL = env("DIGIPAY_WEBHOOK_URL", default="")
+DIGIPAY_WEBHOOK_SECRET = env("DIGIPAY_WEBHOOK_SECRET", default="")
+
+# Default provider
+DEFAULT_PAYMENT_PROVIDER = env("DEFAULT_PAYMENT_PROVIDER", default="DIGIPAY").strip().upper()

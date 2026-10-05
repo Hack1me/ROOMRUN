@@ -82,7 +82,7 @@ class BuildingCreateView(LandlordBuildingAccessMixin, ServiceFormMixin, View):
         return self.service_success(
             _("Building created successfully."),
             "properties:building-detail",
-            pk=building.pk,
+            pk=building.slug,
         )
 
 
@@ -163,7 +163,7 @@ class BuildingUpdateView(LandlordBuildingAccessMixin, ServiceFormMixin, View):
         return self.service_success(
             _("Building updated successfully."),
             "properties:building-detail",
-            pk=building.pk,
+            pk=building.slug,
         )
 
 
@@ -183,4 +183,4 @@ class BuildingDeleteView(LandlordBuildingAccessMixin, View):
         BuildingService.delete(building=building)
 
         messages.success(request, _("Building deleted successfully."))
-        return redirect("properties:property-detail", pk=property_obj.pk)
+        return redirect("properties:property-detail", pk=property_obj.slug)

@@ -475,7 +475,7 @@
 
 {% block body %}
   <div class="app landlord-app">
-    {% include "dashboard/includes/landlord_sidebar.html" %}
+    {% include "dashboard/includes/role_sidebar.html" %}
 
     <main class="main">
       <header class="topbar">
@@ -669,7 +669,7 @@
 
                 <!-- ACTIONS -->
                 <div class="form-actions">
-                  <a href="{% if application %}{% url 'rentals:landlord-rental-application-detail' pk=application.pk %}{% else %}{% url 'rentals:landlord-rental-application-list' %}{% endif %}" class="btn btn-secondary">
+                  <a href="{% if application %}{% url 'rentals:landlord-rental-application-detail' pk=application.slug %}{% else %}{% url 'rentals:landlord-rental-application-list' %}{% endif %}" class="btn btn-secondary">
                     <i class="ti ti-arrow-left"></i>
                     {% translate "Cancel" %}
                   </a>
@@ -725,7 +725,7 @@
                     {% translate "Active" %}
                   </span>
                 </div>
-                <div class="application-note" style="margin-top:15px;">
+                <div class="application-note mt-4">
                   <i class="ti ti-info-circle"></i>
                   <span>{% translate "Once created, the contract will be active and the unit will be associated with this rental." %}</span>
                 </div>
@@ -740,6 +740,7 @@
 
 {% block inline_javascript %}
   {{ block.super }}
+
   <script>
     (() => {
       const canvas = document.getElementById("signatureCanvas");

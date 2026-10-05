@@ -13,15 +13,16 @@ from properties.views.property_view import PropertyDetailView
 from properties.views.property_view import PropertyImagesView
 from properties.views.property_view import PropertyListView
 from properties.views.property_view import PropertyUpdateView
-from properties.views.unit_view import UnitCreateView
-from properties.views.unit_view import UnitDeleteView
-from properties.views.unit_view import UnitDetailView
-from properties.views.unit_view import UnitListView
-from properties.views.unit_view import UnitUpdateView
-from properties.views.unit_view import UnitImagesView
 from properties.views.unit_img_view import UnitImageCreateView
 from properties.views.unit_img_view import UnitImageDeleteView
 from properties.views.unit_img_view import UnitImagePrimaryView
+from properties.views.unit_view import LandlordUnitOverviewView
+from properties.views.unit_view import UnitCreateView
+from properties.views.unit_view import UnitDeleteView
+from properties.views.unit_view import UnitDetailView
+from properties.views.unit_view import UnitImagesView
+from properties.views.unit_view import UnitListView
+from properties.views.unit_view import UnitUpdateView
 
 app_name = "properties"
 
@@ -37,27 +38,32 @@ urlpatterns = [
         name="property-create",
     ),
     path(
-        "<uuid:pk>/",
+        "units/",
+        LandlordUnitOverviewView.as_view(),
+        name="landlord-unit-list",
+    ),
+    path(
+        "<slug:pk>/",
         PropertyDetailView.as_view(),
         name="property-detail",
     ),
     path(
-        "<uuid:pk>/edit/",
+        "<slug:pk>/edit/",
         PropertyUpdateView.as_view(),
         name="property-edit",
     ),
     path(
-        "<uuid:pk>/configure/",
+        "<slug:pk>/configure/",
         PropertyConfigurationView.as_view(),
         name="property-configure",
     ),
     path(
-        "<uuid:pk>/images/",
+        "<slug:pk>/images/",
         PropertyImagesView.as_view(),
         name="property-images",
     ),
     path(
-        "<uuid:pk>/delete/",
+        "<slug:pk>/delete/",
         PropertyDeleteView.as_view(),
         name="property-delete",
     ),
@@ -65,22 +71,22 @@ urlpatterns = [
 
 urlpatterns += [
     path(
-        "<uuid:property_id>/images/add/",
+        "<slug:property_id>/images/add/",
         PropertyImageCreateView.as_view(),
         name="property-image-add",
     ),
     path(
-        "images/<uuid:image_id>/primary/",
+        "images/<slug:image_id>/primary/",
         PropertyImagePrimaryView.as_view(),
         name="property-image-primary",
     ),
     path(
-        "images/<uuid:image_id>/edit/",
+        "images/<slug:image_id>/edit/",
         PropertyImageUpdateView.as_view(),
         name="property-image-edit",
     ),
     path(
-        "images/<uuid:image_id>/delete/",
+        "images/<slug:image_id>/delete/",
         PropertyImageDeleteView.as_view(),
         name="property-image-delete",
     ),
@@ -88,62 +94,62 @@ urlpatterns += [
 
 urlpatterns += [
     path(
-        "buildings/<uuid:pk>/",
+        "buildings/<slug:pk>/",
         BuildingDetailView.as_view(),
         name="building-detail",
     ),
     path(
-        "buildings/<uuid:pk>/edit/",
+        "buildings/<slug:pk>/edit/",
         BuildingUpdateView.as_view(),
         name="building-edit",
     ),
     path(
-        "<uuid:property_id>/buildings/create/",
+        "<slug:property_id>/buildings/create/",
         BuildingCreateView.as_view(),
         name="property-buildings-create",
     ),
     path(
-        "<uuid:property_id>/buildings/<uuid:building_id>/units/",
+        "<slug:property_id>/buildings/<slug:building_id>/units/",
         UnitListView.as_view(),
         name="unit-list",
     ),
     path(
-        "<uuid:property_id>/buildings/<uuid:building_id>/units/create/",
+        "<slug:property_id>/buildings/<slug:building_id>/units/create/",
         UnitCreateView.as_view(),
         name="unit-create",
     ),
     path(
-        "units/<uuid:pk>/",
+        "units/<slug:pk>/",
         UnitDetailView.as_view(),
         name="unit-detail",
     ),
     path(
-        "units/<uuid:pk>/edit/",
+        "units/<slug:pk>/edit/",
         UnitUpdateView.as_view(),
         name="unit-edit",
     ),
     path(
-        "units/<uuid:pk>/delete/",
+        "units/<slug:pk>/delete/",
         UnitDeleteView.as_view(),
         name="unit-delete",
     ),
     path(
-        "units/<uuid:pk>/images/",
+        "units/<slug:pk>/images/",
         UnitImagesView.as_view(),
         name="unit-images",
     ),
     path(
-        "units/<uuid:unit_id>/images/add/",
+        "units/<slug:unit_id>/images/add/",
         UnitImageCreateView.as_view(),
         name="unit-image-add",
     ),
     path(
-        "unit-images/<uuid:image_id>/primary/",
+        "unit-images/<slug:image_id>/primary/",
         UnitImagePrimaryView.as_view(),
         name="unit-image-primary",
     ),
     path(
-        "unit-images/<uuid:image_id>/delete/",
+        "unit-images/<slug:image_id>/delete/",
         UnitImageDeleteView.as_view(),
         name="unit-image-delete",
     ),

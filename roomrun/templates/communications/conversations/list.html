@@ -14,7 +14,7 @@
 
 {% block body %}
   <div class="conversation-page">
-    {% include "dashboard/includes/landlord_sidebar.html" %}
+    {% include "dashboard/includes/role_sidebar.html" %}
 
     <main class="conversation-main">
       <header class="conversation-topbar">
@@ -67,7 +67,7 @@
               <header class="chat-header">
                 <span class="conversation-avatar conversation-avatar--large">{% if selected_conversation.display_avatar_url %}<img src="{{ selected_conversation.display_avatar_url }}" alt="">{% else %}{{ selected_conversation.display_name|first|upper }}{% endif %}</span>
                 <div><h2>{{ selected_conversation.display_name }}</h2><p data-chat-status data-connected-text="{% translate 'Connected' %}" data-disconnected-text="{% translate 'Connection unavailable' %}" data-typing-text="{% translate 'Someone is typing…' %}">{% translate "Connecting…" %}</p></div>
-                <form class="ml-auto" method="post" action="{% url 'communications:conversation-delete' pk=selected_conversation.pk %}" data-delete-conversation>
+                <form class="ml-auto" method="post" action="{% url 'communications:conversation-delete' pk=selected_conversation.slug %}" data-delete-conversation>
                   {% csrf_token %}<button class="conversation-icon-button conversation-delete-button" type="submit" aria-label="{% translate 'Delete conversation' %}" title="{% translate 'Delete conversation' %}"><i class="ti ti-trash"></i></button>
                 </form>
               </header>
@@ -99,7 +99,7 @@
             <aside class="conversation-details">
               <section><h2>{% translate "Conversation information" %}</h2><div class="conversation-details__identity"><span class="conversation-avatar conversation-avatar--large">{% if selected_conversation.display_avatar_url %}<img src="{{ selected_conversation.display_avatar_url }}" alt="">{% else %}{{ selected_conversation.display_name|first|upper }}{% endif %}</span><div><strong>{{ selected_conversation.display_name }}</strong><small>{{ selected_conversation.get_conversation_type_display }}</small></div></div></section>
               <section><h3>{% translate "Participants" %}</h3><ul>{% for participant in other_participants %}<li><span class="participant-avatar">{% if participant.profile_picture %}<img src="{{ participant.profile_picture.url }}" alt="">{% else %}{{ participant.first_name|first }}{{ participant.last_name|first }}{% endif %}</span><span>{{ participant.full_name|default:participant.email }}</span></li>{% empty %}<li>{% translate "Only you are in this conversation." %}</li>{% endfor %}</ul></section>
-              <section><h3>{% translate "Quick actions" %}</h3><a href="{% url 'communications:conversation-detail' pk=selected_conversation.pk %}"><i class="ti ti-dots"></i>{% translate "View conversation" %}</a></section>
+              <section><h3>{% translate "Quick actions" %}</h3><a href="{% url 'communications:conversation-detail' pk=selected_conversation.slug %}"><i class="ti ti-dots"></i>{% translate "View conversation" %}</a></section>
             </aside>
           {% else %}
             <section class="conversation-no-selection"><i class="ti ti-messages"></i><h2>{% translate "Choose a conversation" %}</h2><p>{% translate "Select a conversation to read and send messages." %}</p></section>
@@ -122,6 +122,6 @@
 {% endblock body %}
 
 {% block inline_javascript %}
-  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
+
   <script defer src="{% static 'js/conversations.js' %}"></script>
 {% endblock inline_javascript %}

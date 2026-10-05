@@ -6,48 +6,9 @@
 {% block header %}{% endblock header %}
 {% block dashboard_body %}
   <div class="app landlord-app">
-    {% include "dashboard/includes/landlord_sidebar.html" %}
+    {% include "dashboard/includes/role_sidebar.html" %}
     <main class="main">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button type="button"
-                  class="menu-button"
-                  id="mobile-menu"
-                  aria-label="{% translate 'Open menu' %}">
-            <i class="ti ti-menu-2"></i>
-          </button>
-          <div class="page-heading">
-            <h1>{% translate "Dashboard" %}</h1>
-            <p>{% translate "Overview of your activity" %}</p>
-          </div>
-        </div>
-        <label class="topbar-search">
-          <i class="ti ti-search"></i>
-          <input type="search"
-                 placeholder="{% translate 'Search a property, a tenant…' %}" />
-        </label>
-        <div class="topbar-right">
-          <button type="button"
-                  class="icon-button"
-                  aria-label="{% translate 'Notifications' %}">
-            <i class="ti ti-bell"></i>
-            {% if pending_maintenance %}
-              <span class="notification-badge"></span>
-            {% endif %}
-          </button>
-          <a href="{% url 'users:profile' %}"
-             class="icon-button profile-button"
-             aria-label="{% translate 'Profile' %}">
-            {% if user.profile_picture %}
-              <img class="h-full w-full object-cover"
-                   src="{{ user.profile_picture.url }}"
-                   alt="" />
-            {% else %}
-              <i class="ti ti-user"></i>
-            {% endif %}
-          </a>
-        </div>
-      </header>
+      {% include "dashboard/topbars/landlord.html" %}
       <div class="content">
         {% include "common/includes/messages.html" %}
 
@@ -82,7 +43,7 @@
               <span class="kpi-title">{% translate "Occupied units" %}</span>
               <span class="kpi-icon icon-blue"><i class="ti ti-home"></i></span>
             </div>
-            <p class="kpi-value">{{ active_contracts }} / {{ total_units }}</p>
+            <p class="kpi-value">{{ occupied_unit_count }} / {{ total_units }}</p>
             <p class="kpi-footer positive">
               <i class="ti ti-trending-up"></i>
               {{ occupancy_rate }}% {% translate "occupied" %}
@@ -90,7 +51,7 @@
           </article>
           <article class="kpi-card">
             <div class="kpi-top">
-              <span class="kpi-title">{% translate "Monthly revenue" %}</span>
+              <span class="kpi-title">{% translate "Expected monthly rent" %}</span>
               <span class="kpi-icon icon-green"><i class="ti ti-cash"></i></span>
             </div>
             <p class="kpi-value">{{ monthly_revenue|floatformat:0 }} FCFA</p>
@@ -113,43 +74,32 @@
         </section>
 
         <!-- QUICK ACTIONS -->
-        <section class="section-card quick-actions">
+        <section class="section-card quick-actions" data-quick-actions-source>
           <div class="section-header">
             <h2 class="section-title">{% translate "Quick actions" %}</h2>
+            {% include "dashboard/includes/quick_actions_toggle.html" with panel_id="landlord-quick-actions" %}
           </div>
-          <div class="actions-grid">
-            <button class="action">
-              <div class="action-icon icon-blue"><i class="ti ti-building"></i></div>
-              <div class="action-content">
-                <div class="action-title">{% translate "Add a property" %}</div>
-                <div class="action-description">{% translate "Register a new property" %}</div>
-              </div>
+          <div class="actions-grid quick-actions-panel" id="landlord-quick-actions" data-quick-actions-panel>
+            <a class="action" href="{% url 'rentals:landlord-rental-application-list' %}">
+              <div class="action-icon icon-orange"><i class="ti ti-inbox"></i></div>
+              <div class="action-content"><div class="action-title">{% translate "Applications" %}{% if pending_applications %} <span class="action-count">{{ pending_applications }}</span>{% endif %}</div></div>
               <i class="ti ti-chevron-right action-arrow"></i>
-            </button>
-            <button class="action">
+            </a>
+            <a class="action" href="{% url 'rentals:landlord-rental-contract-create' %}">
               <div class="action-icon icon-green"><i class="ti ti-file-plus"></i></div>
-              <div class="action-content">
-                <div class="action-title">{% translate "New lease" %}</div>
-                <div class="action-description">{% translate "Create a contract" %}</div>
-              </div>
+              <div class="action-content"><div class="action-title">{% translate "New lease" %}</div></div>
               <i class="ti ti-chevron-right action-arrow"></i>
-            </button>
-            <button class="action">
-              <div class="action-icon icon-purple"><i class="ti ti-receipt"></i></div>
-              <div class="action-content">
-                <div class="action-title">{% translate "Add a charge" %}</div>
-                <div class="action-description">{% translate "Create a billing charge" %}</div>
-              </div>
+            </a>
+            <a class="action" href="{% url 'properties:property-create' %}">
+              <div class="action-icon icon-blue"><i class="ti ti-building-plus"></i></div>
+              <div class="action-content"><div class="action-title">{% translate "Add property" %}</div></div>
               <i class="ti ti-chevron-right action-arrow"></i>
-            </button>
-            <button class="action">
-              <div class="action-icon icon-orange"><i class="ti ti-message-plus"></i></div>
-              <div class="action-content">
-                <div class="action-title">{% translate "New message" %}</div>
-                <div class="action-description">{% translate "Contact a tenant" %}</div>
-              </div>
+            </a>
+            <a class="action" href="{% url 'billing:landlord-wallet' %}">
+              <div class="action-icon icon-purple"><i class="ti ti-wallet"></i></div>
+              <div class="action-content"><div class="action-title">{% translate "Wallet" %}</div></div>
               <i class="ti ti-chevron-right action-arrow"></i>
-            </button>
+            </a>
           </div>
         </section>
 
@@ -159,12 +109,9 @@
             <div class="chart-header">
               <div>
                 <div class="chart-title">{% translate "Revenue evolution" %}</div>
-                <div class="chart-description">{% translate "Revenue for the last 6 months" %}</div>
+                <div class="chart-description">{% translate "Confirmed payments for the last 6 months" %}</div>
               </div>
-              <select class="chart-filter">
-                <option>{% translate "Last 6 months" %}</option>
-                <option>{% translate "Last 12 months" %}</option>
-              </select>
+              <span class="chart-period">{% translate "Last 6 months" %}</span>
             </div>
             <div class="chart-container">
               <canvas id="revenueChart"></canvas>
@@ -206,7 +153,7 @@
             </div>
             <div class="list-body">
               {% for property in recent_properties %}
-                <div class="attention-item">
+                <a class="attention-item" href="{% url 'properties:property-detail' property.slug %}">
                   <div class="item-icon icon-blue"><i class="ti ti-home"></i></div>
                   <div class="item-content">
                     <div class="item-title">{{ property.name }}</div>
@@ -215,7 +162,7 @@
                   <span class="item-status status-{% if property.status == 'ACTIVE' %}success{% else %}warning{% endif %}">
                     {{ property.get_status_display }}
                   </span>
-                </div>
+                </a>
               {% empty %}
                 <p class="p-5 text-sm text-muted">{% translate "No property has been added yet." %}</p>
               {% endfor %}
@@ -226,18 +173,18 @@
           <div class="list-card">
             <div class="list-header">
               <h3>{% translate "Recent payments" %}</h3>
-              <a href="#" class="section-link">{% translate "See all" %} →</a>
+              <a href="{% url 'billing:landlord-wallet' %}" class="section-link">{% translate "See all" %} →</a>
             </div>
             <div class="list-body">
               {% for payment in recent_payments %}
-                <div class="attention-item">
+                <a class="attention-item" href="{% url 'billing:landlord-wallet' %}">
                   <div class="item-icon icon-green"><i class="ti ti-check"></i></div>
                   <div class="item-content">
                     <div class="item-title">{{ payment.charge.get_charge_type_display }}</div>
-                    <div class="item-meta">{{ payment.paid_at|date:"d M Y" }}</div>
+                    <div class="item-meta">{{ payment.charge.contract.tenant.user.full_name }} · {{ payment.paid_at|date:"d M Y" }}</div>
                   </div>
-                  <div class="item-amount">{{ payment.amount }} FCFA</div>
-                </div>
+                  <div class="item-amount">{{ payment.amount.amount|floatformat:0 }} FCFA</div>
+                </a>
               {% empty %}
                 <p class="p-5 text-sm text-muted">{% translate "No payment has been recorded yet." %}</p>
               {% endfor %}
@@ -253,7 +200,7 @@
           </div>
           <div class="maintenance-list">
             {% for request in recent_maintenance_requests %}
-              <div class="maintenance-item">
+              <a class="maintenance-item" href="{% url 'maintenance:landlord-request-detail' request.slug %}">
                 <div class="item-icon icon-orange"><i class="ti ti-tools"></i></div>
                 <div class="item-content">
                   <div class="item-title">{{ request.title }}</div>
@@ -262,7 +209,7 @@
                 <div class="item-time">
                   <i class="ti ti-clock"></i> {{ request.created_at|timesince }}
                 </div>
-              </div>
+              </a>
             {% empty %}
               <p class="p-5 text-sm text-muted">{% translate "No maintenance request yet." %}</p>
             {% endfor %}
@@ -273,47 +220,19 @@
         <section class="activity-card">
           <div class="section-header">
             <h2 class="section-title">{% translate "Recent activities" %}</h2>
-            <a href="#" class="view-link">{% translate "See all" %} →</a>
+            <a href="{% url 'communications:notification-list' %}" class="view-link">{% translate "See notifications" %} →</a>
           </div>
           <div class="activity-list">
-            {% with last_payment=recent_payments|first %}
-              {% if last_payment %}
+            {% for activity in recent_activities %}
               <div class="activity">
-                <div class="activity-icon icon-green"><i class="ti ti-cash"></i></div>
+                <div class="activity-icon {% if activity.kind == 'payment' %}icon-green{% elif activity.kind == 'maintenance' %}icon-orange{% else %}icon-blue{% endif %}"><i class="ti {% if activity.kind == 'payment' %}ti-cash{% elif activity.kind == 'maintenance' %}ti-tool{% else %}ti-user-plus{% endif %}"></i></div>
                 <div class="activity-content">
-                  <div class="activity-title">{% translate "Payment received" %}</div>
-                  <div class="activity-meta">{{ last_payment.amount }} FCFA</div>
+                  {% if activity.url_pk %}<a class="activity-title" href="{% url activity.url_name activity.url_pk %}">{{ activity.title }}</a>{% else %}<a class="activity-title" href="{% url activity.url_name %}">{{ activity.title }}</a>{% endif %}
+                  <div class="activity-meta">{{ activity.subtitle }}{% if activity.amount %} · {{ activity.amount.amount|floatformat:0 }} FCFA{% endif %}</div>
                 </div>
-                <div class="activity-time">{% blocktranslate with days=last_payment.paid_at|timesince %}{{ days }} ago{% endblocktranslate %}</div>
+                <div class="activity-time">{% blocktranslate with days=activity.date|timesince %}{{ days }} ago{% endblocktranslate %}</div>
               </div>
-              {% endif %}
-            {% endwith %}
-            {% for req in recent_maintenance_requests %}
-              <div class="activity">
-                <div class="activity-icon icon-orange"><i class="ti ti-tool"></i></div>
-                <div class="activity-content">
-                  <div class="activity-title">{% translate "Maintenance request" %}</div>
-                  <div class="activity-meta">{{ req.title }}</div>
-                </div>
-                <div class="activity-time">{% blocktranslate with days=req.created_at|timesince %}{{ days }} ago{% endblocktranslate %}</div>
-              </div>
-            {% endfor %}
-            <div class="activity">
-              <div class="activity-icon icon-blue"><i class="ti ti-user-plus"></i></div>
-              <div class="activity-content">
-                <div class="activity-title">{% translate "New tenant" %}</div>
-                <div class="activity-meta">{% translate "Apartment D01" %}</div>
-              </div>
-              <div class="activity-time">{% translate "Yesterday" %}</div>
-            </div>
-            <div class="activity">
-              <div class="activity-icon icon-purple"><i class="ti ti-file-text"></i></div>
-              <div class="activity-content">
-                <div class="activity-title">{% translate "Lease signed" %}</div>
-                <div class="activity-meta">{% translate "Apartment C03" %}</div>
-              </div>
-              <div class="activity-time">{% translate "Yesterday" %}</div>
-            </div>
+            {% empty %}<p class="p-5 text-sm text-muted">{% translate "Your payments, applications and maintenance updates will appear here." %}</p>{% endfor %}
           </div>
         </section>
       </div>
@@ -322,26 +241,24 @@
 
   {% block inline_javascript %}
     <script src="{% static 'vendor/chartjs/chart.umd.min.js' %}"></script>
+    {{ dashboard_charts|json_script:"landlord-dashboard-data" }}
     <script>
-      window.LANDLORD_DASHBOARD = {
-        revenue: {
-          labels: ["Avr", "Mai", "Juin", "Juil", "Août", "Sep"],
-          data: [180000, 310000, 290000, 450000, 430000, 600000]
-        },
-        occupancy: {
-          labels: ["Occupés", "Vacants", "Maintenance"],
-          data: [18, 4, 2],
-          backgroundColor: ["#2E9E5B", "#DCE5F1", "#B9770E"]
-        },
-        maintenance: {
-          labels: ["Juin", "Juil", "Août", "Sep"],
-          new: [3, 3, 4, 3],
-          inProgress: [2, 4, 3, 2],
-          completed: [4, 3, 5, 4]
-        }
-      };
+      window.LANDLORD_DASHBOARD = JSON.parse(
+        document.getElementById("landlord-dashboard-data").textContent
+      );
     </script>
     <script defer src="{% static 'js/landlord-dashboard.js' %}"></script>
   {% endblock inline_javascript %}
 {% endblock dashboard_body %}
 {% block footer %}{% endblock footer %}
+{% block extra_css %}
+  {{ block.super }}
+  <style>
+    .landlord-app .action{color:inherit;text-decoration:none}
+    .landlord-app .actions-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .landlord-app .action-count{display:inline-flex;min-width:18px;height:18px;align-items:center;justify-content:center;margin-left:5px;padding:0 5px;border-radius:999px;background:#fff0e5;color:#a15b32;font-size:10px;vertical-align:middle}
+    .landlord-app a.attention-item,.landlord-app a.maintenance-item,.landlord-app a.activity-title{color:inherit;text-decoration:none}
+    .landlord-app a.attention-item:hover,.landlord-app a.maintenance-item:hover,.landlord-app a.activity-title:hover{color:#a15b32}
+    @media(max-width:520px){.landlord-app .actions-grid{grid-template-columns:1fr}}
+  </style>
+{% endblock extra_css %}

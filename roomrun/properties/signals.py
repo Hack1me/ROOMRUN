@@ -1,7 +1,7 @@
+from core.utils.helpers import assign_reference_identifier
 from django.db.models.signals import post_delete
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from utils.helpers import assign_reference_identifier
 
 from .models import Building
 from .models import Property

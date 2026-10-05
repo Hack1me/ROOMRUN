@@ -6,114 +6,9 @@
 {% block header %}{% endblock header %}
 {% block dashboard_body %}
   <div class="app maintenance-app">
-    <aside class="sidebar maintenance-sidebar overflow-y-auto" id="sidebar">
-      <div class="brand">
-        <div class="brand-mark"></div>
-        <div>
-          <div class="brand-name">ROOMRUN</div>
-          <div class="brand-subtitle">
-            {% translate "Property Management" %}
-          </div>
-        </div>
-      </div>
-      <div class="sidebar-content">
-        <div class="nav-section">
-          <div class="nav-title">{% translate "Main" %}</div>
-          <a href="{% url 'dashboard:maintenance' %}" class="nav-item active">
-            <i class="ti ti-layout-dashboard"></i>
-            <span>{% translate "Dashboard" %}</span>
-          </a>
-          <a href="{% url 'maintenance:task-list' %}" class="nav-item">
-            <i class="ti ti-tool"></i>
-            <span>{% translate "My tasks" %}</span>
-            <span class="nav-badge">{{ pending_tasks }}</span>
-          </a>
-          <a href="{% url 'maintenance:agent-queue' %}" class="nav-item">
-            <i class="ti ti-clipboard-list"></i>
-            <span>{% translate "Requests" %}</span>
-          </a>
-          <a href="#" class="nav-item">
-            <i class="ti ti-calendar"></i>
-            <span>{% translate "Calendar" %}</span>
-          </a>
-        </div>
-        <div class="nav-section">
-          <div class="nav-title">{% translate "Communication" %}</div>
-          <a href="#" class="nav-item">
-            <i class="ti ti-message"></i>
-            <span>{% translate "Messages" %}</span>
-            <span class="nav-badge">2</span>
-          </a>
-          <a href="#" class="nav-item">
-            <i class="ti ti-bell"></i>
-            <span>{% translate "Notifications" %}</span>
-            <span class="nav-badge">3</span>
-          </a>
-        </div>
-        <div class="nav-section">
-          <div class="nav-title">{% translate "System" %}</div>
-          <a href="#" class="nav-item">
-            <i class="ti ti-settings"></i>
-            <span>{% translate "Settings" %}</span>
-          </a>
-          <a href="#" class="nav-item">
-            <i class="ti ti-help-circle"></i>
-            <span>{% translate "Help" %}</span>
-          </a>
-          <a href="{% url 'users:logout' %}" class="nav-item">
-            <i class="ti ti-logout"></i>
-            <span>{% translate "Sign out" %}</span>
-          </a>
-        </div>
-      </div>
-      <div class="sidebar-user">
-        <div class="user-avatar">
-          {{ user.first_name|first }}{{ user.last_name|first }}
-        </div>
-        <div>
-          <div class="user-name">{{ user.full_name }}</div>
-          <div class="user-role">{% translate "Maintenance agent" %}</div>
-        </div>
-      </div>
-    </aside>
+    {% include "dashboard/includes/role_sidebar.html" %}
     <main class="main">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button type="button"
-                  class="menu-button"
-                  id="mobile-menu"
-                  aria-label="{% translate 'Open menu' %}">
-            <i class="ti ti-menu-2"></i>
-          </button>
-          <div class="page-heading">
-            <h1>{% translate "Dashboard" %}</h1>
-            <p>{% translate "Overview of your interventions" %}</p>
-          </div>
-        </div>
-        <div class="topbar-right">
-          <label class="topbar-search">
-            <i class="ti ti-search"></i>
-            <input type="search"
-                   placeholder="{% translate 'Search an intervention…' %}" />
-          </label>
-          <button type="button"
-                  class="icon-button"
-                  aria-label="{% translate 'Notifications' %}">
-            <i class="ti ti-bell"></i>
-          </button>
-          <a href="{% url 'users:profile' %}"
-             class="icon-button profile-button"
-             aria-label="{% translate 'Profile' %}">
-            {% if user.profile_picture %}
-              <img class="h-full w-full object-cover"
-                   src="{{ user.profile_picture.url }}"
-                   alt="" />
-            {% else %}
-              <i class="ti ti-user"></i>
-            {% endif %}
-          </a>
-        </div>
-      </header>
+      {% include "dashboard/topbars/maintenance.html" %}
       <div class="content">
         {% include "common/includes/messages.html" %}
 
@@ -167,35 +62,33 @@
         </section>
 
         <!-- QUICK ACTIONS -->
-        <section class="section-card quick-actions">
+        <section class="section-card quick-actions" data-quick-actions-source>
           <div class="section-header">
             <h2 class="section-title">{% translate "Quick actions" %}</h2>
+            {% include "dashboard/includes/quick_actions_toggle.html" with panel_id="maintenance-quick-actions" %}
           </div>
-          <div class="actions-grid">
+          <div class="actions-grid actions-grid--three quick-actions-panel" id="maintenance-quick-actions" data-quick-actions-panel>
             <a href="{% url 'maintenance:task-list' %}" class="action">
               <div class="action-icon icon-blue"><i class="ti ti-tool"></i></div>
               <div class="action-content">
                 <div class="action-title">{% translate "My tasks" %}</div>
-                <div class="action-description">{% translate "View assigned interventions" %}</div>
               </div>
               <i class="ti ti-chevron-right action-arrow"></i>
             </a>
             <a href="{% url 'maintenance:agent-queue' %}" class="action">
               <div class="action-icon icon-orange"><i class="ti ti-clipboard-list"></i></div>
               <div class="action-content">
-                <div class="action-title">{% translate "New requests" %}</div>
-                <div class="action-description">{% translate "Review maintenance requests" %}</div>
+                <div class="action-title">{% translate "Requests" %}</div>
               </div>
               <i class="ti ti-chevron-right action-arrow"></i>
             </a>
-            <button class="action">
-              <div class="action-icon icon-purple"><i class="ti ti-calendar"></i></div>
+            <a href="{% url 'communications:conversation-list' %}" class="action">
+              <div class="action-icon icon-purple"><i class="ti ti-message"></i></div>
               <div class="action-content">
-                <div class="action-title">{% translate "My calendar" %}</div>
-                <div class="action-description">{% translate "View today's schedule" %}</div>
+                <div class="action-title">{% translate "Messages" %}</div>
               </div>
               <i class="ti ti-chevron-right action-arrow"></i>
-            </button>
+            </a>
           </div>
         </section>
 
@@ -211,7 +104,7 @@
             </div>
             <div class="maintenance-list">
               {% for task in recent_tasks %}
-                <a href="{% url 'maintenance:task-detail' task.pk %}" class="maintenance-item">
+                <a href="{% url 'maintenance:task-detail' task.slug %}" class="maintenance-item">
                   <div class="item-icon icon-orange"><i class="ti ti-tools"></i></div>
                   <div class="item-content">
                     <div class="item-title">{{ task.title }}</div>

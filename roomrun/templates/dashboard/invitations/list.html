@@ -1,0 +1,31 @@
+{% extends "dashboard/layout.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Invitations" %} — ROOMRUN{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-6xl space-y-8">
+  <header>
+    <p class="rr-eyebrow">{% translate "Workspace access" %}</p>
+    <h1 class="mt-3 font-display text-3xl text-primary">{% translate "Invite people" %}</h1>
+    <p class="mt-2 text-sm text-muted">{% translate "Invite tenants, guards and maintenance agents to your workspace." %}</p>
+  </header>
+  <section class="rr-card p-6">
+    <form method="post" class="grid gap-4 md:grid-cols-[1fr_220px_auto] md:items-end">
+      {% csrf_token %}
+      <div><label class="rr-form-label" for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>{{ form.email }}{% for error in form.email.errors %}<p class="mt-1 text-xs text-danger">{{ error }}</p>{% endfor %}</div>
+      <div><label class="rr-form-label" for="{{ form.role.id_for_label }}">{{ form.role.label }}</label>{{ form.role }}{% for error in form.role.errors %}<p class="mt-1 text-xs text-danger">{{ error }}</p>{% endfor %}</div>
+      <button type="submit" class="rr-btn-primary">{% translate "Send invitation" %}</button>
+      {% for error in form.non_field_errors %}<p class="md:col-span-3 text-xs text-danger">{{ error }}</p>{% endfor %}
+    </form>
+  </section>
+  <section class="rr-card overflow-hidden">
+    <div class="border-b border-line px-6 py-4"><h2 class="font-display text-xl text-primary">{% translate "Invitation history" %}</h2></div>
+    <div class="overflow-x-auto"><table class="w-full min-w-180 text-left text-sm">
+      <thead class="bg-bg text-xs uppercase tracking-wide text-muted"><tr><th class="px-6 py-3">{% translate "Email" %}</th><th class="px-6 py-3">{% translate "Role" %}</th><th class="px-6 py-3">{% translate "Status" %}</th><th class="px-6 py-3">{% translate "Expires" %}</th><th class="px-6 py-3"></th></tr></thead>
+      <tbody class="divide-y divide-line">{% for invitation in invitations %}
+        <tr><td class="px-6 py-4 font-medium text-primary">{{ invitation.email }}<span class="mt-1 block text-xs text-muted">{{ invitation.invitation_number }}</span></td><td class="px-6 py-4">{{ invitation.get_role_display }}</td><td class="px-6 py-4">{{ invitation.get_status_display }}</td><td class="px-6 py-4">{{ invitation.expires_at|date:"d/m/Y H:i" }}</td><td class="px-6 py-4">{% if invitation.status == "PENDING" %}<form method="post" action="{% url 'dashboard:invitation-cancel' invitation.slug %}">{% csrf_token %}<button class="text-sm text-danger hover:underline">{% translate "Cancel" %}</button></form>{% endif %}</td></tr>
+      {% empty %}<tr><td colspan="5" class="px-6 py-8 text-center text-muted">{% translate "No invitation has been sent yet." %}</td></tr>{% endfor %}</tbody>
+    </table></div>
+  </section>
+</div>
+{% endblock content %}

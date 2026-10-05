@@ -35,7 +35,7 @@
     closeButton.type = 'button';
     closeButton.className = 'shrink-0 text-current/70 hover:text-current';
     closeButton.innerHTML = '&times;';
-    closeButton.setAttribute('aria-label', 'Close');
+    closeButton.setAttribute('aria-label', gettext('Close'));
     closeButton.addEventListener('click', function () {
       alertEl.remove();
     });

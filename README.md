@@ -11,6 +11,10 @@ License: MIT
 
 Moved to [settings](https://cookiecutter-django.readthedocs.io/en/latest/1-getting-started/settings.html).
 
+### Payment webhooks
+
+Payment webhook endpoints expect an HMAC-SHA256 signature over the exact raw request body, sent in `X-CamPay-Signature` or `X-DigiPay-Signature` as a hex digest (optionally prefixed with `sha256=`). Configure `CAMPAY_WEBHOOK_SECRET` and `DIGIPAY_WEBHOOK_SECRET` to match each provider's signing setup; requests are rejected with HTTP 401 when a secret or valid signature is missing. Confirm that the signature format and header match each provider account before enabling live webhook delivery.
+
 ## Basic Commands
 
 ### Setting Up Your Users

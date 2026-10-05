@@ -1,3 +1,4 @@
+from core.utils.enums import OtpPurpose
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
@@ -13,7 +14,6 @@ from users.mixins import OtpSessionKeyMixin
 from users.mixins import RedirectToNextOrReferrerMixin
 from users.services import OtpRateLimitError
 from users.services import OtpService
-from utils.enums import OtpPurpose
 
 
 class SigninView(OtpEmailMixin, OtpSessionKeyMixin, RedirectToNextOrReferrerMixin, FormView):

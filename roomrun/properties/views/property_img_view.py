@@ -30,7 +30,7 @@ class PropertyImageCreateView(PropertyImageAccessMixin, ServiceFormMixin, View):
             self.add_form_errors_as_messages(form)
             return redirect(
                 "properties:property-detail",
-                pk=property_obj.pk,
+                pk=property_obj.slug,
             )
 
         try:
@@ -43,13 +43,13 @@ class PropertyImageCreateView(PropertyImageAccessMixin, ServiceFormMixin, View):
             self.add_form_errors_as_messages(form)
             return redirect(
                 "properties:property-detail",
-                pk=property_obj.pk,
+                pk=property_obj.slug,
             )
 
         return self.service_success(
             _("Image added successfully."),
             "properties:property-detail",
-            pk=property_obj.pk,
+            pk=property_obj.slug,
         )
 
 
@@ -72,13 +72,13 @@ class PropertyImagePrimaryView(PropertyImageAccessMixin, ServiceFormMixin, View)
             )
             return redirect(
                 "properties:property-detail",
-                pk=image.property.pk,
+                pk=image.property.slug,
             )
 
         return self.service_success(
             _("Primary image updated successfully."),
             "properties:property-detail",
-            pk=image.property.pk,
+            pk=image.property.slug,
         )
 
 
@@ -111,13 +111,13 @@ class PropertyImageDeleteView(PropertyImageAccessMixin, ServiceFormMixin, View):
             )
             return redirect(
                 "properties:property-detail",
-                pk=property_obj.pk,
+                pk=property_obj.slug,
             )
 
         return self.service_success(
             _("Image deleted successfully."),
             "properties:property-detail",
-            pk=property_obj.pk,
+            pk=property_obj.slug,
         )
 
 
@@ -148,7 +148,7 @@ class PropertyImageUpdateView(PropertyImageAccessMixin, ServiceFormMixin, View):
 
         if not form.is_valid():
             self.add_form_errors_as_messages(form)
-            return redirect(redirect_url, pk=property_obj.pk)
+            return redirect(redirect_url, pk=property_obj.slug)
 
         try:
             PropertyImageService.update(
@@ -158,10 +158,10 @@ class PropertyImageUpdateView(PropertyImageAccessMixin, ServiceFormMixin, View):
         except ValidationError as e:
             self.handle_service_errors(form, e)
             self.add_form_errors_as_messages(form)
-            return redirect(redirect_url, pk=property_obj.pk)
+            return redirect(redirect_url, pk=property_obj.slug)
 
         return self.service_success(
             _("Image updated successfully."),
             redirect_url,
-            pk=property_obj.pk,
+            pk=property_obj.slug,
         )

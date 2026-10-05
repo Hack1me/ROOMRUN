@@ -1,0 +1,46 @@
+{% extends "dashboard/pages/tenant.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Payment status" %} — ROOMRUN{% endblock %}
+
+{% block tenant_content %}
+  <div class="tenant-payment-page">
+    <a class="tp-back" href="{% url 'billing:tenant-charge-list' %}"><i class="ti ti-arrow-left"></i>{% translate "Back to payments" %}</a>
+    <section class="tp-card tp-status-card" aria-live="polite" aria-atomic="true">
+      {% if payment.status == "COMPLETED" %}
+        <div class="tp-icon tp-success"><i class="ti ti-check"></i></div><h1>{% translate "Payment confirmed" %}</h1><p class="tp-intro">{% translate "Your payment has been received successfully." %}</p>
+        <div class="tp-amount"><span>{% translate "Amount paid" %}</span><strong>{{ payment.amount.amount|floatformat:0 }} <small>{{ payment.amount.currency }}</small></strong><span>{{ payment.payment_number }}{% if payment.paid_at %} · {{ payment.paid_at|date:"d M Y, H:i" }}{% endif %}</span></div>
+        <a class="tp-submit tp-link-button" href="{% url 'billing:tenant-charge-list' %}">{% translate "Done" %}<i class="ti ti-arrow-right"></i></a>
+      {% elif payment.status == "REFUNDED" %}
+        <div class="tp-icon tp-success"><i class="ti ti-receipt-refund"></i></div><h1>{% translate "Payment refunded" %}</h1><p class="tp-intro">{% translate "This payment has been refunded." %}</p>
+        <div class="tp-amount"><span>{% translate "Refunded amount" %}</span><strong>{{ payment.amount.amount|floatformat:0 }} <small>{{ payment.amount.currency }}</small></strong><span>{{ payment.payment_number }}</span></div>
+        <a class="tp-submit tp-link-button" href="{% url 'billing:tenant-charge-list' %}">{% translate "Back to payments" %}</a>
+      {% elif payment.status == "FAILED" or payment.status == "CANCELLED" %}
+        <div class="tp-icon tp-failed"><i class="ti ti-alert-circle"></i></div><h1>{% translate "Payment not completed" %}</h1><p class="tp-intro">{% translate "The payment was not confirmed. You can try again." %}</p>
+        <div class="tp-amount"><span>{% translate "Amount" %}</span><strong>{{ payment.amount.amount|floatformat:0 }} <small>{{ payment.amount.currency }}</small></strong><span>{{ payment.payment_number }} · {{ payment.get_status_display }}</span></div>
+        <a class="tp-submit tp-link-button" href="{% url 'billing:tenant-payment-initiate' payment.charge.slug %}"><i class="ti ti-refresh"></i>{% translate "Try again" %}</a>
+      {% else %}
+        <div class="tp-icon tp-pending"><span class="tp-spinner" aria-hidden="true"></span></div><h1>{% translate "Waiting for payment" %}</h1><p class="tp-intro">{% translate "Approve the Mobile Money request on your phone. We are checking the transaction status." %}</p>
+        <div class="tp-amount"><span>{% translate "Amount" %}</span><strong>{{ payment.amount.amount|floatformat:0 }} <small>{{ payment.amount.currency }}</small></strong><span>{{ payment.payment_number }}</span></div>
+        <div class="tp-waiting"><span class="tp-dot"></span>{% translate "Checking status automatically" %}</div>
+        <a class="tp-submit tp-link-button" href="{% url 'billing:tenant-payment-sync' payment.slug %}"><i class="ti ti-refresh"></i>{% translate "Check now" %}</a>
+        <small class="tp-hint">{% translate "Keep this page open. It will update when the payment provider responds." %}</small>
+      {% endif %}
+      <div class="tp-security"><i class="ti ti-shield-lock"></i>{% translate "Never share your Mobile Money PIN." %}</div>
+    </section>
+  </div>
+  <style>
+    .tenant-payment-page{--tp-border:#e3e7ec;--tp-ink:#1e293b;--tp-muted:#687486;--tp-primary:#16283f;max-width:760px;margin:0 auto;padding:8px 0 34px;color:var(--tp-ink)}.tenant-payment-page *{box-sizing:border-box}.tp-back{display:inline-flex;align-items:center;gap:7px;margin:0 0 18px;color:#536276;font-size:12px}.tp-card{width:100%;max-width:510px;margin:0 auto;padding:30px;border:1px solid var(--tp-border);border-radius:12px;background:#fff;box-shadow:0 2px 10px #172b4508}.tp-icon{width:46px;height:46px;display:grid;place-items:center;margin:0 auto 14px;border-radius:50%;background:#f1f4f7;color:var(--tp-primary);font-size:22px}.tp-success{background:#eaf7ef;color:#2e9e5b}.tp-failed{background:#fff0f0;color:#c43d3d}.tp-pending{background:#fff6e8;color:#ae7616}.tp-card h1{text-align:center;font-size:20px;font-weight:650}.tp-intro{margin:6px 0 20px;text-align:center;color:var(--tp-muted);font-size:12px;line-height:1.55}.tp-amount{display:flex;flex-direction:column;align-items:center;gap:5px;padding:15px;border:1px solid #edf0f3;border-radius:9px;background:#fafbfc;text-align:center}.tp-amount>span:first-child{color:var(--tp-muted);font-size:10px}.tp-amount strong{font-size:25px;letter-spacing:-.02em}.tp-amount strong small{font-size:12px}.tp-amount>span:last-child{color:var(--tp-muted);font-size:10px;overflow-wrap:anywhere}.tp-link-button{width:100%;text-decoration:none}.tp-submit{height:42px;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:17px;border:0;border-radius:7px;background:var(--tp-primary);color:white;font-size:12px;font-weight:600;cursor:pointer}.tp-submit:hover{background:#243d5e}.tp-spinner{width:25px;height:25px;border:3px solid #eadbbd;border-top-color:#ae7616;border-radius:50%;animation:tp-spin .8s linear infinite}@keyframes tp-spin{to{transform:rotate(360deg)}}.tp-waiting{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:15px;color:#80652f;font-size:10px}.tp-dot{width:7px;height:7px;border-radius:50%;background:#bf902d;animation:tp-pulse 1.2s ease-in-out infinite alternate}@keyframes tp-pulse{to{opacity:.3}}.tp-hint{display:block;margin-top:9px;color:var(--tp-muted);text-align:center;font-size:10px}.tp-security{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:19px;padding-top:14px;border-top:1px solid #edf0f3;color:var(--tp-muted);font-size:10px}.tp-security i{color:#39815b;font-size:14px}@media(max-width:520px){.tenant-payment-page{padding-top:0}.tp-card{padding:23px 18px}.tp-card h1{font-size:18px}}@media(prefers-reduced-motion:reduce){.tp-spinner,.tp-dot{animation-duration:3s}}
+  </style>
+  {% if payment.status == "PENDING" and payment.provider_reference %}
+    <script>
+      let paymentRefreshTimer = window.setTimeout(() => window.location.reload(), 7000);
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") {
+          window.clearTimeout(paymentRefreshTimer);
+          window.location.reload();
+        }
+      });
+    </script>
+  {% endif %}
+{% endblock tenant_content %}

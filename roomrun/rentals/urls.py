@@ -1,4 +1,9 @@
 from django.urls import path
+from rentals.views.document_views import ExistingLeaseFileView
+from rentals.views.document_views import LeaseDocumentPreviewView
+from rentals.views.document_views import LeasePDFView
+from rentals.views.land_ren_views import LandlordContractExtensionDecisionView
+from rentals.views.land_ren_views import LandlordExistingRentalContractCreateView
 from rentals.views.land_ren_views import LandlordRentalApplicationDetailView
 from rentals.views.land_ren_views import LandlordRentalApplicationListView
 from rentals.views.land_ren_views import LandlordRentalContractCreateView
@@ -10,12 +15,29 @@ from rentals.views.land_ren_views import TenantSearchView
 from rentals.views.ten_ren_views import RentalApplicationCreateView
 from rentals.views.ten_ren_views import RentalApplicationDetailView
 from rentals.views.ten_ren_views import RentalApplicationListView
+from rentals.views.ten_ren_views import RentalContractTerminateView
+from rentals.views.ten_ren_views import TenantContractExtensionRequestView
 from rentals.views.ten_ren_views import TenantLeaseDetailView
 from rentals.views.ten_ren_views import TenantRentalContractSignView
 
 app_name = "rentals"
 
 urlpatterns = [
+    path(
+        "contracts/<slug:pk>/original/",
+        ExistingLeaseFileView.as_view(),
+        name="existing-lease-file",
+    ),
+    path(
+        "contracts/<slug:pk>/document/",
+        LeaseDocumentPreviewView.as_view(),
+        name="lease-document",
+    ),
+    path(
+        "contracts/<slug:pk>/document/pdf/",
+        LeasePDFView.as_view(),
+        name="lease-pdf",
+    ),
     path(
         "applications/",
         RentalApplicationListView.as_view(),
@@ -27,14 +49,24 @@ urlpatterns = [
         name="rental-application-create",
     ),
     path(
-        "applications/<uuid:pk>/",
+        "applications/<slug:pk>/",
         RentalApplicationDetailView.as_view(),
         name="rental-application-detail",
     ),
     path(
-        "contracts/<uuid:pk>/sign/",
+        "contracts/<slug:pk>/sign/",
         TenantRentalContractSignView.as_view(),
         name="tenant-rental-contract-sign",
+    ),
+    path(
+        "contracts/<slug:pk>/terminate/",
+        RentalContractTerminateView.as_view(),
+        name="rental-contract-terminate",
+    ),
+    path(
+        "contracts/<slug:pk>/extensions/request/",
+        TenantContractExtensionRequestView.as_view(),
+        name="tenant-extension-request",
     ),
     path(
         "mylease/",
@@ -51,19 +83,19 @@ urlpatterns += [
     ),
 
     path(
-        "landlord/applications/<uuid:pk>/",
+        "landlord/applications/<slug:pk>/",
         LandlordRentalApplicationDetailView.as_view(),
         name="landlord-rental-application-detail",
     ),
 
     path(
-        "landlord/applications/<uuid:pk>/approve/",
+        "landlord/applications/<slug:pk>/approve/",
         RentalApplicationApproveView.as_view(),
         name="rental-application-approve",
     ),
 
     path(
-        "landlord/applications/<uuid:pk>/reject/",
+        "landlord/applications/<slug:pk>/reject/",
         RentalApplicationRejectView.as_view(),
         name="rental-application-reject",
     ),
@@ -73,14 +105,24 @@ urlpatterns += [
         name="landlord-rental-contract-create",
     ),
     path(
+        "landlord/contracts/register-existing/",
+        LandlordExistingRentalContractCreateView.as_view(),
+        name="landlord-existing-rental-contract-create",
+    ),
+    path(
         "landlord/contracts/",
         LandlordRentalContractListView.as_view(),
         name="landlord-rental-contract-list",
     ),
     path(
-        "landlord/contracts/<uuid:pk>/",
+        "landlord/contracts/<slug:pk>/",
         LandlordRentalContractDetailView.as_view(),
         name="landlord-rental-contract-detail",
+    ),
+    path(
+        "landlord/extensions/<slug:pk>/decision/",
+        LandlordContractExtensionDecisionView.as_view(),
+        name="landlord-extension-decision",
     ),
     path(
         "landlord/tenants/search/",

@@ -533,7 +533,7 @@
 
 {% block body %}
   <div class="app landlord-app">
-    {% include "dashboard/includes/landlord_sidebar.html" %}
+    {% include "dashboard/includes/role_sidebar.html" %}
 
     <main class="main">
       <header class="flex items-center justify-between gap-4 border-b border-[#e6e8ec] bg-white px-4 py-3">
@@ -589,10 +589,10 @@
               <i class="ti ti-download"></i>
               {% translate "Export" %}
             </button>
-            <button type="button" class="btn btn-primary" id="inviteTenantButton">
+            <a href="{% url 'dashboard:invitation-list' %}" class="btn btn-primary">
               <i class="ti ti-user-plus"></i>
               {% translate "Invite tenant" %}
-            </button>
+            </a>
           </div>
         </div>
 
@@ -751,7 +751,7 @@
                 {% empty %}
                   <tr id="emptyRow">
                     <td colspan="7">
-                      <div class="empty-state" style="display:block;">
+                      <div class="empty-state block">
                         <div class="empty-icon">
                           <i class="ti ti-users"></i>
                         </div>
@@ -813,7 +813,7 @@
 {% endblock body %}
 
 {% block inline_javascript %}
-  <script defer src="{% static 'js/dashboard-sidebar.js' %}"></script>
+
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const searchInput = document.getElementById('searchInput');
@@ -849,12 +849,6 @@
         });
       }
 
-      const mobileMenu = document.getElementById('mobileMenu');
-      const sidebar = document.getElementById('sidebar');
-
-      mobileMenu?.addEventListener('click', function () {
-        sidebar.classList.toggle('open');
-      });
     });
   </script>
 {% endblock inline_javascript %}

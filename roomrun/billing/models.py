@@ -2,6 +2,11 @@ import uuid
 
 from core.models import BaseModel
 from core.utils import safe_reverse
+from core.utils.enums import ChargeStatus
+from core.utils.enums import ChargeType
+from core.utils.enums import PaymentMethod
+from core.utils.enums import PaymentProvider
+from core.utils.enums import PaymentStatus
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
@@ -9,11 +14,6 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from djmoney.money import Money
 from rentals.models import RentalContract
-from utils.enums import ChargeStatus
-from utils.enums import ChargeType
-from utils.enums import PaymentMethod
-from utils.enums import PaymentProvider
-from utils.enums import PaymentStatus
 
 
 # CHARGE
@@ -109,7 +109,7 @@ class Charge(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the charge detail view."""
-        return safe_reverse("billing:charge-detail", kwargs={"pk": self.id})
+        return safe_reverse("billing:charge-detail", kwargs={"pk": self.slug})
 
     def clean(self):
         super().clean()
@@ -134,9 +134,9 @@ class Charge(BaseModel):
     def refresh_status(self) -> None:
         zero = Money(0, self.amount.currency)
 
-        if self.balance_due.amount == zero:
+        if self.balance_due.amount == zero.amount:
             status = ChargeStatus.PAID
-        elif self.total_paid.amount > zero:
+        elif self.total_paid.amount > zero.amount:
             status = ChargeStatus.PARTIAL
         elif self.is_overdue:
             status = ChargeStatus.OVERDUE
@@ -276,7 +276,7 @@ class Payment(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the payment detail view."""
-        return safe_reverse("billing:payment-detail", kwargs={"pk": self.id})
+        return safe_reverse("billing:payment-detail", kwargs={"pk": self.slug})
 
     def clean(self):
         """
@@ -380,7 +380,7 @@ class Receipt(BaseModel):
 
     def get_absolute_url(self) -> str:
         """Return the canonical URL for the receipt detail view."""
-        return safe_reverse("billing:receipt-detail", kwargs={"pk": self.id})
+        return safe_reverse("billing:receipt-detail", kwargs={"pk": self.slug})
 
     def clean(self):
         """
@@ -392,3 +392,29 @@ class Receipt(BaseModel):
             raise ValidationError(
                 _("Receipts can only be issued for completed payments.")
             )
+
+
+class Withdrawal(BaseModel):
+    """A landlord payout request. Pending requests reserve wallet funds."""
+
+    class Status(models.TextChoices):
+        PENDING = "PENDING", _("Pending")
+        COMPLETED = "COMPLETED", _("Completed")
+        REJECTED = "REJECTED", _("Rejected")
+
+    landlord = models.ForeignKey(
+        "users.Landlord", on_delete=models.PROTECT, related_name="withdrawals"
+    )
+    amount = MoneyField(max_digits=12, decimal_places=2, default_currency="XAF")
+    phone_number = models.CharField(max_length=32)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    processed_at = models.DateTimeField(null=True, blank=True)
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def clean(self):
+        super().clean()
+        if self.amount and self.amount.amount < 5000:
+            raise ValidationError({"amount": _("The minimum withdrawal is 5,000 FCFA.")})

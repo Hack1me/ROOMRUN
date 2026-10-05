@@ -1,0 +1,20 @@
+{% load i18n %}
+
+<header class="topbar dashboard-topbar">
+  <div class="topbar-left">
+    <button type="button"
+            class="icon-button mobile-menu"
+            id="mobile-menu"
+            aria-label="{% translate 'Open menu' %}">
+      <i class="ti ti-menu-2" aria-hidden="true"></i>
+    </button>
+    <div class="page-heading">
+      <h1>{% block topbar_title %}{% endblock topbar_title %}</h1>
+      {% block topbar_subtitle %}<p></p>{% endblock topbar_subtitle %}
+    </div>
+  </div>
+  {% block topbar_search %}{% endblock topbar_search %}
+  <div class="topbar-actions">
+    {% block topbar_actions %}{% endblock topbar_actions %}
+  </div>
+</header>
