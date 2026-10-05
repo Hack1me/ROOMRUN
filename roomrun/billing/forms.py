@@ -1,9 +1,9 @@
 from billing.models import Charge
+from core.utils.enums import ChargeType
+from core.utils.enums import ContractStatus
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from rentals.models import RentalContract
-from utils.enums import ChargeType
-from utils.enums import ContractStatus
 
 LANDLORD_CHARGE_TYPES = tuple(
     (value, label)

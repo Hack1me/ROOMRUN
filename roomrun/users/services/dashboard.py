@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from core.utils.enums import UserRole
 from django.utils.translation import gettext_lazy as _
 from users.services.dashboards import GuardDashboardService
 from users.services.dashboards import LandlordDashboardContext
@@ -9,7 +10,6 @@ from users.services.dashboards import LandlordDashboardService
 from users.services.dashboards import MaintenanceDashboardService
 from users.services.dashboards import TenantDashboardContext
 from users.services.dashboards import TenantDashboardService
-from utils.enums import UserRole
 
 
 @dataclass(frozen=True)

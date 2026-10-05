@@ -2,6 +2,7 @@ from communications.forms import StartConversationForm
 from communications.models import Conversation
 from communications.models import Notification
 from communications.services import ConversationService
+from core.utils.enums import ContractStatus
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
@@ -17,7 +18,6 @@ from django.views.generic import DetailView
 from django.views.generic import ListView
 from rentals.models import RentalContract
 from users.models import User
-from utils.enums import ContractStatus
 
 
 def contacts_for_user(user):

@@ -11,6 +11,8 @@ from typing import TYPE_CHECKING
 from typing import Any
 from typing import BinaryIO
 
+from core.utils.enums import Orientation
+from core.utils.enums import PageSize
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.storage import Storage
@@ -19,8 +21,6 @@ from django.http import FileResponse
 from django.template.loader import render_to_string
 from pypdf import PdfReader
 from pypdf import PdfWriter
-from utils.enums import Orientation
-from utils.enums import PageSize
 from weasyprint import CSS
 from weasyprint import HTML
 

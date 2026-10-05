@@ -2,6 +2,9 @@ import base64
 import logging
 import mimetypes
 
+from core.utils.pdf import PDFError
+from core.utils.pdf import PDFOptions
+from core.utils.pdf import PDFService
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
@@ -14,9 +17,6 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from rentals.models import RentalContract
-from utils.pdf import PDFError
-from utils.pdf import PDFOptions
-from utils.pdf import PDFService
 
 logger = logging.getLogger(__name__)
 

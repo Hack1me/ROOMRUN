@@ -1,10 +1,10 @@
 from communications.services.notification_ser import send_notification
+from core.utils.enums import NotificationType
+from core.utils.helpers import assign_reference_identifier
 from django.db.models.signals import post_save
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
-from utils.enums import NotificationType
-from utils.helpers import assign_reference_identifier
 
 from .models import MaintenanceRequest
 from .models import Task

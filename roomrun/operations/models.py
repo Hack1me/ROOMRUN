@@ -1,5 +1,9 @@
 from core.models import BaseModel
 from core.utils import safe_reverse
+from core.utils.enums import CleaningStatus
+from core.utils.enums import InvitationStatus
+from core.utils.enums import UserRole
+from core.utils.enums import VisitorStatus
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -9,10 +13,6 @@ from django.utils.translation import gettext_lazy as _
 from properties.models import Building
 from users.models import Guard
 from users.models import Tenant
-from utils.enums import CleaningStatus
-from utils.enums import InvitationStatus
-from utils.enums import UserRole
-from utils.enums import VisitorStatus
 
 
 class CleaningSchedule(BaseModel):

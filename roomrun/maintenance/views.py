@@ -1,3 +1,4 @@
+from core.utils.enums import RequestStatus
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
@@ -21,7 +22,6 @@ from maintenance.models import Task
 from maintenance.services import MaintenanceWorkflowService
 from properties.mixins import LandlordRequiredMixin
 from rentals.mixins import TenantRequiredMixin
-from utils.enums import RequestStatus
 
 
 class MaintenanceAgentRequiredMixin(LoginRequiredMixin):

@@ -1,5 +1,8 @@
 from core.models import BaseModel
 from core.utils import safe_reverse
+from core.utils.enums import ApplicationStatus
+from core.utils.enums import ContractStatus
+from core.utils.enums import ExtensionRequestStatus
 from core.validators import validate_signature
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -9,9 +12,6 @@ from djmoney.models.fields import MoneyField
 from properties.models import Unit
 from rentals.managers import LandlordRentalManager
 from users.models import Tenant
-from utils.enums import ApplicationStatus
-from utils.enums import ContractStatus
-from utils.enums import ExtensionRequestStatus
 
 
 # RENTAL APPLICATION

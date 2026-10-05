@@ -1,5 +1,7 @@
+"""Payment gateway adapters and their provider factory."""
+
+from core.utils.enums import PaymentProvider
 from django.conf import settings
-from utils.enums import PaymentProvider
 
 from .base import GatewayInitResult
 from .base import GatewayStatusResult

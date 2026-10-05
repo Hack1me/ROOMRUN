@@ -1,6 +1,13 @@
 
 from billing.models import Charge
 from billing.models import Payment
+from core.utils.enums import ApplicationStatus
+from core.utils.enums import ChargeType
+from core.utils.enums import ContractStatus
+from core.utils.enums import ExtensionRequestStatus
+from core.utils.enums import PaymentMethod
+from core.utils.enums import PaymentStatus
+from core.utils.enums import UnitStatus
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
@@ -10,13 +17,6 @@ from properties.models import Unit
 from rentals.models import ContractExtensionRequest
 from rentals.models import RentalApplication
 from rentals.models import RentalContract
-from utils.enums import ApplicationStatus
-from utils.enums import ChargeType
-from utils.enums import ContractStatus
-from utils.enums import ExtensionRequestStatus
-from utils.enums import PaymentMethod
-from utils.enums import PaymentStatus
-from utils.enums import UnitStatus
 
 
 class RentalApplicationService:

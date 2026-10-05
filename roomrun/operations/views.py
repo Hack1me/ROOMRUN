@@ -1,3 +1,7 @@
+from core.utils.enums import CleaningStatus
+from core.utils.enums import ContractStatus
+from core.utils.enums import EmployeeStatus
+from core.utils.enums import VisitorStatus
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -24,10 +28,6 @@ from properties.mixins import LandlordRequiredMixin
 from properties.models import Building
 from rentals.mixins import TenantRequiredMixin
 from rentals.models import RentalContract
-from utils.enums import CleaningStatus
-from utils.enums import ContractStatus
-from utils.enums import EmployeeStatus
-from utils.enums import VisitorStatus
 
 
 class CleaningScheduleForm(forms.ModelForm):

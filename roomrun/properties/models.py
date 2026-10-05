@@ -1,6 +1,11 @@
 from cities_light.models import City
 from cities_light.models import Region
 from core.models import BaseModel
+from core.utils.enums import PropertyStatus
+from core.utils.enums import PropertyType
+from core.utils.enums import UnitStatus
+from core.utils.enums import UnitType
+from core.utils.helpers import property_image_upload_path
 from core.validators import validate_image_extension
 from core.validators import validate_image_size
 from django.db import models
@@ -10,11 +15,6 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from smart_selects.db_fields import ChainedForeignKey
 from users.models import Landlord
-from utils.enums import PropertyStatus
-from utils.enums import PropertyType
-from utils.enums import UnitStatus
-from utils.enums import UnitType
-from utils.helpers import property_image_upload_path
 
 
 # PROPERTY

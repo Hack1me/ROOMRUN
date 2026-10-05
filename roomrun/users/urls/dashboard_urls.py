@@ -6,9 +6,9 @@ from users.views.dashboard import LandlordDashboardView
 from users.views.dashboard import MaintenanceDashboardView
 from users.views.dashboard import TenantDashboardView
 from users.views.emp_views import EmployeeListView
-from users.views.ten_views import TenantListView
 from users.views.invitation_views import LandlordInvitationCancelView
 from users.views.invitation_views import LandlordInvitationListView
+from users.views.ten_views import TenantListView
 
 app_name = "dashboard"
 

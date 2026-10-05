@@ -2,6 +2,11 @@ import uuid
 
 from core.models import BaseModel
 from core.utils import safe_reverse
+from core.utils.enums import ChargeStatus
+from core.utils.enums import ChargeType
+from core.utils.enums import PaymentMethod
+from core.utils.enums import PaymentProvider
+from core.utils.enums import PaymentStatus
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
@@ -9,11 +14,6 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from djmoney.money import Money
 from rentals.models import RentalContract
-from utils.enums import ChargeStatus
-from utils.enums import ChargeType
-from utils.enums import PaymentMethod
-from utils.enums import PaymentProvider
-from utils.enums import PaymentStatus
 
 
 # CHARGE

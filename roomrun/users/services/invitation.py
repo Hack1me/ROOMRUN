@@ -4,6 +4,8 @@ import hashlib
 import secrets
 from datetime import timedelta
 
+from core.utils.enums import InvitationStatus
+from core.utils.enums import UserRole
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
@@ -12,8 +14,6 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from operations.models import UserInvitation
 from users.models import User
-from utils.enums import InvitationStatus
-from utils.enums import UserRole
 
 
 class UserInvitationService:

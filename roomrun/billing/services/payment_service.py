@@ -4,14 +4,14 @@ from billing.models import Payment
 from billing.services.gateways import PaymentGatewayError
 from billing.services.gateways import get_gateway
 from communications.services.notification_ser import send_notification
+from core.utils.enums import ChargeType
+from core.utils.enums import NotificationType
+from core.utils.enums import PaymentStatus
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db import transaction
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from utils.enums import ChargeType
-from utils.enums import NotificationType
-from utils.enums import PaymentStatus
 
 logger = logging.getLogger(__name__)
 

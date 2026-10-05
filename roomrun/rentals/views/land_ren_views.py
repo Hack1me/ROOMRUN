@@ -1,4 +1,7 @@
 from communications.services.notification_ser import send_notification
+from core.utils.enums import ApplicationStatus
+from core.utils.enums import NotificationType
+from core.utils.enums import UserRole
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -29,9 +32,6 @@ from rentals.services import RentalApplicationService
 from rentals.services import RentalContractService
 from users.models import Tenant
 from users.services import UserInvitationService
-from utils.enums import ApplicationStatus
-from utils.enums import NotificationType
-from utils.enums import UserRole
 
 
 class LandlordRentalApplicationListView(LandlordRequiredMixin, ListView):

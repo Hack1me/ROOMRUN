@@ -4,6 +4,9 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from billing.models import Payment
+from core.utils.enums import ContractStatus
+from core.utils.enums import PaymentStatus
+from core.utils.enums import RequestStatus
 from django.db.models import Sum
 from django.utils import timezone
 from django.utils.formats import date_format
@@ -12,9 +15,6 @@ from maintenance.models import MaintenanceRequest
 from properties.models import Unit
 from rentals.models import RentalApplication
 from rentals.models import RentalContract
-from utils.enums import ContractStatus
-from utils.enums import PaymentStatus
-from utils.enums import RequestStatus
 
 if TYPE_CHECKING:
     from users.models import User

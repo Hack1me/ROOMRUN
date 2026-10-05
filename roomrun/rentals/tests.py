@@ -1,13 +1,12 @@
-import uuid
 from datetime import date
 from datetime import timedelta
-from io import BytesIO
-from unittest import mock
 
+from core.utils.enums import ApplicationStatus
+from core.utils.enums import ContractStatus
+from core.utils.enums import UnitStatus
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
-from django.test import override_settings
 from django.urls import reverse
 from djmoney.money import Money
 from properties.models import Building
@@ -15,7 +14,6 @@ from properties.models import Property
 from properties.models import Unit
 from rentals.forms import RentalApplicationForm
 from rentals.forms import RentalContractForm
-from rentals.managers import LandlordRentalQuerySet
 from rentals.models import RentalApplication
 from rentals.models import RentalContract
 from rentals.services import RentalApplicationService
@@ -23,9 +21,6 @@ from rentals.services import RentalContractService
 from users.models import Landlord
 from users.models import Tenant
 from users.models import User
-from utils.enums import ApplicationStatus
-from utils.enums import ContractStatus
-from utils.enums import UnitStatus
 
 # =====================================================================
 # FIXTURE HELPERS

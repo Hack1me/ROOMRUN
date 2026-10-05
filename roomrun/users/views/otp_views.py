@@ -1,3 +1,4 @@
+from core.utils.enums import OtpPurpose
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
@@ -16,7 +17,6 @@ from users.services import OtpService
 from users.services import OtpVerificationError
 from users.services import OtpVerifyService
 from users.services import PasswordResetTokenService
-from utils.enums import OtpPurpose
 
 
 @method_decorator(

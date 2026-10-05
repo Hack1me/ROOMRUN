@@ -1,3 +1,6 @@
+from core.utils.enums import ContractStatus
+from core.utils.enums import RequestStatus
+from core.utils.enums import TaskStatus
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
@@ -6,9 +9,6 @@ from maintenance.models import MaintenanceRequest
 from maintenance.models import MaintenanceRequestAttachment
 from maintenance.models import Task
 from rentals.models import RentalContract
-from utils.enums import ContractStatus
-from utils.enums import RequestStatus
-from utils.enums import TaskStatus
 
 
 class MaintenanceWorkflowService:

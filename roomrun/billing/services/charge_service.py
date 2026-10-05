@@ -1,14 +1,14 @@
 from billing.models import Charge
 from communications.services.notification_ser import send_notification
+from core.utils.enums import ChargeStatus
+from core.utils.enums import ChargeType
+from core.utils.enums import ContractStatus
+from core.utils.enums import NotificationType
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 from djmoney.money import Money
 from rentals.models import RentalContract
-from utils.enums import ChargeStatus
-from utils.enums import ChargeType
-from utils.enums import ContractStatus
-from utils.enums import NotificationType
 
 
 class ChargeService:

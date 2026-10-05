@@ -1,12 +1,12 @@
 from billing.models import Payment
 from billing.models import Withdrawal
+from core.utils.enums import PaymentStatus
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Sum
 from django.utils.translation import gettext_lazy as _
 from djmoney.money import Money
 from users.models import Landlord
-from utils.enums import PaymentStatus
 
 
 def wallet_balance(landlord):

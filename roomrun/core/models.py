@@ -123,7 +123,7 @@ class BaseModel(models.Model):
             and self.reference_prefix
             and not getattr(self, self.reference_field, None)
         ):
-            from utils.helpers import assign_reference_identifier  # noqa: PLC0415
+            from core.utils.helpers import assign_reference_identifier  # noqa: PLC0415
 
             assign_reference_identifier(
                 self,

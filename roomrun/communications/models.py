@@ -1,6 +1,10 @@
 from core.models import BaseModel
 from core.models import ReadableModelMixin
 from core.utils import safe_reverse
+from core.utils.enums import AnnouncementStatus
+from core.utils.enums import AnnouncementTarget
+from core.utils.enums import ConversationType
+from core.utils.enums import NotificationType
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -12,10 +16,6 @@ from properties.models import Building
 from properties.models import Unit
 from users.models import Landlord
 from users.models import User
-from utils.enums import AnnouncementStatus
-from utils.enums import AnnouncementTarget
-from utils.enums import ConversationType
-from utils.enums import NotificationType
 
 
 class Announcement(BaseModel):

@@ -1,9 +1,11 @@
-from users.services.dashboards.guard import GuardDashboardService
-from users.services.dashboards.landlord import LandlordDashboardContext
-from users.services.dashboards.landlord import LandlordDashboardService
-from users.services.dashboards.maintenance import MaintenanceDashboardService
-from users.services.dashboards.tenant import TenantDashboardContext
-from users.services.dashboards.tenant import TenantDashboardService
+"""Role-specific dashboard services."""
+
+from .guard import GuardDashboardService
+from .landlord import LandlordDashboardContext
+from .landlord import LandlordDashboardService
+from .maintenance import MaintenanceDashboardService
+from .tenant import TenantDashboardContext
+from .tenant import TenantDashboardService
 
 __all__ = [
     "GuardDashboardService",

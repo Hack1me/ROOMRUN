@@ -1,6 +1,9 @@
 import base64
 import binascii
 
+from core.utils.enums import ApplicationStatus
+from core.utils.enums import ContractStatus
+from core.utils.enums import UnitStatus
 from django import forms
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -12,9 +15,6 @@ from properties.models import Unit
 from rentals.models import RentalApplication
 from rentals.models import RentalContract
 from users.models import Tenant
-from utils.enums import ApplicationStatus
-from utils.enums import ContractStatus
-from utils.enums import UnitStatus
 
 
 class SignatureInput(forms.ClearableFileInput):

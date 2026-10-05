@@ -1,5 +1,6 @@
 import logging
 
+from core.utils.enums import OtpPurpose
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db import transaction
@@ -14,7 +15,6 @@ from users.models import Landlord
 from users.models import Tenant
 from users.services import OtpRateLimitError
 from users.services import OtpService
-from utils.enums import OtpPurpose
 
 logger = logging.getLogger(__name__)
 

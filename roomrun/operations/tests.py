@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from core.utils.enums import VisitorStatus
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -10,7 +11,6 @@ from users.models import Employee
 from users.models import Guard
 from users.models import Landlord
 from users.models import User
-from utils.enums import VisitorStatus
 
 
 class GuardVisitorAccessTests(TestCase):

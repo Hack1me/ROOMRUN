@@ -18,6 +18,13 @@ from typing import ClassVar
 # Core imports
 from core.models import BaseModel
 from core.utils import safe_reverse
+from core.utils.enums import EmployeeStatus
+from core.utils.enums import GuardShift
+from core.utils.enums import InvitationRole
+from core.utils.enums import InvitationStatus
+from core.utils.enums import OtpPurpose
+from core.utils.enums import UserStatus
+from core.utils.otp import verify_otp_code
 from core.validators import validate_phone_number_for_country
 
 # Django & third-party
@@ -32,13 +39,6 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 # Project imports
 from users.managers import UserManager
-from utils.enums import EmployeeStatus
-from utils.enums import GuardShift
-from utils.enums import InvitationRole
-from utils.enums import InvitationStatus
-from utils.enums import OtpPurpose
-from utils.enums import UserStatus
-from utils.otp import verify_otp_code
 
 MAX_OTP_ATTEMPTS = 5
 
@@ -421,7 +421,7 @@ class Employee(BaseModel):
     - Linked to a User via OneToOneField.
     - Has a unique, auto-generated employee_number.
     - Stores job title, employment status, hire date.
-    - Status uses EmployeeStatus enum from utils.enums.
+    - Status uses EmployeeStatus enum from core.utils.enums.
     """
 
     reference_field = "employee_number"

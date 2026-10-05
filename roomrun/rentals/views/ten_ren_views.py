@@ -2,6 +2,9 @@ from datetime import timedelta
 
 from billing.models import Charge
 from communications.services.notification_ser import send_notification
+from core.utils.enums import ContractStatus
+from core.utils.enums import NotificationType
+from core.utils.enums import PaymentMethod
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
@@ -26,9 +29,6 @@ from rentals.models import RentalContract
 from rentals.services import ContractExtensionService
 from rentals.services import RentalApplicationService
 from rentals.services import RentalContractService
-from utils.enums import ContractStatus
-from utils.enums import NotificationType
-from utils.enums import PaymentMethod
 
 
 class RentalApplicationListView(TenantApplicationQuerysetMixin, ListView):

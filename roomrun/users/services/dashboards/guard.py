@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+from core.utils.enums import VisitorStatus
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from operations.models import VisitorVisit
-from utils.enums import VisitorStatus
 
 
 class GuardDashboardService:

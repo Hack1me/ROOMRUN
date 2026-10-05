@@ -1,3 +1,5 @@
+from core.utils.email import EmailUtil
+from core.utils.enums import InvitationStatus
 from django.contrib import messages
 from django.contrib.auth import login
 from django.core.exceptions import ValidationError
@@ -13,8 +15,6 @@ from users.forms import LandlordInvitationForm
 from users.forms import TenantInvitationAcceptForm
 from users.services import InvitationAcceptanceService
 from users.services import UserInvitationService
-from utils.email import EmailUtil
-from utils.enums import InvitationStatus
 
 
 class LandlordInvitationListView(LandlordRequiredMixin, FormView):

@@ -6,6 +6,8 @@ from billing.models import Payment
 from billing.models import Withdrawal
 from billing.services.wallet_service import request_withdrawal
 from billing.services.wallet_service import wallet_balance
+from core.utils.enums import ChargeType
+from core.utils.enums import PaymentStatus
 from django import forms
 from django.contrib import messages
 from django.core.exceptions import ValidationError
@@ -18,8 +20,6 @@ from django.utils.translation import gettext_lazy as _
 from django.views import View
 from djmoney.money import Money
 from properties.mixins import LandlordRequiredMixin
-from utils.enums import ChargeType
-from utils.enums import PaymentStatus
 
 DECEMBER_MONTH = 12
 MIN_PHONE_NUMBER_LENGTH = 8

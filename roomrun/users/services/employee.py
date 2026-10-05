@@ -1,8 +1,8 @@
+from core.utils.enums import EmployeeStatus
+from core.utils.enums import UserRole
 from django.db.models import Q
 from django.db.models import QuerySet
 from users.models import Employee
-from utils.enums import EmployeeStatus
-from utils.enums import UserRole
 
 
 class EmployeeService:
