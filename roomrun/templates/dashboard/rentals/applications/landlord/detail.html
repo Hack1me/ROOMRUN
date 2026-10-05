@@ -33,7 +33,7 @@
               <i class="ti ti-check"></i>
               {% translate "Approve application" %}
             </a>
-            <form method="post" action="{% url 'rentals:rental-application-reject' application.slug %}" style="display:inline">
+            <form method="post" action="{% url 'rentals:rental-application-reject' application.slug %}" class="inline">
               {% csrf_token %}
               <button type="submit" class="btn btn-danger">
                 <i class="ti ti-x"></i>
@@ -282,15 +282,15 @@
           <article class="application-card">
             <header class="application-card__header"><h2>{% translate "Quick actions" %}</h2></header>
             <div class="application-card__body">
-              <a href="{% url 'properties:unit-detail' pk=unit.slug %}" class="btn" style="width:100%; margin-bottom:7px;">
+              <a href="{% url 'properties:unit-detail' pk=unit.slug %}" class="btn mb-2 w-full">
                 <i class="ti ti-building"></i>
                 {% translate "View unit" %}
               </a>
-              <a href="{% url 'users:profile' %}" class="btn" style="width:100%; margin-bottom:7px;">
+              <a href="{% url 'users:profile' %}" class="btn mb-2 w-full">
                 <i class="ti ti-user"></i>
                 {% translate "View tenant profile" %}
               </a>
-              <a href="{% url 'rentals:landlord-rental-application-list' %}" class="btn" style="width:100%;">
+              <a href="{% url 'rentals:landlord-rental-application-list' %}" class="btn w-full">
                 <i class="ti ti-list"></i>
                 {% translate "All applications" %}
               </a>

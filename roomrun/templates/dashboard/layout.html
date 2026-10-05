@@ -5,34 +5,22 @@
 {% block bodyclass %}dashboard-page{% endblock bodyclass %}
 {% block css %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
+  <link rel="stylesheet"
+        href="{% static 'vendor/tabler/tabler-icons.min.css' %}" />
 {% endblock css %}
 {% block javascript %}
   {{ block.super }}
   <script defer src="{% static 'js/dashboard-quick-actions.js' %}"></script>
 {% endblock javascript %}
-{% block extra_css %}
-  <style>
-    .dashboard-main {
-      margin-left: 232px;
-    }
-
-    .dashboard-main .main {
-      margin-left: 0;
-    }
-    @media (max-width: 1024px) {
-      .dashboard-main { margin-left: 0; }
-    }
-  </style>
-{% endblock extra_css %}
-{% block header %}{% endblock header %}
+{% block header %}
+{% endblock header %}
 {% block body %}
   {% block dashboard_body %}
     <div class="app {% block app_class %}{% endblock app_class %}">
       {% block sidebar %}
         {% include "dashboard/includes/role_sidebar.html" %}
       {% endblock sidebar %}
-      <div class="dashboard-main">
+      <div class="dashboard-main ml-58 max-lg:ml-0">
         {% block topbar %}
           {% if topbar_template %}
             {% include topbar_template %}
@@ -46,13 +34,16 @@
             {% include "dashboard/topbars/maintenance.html" %}
           {% else %}
             <header class="dashboard-mobile-bar">
-              <button type="button" class="menu-button" id="mobile-menu" aria-label="{% translate 'Open menu' %}">
+              <button type="button"
+                      class="menu-button"
+                      id="mobile-menu"
+                      aria-label="{% translate 'Open menu' %}">
                 <i class="ti ti-menu-2" aria-hidden="true"></i>
               </button>
             </header>
           {% endif %}
         {% endblock topbar %}
-        <main class="main">
+        <main class="main ml-0">
           <div class="content">
             {% include "common/includes/messages.html" %}
             {% block content %}
@@ -62,5 +53,6 @@
       </div>
     </div>
   {% endblock dashboard_body %}
-  {% block footer %}{% endblock footer %}
+  {% block footer %}
+  {% endblock footer %}
 {% endblock body %}

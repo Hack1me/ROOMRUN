@@ -163,7 +163,7 @@
                      data-property="{{ property.name|lower }}"
                      data-detail-url="{% url 'rentals:landlord-rental-contract-detail' contract.slug %}"
                      role="link" tabindex="0" aria-label="{% blocktranslate with number=contract.contract_number %}View contract {{ number }} details{% endblocktranslate %}"
-                     style="cursor:pointer">
+                     class="cursor-pointer">
                   <div>
                     <div class="text-[11px] font-semibold text-primary">{{ contract.contract_number }}</div>
                     <div class="mt-[5px] text-muted text-[9px]">

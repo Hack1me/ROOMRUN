@@ -79,7 +79,7 @@
             </div>
             <span class="status status-{{ contract.status|lower|default:'inactive' }}">
               {% if contract.status == 'ACTIVE' or contract.status == 'SIGNED' %}
-                <span class="status-dot" style="background: currentColor;"></span>
+                <span class="status-dot bg-current"></span>
               {% else %}
                 <span class="status-dot"></span>
               {% endif %}
@@ -395,7 +395,7 @@
                 <span>{{ contract.unit.floor|default:"—" }}</span>
               </div>
             </div>
-            <a href="{% url 'properties:property-detail' contract.unit.building.property_ref.slug %}" class="btn btn-secondary" style="width:100%;margin-top:14px">
+            <a href="{% url 'properties:property-detail' contract.unit.building.property_ref.slug %}" class="btn btn-secondary mt-3.5 w-full">
               {% translate "View property" %}
             </a>
           </div>

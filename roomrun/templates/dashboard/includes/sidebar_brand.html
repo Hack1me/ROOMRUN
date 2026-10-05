@@ -1,0 +1,11 @@
+{% load static %}
+
+<a href="{{ brand_url }}" class="brand" aria-label="ROOMRUN">
+  <img src="{% static 'images/logo/logo.png' %}"
+       alt="ROOMRUN"
+       class="brand-mark object-contain" />
+  <span class="min-w-0">
+    <span class="brand-name block">ROOMRUN</span>
+    <span class="brand-subtitle block truncate">{{ brand_subtitle }}</span>
+  </span>
+</a>

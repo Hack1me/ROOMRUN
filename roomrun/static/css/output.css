@@ -256,6 +256,9 @@
   }
 }
 @layer utilities {
+  .pointer-events-none {
+    pointer-events: none;
+  }
   .collapse {
     visibility: collapse;
   }
@@ -375,6 +378,9 @@
   .mt-3 {
     margin-top: calc(var(--spacing) * 3);
   }
+  .mt-3\.5 {
+    margin-top: calc(var(--spacing) * 3.5);
+  }
   .mt-4 {
     margin-top: calc(var(--spacing) * 4);
   }
@@ -440,6 +446,15 @@
   }
   .mb-\[18px\] {
     margin-bottom: 18px;
+  }
+  .ml-0 {
+    margin-left: 0px;
+  }
+  .ml-58 {
+    margin-left: calc(var(--spacing) * 58);
+  }
+  .ml-\[232px\] {
+    margin-left: 232px;
   }
   .ml-auto {
     margin-left: auto;
@@ -743,6 +758,9 @@
   .animate-\[auth-float_8s_ease-in-out_infinite\] {
     animation: auth-float 8s ease-in-out infinite;
   }
+  .cursor-not-allowed {
+    cursor: not-allowed;
+  }
   .cursor-pointer {
     cursor: pointer;
   }
@@ -902,6 +920,11 @@
   :where(.divide-line > :not(:last-child)) {
     border-color: var(--color-line);
   }
+  .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   .overflow-hidden {
     overflow: hidden;
   }
@@ -1036,6 +1059,9 @@
   }
   .bg-card {
     background-color: var(--color-card);
+  }
+  .bg-current {
+    background-color: currentcolor;
   }
   .bg-danger-soft {
     background-color: var(--color-danger-soft);
@@ -1933,6 +1959,11 @@
     }
     .max-\[850px\]\:overflow-x-auto {
       overflow-x: auto;
+    }
+  }
+  @media (width < 64rem) {
+    .max-lg\:ml-0 {
+      margin-left: 0px;
     }
   }
   @media (width >= 40rem) {

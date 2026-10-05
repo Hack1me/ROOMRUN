@@ -307,9 +307,9 @@
                   <div class="list-title">{{ next_charge.get_charge_type_display }}</div>
                   <div class="list-meta">{% translate "Apartment" %} {{ unit.unit_number }} · {% translate "Due" %} {{ next_charge.due_date|date:"d F" }}</div>
                 </div>
-                <div style="text-align:right">
+                <div class="text-right">
                   <div class="list-title">{{ next_charge.balance_due }}</div>
-                  <a class="outline-button" style="margin-top:5px" href="{% url 'billing:tenant-payment-initiate' next_charge.slug %}">{% translate "Pay" %}</a>
+                  <a class="outline-button mt-1" href="{% url 'billing:tenant-payment-initiate' next_charge.slug %}">{% translate "Pay" %}</a>
                 </div>
               </div>
             </div>

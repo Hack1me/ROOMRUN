@@ -85,7 +85,7 @@
                 </div>
                 <span class="status status-{{ contract.status|lower|default:'inactive' }}">
                   {% if contract.status == 'ACTIVE' or contract.status == 'SIGNED' %}
-                    <span class="status-dot" style="background: currentColor;"></span>
+                    <span class="status-dot bg-current"></span>
                   {% else %}
                     <span class="status-dot"></span>
                   {% endif %}
@@ -129,15 +129,15 @@
           <!-- SIGNATURE -->
           <section class="lease-card">
             <div class="lease-main">
-              <div class="lease-header" style="align-items: flex-start;">
+              <div class="lease-header items-start">
                 <div>
-                  <h2 class="lease-number" style="font-size: 18px;">{% translate "Your signature" %}</h2>
+                  <h2 class="lease-number text-lg">{% translate "Your signature" %}</h2>
                   <p class="lease-property">{% translate "Sign in the designated area below." %}</p>
                 </div>
                 <span class="text-xs text-muted">{% translate "Electronic signature" %}</span>
               </div>
 
-              <div class="signature-wrapper" style="margin-top: 18px;">
+              <div class="signature-wrapper mt-5">
                 <canvas id="signatureCanvas"></canvas>
                 <div id="signaturePlaceholder" class="signature-placeholder">
                   <i class="ti ti-signature text-3xl mb-2 block"></i>
