@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm run build:prod && DJANGO_SETTINGS_MODULE=config.settings.production python manage.py collectstatic --noinput",
+  "buildCommand": "npm ci && npm run build:prod && DJANGO_SETTINGS_MODULE=config.settings.production python manage.py collectstatic --noinput",
   "rewrites": [
     {
       "source": "/(.*)",
