@@ -8,11 +8,12 @@ from django.urls import include
 from django.urls import path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
-from roomrun.core.views import LegalView
 from django.views.i18n import JavaScriptCatalog
 from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
+
+from roomrun.core.views import LegalView
 
 handler400 = "core.error_views.bad_request"
 handler403 = "core.error_views.permission_denied"

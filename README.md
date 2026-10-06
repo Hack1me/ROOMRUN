@@ -92,3 +92,18 @@ The following details how to deploy this application.
 ### Docker
 
 See detailed [cookiecutter-django Docker documentation](https://cookiecutter-django.readthedocs.io/en/latest/3-deployment/deployment-with-docker.html).
+
+### Vercel
+
+The project includes a Vercel Python function entry point and builds its Tailwind CSS and Django static files during deployment. In Vercel, set the project root to the repository root and add these environment variables for **Production, Preview, and Development** as needed:
+
+- `DJANGO_SETTINGS_MODULE=config.settings.production`
+- `DJANGO_SECRET_KEY`: a long, random secret
+- `DJANGO_ADMIN_URL`: the admin URL path, including its trailing slash (for example, `admin/`)
+- `DATABASE_URL`: the connection URL for a managed PostgreSQL database
+- `DJANGO_ALLOWED_HOSTS`: comma-separated hostnames, including the production domain and `.vercel.app` for preview deployments
+- `REDIS_URL`: a managed Redis URL if using caching or background tasks
+
+The build runs `npm run build:prod` and `collectstatic`, so the production environment variables must also be available to the build. After deployment, apply database migrations against the managed PostgreSQL database with `python manage.py migrate` using `config.settings.production` and the same database environment variables.
+
+Vercel runs Django as a serverless HTTP function. It does not run the project's Celery worker or beat process, and its serverless filesystem is not persistent for user uploads. Configure external services for those features. WebSocket connections also require a separate service that supports persistent ASGI connections.
